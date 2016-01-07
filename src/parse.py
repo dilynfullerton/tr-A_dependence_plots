@@ -1,22 +1,23 @@
 from __future__ import print_function
 import os
 import glob
-from numpy import *
-from matplotlib import pyplot as plt
 
+# ======================================================================
 # Constants
+# ======================================================================
 FILES_DIR = '../files/'
 FILE_EXT = '.int'
+FILENAME_SPLIT = '_'
 HEADER_POS = 0
 ORBITAL_ENERGY_START_INDEX = 1
 MAX_NUM_ORBITALS = 6
-START_INDEX = 1
-NUM_ORBITALS = 6
 COMMENT_CHAR = '!'
 INDEX_COMMENT = 'Index'
 
 
+# ======================================================================
 # Functions
+# ======================================================================
 def files_with_ext_in_directory(directory, extension=FILE_EXT):
     """Returns a list of the filenames of all the files in the given
     directory with the given extension"""
@@ -24,6 +25,9 @@ def files_with_ext_in_directory(directory, extension=FILE_EXT):
     return filenames
 
 
+# ............................................................
+# File name parsing
+# ............................................................
 def mass_number_from_filename(filename):
     """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
@@ -35,6 +39,48 @@ def mass_number_from_filename(filename):
     return mass_number
 
 
+def _filename_elts_list(filename, split_char):
+    """Get a list of the elements in the filename where name elements are
+    separated by split_char
+    """
+    ext_index = filename.rfind('.')
+    filename_woext = filename[:ext_index]
+    return filename_woext.split(split_char)
+
+def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
+    """Gets the e-level number from the file name. 
+    Assumes files are named accoding to the convention:
+        ..._[...]_e[e-level]_[...]_...
+    Also assumes that the name element containing th e-level is the last
+    element which begins with an e.
+    Returns -1 if not found.
+    """
+    filename_elts_list = _filename_elts_list(filename, split_char)
+    for elt in reversed(filename_elts_list):
+        if str(elt[0]) == 'e':
+            return int(elt[1:])
+    return -1
+
+
+def hw_from_filename(filename, split_char=FILENAME_SPLIT):
+    """Gets the hw frequency number from the file name. Returns -1 if not
+    found.
+    + Assumes files are named according to the convention:
+          ..._[...]_hw[hw number]_[...]_...
+    + Assumes that the instance of the string 'hw' in the beginning of the
+    element containing the number is the last instance of such that begins
+    an element.
+    """
+    filename_elts_list = _filename_elts_list(filename, split_char)
+    for elt in reversed(filename_elts_list):
+        if str(elt[0:2]) == 'hw':
+            return int(elt[2:])
+    return -1
+    
+
+# ............................................................
+# File content parsing
+# ............................................................
 def _get_lines(filename):
     """Returns all of the lines read from the given file in a list (with
     line separators and blank lines removed
@@ -77,19 +123,7 @@ def index_lines(comment_lines, index_comment=INDEX_COMMENT):
         if cl.find(index_comment) is 0:
             start_index = index + 1
             break
-    return comment_lines[start_index:]
-    
-
-def index_map(index_lines):
-    """Returns a map from the orbital index to its descriptive quantum
-    numbers
-    """
-    index_map = dict()
-    for line in index_lines:
-        row = line.split()
-        row[0] = int(row[0])
-        index_map[row[0]] = tuple(row[1:])
-    return index_map
+    return comment_lines[start_index:]   
 
 
 def header_list(lines, header_pos=HEADER_POS):
@@ -99,11 +133,14 @@ def header_list(lines, header_pos=HEADER_POS):
     return header_line.split()
 
 
-def index_tuple_map(filename):
-    """Given a data file name, gets the mapping from orbital index to
-    (n, l, j, tz) tuple
+def interaction_data_array(lines, interaction_start=HEADER_POS+1):
+    """Returns the lines containing the interaction data in the form of an 
+    array (list of lists)
     """
-    return index_map(index_lines(comment_lines(filename)))    
+    data_lines = lines[interaction_start:]
+    for i in range(len(data_lines)):
+        data_lines[i] = data_lines[i].split()
+    return data_lines
 
 
 def orbital_energies(header_items_list, 
@@ -120,74 +157,87 @@ def orbital_energies_from_filename(filename):
     return orbital_energies(header_list(content_lines(filename)))
 
 
-def mass_energy_map(file_dir, sub_dir):
+# ............................................................
+# Map construction
+# ............................................................ 
+def index_map(index_lines):
+    """Returns a map from the orbital index to its descriptive quantum
+    numbers
+    """
+    index_map = dict()
+    for line in index_lines:
+        row = line.split()
+        row[0] = int(row[0])
+        index_map[row[0]] = tuple(row[1:])
+    return index_map
+
+
+def index_tuple_map(filename):
+    """Given a data file name, gets the mapping from orbital index to
+    (n, l, j, tz) tuple
+    """
+    return index_map(index_lines(comment_lines(filename)))    
+
+
+def mass_energy_array_map(directory):
     """Returns a map from atomic mass to orbital energy arrays"""
     d = dict()
-    files = files_with_ext_in_directory(file_dir + sub_dir)
+    files = files_with_ext_in_directory(directory)
     for f in files:
         mass_number = mass_number_from_filename(f)
         orbital_energies_list = orbital_energies_from_filename(f)
         d[mass_number] = orbital_energies_list
     return d
 
-
-def mass_index_tuple_map_map(file_dir, sub_dir):
-    """Returns a map from the mass number to the associated index -> tuple
-    map
+def mass_index_energy_map_map(directory):
+    """Given a directory, creates a mapping
+        mass number -> (index -> energy)
+    using the files in that directory
     """
-    d = dict()
-    files = files_with_ext_in_directory(file_dir + sub_dir)
+    mea_map = mass_energy_array_map(directory)
+    for k in mea_map.keys():
+        v = mea_map[k]
+        nextv = dict()
+        for i in range(1, 1 + len(v)):
+            nextv[i] = float(v[i-1])
+        mea_map[k] = nextv
+    return mea_map
+
+def _mass_interaction_data_array_map(directory):
+    """Creates a mapping from mass number to an array of interaction data
+    for each file in the directory
+    """
+    mida_map = dict()
+    files = files_with_ext_in_directory(directory)
     for f in files:
         mass_number = mass_number_from_filename(f)
-        itm = index_tuple_map(f)
-        d[mass_number] = itm
-    return d
+        ida = interaction_data_array(content_lines(f))
+        mida_map[mass_number] = ida
+    return mida_map
 
-
-def plot_orbital_vs_mass_number(file_dir, sub_dir, orbital_index):
-    """Returns the x points and y points for a plot of the orbital energies
-    against mass number for the data files in the given directory and
-    subdirectory
+def mass_interaction_tuple_energy_map_map(directory):
+    """Given a directory, creates a mapping
+        mass number -> ( a, b, c, d, j -> energy )
+    using the files in the directory
     """
-    me_map = mass_energy_map(file_dir, sub_dir)
-    mit_map_map = mass_index_tuple_map_map(file_dir, sub_dir)
-    x_points = list(sort(me_map.keys()))
-    y_points = list()
-    for mass_num in x_points:
-        y_points.append(me_map[mass_num][orbital_index - 1])
-    return x_points, y_points, mit_map_map[mass_num]
+    mida_map = _mass_interaction_data_array_map(directory)
+    for k in mida_map.keys():
+        v = mida_map[k]
+        nextv = dict()
+        for row in v:
+            tup = tuple(row[0:5])
+            energy = float(row[6])
+            nextv[tup] = energy
+        mida_map[k] = nextv
+    return mida_map
 
+'''
+x = mass_interaction_tuple_energy_map_map(
+    '../files/hw20/')
+        #'SD_magnus_e12_s100_hw20_A17.int')))
 
-def plot_orbitals_vs_mass_number(file_dir, sub_dir, 
-                                 start_index=START_INDEX,
-                                 num_orbitals=NUM_ORBITALS):
-    """Plots the x and y points for all orbitals in a single plot"""
-    itmm = mass_index_tuple_map_map(file_dir, sub_dir)
-
-    # Make a subplot
-    ax = plt.subplot(111)
-    for index in range(start_index, start_index + num_orbitals):
-        x_points, y_points, labels = plot_orbital_vs_mass_number(file_dir, 
-                                                                 sub_dir,
-                                                                 index)
-        ax.plot(x_points, y_points, '-o', 
-                 label=(str(sub_dir[:-1]) + ' ' + str(index) + ': ' + 
-                        str(labels[index]).replace("'", '')))
-    plt.title('Energies for orbitals')
-    plt.xlabel('Atomic mass A (amu)')
-    plt.ylabel('Orbital energy (MeV)')
-
-    # Shrink plot width and add legend
-    plot_pos = ax.get_position()
-    ax.set_position([plot_pos.x0, plot_pos.y0, 
-                      plot_pos.width * .8, plot_pos.height])
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
-
-plot_orbitals_vs_mass_number(file_dir=FILES_DIR, sub_dir='hw20/')
-
-plot_orbitals_vs_mass_number(file_dir=FILES_DIR, sub_dir='e14_hw20/')
-
-# plot_orbitals_vs_mass_number(file_dir=FILES_DIR, sub_dir='e14_hw24/')
-
-plt.show()
+for i in x.keys():
+    print(str(i) + ': ')
+    for j in x[i].keys():
+        print('\t' + str(j) + ': ' + str(x[i][j]))
+'''
