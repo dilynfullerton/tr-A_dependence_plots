@@ -15,18 +15,19 @@ NUM_ORBITALS = 6
 COMMENT_CHAR = '!'
 INDEX_COMMENT = 'Index'
 
+
 # Functions
 def files_with_ext_in_directory(directory, extension=FILE_EXT):
-    '''Returns a list of the filenames of all the files in the given
-    directory with the given extension'''
+    """Returns a list of the filenames of all the files in the given
+    directory with the given extension"""
     filenames = list(glob.glob(os.path.join(directory, '*' + extension)))
     return filenames
 
 
 def mass_number_from_filename(filename):
-    '''Gets the mass number from the file name. Assumes files are named
+    """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
-    '''
+    """
     index_of_extension = filename.rfind('.')
     filename = filename[:index_of_extension]
     index_of_mass_number = filename.rfind('A') + 1
@@ -35,9 +36,9 @@ def mass_number_from_filename(filename):
 
 
 def _get_lines(filename):
-    '''Returns all of the lines read from the given file in a list (with
+    """Returns all of the lines read from the given file in a list (with
     line separators and blank lines removed
-    '''
+    """
     with open(filename) as f:
         lines = f.readlines();
     # Remove line separators
@@ -48,16 +49,16 @@ def _get_lines(filename):
 
 
 def content_lines(filename, comment_char=COMMENT_CHAR):
-    '''Returns a list of all of the lines that are not comments
-    '''
+    """Returns a list of all of the lines that are not comments
+    """
     lines = _get_lines(filename)
     return list(filter(lambda x: x[0] is not comment_char, lines))
 
 
 def comment_lines(filename, comment_char=COMMENT_CHAR):
-    '''Returns all of the lines read from the given filename that are
+    """Returns all of the lines read from the given filename that are
     descriptive comments
-    '''
+    """
     lines = _get_lines(filename)
     lines = filter(lambda x: x[0] is comment_char, lines)
     lines = map(lambda x: x.strip('!').strip(), lines)
@@ -66,11 +67,11 @@ def comment_lines(filename, comment_char=COMMENT_CHAR):
 
 
 def index_lines(comment_lines, index_comment=INDEX_COMMENT):
-    '''From the set of comment lines taken from a data file, returns the
+    """From the set of comment lines taken from a data file, returns the
     lines that relate the orbital indices to their quantum numbers. Assumes
-    these lines always occur at the end of the commented section and are 
+    these lines always occur at the end of the commented section and are
     directly preceded with a line beginning with the word "Index"
-    '''
+    """
     start_index = -1
     for cl, index in zip(comment_lines, range(len(comment_lines) + 1)):
         if cl.find(index_comment) is 0:
@@ -80,9 +81,9 @@ def index_lines(comment_lines, index_comment=INDEX_COMMENT):
     
 
 def index_map(index_lines):
-    '''Returns a map from the orbital index to its descriptive quantum 
+    """Returns a map from the orbital index to its descriptive quantum
     numbers
-    '''
+    """
     index_map = dict()
     for line in index_lines:
         row = line.split()
@@ -92,35 +93,35 @@ def index_map(index_lines):
 
 
 def header_list(lines, header_pos=HEADER_POS):
-    '''Returns the line containing the header in the form of an list
-    '''
+    """Returns the line containing the header in the form of an list
+    """
     header_line = lines[header_pos]
     return header_line.split()
 
 
 def index_tuple_map(filename):
-    '''Given a data file name, gets the mapping from orbital index to 
+    """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
-    '''
+    """
     return index_map(index_lines(comment_lines(filename)))    
 
 
 def orbital_energies(header_items_list, 
                      start_index=ORBITAL_ENERGY_START_INDEX,
                      num_orbitals=MAX_NUM_ORBITALS):
-    '''Returns the orbital energies from the given header list
-    '''
+    """Returns the orbital energies from the given header list
+    """
     return header_items_list[start_index : start_index + num_orbitals]
 
 
 def orbital_energies_from_filename(filename):
-    '''Returns the orbital energies from the given filename through
-    functional composition'''
+    """Returns the orbital energies from the given filename through
+    functional composition"""
     return orbital_energies(header_list(content_lines(filename)))
 
 
 def mass_energy_map(file_dir, sub_dir):
-    '''Returns a map from atomic mass to orbital energy arrays'''
+    """Returns a map from atomic mass to orbital energy arrays"""
     d = dict()
     files = files_with_ext_in_directory(file_dir + sub_dir)
     for f in files:
@@ -131,9 +132,9 @@ def mass_energy_map(file_dir, sub_dir):
 
 
 def mass_index_tuple_map_map(file_dir, sub_dir):
-    '''Returns a map from the mass number to the associated index -> tuple
+    """Returns a map from the mass number to the associated index -> tuple
     map
-    '''
+    """
     d = dict()
     files = files_with_ext_in_directory(file_dir + sub_dir)
     for f in files:
@@ -144,10 +145,10 @@ def mass_index_tuple_map_map(file_dir, sub_dir):
 
 
 def plot_orbital_vs_mass_number(file_dir, sub_dir, orbital_index):
-    '''Returns the x points and y points for a plot of the orbital energies
+    """Returns the x points and y points for a plot of the orbital energies
     against mass number for the data files in the given directory and
     subdirectory
-    '''
+    """
     me_map = mass_energy_map(file_dir, sub_dir)
     mit_map_map = mass_index_tuple_map_map(file_dir, sub_dir)
     x_points = list(sort(me_map.keys()))
@@ -160,7 +161,7 @@ def plot_orbital_vs_mass_number(file_dir, sub_dir, orbital_index):
 def plot_orbitals_vs_mass_number(file_dir, sub_dir, 
                                  start_index=START_INDEX,
                                  num_orbitals=NUM_ORBITALS):
-    '''Plots the x and y points for all orbitals in a single plot'''
+    """Plots the x and y points for all orbitals in a single plot"""
     itmm = mass_index_tuple_map_map(file_dir, sub_dir)
 
     # Make a subplot
