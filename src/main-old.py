@@ -11,6 +11,7 @@ FILENAME_SUFFIX = '.int'
 HEADER_START_INDEX = 1
 NUM_ORBITALS = 6
 
+
 # Functions
 def generate_filename(mass_number,
                       directory,
@@ -28,8 +29,8 @@ def get_header_array(filename):
 
 def get_lines(filename):
     with open(filename) as f:
-        lines = f.readlines();
-    lines = list(map(lambda x: x.strip(), lines)) # Remove line separators
+        lines = f.readlines()
+    lines = list(map(lambda x: x.strip(), lines))  # Remove line separators
     return lines
 
 
@@ -39,7 +40,7 @@ def get_content_lines(lines):
 
 def orbital_energy_values(filename, start_index, num_orbitals):
     header_array = get_header_array(filename)
-    return header_array[start_index : start_index + num_orbitals]
+    return header_array[start_index: start_index + num_orbitals]
 
 
 def orbital_energy_values_dict(min_mass_num, 
