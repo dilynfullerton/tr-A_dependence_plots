@@ -16,32 +16,33 @@ def plot_energy_vs_mass(e, hw, directory):
     idat = idm.map[Exp(e=e, hw=hw)]
     
     miie_map = idat.mass_interaction_index_energy_map
-    '''
-    fold_miie = idat.folded_mass_interaction_index_energy_map()
-    s2 = sorted(fold_miie, key=lambda x: x[1][4])
-    s3 = sorted(s2, key=lambda x: x[1][3])
-    s4 = sorted(s3, key=lambda x: x[1][2])
-    s5 = sorted(s4, key=lambda x: x[1][1])
-    s6 = sorted(s5, key=lambda x: x[1][0])
+
+    tupleset = list()
+    for v in miie_map.values():
+        tupleset.extend(v.keys())
+    tupleset = set(tupleset)
     
-    for line in s6:
-        print(line)
-    '''
-    for tup_energy_map in miie_map.values():
-        plot_map = dict()
-        for tup in tup_energy_map.keys():
-            x = list()
-            y = list()
-            label = str(tup)
-            
-            for mass_num in miie_map.keys():
-                if tup in miie_map[mass_num].keys():
-                    x.append(mass_num)
-                    y.append(tup_energy_map[tup])
-            
-            plot_map[tup] = (x, y)
-            plt.plot(x, y, '-', label=label)
+    plot_map = dict()
+    for t in tupleset:
+        x = list()
+        y = list()
+        label = str(t)
+        
+        for mass_num in sorted(miie_map.keys()):
+            if t in miie_map[mass_num]:
+                x.append(mass_num)
+                y.append(miie_map[mass_num][t])
+
+                print(t)
+                for p in zip(x, y):
+                    print(p)
+
+                plot_map[t] = (x, y)
+                plt.plot(x, y, '-', label=label)
+        
     plt.show()
 
+    return plot_map
 
-plot_energy_vs_mass(14, 24, '../files/')
+
+plot_energy_vs_mass(12, 20, '../files/')
