@@ -15,13 +15,13 @@ class ImsrgDataMap:
     def __init__(self, parent_directory):
         self.parent_dir = parent_directory
         self.map = dict()
+        self.sub_dir_tuple_map = dict()
 
-        self._set_map()
+        self._set_maps()
 
-    def _set_map(self):
+    def _set_maps(self):
         sub_directories = parse.files_with_ext_in_directory(self.parent_dir,
                                                             extension='')
-        m = dict()
         for sd in sub_directories:
             files = parse.files_with_ext_in_directory(sd)
             f0 = files[0]
@@ -30,11 +30,14 @@ class ImsrgDataMap:
             hw = parse.hw_from_filename(f0)
             key = Exp(e, hw)
             value = ImsrgDatum(sd, e, hw)
+            
+            self.sub_dir_tuple_map[sd] = key
+            self.map[key] = value
 
-            m[key] = value
-        
-        self.map = m
-
+'''
 idm = ImsrgDataMap('../files/')
 print(idm.map)
-            
+print(idm.sub_dir_tuple_map)
+'''
+
+

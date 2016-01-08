@@ -71,11 +71,28 @@ class ImsrgDatum:
             miiem[A] = next_tuple_energy_map
         
         self.mass_interaction_index_energy_map = miiem
+        
+    def folded_mass_interaction_index_energy_map(self):
+        """Return a flat version of the map"""
+        miie_map = self.mass_interaction_index_energy_map
+        folded_map = list()
+        for mass_num in miie_map.keys():
+            for tup in miie_map[mass_num]:
+                energy = miie_map[mass_num][tup]
+                folded_map.append((mass_num, tup, energy))
+        return folded_map
+                
 
 '''
 idx = ImsrgDatum(directory='../files/hw20/', e=12, hw=20)
+fm = idx.folded_mass_interaction_index_energy_map()
+
+for t in fm:
+    print(t)
+'''
+'''
 x = idx.mass_interaction_index_energy_map
- 
+
 for i in x.keys():
     print(str(i) + ': ')
     for j in x[i].keys():
