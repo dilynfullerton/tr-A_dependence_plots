@@ -81,10 +81,39 @@ class ImsrgDatum:
                 energy = miie_map[mass_num][tup]
                 folded_map.append((mass_num, tup, energy))
         return folded_map
+
+    def interaction_index_mass_energy_map(self):
+        """From the mass -> interaction index -> energy map, creates a
+        mapping from interaction index -> mass -> energy
+        """
+        miie_map = self.mass_interaction_index_energy_map
+        iime_map = dict()
+        for mass_num in miie_map.keys():
+            for tup in miie_map[mass_num]:
+                if tup not in iime_map.keys():
+                    iime_map[tup] = dict()
+                iime_map[tup][mass_num] = miie_map[mass_num][tup]
+        return iime_map
+
+    def index_mass_energy_map(self):
+        """From the (mass -> orbital index -> energy) map produce an
+        (orbital index -> mass -> energy) map
+        """
+        mie_map = self.mass_index_energy_map
+        ime_map = dict()
+        for mass in mie_map.keys():
+            for index in mie_map[mass].keys():
+                if index not in ime_map.keys():
+                    ime_map[index] = dict()
+                ime_map[index][mass] = mie_map[mass][index]
+        return ime_map
                 
 
 '''
 idx = ImsrgDatum(directory='../files/hw20/', e=12, hw=20)
+print(idx.interaction_index_mass_energy_map())
+'''
+'''
 fm = idx.folded_mass_interaction_index_energy_map()
 
 for t in fm:

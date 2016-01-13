@@ -7,42 +7,120 @@ from ImsrgDataMap import Exp
 from ImsrgDatum import ImsrgDatum
 
 
-def plot_energy_vs_mass(e, hw, directory):
+def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
+                                              **kwargs):
     """For a single e, hw pair, along with the main parent directory, 
     plots are created for the energy of each (a, b, c, d, j) tuple against
-    its mass number
-    """
-    idm = ImsrgDataMap(directory)
-    idat = idm.map[Exp(e=e, hw=hw)]
-    
-    miie_map = idat.mass_interaction_index_energy_map
+    its mass number.
 
-    tupleset = list()
-    for v in miie_map.values():
-        tupleset.extend(v.keys())
-    tupleset = set(tupleset)
+    keyword arguments:
+       verbose=True|False (default False)
+           Indicates whether or not to print out the details of the plot.
+       show=True|False (default False)
+           Indicates whether or not to display the plot on screen
+       savename=str (default same as plot title)
+           The name to given the plot
+    """
+    idm = ImsrgDataMap(filesdir)
+    idat = idm.map[Exp(e=e, hw=hw)]
+    iime_map = idat.interaction_index_mass_energy_map()
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     
     plot_map = dict()
-    for t in tupleset:
+    for tup in sorted(iime_map.keys()):
         x = list()
         y = list()
-        label = str(t)
+        label = str(tup)
         
-        for mass_num in sorted(miie_map.keys()):
-            if t in miie_map[mass_num]:
-                x.append(mass_num)
-                y.append(miie_map[mass_num][t])
-
-                print(t)
+        for mass_num in sorted(iime_map[tup].keys()):
+            x.append(mass_num)
+            y.append(iime_map[tup][mass_num])            
+            plot_map[tup] = (x, y)
+            ax.plot(x, y, '-', label=label)
+        
+        if 'verbose' in kwargs and kwargs['verbose'] is True:
+                print(tup)
                 for p in zip(x, y):
                     print(p)
+                print()
 
-                plot_map[t] = (x, y)
-                plt.plot(x, y, '-', label=label)
+    plt.xlabel('A')
+    plt.ylabel('energy (MeV)')
+
+    title = ('energy vs mass for interactions with '
+             'e{e}, hw{hw}').format(e=e, hw=hw)
+    plt.title(title)
+
+    if 'savename' in kwargs:
+        savename = kwargs['savename']
+    else:
+        savename = title
+    plt.savefig(savedir + '/' + savename + '.png')
+
+
+    if 'show' in kwargs and kwargs['show']:
+        plt.show()
         
-    plt.show()
-
     return plot_map
 
 
-plot_energy_vs_mass(12, 20, '../files/')
+def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
+                                         **kwargs):
+    """For a single (e, hw) pair, along with the main parent directory,
+    plots are created for the energy of each orbital against its mass.
+
+    keyword arguments:
+       verbose=True|False (default False)
+           Indicates whether or not to print out the details of the plot.
+       show=True|False (default False)
+           Indicates whether or not to display the plot on screen
+       savename=str (default same as plot title)
+           The name to given the plot
+    """
+    idm = ImsrgDataMap(filesdir)
+    idat = idm.map[Exp(e=e, hw=hw)]
+    ime_map = idat.index_mass_energy_map()
+    io_map = idat.index_orbital_map
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    
+    plot_map = dict()
+    for index in sorted(ime_map.keys()):
+        x = list()
+        y = list()
+        label = '{i}: {qn}'.format(i=index, qn=io_map[index])
+        
+        for mass in sorted(ime_map[index].keys()):
+            x.append(mass)
+            y.append(ime_map[index][mass])
+            plot_map[index] = (x, y)
+            ax.plot(x, y, '-', label=label)
+        
+        if 'verbose' in kwargs and kwargs['verbose']:
+            print(label)
+            for p in zip(x, y):
+                print(p)
+            print()
+    
+    plt.xlabel('A')
+    plt.ylabel('energy (MeV)')
+    
+    title = 'energy vs mass for orbitals with e{e}, hw{hw}'.format(e=e, hw=hw)
+    plt.title(title)
+
+    if 'savename' in kwargs:
+        savename = kwargs['savename']
+    else:
+        savename = title
+    plt.savefig(savedir + '/' + savename + '.png')
+
+    if 'show' in kwargs and kwargs['show']:
+        plt.show()
+        
+    return plot_map
+
+
+# plot_energy_vs_mass(14, 20, '../files/', '-v')
