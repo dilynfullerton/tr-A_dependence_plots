@@ -75,12 +75,31 @@ def rel1(x, a, b, c, d):
     return a * np.sqrt(b*x**2 + c) + d
 
 
-def single_particle_energy_curvefit(fitfn,
+def single_particle_energy_curvefit(fitfn, e=E, hw=HW, directory=FILES_DIR,
                                     show_fits=SHOW_INDIVIDUAL_FITS,
                                     show_data_compare=COMPARE_RAW_DATA,
                                     show_fit_compare=COMPARE_FITS,
                                     show_deriv_compare=COMPARE_DERIV,
                                     verbose=PRINT_FITTING_PARAMETERS):
+    """Perform a curve fit for each of the single particle orbitals, for
+    the files in the given directory with the given e and hw values
+
+    :param fitfn: Function to use for curve-fitting. Must be of the form
+    f(x, a1, a2, a3, ... aN)
+    :param e: the energy level
+    :param hw: the hw frequency
+    :param directory: the parent directory containing related files
+    :param show_fits: whether to show the individual orbital fits
+    :param show_data_compare: whether to show a comparison between the
+    single particle orbital energy dependencies on mass
+    :param show_fit_compare: whether to show a comparison between the
+    single particle fitted energy dependencies on mass
+    :param show_deriv_compare: whether to show a comparison between the
+    single particle first derivatives
+    :param verbose: whether to output the fitted data
+    :return: a map from the QuantumNumbers of each orbital to its fit
+    parameters
+    """
     all_data_map = ImsrgDataMap(parent_directory=FILES_DIR)
     data_maps = all_data_map.map[Exp(E, HW)]
     index_orbital_map = data_maps.index_orbital_map
