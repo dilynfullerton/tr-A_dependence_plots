@@ -1,14 +1,11 @@
 from __future__ import print_function
 from __future__ import division
-from collections import namedtuple
 from matplotlib import pyplot as plt
 from ImsrgDataMap import ImsrgDataMap
 from ImsrgDataMap import Exp
-from ImsrgDatum import ImsrgDatum
 
 
-def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
-                                              **kwargs):
+def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):
     """For a single e, hw pair, along with the main parent directory, 
     plots are created for the energy of each (a, b, c, d, j) tuple against
     its mass number.
@@ -38,13 +35,14 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
             x.append(mass_num)
             y.append(iime_map[tup][mass_num])            
             plot_map[tup] = (x, y)
-            ax.plot(x, y, '-', label=label)
+
+        ax.plot(x, y, '-', label=label)
         
         if 'verbose' in kwargs and kwargs['verbose'] is True:
-                print(tup)
-                for p in zip(x, y):
-                    print(p)
-                print()
+            print(tup)
+            for p in zip(x, y):
+                print(p)
+            print()
 
     plt.xlabel('A')
     plt.ylabel('energy (MeV)')
@@ -59,15 +57,13 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
         savename = title
     plt.savefig(savedir + '/' + savename + '.png')
 
-
     if 'show' in kwargs and kwargs['show']:
-        plt.show()
+        plt.show(block=True)
         
     return plot_map
 
 
-def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
-                                         **kwargs):
+def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir, **kwargs):
     """For a single (e, hw) pair, along with the main parent directory,
     plots are created for the energy of each orbital against its mass.
 
@@ -97,7 +93,8 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
             x.append(mass)
             y.append(ime_map[index][mass])
             plot_map[index] = (x, y)
-            ax.plot(x, y, '-', label=label)
+
+        ax.plot(x, y, '-', label=label)
         
         if 'verbose' in kwargs and kwargs['verbose']:
             print(label)
@@ -121,6 +118,3 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
         plt.show()
         
     return plot_map
-
-
-# plot_energy_vs_mass(14, 20, '../files/', '-v')

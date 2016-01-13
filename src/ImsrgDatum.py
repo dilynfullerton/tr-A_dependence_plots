@@ -107,23 +107,3 @@ class ImsrgDatum:
                     ime_map[index] = dict()
                 ime_map[index][mass] = mie_map[mass][index]
         return ime_map
-                
-
-'''
-idx = ImsrgDatum(directory='../files/hw20/', e=12, hw=20)
-print(idx.interaction_index_mass_energy_map())
-'''
-'''
-fm = idx.folded_mass_interaction_index_energy_map()
-
-for t in fm:
-    print(t)
-'''
-'''
-x = idx.mass_interaction_index_energy_map
-
-for i in x.keys():
-    print(str(i) + ': ')
-    for j in x[i].keys():
-        print('\t' + str(j) + ': ' + str(x[i][j]))
-'''

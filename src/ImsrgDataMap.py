@@ -1,9 +1,8 @@
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
 from collections import namedtuple
-from ImsrgDatum import ImsrgDatum
 import parse
-
+from ImsrgDatum import ImsrgDatum
 
 Exp = namedtuple('Exp', ['e', 'hw'])
 
@@ -33,11 +32,3 @@ class ImsrgDataMap:
             
             self.sub_dir_tuple_map[sd] = key
             self.map[key] = value
-
-'''
-idm = ImsrgDataMap('../files/')
-print(idm.map)
-print(idm.sub_dir_tuple_map)
-'''
-
-

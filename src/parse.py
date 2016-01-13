@@ -189,6 +189,7 @@ def mass_energy_array_map(directory):
         d[mass_number] = orbital_energies_list
     return d
 
+
 def mass_index_energy_map_map(directory):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
@@ -203,6 +204,7 @@ def mass_index_energy_map_map(directory):
         mea_map[k] = nextv
     return mea_map
 
+
 def _mass_interaction_data_array_map(directory):
     """Creates a mapping from mass number to an array of interaction data
     for each file in the directory
@@ -214,6 +216,7 @@ def _mass_interaction_data_array_map(directory):
         ida = interaction_data_array(content_lines(f))
         mida_map[mass_number] = ida
     return mida_map
+
 
 def mass_interaction_tuple_energy_map_map(directory):
     """Given a directory, creates a mapping
@@ -230,14 +233,3 @@ def mass_interaction_tuple_energy_map_map(directory):
             nextv[tup] = energy
         mida_map[k] = nextv
     return mida_map
-
-'''
-x = mass_interaction_tuple_energy_map_map(
-    '../files/hw20/')
-        #'SD_magnus_e12_s100_hw20_A17.int')))
-
-for i in x.keys():
-    print(str(i) + ': ')
-    for j in x[i].keys():
-        print('\t' + str(j) + ': ' + str(x[i][j]))
-'''
