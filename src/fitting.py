@@ -3,6 +3,7 @@ from __future__ import print_function
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit as cf
 import numpy as np
+import math
 from constants import *
 from ImsrgDataMap import ImsrgDataMap, Exp
 from ImsrgDatum import ImsrgDatum, QuantumNumbers
@@ -49,6 +50,23 @@ def _powerfit1(x, a, b, c):
 def _sqrtfit1(x, a, b):
     return a * np.sqrt(x) + b
 
+
+def _invfit1(x, a, b):
+    return a/(x+1) + b
+
+
+def _linvfit1(x, a, b):
+    return a * x/(x+1) + b
+
+
+def _asymptote1(x, a, b, c):
+    return a * (1 - b/x) + c
+
+
+def _rel1(x, a, b, c, d):
+    return a * np.sqrt(b*x**2 + c) + d
+
+
 all_data_map = ImsrgDataMap(parent_directory=FILES_DIR)
 data_maps = all_data_map.map[Exp(E, HW)]
 
@@ -57,14 +75,20 @@ ime_map = data_maps.index_mass_energy_map()
 
 fitfn = _polyfit4
 
+data = list()
 fits = list()
 for index in sorted(ime_map.keys(), key=lambda k: index_orbital_map[k].j):
+    title = index_orbital_map[index]
+
     me_map = ime_map[index]
     xdata, ydata = _map_to_arrays(me_map)
+    data.append((xdata, ydata, title))
 
-    popt, pcov = cf(fitfn, xdata, ydata)
-
-    title = index_orbital_map[index]
+    try:
+        popt, pcov = cf(fitfn, xdata, ydata)
+    except RuntimeError:
+        print('RuntimeError for orbital {o}'.format(o=title))
+        continue
 
     print(title)
     print(popt)
@@ -72,7 +96,7 @@ for index in sorted(ime_map.keys(), key=lambda k: index_orbital_map[k].j):
 
     curve_x = np.linspace(xdata[0], xdata[-1])
     curve_y = np.array(list(map(lambda x: fitfn(x, *popt), curve_x)))
-    fits.append((curve_x, curve_y-ydata[0], title))
+    fits.append((curve_x, curve_y, title))
 
     f = plt.figure()
     ax = f.add_subplot(111)
@@ -82,8 +106,16 @@ for index in sorted(ime_map.keys(), key=lambda k: index_orbital_map[k].j):
     plt.title(title)
     plt.show()
 
+for dat in data:
+    x, y, label = dat
+    y = y - y[0]
+    plt.plot(x, y, label=tuple(label))
+    plt.title('Data')
+plt.show()
+
 for fit in fits:
     x, y, label = fit
-    plt.plot(x, y, label=[q for q in label])
-    plt.legend()
+    y = y - y[0]
+    plt.plot(x, y, label=tuple(label))
+    plt.title('Fits')
 plt.show()
