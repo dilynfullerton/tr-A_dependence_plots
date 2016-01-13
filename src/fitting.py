@@ -3,13 +3,16 @@ from __future__ import print_function
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit as cf
 import numpy as np
-import math
 from constants import *
 from ImsrgDataMap import ImsrgDataMap, Exp
-from ImsrgDatum import ImsrgDatum, QuantumNumbers
 
 E = 12
 HW = 20
+
+SHOW_INDIVIDUAL_FITS = True
+COMPARE_RAW_DATA = False
+COMPARE_FITS = True
+PRINT_FITTING_PARAMETERS = True
 
 
 def _map_to_arrays(m):
@@ -90,32 +93,31 @@ for index in sorted(ime_map.keys(), key=lambda k: index_orbital_map[k].j):
         print('RuntimeError for orbital {o}'.format(o=title))
         continue
 
-    print(title)
-    print(popt)
-    print()
+    if PRINT_FITTING_PARAMETERS:
+        print(title)
+        print(popt)
+        print()
 
     curve_x = np.linspace(xdata[0], xdata[-1])
     curve_y = np.array(list(map(lambda x: fitfn(x, *popt), curve_x)))
     fits.append((curve_x, curve_y, title))
 
-    f = plt.figure()
-    ax = f.add_subplot(111)
+    if SHOW_INDIVIDUAL_FITS:
+        f = plt.figure()
+        ax = f.add_subplot(111)
+        ax.plot(xdata, ydata, '-b')
+        ax.plot(curve_x, curve_y, '-r')
+        plt.title(title)
+        plt.show()
 
-    ax.plot(xdata, ydata, '-b')
-    ax.plot(curve_x, curve_y, '-r')
-    plt.title(title)
-    plt.show()
 
-for dat in data:
-    x, y, label = dat
-    y = y - y[0]
-    plt.plot(x, y, label=tuple(label))
-    plt.title('Data')
-plt.show()
-
-for fit in fits:
-    x, y, label = fit
-    y = y - y[0]
-    plt.plot(x, y, label=tuple(label))
-    plt.title('Fits')
+for dat, fit in zip(data, fits):
+    if COMPARE_RAW_DATA:
+        x, y, label = dat
+        y = y - y[0]
+        plt.plot(x, y, 'o', label=tuple(label))
+    if COMPARE_FITS:
+        x, y, label = fit
+        y = y - y[0]
+        plt.plot(x, y, '-', label=tuple(label))
 plt.show()
