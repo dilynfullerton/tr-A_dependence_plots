@@ -17,7 +17,7 @@ def _map_to_arrays(m):
     length = len(m)
     x = np.empty(length)
     y = np.empty(length)
-    for k, i in zip(m.keys(), range(length)):
+    for k, i in zip(sorted(m.keys()), range(length)):
         x[i] = k
         y[i] = m[k]
     return x, y
