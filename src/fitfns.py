@@ -18,15 +18,15 @@ def polyfit1(x, a, b):
 
 
 def expfit1(x, a, b, c):
-    return a*np.exp(b*x) + c
+    return a * np.exp(b * x) + c
 
 
 def logfit1(x, a, b, c):
-    return a * np.log(b**2 * x + 1) + c
+    return a * np.log(b ** 2 * x + 1) + c
 
 
 def logbasefit1(x, a, b, c):
-    return a * np.log(x) / np.log(b**2 + 1) + c
+    return a * np.log(x) / np.log(b ** 2 + 1) + c
 
 
 def powerfit1(x, a, b, c):
@@ -38,16 +38,16 @@ def sqrtfit1(x, a, b):
 
 
 def invfit1(x, a, b):
-    return a/(x+1) + b
+    return a / (x + 1) + b
 
 
 def linvfit1(x, a, b):
-    return a * x/(x+1) + b
+    return a * x / (x + 1) + b
 
 
 def asymptote1(x, a, b, c):
-    return a * (1 - b/x) + c
+    return a * (1 - b / x) + c
 
 
 def rel1(x, a, b, c, d):
-    return a * np.sqrt(b*x**2 + c) + d
+    return a * np.sqrt(b * x ** 2 + c) + d

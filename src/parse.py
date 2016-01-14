@@ -20,7 +20,9 @@ INDEX_COMMENT = 'Index'
 # ======================================================================
 def files_with_ext_in_directory(directory, extension=FILE_EXT):
     """Returns a list of the filenames of all the files in the given
-    directory with the given extension"""
+    directory with the given extension
+    :param extension:
+    :param directory: """
     filenames = list(glob.glob(os.path.join(directory, '*' + extension)))
     return filenames
 
@@ -31,6 +33,7 @@ def files_with_ext_in_directory(directory, extension=FILE_EXT):
 def mass_number_from_filename(filename):
     """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
+    :param filename:
     """
     index_of_extension = filename.rfind('.')
     filename = filename[:index_of_extension]
@@ -47,6 +50,7 @@ def _filename_elts_list(filename, split_char):
     filename_woext = filename[:ext_index]
     return filename_woext.split(split_char)
 
+
 def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
     """Gets the e-level number from the file name. 
     Assumes files are named accoding to the convention:
@@ -54,6 +58,8 @@ def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
     Also assumes that the name element containing th e-level is the last
     element which begins with an e.
     Returns -1 if not found.
+    :param split_char:
+    :param filename:
     """
     filename_elts_list = _filename_elts_list(filename, split_char)
     for elt in reversed(filename_elts_list):
@@ -70,13 +76,15 @@ def hw_from_filename(filename, split_char=FILENAME_SPLIT):
     + Assumes that the instance of the string 'hw' in the beginning of the
     element containing the number is the last instance of such that begins
     an element.
+    :param split_char:
+    :param filename:
     """
     filename_elts_list = _filename_elts_list(filename, split_char)
     for elt in reversed(filename_elts_list):
         if str(elt[0:2]) == 'hw':
             return int(elt[2:])
     return -1
-    
+
 
 # ............................................................
 # File content parsing
@@ -86,7 +94,7 @@ def _get_lines(filename):
     line separators and blank lines removed
     """
     with open(filename) as f:
-        lines = f.readlines();
+        lines = f.readlines()
     # Remove line separators
     lines = list(map(lambda x: x.strip(), lines))
     # Remove blank lines
@@ -96,6 +104,8 @@ def _get_lines(filename):
 
 def content_lines(filename, comment_char=COMMENT_CHAR):
     """Returns a list of all of the lines that are not comments
+    :param comment_char:
+    :param filename:
     """
     lines = _get_lines(filename)
     return list(filter(lambda x: x[0] is not comment_char, lines))
@@ -104,6 +114,8 @@ def content_lines(filename, comment_char=COMMENT_CHAR):
 def comment_lines(filename, comment_char=COMMENT_CHAR):
     """Returns all of the lines read from the given filename that are
     descriptive comments
+    :param comment_char:
+    :param filename:
     """
     lines = _get_lines(filename)
     lines = filter(lambda x: x[0] is comment_char, lines)
@@ -117,25 +129,31 @@ def index_lines(comment_lines, index_comment=INDEX_COMMENT):
     lines that relate the orbital indices to their quantum numbers. Assumes
     these lines always occur at the end of the commented section and are
     directly preceded with a line beginning with the word "Index"
+    :param index_comment:
+    :param comment_lines:
     """
     start_index = -1
     for cl, index in zip(comment_lines, range(len(comment_lines) + 1)):
         if cl.find(index_comment) is 0:
             start_index = index + 1
             break
-    return comment_lines[start_index:]   
+    return comment_lines[start_index:]
 
 
 def header_list(lines, header_pos=HEADER_POS):
     """Returns the line containing the header in the form of an list
+    :param header_pos:
+    :param lines:
     """
     header_line = lines[header_pos]
     return header_line.split()
 
 
-def interaction_data_array(lines, interaction_start=HEADER_POS+1):
+def interaction_data_array(lines, interaction_start=HEADER_POS + 1):
     """Returns the lines containing the interaction data in the form of an 
     array (list of lists)
+    :param interaction_start:
+    :param lines:
     """
     data_lines = lines[interaction_start:]
     for i in range(len(data_lines)):
@@ -143,17 +161,21 @@ def interaction_data_array(lines, interaction_start=HEADER_POS+1):
     return data_lines
 
 
-def orbital_energies(header_items_list, 
+def orbital_energies(header_items_list,
                      start_index=ORBITAL_ENERGY_START_INDEX,
                      num_orbitals=MAX_NUM_ORBITALS):
     """Returns the orbital energies from the given header list
+    :param num_orbitals:
+    :param start_index:
+    :param header_items_list:
     """
-    return header_items_list[start_index : start_index + num_orbitals]
+    return header_items_list[start_index: start_index + num_orbitals]
 
 
 def orbital_energies_from_filename(filename):
     """Returns the orbital energies from the given filename through
-    functional composition"""
+    functional composition
+    :param filename: """
     return orbital_energies(header_list(content_lines(filename)))
 
 
@@ -163,6 +185,7 @@ def orbital_energies_from_filename(filename):
 def index_map(index_lines):
     """Returns a map from the orbital index to its descriptive quantum
     numbers
+    :param index_lines:
     """
     index_map = dict()
     for line in index_lines:
@@ -175,12 +198,15 @@ def index_map(index_lines):
 def index_tuple_map(filename):
     """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
+    :param filename:
     """
-    return index_map(index_lines(comment_lines(filename)))    
+    return index_map(index_lines(comment_lines(filename)))
 
 
 def mass_energy_array_map(directory):
-    """Returns a map from atomic mass to orbital energy arrays"""
+    """Returns a map from atomic mass to orbital energy arrays
+    :param directory:
+    """
     d = dict()
     files = files_with_ext_in_directory(directory)
     for f in files:
@@ -194,13 +220,14 @@ def mass_index_energy_map_map(directory):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
+    :param directory:
     """
     mea_map = mass_energy_array_map(directory)
     for k in mea_map.keys():
         v = mea_map[k]
         nextv = dict()
         for i in range(1, 1 + len(v)):
-            nextv[i] = float(v[i-1])
+            nextv[i] = float(v[i - 1])
         mea_map[k] = nextv
     return mea_map
 
@@ -222,6 +249,7 @@ def mass_interaction_tuple_energy_map_map(directory):
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
+    :param directory:
     """
     mida_map = _mass_interaction_data_array_map(directory)
     for k in mida_map.keys():

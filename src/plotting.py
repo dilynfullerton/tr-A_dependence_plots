@@ -17,6 +17,10 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):
            Indicates whether or not to display the plot on screen
        savename=str (default same as plot title)
            The name to given the plot
+           :param savedir:
+           :param filesdir:
+           :param hw:
+           :param e:
     """
     idm = ImsrgDataMap(filesdir)
     idat = idm.map[Exp(e=e, hw=hw)]
@@ -74,6 +78,10 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir, **kwargs):
            Indicates whether or not to display the plot on screen
        savename=str (default same as plot title)
            The name to given the plot
+           :param savedir:
+           :param filesdir:
+           :param hw:
+           :param e:
     """
     idm = ImsrgDataMap(filesdir)
     idat = idm.map[Exp(e=e, hw=hw)]
