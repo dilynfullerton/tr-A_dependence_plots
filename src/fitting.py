@@ -168,7 +168,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             # plt.plot(x, y, '-', label=label)
         title = title_temp.format(rel='relative', sp1=' ', fn='',
                                   sp2='', dof='data', us='')
-        _do_plot(title, xlabel, ylabel,
+        _do_plot(title, xlabel, 'relative' + ylabel,
                  saveloc=savedir + '/' + title + '.png',
                  showlegend=legend_rel_data_compare)
         plt.show()
@@ -182,7 +182,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             # plt.plot(x, y, '-', label=label)
         title = title_temp.format(rel='relative', sp1=' ', fn=fitfn.__name__,
                                   sp2=' ', dof='fit', us='using')
-        _do_plot(title, xlabel, ylabel,
+        _do_plot(title, xlabel, 'relative' + ylabel,
                  saveloc=savedir + '/' + title + '.png',
                  showlegend=legend_rel_data_compare)
         plt.show()

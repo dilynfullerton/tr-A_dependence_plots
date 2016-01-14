@@ -22,8 +22,8 @@ SAVE = '../plots'
 
 '''
 spic(polyfit4, e=12, hw=20,
-     show_fits=True,
-     show_data_compare=True,
+     # show_fits=True,
+     # show_data_compare=True,
      show_rel_data_compare=True,
      verbose=True)
 '''
@@ -33,9 +33,9 @@ spdc(polyfit4, e=12, hw=20,
      show_data_compare=True,
      show_rel_data_compare=True)
 '''
-'''
+
 sppnc(polyfit2, e=12, hw=20,
+      show_fits=True,
       show_data_compare=True,
-      show_rel_data_compare=True,
+      # show_rel_data_compare=True,
       verbose=True)
-'''
