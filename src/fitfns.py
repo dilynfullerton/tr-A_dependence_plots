@@ -13,6 +13,10 @@ def polyfit2(x, a, b, c):
     return np.polyval([a, b, c], x)
 
 
+def polyfit1(x, a, b):
+    return np.polyval([a, b], x)
+
+
 def expfit1(x, a, b, c):
     return a*np.exp(b*x) + c
 

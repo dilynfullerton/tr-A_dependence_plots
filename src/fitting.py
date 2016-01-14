@@ -7,6 +7,7 @@ from openpyxl import Workbook, load_workbook
 from scipy.optimize import curve_fit as cf
 
 from ImsrgDataMap import ImsrgDataMap, Exp
+from fittransforms import *
 from constants import *
 
 E = 12
@@ -69,22 +70,22 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
     index_orbital_map = data_maps.index_orbital_map
     ime_map = data_maps.index_mass_energy_map()
 
-    data_plots = list()
-    deriv_plots = list()
-    fits_plots = list()
+    compare_data_plots = list()
+    compare_deriv_plots = list()
+    compare_fits_plots = list()
     orbital_fit_map = dict()
     for index in sorted(ime_map.keys(), key=lambda k: index_orbital_map[k].j):
         qnums = index_orbital_map[index]
 
         me_map = ime_map[index]
         xdata, ydata = _map_to_arrays(me_map)
-        data_plots.append((xdata, ydata, qnums))
+        compare_data_plots.append((xdata, ydata, qnums))
 
         xderiv = np.array(xdata)[:-1]
         yderiv = np.empty(shape=len(xderiv))
         for i in range(len(xderiv)):
             yderiv[i] = ydata[i+1] - ydata[i]
-        deriv_plots.append((xderiv, yderiv, qnums))
+        compare_deriv_plots.append((xderiv, yderiv, qnums))
 
         try:
             popt, pcov = cf(fitfn, xdata, ydata)
@@ -100,7 +101,7 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
 
         curve_x = np.linspace(xdata[0], xdata[-1])
         curve_y = np.array(list(map(lambda x: fitfn(x, *popt), curve_x)))
-        fits_plots.append((curve_x, curve_y, qnums))
+        compare_fits_plots.append((curve_x, curve_y, qnums))
 
         if show_fits:
             f = plt.figure()
@@ -119,7 +120,7 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
             plt.show()
 
     if show_data_compare:
-        for dat in data_plots:
+        for dat in compare_data_plots:
             x, y, label = dat
             y = y - y[0]
             plt.plot(x, y, '-', label=tuple(label))
@@ -133,7 +134,7 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
         plt.show()
 
     if show_fit_compare:
-        for fit in fits_plots:
+        for fit in compare_fits_plots:
             x, y, label = fit
             y = y - y[0]
             plt.plot(x, y, '-', label=tuple(label))
@@ -148,7 +149,7 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
         plt.show()
 
     if show_data_compare2:
-        for dat in data_plots:
+        for dat in compare_data_plots:
             x, y, label = dat
             for i in range(len(y)):
                 y[i] = y[i] / x[i]
@@ -165,7 +166,7 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
         plt.show()
 
     if show_log_log_compare:
-        for dat in data_plots:
+        for dat in compare_data_plots:
             x, y, label = dat
             plt.plot(np.log(abs(x)), np.log(abs(y)), label=tuple(label))
             title = ('Single particle energies: '
@@ -178,7 +179,7 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
         plt.show()
 
     if show_deriv_compare:
-        for der in deriv_plots:
+        for der in compare_deriv_plots:
             x, y, label = der
             plt.plot(x, y, '-', label=tuple(label))
             title = ('Single particle energies: '
@@ -191,6 +192,173 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
         plt.show()
 
     return orbital_fit_map
+
+
+def single_particle_deriv_curvefit(fitfn, e=E, hw=HW, **kwargs):
+    return _single_particle_curvefit(fitfn, e, hw,
+                                     code='spd', transform=derivative,
+                                     **kwargs)
+
+
+def single_particle_log_log_curvefit(fitfn, e=E, hw=HW, **kwargs):
+    return _single_particle_curvefit(fitfn, e, hw,
+                                     code='spll', transform=log_log,
+                                     **kwargs)
+
+
+def single_particle_identity_curvefit(fitfn, e=E, hw=HW, **kwargs):
+    return _single_particle_curvefit(fitfn, e, hw,
+                                     code='spi', transform=identity,
+                                     **kwargs)
+
+
+def single_particle_per_nucleon_curvefit(fitfn, e=E, hw=HW, **kwargs):
+    return _single_particle_curvefit(fitfn, e, hw,
+                                     code='sppn', transform=per_nucleon,
+                                     **kwargs)
+
+
+def _single_particle_curvefit(fitfn, e=E, hw=HW,
+                              sourcedir=FILES_DIR,
+                              savedir=PLOTS_DIR,
+                              show_fits=False,
+                              show_data_compare=False,
+                              legend_data_compare=True,
+                              show_rel_data_compare=False,
+                              legend_rel_data_compare=True,
+                              transform=identity,
+                              verbose=False,
+                              code='',
+                              xlabel='A',
+                              ylabel='Energy (MeV)',
+                              sortkey=lambda k: k):
+    all_data_map = ImsrgDataMap(parent_directory=FILES_DIR)
+    data_maps = all_data_map.map[Exp(E, HW)]
+    io_map = data_maps.index_orbital_map
+    ime_map = data_maps.index_mass_energy_map()
+
+    compare_data_plots = list()
+    compare_fit_plots = list()
+    orbital_fit_map = dict()
+
+    for index in sorted(ime_map.keys(), key=sortkey):
+        qnums = io_map[index]
+        me_map = ime_map[index]
+
+        xdata, ydata = _map_to_arrays(me_map)
+        x, y = transform(xdata, ydata)
+        compare_data_plots.append((x, y, index))
+
+        popt, pcov = cf(fitfn, x, y)
+        orbital_fit_map[qnums] = popt
+
+        if verbose:
+            print(str(index) + ': ' + str(qnums))
+            print(popt, end='\n\n')
+
+        fitx = np.linspace(x[0], x[-1])
+        fity = np.array(list(map(lambda xi: fitfn(xi, *popt), fitx)))
+        compare_fit_plots.append((fitx, fity, index))
+
+        if show_fits:
+            f = plt.figure()
+            ax = f.add_subplot(111)
+            ax.plot(xdata, ydata, '-b')
+            ax.plot(fitx, fity, '-r')
+            plt.plot(xdata, ydata, '-b')
+            plt.plot(fitx, fity, '-r')
+            title = ('{c}:Single particle energy {tr} fit using {fn} for '
+                     'orbital {o} with e={e} '
+                     'hw={hw}').format(c=code,
+                                       tr=transform.__name__,
+                                       fn=fitfn.__name__,
+                                       o=index,
+                                       e=e, hw=hw)
+            plt.title(title)
+            plt.xlabel(xlabel)
+            plt.ylabel(ylabel)
+            plt.savefig(savedir + '/' + title + '.png')
+            plt.show()
+
+    # DATA COMPARISONS
+    title_temp = ('{c}:Comparison of {rel}{sp1}single particle energy {tr} '
+                  '{dof}{sp2}{us}{sp2}{fn} with e={e} hw={hw}'
+                  '').format(c=code,
+                             tr=transform.__name__,
+                             e=e, hw=hw,
+                             rel='{rel}',
+                             sp1='{sp1}',
+                             fn='{fn}',
+                             sp2='{sp2}',
+                             dof='{dof}',
+                             us='{us}')
+
+    if show_data_compare:
+        fdat = plt.figure()
+        axdat = fdat.add_subplot(111)
+        for dat in compare_data_plots:
+            x, y, label = dat
+            axdat.plot(x, y, '-', label=label)
+            # plt.plot(x, y, '-', label=label)
+        title = title_temp.format(rel='', sp1='', fn='', sp2='', dof='data',
+                                  us='')
+        _do_plot(title, xlabel, ylabel,
+                 saveloc=savedir + '/' + title + '.png',
+                 showlegend=legend_data_compare)
+        plt.show()
+
+        ffit = plt.figure()
+        axfit = ffit.add_subplot(111)
+        for fit in compare_fit_plots:
+            x, y, label = fit
+            axfit.plot(x, y, '-', label=label)
+            # plt.plot(x, y, '-', label=label)
+        title = title_temp.format(rel='', sp1='', fn=fitfn.__name__,
+                                  sp2=' ', dof='fit', us='using')
+        _do_plot(title, xlabel, ylabel,
+                 saveloc=savedir + '/' + title + '.png',
+                 showlegend=legend_data_compare)
+        plt.show()
+
+    if show_rel_data_compare:
+        frdat = plt.figure()
+        axrdat = frdat.add_subplot(111)
+        for rdat in compare_data_plots:
+            x, y, label = rdat
+            y = y - y[0]
+            axrdat.plot(x, y, '-', label=label)
+            # plt.plot(x, y, '-', label=label)
+        title = title_temp.format(rel='relative', sp1=' ', fn='',
+                                  sp2='', dof='data', us='')
+        _do_plot(title, xlabel, ylabel,
+                 saveloc=savedir + '/' + title + '.png',
+                 showlegend=legend_rel_data_compare)
+        plt.show()
+
+        frfit = plt.figure()
+        axrfit = frfit.add_subplot(111)
+        for rfit in compare_fit_plots:
+            x, y, label = rfit
+            y = y - y[0]
+            axrfit.plot(x, y, '-', label=label)
+            # plt.plot(x, y, '-', label=label)
+        title = title_temp.format(rel='relative', sp1=' ', fn=fitfn.__name__,
+                                  sp2=' ', dof='fit', us='using')
+        _do_plot(title, xlabel, ylabel,
+                 saveloc=savedir + '/' + title + '.png',
+                 showlegend=legend_rel_data_compare)
+        plt.show()
+
+    return orbital_fit_map
+
+
+def _do_plot(title, xlabel, ylabel, saveloc, showlegend):
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if showlegend:
+        plt.legend()
+    plt.savefig(saveloc)
 
 
 def print_single_particle_energy_data_to_excel(e, hw, datadir, savepath,
