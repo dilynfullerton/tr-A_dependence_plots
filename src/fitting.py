@@ -105,7 +105,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             ax.plot(fitx, fity, '-r')
             plt.plot(xdata, ydata, '-b')
             plt.plot(fitx, fity, '-r')
-            title = ('{c}:Single particle energy {tr} fit using {fn} for '
+            title = ('{c}-Single particle energy {tr} fit using {fn} for '
                      'orbital {o} with e={e} '
                      'hw={hw}').format(c=code,
                                        tr=transform.__name__,
@@ -119,7 +119,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             plt.show()
 
     # DATA COMPARISONS
-    title_temp = ('{c}:Comparison of {rel}{sp1}single particle energy {tr} '
+    title_temp = ('{c}-Comparison of {rel}{sp1}single particle energy {tr} '
                   '{dof}{sp2}{us}{sp2}{fn} with e={e} hw={hw}'
                   '').format(c=code,
                              tr=transform.__name__,
