@@ -8,9 +8,11 @@ def identity(xarr, yarr):
 
 
 def derivative(xarr, yarr):
-    for i in range(len(yarr) - 1):
-        yarr[i] = yarr[i+1] - yarr[i]
-    return xarr, yarr
+    x = np.array(xarr)[:-1]
+    y = np.array(yarr)[:-1]
+    for i in range(len(y)):
+        y[i] = yarr[i+1] - yarr[i]
+    return x, y
 
 
 def log_log(xarr, yarr):
