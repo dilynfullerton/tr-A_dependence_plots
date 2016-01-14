@@ -1,11 +1,13 @@
 from __future__ import division
 from __future__ import print_function
-from matplotlib import pyplot as plt
-from scipy.optimize import curve_fit as cf
+
 import numpy as np
+from matplotlib import pyplot as plt
 from openpyxl import Workbook, load_workbook
-from constants import *
+from scipy.optimize import curve_fit as cf
+
 from ImsrgDataMap import ImsrgDataMap, Exp
+from constants import *
 
 E = 12
 HW = 20
@@ -28,54 +30,6 @@ def _map_to_arrays(m):
         x[i] = k
         y[i] = m[k]
     return x, y
-
-
-def polyfit4(x, a, b, c, d, e):
-    return np.polyval([a, b, c, d, e], x)
-
-
-def polyfit3(x, a, b, c, d):
-    return np.polyval([a, b, c, d], x)
-
-
-def polyfit2(x, a, b, c):
-    return np.polyval([a, b, c], x)
-
-
-def expfit1(x, a, b, c):
-    return a*np.exp(b*x) + c
-
-
-def logfit1(x, a, b, c):
-    return a * np.log(b**2 * x + 1) + c
-
-
-def logbasefit1(x, a, b, c):
-    return a * np.log(x) / np.log(b**2 + 1) + c
-
-
-def powerfit1(x, a, b, c):
-    return a * np.power(x, b) + c
-
-
-def sqrtfit1(x, a, b):
-    return a * np.sqrt(x) + b
-
-
-def invfit1(x, a, b):
-    return a/(x+1) + b
-
-
-def linvfit1(x, a, b):
-    return a * x/(x+1) + b
-
-
-def asymptote1(x, a, b, c):
-    return a * (1 - b/x) + c
-
-
-def rel1(x, a, b, c, d):
-    return a * np.sqrt(b*x**2 + c) + d
 
 
 def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
@@ -184,8 +138,9 @@ def single_particle_energy_curvefit(fitfn, e=E, hw=HW,
             y = y - y[0]
             plt.plot(x, y, '-', label=tuple(label))
             title = ('Single particle energies: '
-                     'Comparison of fits with '
-                     'e={e} hw={hw}').format(e=e, hw=hw)
+                     'Comparison of fits using {fit} with '
+                     'e={e} hw={hw}').format(fit=fitfn.__name__,
+                                             e=e, hw=hw)
             plt.title(title)
             plt.xlabel('A')
             plt.ylabel('Relative fit energy (MeV)')
@@ -290,7 +245,7 @@ def print_single_particle_energy_data_to_excel(e, hw, datadir, savepath,
 
     wb.save(savepath)
 
-single_particle_energy_curvefit(fitfn=polyfit4)
+# single_particle_energy_curvefit(fitfn=polyfit4)
 '''
 print_single_particle_energy_data_to_excel(
         12, 20,
