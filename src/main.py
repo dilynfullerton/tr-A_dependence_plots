@@ -2,10 +2,12 @@ from __future__ import division
 from __future__ import print_function
 
 from fitfns import *
-from fitting import single_particle_deriv_curvefit as spdc
-from fitting import single_particle_identity_curvefit as spic
-from fitting import single_particle_log_log_curvefit as spllc
-from fitting import single_particle_per_nucleon_curvefit as sppnc
+from fitting import single_particle_deriv_curvefit as spd
+from fitting import single_particle_identity_curvefit as spi
+from fitting import single_particle_log_log_curvefit as spll
+from fitting import single_particle_per_nucleon_curvefit as sppn
+from fitting import single_particle_per_nucleon_power_curvefit as sppnp
+from fitting import single_particle_power_curvefit as spp
 from plotting import plot_energy_vs_mass_for_interactions as iplot
 from plotting import plot_energy_vs_mass_for_orbitals as oplot
 
@@ -21,21 +23,29 @@ SAVE = '../plots'
 # iplot(14, 24, filesdir=DIR, savedir=SAVE, show=True)
 
 '''
-spic(polyfit4, e=12, hw=20,
+spi(polyfit4, e=14, hw=24,
      # show_fits=True,
-     # show_data_compare=True,
+     show_data_compare=True,
      show_rel_data_compare=True,
      verbose=True)
 '''
 '''
-spdc(polyfit4, e=12, hw=20,
+spd(polyfit4, e=12, hw=20,
      # show_fits=True,
      show_data_compare=True,
      show_rel_data_compare=True)
 '''
-
-sppnc(polyfit2, e=12, hw=20,
-      show_fits=True,
+'''
+sppn(polyfit2, e=14, hw=24,
+      # show_fits=True,
       show_data_compare=True,
-      # show_rel_data_compare=True,
+      show_rel_data_compare=True,
       verbose=True)
+'''
+'''
+spp(polyfit4, e=12, hw=20,
+    xpow=1, ypow=3,
+    show_data_compare=True,
+    show_rel_data_compare=True,
+    verbose=True)
+'''

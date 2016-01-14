@@ -35,12 +35,15 @@ def _map_to_arrays(m):
 def single_particle_deriv_curvefit(fitfn, e=E, hw=HW, **kwargs):
     return _single_particle_curvefit(fitfn, e, hw,
                                      code='spd', transform=derivative,
+                                     ylabel='dE/dA',
                                      **kwargs)
 
 
 def single_particle_log_log_curvefit(fitfn, e=E, hw=HW, **kwargs):
     return _single_particle_curvefit(fitfn, e, hw,
                                      code='spll', transform=log_log,
+                                     xlabel='log(A)',
+                                     ylabel='log(Energy)',
                                      **kwargs)
 
 
@@ -53,6 +56,40 @@ def single_particle_identity_curvefit(fitfn, e=E, hw=HW, **kwargs):
 def single_particle_per_nucleon_curvefit(fitfn, e=E, hw=HW, **kwargs):
     return _single_particle_curvefit(fitfn, e, hw,
                                      code='sppn', transform=per_nucleon,
+                                     ylabel='Energy per nucleon (MeV)',
+                                     **kwargs)
+
+
+def single_particle_per_nucleon_power_curvefit(fitfn, e=E, hw=HW,
+                                               xpow=1, ypow=1,
+                                               **kwargs):
+    if xpow != 1:
+        xlabel='[A]^{xp}'.format(xp=xpow)
+    else:
+        xlabel='A'
+    if ypow != 1:
+        ylabel='[Energy per nucleon]^{yp} (MeV)^{yp}'.format(yp=ypow)
+    else:
+        ylabel='Energy per nucleon (MeV)'
+    return _single_particle_curvefit(
+            fitfn, e, hw, code='sppnp',
+            transform=lambda x, y: power(xpow, ypow)(*per_nucleon(x, y)),
+            xlabel=xlabel, ylabel=ylabel,
+            **kwargs)
+
+
+def single_particle_power_curvefit(fitfn, e=E, hw=HW, xpow=1, ypow=1, **kwargs):
+    if xpow != 1:
+        xlabel='[A]^{xp}'.format(xp=xpow)
+    else:
+        xlabel='A'
+    if ypow != 1:
+        ylabel='[Energy per nucleon]^{yp} (MeV)^{yp}'.format(yp=ypow)
+    else:
+        ylabel='Energy per nucleon (MeV)'
+    return _single_particle_curvefit(fitfn, e, hw,
+                                     code='spp', transform=power(xpow, ypow),
+                                     xlabel=xlabel, ylabel=ylabel,
                                      **kwargs)
 
 
@@ -168,7 +205,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             # plt.plot(x, y, '-', label=label)
         title = title_temp.format(rel='relative', sp1=' ', fn='',
                                   sp2='', dof='data', us='')
-        _do_plot(title, xlabel, 'relative' + ylabel,
+        _do_plot(title, xlabel, 'relative ' + ylabel,
                  saveloc=savedir + '/' + title + '.png',
                  showlegend=legend_rel_data_compare)
         plt.show()
@@ -182,7 +219,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             # plt.plot(x, y, '-', label=label)
         title = title_temp.format(rel='relative', sp1=' ', fn=fitfn.__name__,
                                   sp2=' ', dof='fit', us='using')
-        _do_plot(title, xlabel, 'relative' + ylabel,
+        _do_plot(title, xlabel, 'relative ' + ylabel,
                  saveloc=savedir + '/' + title + '.png',
                  showlegend=legend_rel_data_compare)
         plt.show()

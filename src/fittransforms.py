@@ -25,3 +25,11 @@ def per_nucleon(xarr, yarr):
     for i in range(len(yarr)):
         yarr[i] = yarr[i] / xarr[i]
     return xarr, yarr
+
+
+def absval(xarr, yarr):
+    return np.abs(xarr), np.abs(yarr)
+
+
+def power(xpow, ypow):
+    return lambda xarr, yarr: (xarr ** xpow, yarr ** ypow)
