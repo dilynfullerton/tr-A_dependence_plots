@@ -99,7 +99,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
                               show_fits=False,
                               show_data_compare=False,
                               legend_data_compare=True,
-                              show_rel_data_compare=False,
+                              show_fit_compare=False,
                               legend_rel_data_compare=True,
                               transform=identity,
                               verbose=False,
@@ -155,7 +155,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
             plt.savefig(savedir + '/' + title + '.png')
             plt.show()
 
-    # DATA COMPARISONS
+    # DATA COMPARISON PLOTS
     title_temp = ('{c}-Comparison of {rel}{sp1}single particle energy {tr} '
                   '{dof}{sp2}{us}{sp2}{fn} with e={e} hw={hw}'
                   '').format(c=code,
@@ -182,20 +182,6 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
                  showlegend=legend_data_compare)
         plt.show()
 
-        ffit = plt.figure()
-        axfit = ffit.add_subplot(111)
-        for fit in compare_fit_plots:
-            x, y, label = fit
-            axfit.plot(x, y, '-', label=label)
-            # plt.plot(x, y, '-', label=label)
-        title = title_temp.format(rel='', sp1='', fn=fitfn.__name__,
-                                  sp2=' ', dof='fit', us='using')
-        _do_plot(title, xlabel, ylabel,
-                 saveloc=savedir + '/' + title + '.png',
-                 showlegend=legend_data_compare)
-        plt.show()
-
-    if show_rel_data_compare:
         frdat = plt.figure()
         axrdat = frdat.add_subplot(111)
         for rdat in compare_data_plots:
@@ -208,6 +194,20 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
         _do_plot(title, xlabel, 'relative ' + ylabel,
                  saveloc=savedir + '/' + title + '.png',
                  showlegend=legend_rel_data_compare)
+        plt.show()
+
+    if show_fit_compare:
+        ffit = plt.figure()
+        axfit = ffit.add_subplot(111)
+        for fit in compare_fit_plots:
+            x, y, label = fit
+            axfit.plot(x, y, '-', label=label)
+            # plt.plot(x, y, '-', label=label)
+        title = title_temp.format(rel='', sp1='', fn=fitfn.__name__,
+                                  sp2=' ', dof='fit', us='using')
+        _do_plot(title, xlabel, ylabel,
+                 saveloc=savedir + '/' + title + '.png',
+                 showlegend=legend_data_compare)
         plt.show()
 
         frfit = plt.figure()
