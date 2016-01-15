@@ -23,29 +23,44 @@ SAVE = '../plots'
 # iplot(14, 24, filesdir=DIR, savedir=SAVE, show=True)
 
 '''
+spi(polyfit4, e=12, hw=20,
+    show_data_compare=True,
+    show_fit_compare=True,
+    printkey=True,
+    printresults=True)
+'''
+'''
 spi(polyfit4, e=14, hw=24,
-     # show_fits=True,
-     show_data_compare=True,
-     show_fit_compare=True,
-     verbose=True)
+    # show_fits=True,
+    show_data_compare=True,
+    show_fit_compare=True,
+    printresults=True)
 '''
 '''
 spd(polyfit4, e=12, hw=20,
-     # show_fits=True,
-     show_data_compare=True,
-     show_fit_compare=True)
+    # show_fits=True,
+    show_rel_data_compare=True,
+    show_rel_fit_compare=True,
+    printkey=True,
+    printresults=True)
 '''
 '''
 sppn(polyfit2, e=14, hw=24,
-      # show_fits=True,
-      show_data_compare=True,
-      show_fit_compare=True,
-      verbose=True)
+     # show_fits=True,
+     # show_data_compare=True,
+     # show_fit_compare=True,
+     printresults=True)
 '''
 '''
-spp(polyfit4, e=12, hw=20,
-    xpow=1, ypow=3,
-    show_data_compare=True,
-    show_fit_compare=True,
-    verbose=True)
+spp(polyfit1, e=12, hw=20,
+    xpow=1, ypow=1,
+    show_rel_fit_compare=True,
+    show_rel_data_compare=True,
+    printresults=True)
 '''
+
+spll(polyfit1, e=12, hw=20,
+     show_rel_data_compare=True,
+     show_rel_fit_compare=True,
+     printkey=True,
+     printresults=True)
