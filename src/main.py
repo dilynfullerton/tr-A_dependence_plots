@@ -58,9 +58,10 @@ spp(polyfit1, e=12, hw=20,
     show_rel_data_compare=True,
     printresults=True)
 '''
-
+'''
 spll(polyfit1, e=12, hw=20,
      show_rel_data_compare=True,
      show_rel_fit_compare=True,
      printkey=True,
      printresults=True)
+'''
