@@ -21,17 +21,6 @@ COMPARE_LOG_LOG = True
 PRINT_FITTING_PARAMETERS = True
 
 
-def _map_to_arrays(m):
-    """Convert a map of dimensionality 2 into an x and y array"""
-    length = len(m)
-    x = np.empty(length)
-    y = np.empty(length)
-    for k, i in zip(sorted(m.keys()), range(length)):
-        x[i] = k
-        y[i] = m[k]
-    return x, y
-
-
 def single_particle_deriv_curvefit(fitfn, e=E, hw=HW, **kwargs):
     return _single_particle_curvefit(fitfn, e, hw,
                                      code='spd', transform=derivative,
@@ -152,17 +141,14 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
     orbital_fit_map = dict()
 
     if printkey:
-        print('Index key:')
-        for index in sorted(ime_map.keys(), key=sortkey):
-            print(str(index) + ': ' + str(io_map[index]))
-        print()
+        print_key(io_map, sortkey)
 
     for index in sorted(ime_map.keys(), key=sortkey):
         qnums = io_map[index]
         me_map = ime_map[index]
 
-        xdata, ydata = _map_to_arrays(me_map)
-        x, y = transform(xdata, ydata)
+        xdata, ydata = map_to_arrays(me_map)
+        x, y = transform(xdata, ydata, qnums)[0:2]
         compare_data_plots.append((x, y, index))
 
         popt, pcov = cf(fitfn, x, y)
@@ -282,6 +268,24 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
     plt.show()
 
     return orbital_fit_map
+
+
+def map_to_arrays(m):
+    """Convert a map of dimensionality 2 into an x and y array"""
+    length = len(m)
+    x = np.empty(length)
+    y = np.empty(length)
+    for k, i in zip(sorted(m.keys()), range(length)):
+        x[i] = k
+        y[i] = m[k]
+    return x, y
+
+
+def print_key(iomap, sortkey):
+    print('Index key:')
+    for index in sorted(iomap.keys(), key=sortkey):
+        print(str(index) + ': ' + str(iomap[index]))
+    print()
 
 
 def _do_plot(title, xlabel, ylabel, saveloc, showlegend):

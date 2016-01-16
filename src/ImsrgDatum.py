@@ -38,7 +38,7 @@ class ImsrgDatum:
         # Turn each tuple in the map into a named tuple
         for k in index_orbital_map.keys():
             v = index_orbital_map[k]
-            nextv = QuantumNumbers(*v)
+            nextv = QuantumNumbers(*qnums_to_list(v))
             index_orbital_map[k] = nextv
             
         self.index_orbital_map = index_orbital_map
@@ -107,3 +107,14 @@ class ImsrgDatum:
                     ime_map[index] = dict()
                 ime_map[index][mass] = mie_map[mass][index]
         return ime_map
+
+
+def qnums_to_list(qnums):
+    qn_list = list()
+    for n in qnums:
+        if '/' in n:
+            sn = n.split('/')
+            qn_list.append(float(sn[0]) / float(sn[1]))
+        else:
+            qn_list.append(float(n))
+    return qn_list
