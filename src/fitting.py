@@ -281,8 +281,8 @@ def map_to_arrays(m):
     return x, y
 
 
-def print_key(iomap, sortkey):
-    print('Index key:')
+def print_key(iomap, sortkey, heading='Index key:'):
+    print('\n' + P_TITLE + heading + '\n' + '-' * 80 + P_END)
     for index in sorted(iomap.keys(), key=sortkey):
         print(str(index) + ': ' + str(iomap[index]))
     print()

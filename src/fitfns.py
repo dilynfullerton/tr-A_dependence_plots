@@ -199,3 +199,80 @@ def poly4_fit_quadratic_n_l_j_tz_dependence_with_forced_zero(zero):
     fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
+
+
+def poly4_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, d, d1, d2, d3, d4, d5, d6, *constants):
+        xp = x - zero
+        if len(constants) == 0:
+            return np.polyval([a, b, c, d, 0], xp)
+        else:
+            qnums = constants[0]
+            e = constants[1]
+            hw = constants[2]
+            n, l, j, tz = qnums
+            return np.polyval([a, b, c, d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw, 0],
+                              xp)
+    fn.__name__ = ('poly4_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero'
+                   '_at_{z}'.format(z=zero))
+    return fn
+
+
+def poly4_fit_quadratic_n_l_j_tz_linear_ephw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, c3, c4, d, d1, d2, d3, d4, d5,
+           *constants):
+        xp = x - zero
+        if len(constants) == 0:
+            return np.polyval([a, b, c, d, 0], xp)
+        else:
+            qnums, e, hw = constants[0:3]
+            n, l, j, tz = qnums
+            return np.polyval([a, b,
+                               c+c1*n+c2*l+c3*j+c4*tz,
+                               d+d1*n+d2*l+d3*j+d4*tz+d5*(e+hw),
+                               0],
+                              xp)
+    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_linear_ephw_'
+                   'dependence_with_forced_zero'
+                   '_at_{z}'.format(z=zero))
+    return fn
+
+
+def poly4_fit_quadratic_n_l_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, c3, c4, d, d1, d2, d3, d4, d5, d6,
+           *constants):
+        xp = x - zero
+        if len(constants) == 0:
+            return np.polyval([a, b, c, d, 0], xp)
+        else:
+            qnums, e, hw = constants[0:3]
+            n, l, j, tz = qnums
+            return np.polyval([a, b,
+                               c+c1*n+c2*l+c3*j+c4*tz,
+                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
+                               0],
+                              xp)
+    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_linear_e_hw_'
+                   'dependence_with_forced_zero'
+                   '_at_{z}'.format(z=zero))
+    return fn
+
+
+def poly4_fit_quadratic_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, c3, c4, c5, c6, d, d1, d2, d3, d4, d5, d6,
+           *constants):
+        xp = x - zero
+        if len(constants) == 0:
+            return np.polyval([a, b, c, d, 0], xp)
+        else:
+            qnums, e, hw = constants[0:3]
+            n, l, j, tz = qnums
+            return np.polyval([a, b,
+                               c+c1*n+c2*l+c3*j+c4*tz+c5*e+c6*hw,
+                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
+                               0],
+                              xp)
+    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_e_hw_'
+                   'dependence_with_forced_zero'
+                   '_at_{z}'.format(z=zero))
+    return fn

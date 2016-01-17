@@ -16,14 +16,14 @@ from fitting import print_key
 from fitting import map_to_arrays
 
 
-def single_particle_relative_metafit(fitfn, e, hw, **kwargs):
-    return _single_particle_metafit(fitfn, e, hw,
+def single_particle_relative_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
                                     sourcedir=FILES_DIR, savedir=PLOTS_DIR,
                                     code='spr',
                                     **kwargs)
 
 
-def _single_particle_metafit(fitfn, e, hw, sourcedir, savedir,
+def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative,
                              printkey=False,
                              printresults=False,
@@ -58,21 +58,24 @@ def _single_particle_metafit(fitfn, e, hw, sourcedir, savedir,
     """
     # Get index->orbital and index->mass->energy maps
     all_data_map = ImsrgDataMap(parent_directory=sourcedir)
-    data_maps = all_data_map.map[Exp(e, hw)]
-    io_map = data_maps.index_orbital_map
-    ime_map = data_maps.index_mass_energy_map()
 
-    if printkey is True:
-        print_key(io_map, sortkey)
-
-    # Get list of plots
     plots = list()
-    for index in sorted(io_map.keys()):
-        qnums = io_map[index]
-        me_map = ime_map[index]
+    for e, hw in e_hw_pairs:
+        data_maps = all_data_map.map[Exp(e, hw)]
+        io_map = data_maps.index_orbital_map
+        ime_map = data_maps.index_mass_energy_map()
 
-        x, y = map_to_arrays(me_map)
-        plots.append(transform(x, y, [qnums, index]))
+        if printkey is True:
+            print_key(io_map, sortkey,
+                      'Index key for e={e} hw={hw}:'.format(e=e, hw=hw))
+
+        # Get list of plots
+        for index in sorted(io_map.keys()):
+            qnums = io_map[index]
+            me_map = ime_map[index]
+
+            x, y = map_to_arrays(me_map)
+            plots.append(transform(x, y, [qnums, e, hw, index]))
 
     # Make an initial parameter guess based on the first plot
     x0, y0, c0 = plots[0]
@@ -85,12 +88,13 @@ def _single_particle_metafit(fitfn, e, hw, sourcedir, savedir,
     # Test goodness of fits
     lr_results = dict()
     for p in plots:
-        x_p, y_p, qn_p, i_p = p[0], p[1], p[2][0], p[2][1]
+        x, y, constants = p
+        qnums, e, hw, index = constants
         args = list(params)
-        args.append(qn_p)
-        yarr = np.array(y_p)
-        ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x_p)))
-        lr_results[qn_p] = linregress(yarr, ypred)
+        args.extend(constants)
+        yarr = np.array(y)
+        ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
+        lr_results[(e, hw, qnums)] = linregress(yarr, ypred)
 
     # Print results
     if printresults is True:
@@ -106,15 +110,17 @@ def _single_particle_metafit(fitfn, e, hw, sourcedir, savedir,
         scalarMap = cm.ScalarMappable(norm=cNorm, cmap=cmap)
         # Do plots
         for p, i in zip(plots, range(len(plots))):
-            x, y, qn, index = p[0], p[1], p[2][0], p[2][1]
+            x, y, constants = p
+            qnums, e, hw, index = constants
             args = list(params)
-            args.append(qn)
+            args.extend(constants)
             xfit = np.linspace(x[0], x[-1])
             yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
 
             cval = scalarMap.to_rgba(i)
-            ax.plot(x, y, label=index, color=cval)
-            ax.plot(xfit, yfit, '--', label=str(index)+' fit', color=cval)
+            labelstr = '{e}, {hw}, {i}'.format(e=e, hw=hw, i=index)
+            ax.plot(x, y, label=labelstr, color=cval)
+            ax.plot(xfit, yfit, '--', label=labelstr+' fit', color=cval)
             plt.xlabel(xlabel)
             plt.ylabel(ylabel)
             title = ('Metafit for single particle energy {tr} data '
@@ -144,9 +150,11 @@ def _print_results(metafit_results, linregress_results):
     print('{}'.format(ier))
 
     print('\n' + P_TITLE + 'Line regression results:\n' + '-' * 80 + P_END)
-    for qnums in linregress_results.keys():
-        slope, intercept, rvalue, pvalue, stderr = linregress_results[qnums]
-        print(P_HEAD + str(qnums) + P_END)
+    for e, hw, qnums in sorted(linregress_results.keys()):
+        slope, intercept, rvalue, pvalue, stderr = linregress_results[(e, hw,
+                                                                       qnums)]
+        print(P_HEAD + 'e={e} hw={hw}: {qn}'.format(e=e, hw=hw, qn=qnums) +
+              P_END)
         print(P_SUB + 'SLOPE = ' + P_END)
         print('  ' + str(slope))
         print(P_SUB + 'INTERCEPT = ' + P_END)

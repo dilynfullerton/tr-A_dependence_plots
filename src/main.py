@@ -23,9 +23,10 @@ SAVE = '../plots'
 # iplot(14, 20, filesdir=DIR, savedir=SAVE, show=True)
 # iplot(14, 24, filesdir=DIR, savedir=SAVE, show=True)
 
-metaspr(poly4_fit_quadratic_n_l_j_tz_dependence_with_forced_zero(17),
-        e=12, hw=20,
+metaspr(poly4_fit_quadratic_n_l_j_tz_linear_ephw_dependence_with_forced_zero(17),
+        [(14, 20), (14, 24)],
         showplot=True,
+        printkey=True,
         printresults=True)
 
 '''
