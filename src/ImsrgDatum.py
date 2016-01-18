@@ -25,6 +25,7 @@ class ImsrgDatum:
         self._set_index_orbital_map()
         self._set_mass_index_energy_map()
         self._set_mass_interaction_index_energy_map()
+        self._set_name()
 
     def _set_index_orbital_map(self):
         """Retrieves the index -> orbital map from a file in the directory
@@ -72,7 +73,13 @@ class ImsrgDatum:
             miiem[A] = next_tuple_energy_map
         
         self.mass_interaction_index_energy_map = miiem
-        
+
+    def _set_name(self):
+        """Sets the incidence name variable
+        """
+        f0 = parse.files_with_ext_in_directory(directory=self.dir)[0]
+        self.name = parse.name_from_filename(f0)
+
     def folded_mass_interaction_index_energy_map(self):
         """Return a flat version of the map"""
         miie_map = self.mass_interaction_index_energy_map

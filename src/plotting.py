@@ -2,12 +2,16 @@ from __future__ import division
 from __future__ import print_function
 
 from matplotlib import pyplot as plt
+import numpy as np
 
 from ImsrgDataMap import Exp
 from ImsrgDataMap import ImsrgDataMap
+from fittransforms import identity
 
 
-def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):
+def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
+                                         transform=identity,
+                                         **kwargs):
     """For a single e, hw pair, along with the main parent directory, 
     plots are created for the energy of each (a, b, c, d, j) tuple against
     its mass number.
@@ -19,6 +23,7 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):
            Indicates whether or not to display the plot on screen
        savename=str (default same as plot title)
            The name to given the plot
+           :param transform:
            :param savedir:
            :param filesdir:
            :param hw:
@@ -42,6 +47,7 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):
             y.append(iime_map[tup][mass_num])            
             plot_map[tup] = (x, y)
 
+        x, y = transform(np.array(x), np.array(y))[0:2]
         ax.plot(x, y, '-', label=label)
         
         if 'verbose' in kwargs and kwargs['verbose'] is True:
@@ -69,7 +75,9 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):
     return plot_map
 
 
-def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir, **kwargs):
+def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
+                                     transform=identity,
+                                     **kwargs):
     """For a single (e, hw) pair, along with the main parent directory,
     plots are created for the energy of each orbital against its mass.
 
@@ -80,6 +88,7 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir, **kwargs):
            Indicates whether or not to display the plot on screen
        savename=str (default same as plot title)
            The name to given the plot
+           :param transform:
            :param savedir:
            :param filesdir:
            :param hw:
@@ -104,6 +113,7 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir, **kwargs):
             y.append(ime_map[index][mass])
             plot_map[index] = (x, y)
 
+        x, y = transform(np.array(x), np.array(y))[0:2]
         ax.plot(x, y, '-', label=label)
         
         if 'verbose' in kwargs and kwargs['verbose']:

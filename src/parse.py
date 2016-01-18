@@ -87,6 +87,17 @@ def hw_from_filename(filename, split_char=FILENAME_SPLIT):
     return -1
 
 
+def name_from_filename(filename, split_char=FILENAME_SPLIT):
+    """Gets the analysis method name from the filename
+
+    Assumes that the name is the second element in the split filename
+
+    :param filename: the name of the data file
+    :param split_char: the split character for name
+    :return: name
+    """
+    return _filename_elts_list(filename, split_char)[1]
+
 # ............................................................
 # File content parsing
 # ............................................................

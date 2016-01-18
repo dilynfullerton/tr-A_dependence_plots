@@ -421,29 +421,3 @@ def _mls(params, fitfn, lox, loy, const_lists):
 
 class FunctionDoesNotMatchParameterGuessException(Exception):
     pass
-'''
-from fitfns import polyfit1
-_single_particle_metafit(polyfit1, 12, 20, '../files', '../plots',
-                         printresults=True,
-                         showplot=True)
-'''
-'''
-from fitfns import polyfit1 as f
-from matplotlib import pyplot as plt
-x1 = [1.0, 2.0, 3.0]
-y1 = [2.0, 3.0, 4.0]
-x2 = [1.0, 2.0, 3.0, 4.0]
-y2 = [1.0, 4.0, 9.0, 16.0]
-x3 = [1.0, 2.0, 3.0, 4.0, 5.0]
-y3 = [2.0, 4.0, 8.0, 16.0, 32.0]
-plots = [(x1, y1, []), (x2, y2, []), (x3, y3, [])]
-pg = [1.0, 1.0]
-
-A = _meta_fit(plots, f, pg)[0]
-
-x = np.linspace(1, 5)
-y = np.array(list(map(lambda xi: f(xi, *A), x)))
-
-#plt.plot(x, y)
-print(A)
-'''
