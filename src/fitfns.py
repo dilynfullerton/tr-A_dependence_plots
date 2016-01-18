@@ -68,18 +68,18 @@ def linear_j_and_tz_dependence(x, a, b, c, d, *constants):
         quantum_numbers = constants[0]
         j = quantum_numbers.j
         tz = quantum_numbers.tz
-        return a * x + b * j * x + c * j * x + d
+        return a * x + b * j * x + c * tz * x + d
 
 
-def linear_fit_linear_n_l_j_tz_ephw_dependence_common_zero(
-        x, c, c1, c2, c3, c4, c5, d, *constants):
+def linear_fit_linear_n_j_tz_ephw_dependence_common_zero(
+        x, c, c1, c3, c4, c5, d, *constants):
     xp = x - d
     if len(constants) == 0:
         return np.polyval([c, 0], xp)
     else:
         qnums, e, hw = constants[0:3]
         n, l, j, tz = qnums
-        return np.polyval([c+c1*n+c2*l+c3*j+c4*tz+c5*(e+hw), 0], xp)
+        return np.polyval([c+c1*n+c3*j+c4*tz+c5*(e+hw), 0], xp)
 
 
 def quadratic_j_and_tz_dependence(x, a, b, c, d, e, f, g, *constants):
@@ -93,8 +93,8 @@ def quadratic_j_and_tz_dependence(x, a, b, c, d, e, f, g, *constants):
 
 
 # Fit function generators
-def linear_fit_linear_n_l_j_tz_ephw_dependence_with_forced_zero(zero):
-    def fn(x, c, c1, c2, c3, c4, c5,
+def linear_fit_linear_n_j_tz_ephw_dependence_with_forced_zero(zero):
+    def fn(x, c, c1, c3, c4, c5,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -102,8 +102,8 @@ def linear_fit_linear_n_l_j_tz_ephw_dependence_with_forced_zero(zero):
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([c+c1*n+c2*l+c3*j+c4*tz+c5*(e+hw), 0], xp)
-    fn.__name__ = ('linear_fit_linear_n_l_j_tz_ephw_dependence_with_forced_zero'
+            return np.polyval([c+c1*n+c3*j+c4*tz+c5*(e+hw), 0], xp)
+    fn.__name__ = ('linear_fit_linear_n_j_tz_ephw_dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
@@ -136,8 +136,8 @@ def quadratic_fit_linear_j_tz_dependence_with_forced_zero(zero):
     return fn
 
 
-def quadratic_fit_quadratic_e_hw_linear_n_l_j_tz_dependence_with_forced_zero(zero):
-    def fn(x, c, c1, c2, d, d1, d2, d3, d4, d5, d6,
+def quadratic_fit_quadratic_e_hw_linear_n_j_tz_dependence_with_forced_zero(zero):
+    def fn(x, c, c1, c2, d, d1, d3, d4, d5, d6,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -145,11 +145,9 @@ def quadratic_fit_quadratic_e_hw_linear_n_l_j_tz_dependence_with_forced_zero(zer
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([c+c1*e+c2*hw,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
-                               0],
+            return np.polyval([c+c1*e+c2*hw, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
                               xp)
-    fn.__name__ = ('quadratic_fit_quadratic_e_hw_linear_n_l_j_tz_'
+    fn.__name__ = ('quadratic_fit_quadratic_e_hw_linear_n_j_tz_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
@@ -174,8 +172,8 @@ def quadratic_fit_quadratic_j_tz_linear_ephw_dependence_with_forced_zero(zero):
     return fn
 
 
-def quadratic_fit_quadratic_j_tz_linear_n_l_ephw_dependence_with_forced_zero(zero):
-    def fn(x, c, c1, c2, d, d1, d2, d3,
+def quadratic_fit_quadratic_j_tz_linear_n_ephw_dependence_with_forced_zero(zero):
+    def fn(x, c, c1, c2, d, d1, d3,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -183,18 +181,15 @@ def quadratic_fit_quadratic_j_tz_linear_n_l_ephw_dependence_with_forced_zero(zer
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([c+c1*j+c2*tz,
-                               d+d1*(e+hw)+d2*l+d3*n,
-                               0],
-                              xp)
-    fn.__name__ = ('quadratic_fit_quadratic_j_tz_linear_n_l_ephw_'
+            return np.polyval([c+c1*j+c2*tz, d+d1*(e+hw)+d3*n, 0], xp)
+    fn.__name__ = ('quadratic_fit_quadratic_j_tz_linear_n_ephw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def quadratic_fit_quadratic_j_tz_linear_n_l_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, c, c1, c2, d, d1, d2, d3, d4, d5, d6,
+def quadratic_fit_quadratic_j_tz_linear_n_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, c, c1, c2, d, d1, d3, d4, d5, d6,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -202,18 +197,16 @@ def quadratic_fit_quadratic_j_tz_linear_n_l_e_hw_dependence_with_forced_zero(zer
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([c+c1*j+c2*tz,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
-                               0],
+            return np.polyval([c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
                               xp)
-    fn.__name__ = ('quadratic_fit_quadratic_j_tz_linear_n_l_e_hw_'
+    fn.__name__ = ('quadratic_fit_quadratic_j_tz_linear_n_e_hw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def quadratic_fit_quadratic_n_l_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, c, c1, c2, c3, c4, d, d1, d2, d3, d4, d5, d6,
+def quadratic_fit_quadratic_n_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, c, c1, c3, c4, d, d1, d3, d4, d5, d6,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -221,11 +214,11 @@ def quadratic_fit_quadratic_n_l_j_tz_linear_e_hw_dependence_with_forced_zero(zer
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([c+c1*n+c2*l+c3*j+c4*tz,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
+            return np.polyval([c+c1*n+c3*j+c4*tz,
+                               d+d1*n+d3*j+d4*tz+d5*e+d6*hw,
                                0],
                               xp)
-    fn.__name__ = ('quadratic_fit_quadratic_n_l_j_tz_linear_e_hw_'
+    fn.__name__ = ('quadratic_fit_quadratic_n_j_tz_linear_e_hw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
@@ -246,8 +239,8 @@ def cubic_fit_linear_j_tz_dependence_with_forced_zero(zero):
     return fn
 
 
-def cubic_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, a, b, d, d1, d2, d3, d4, d5, d6,
+def cubic_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, d, d1, d3, d4, d5, d6,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -255,11 +248,8 @@ def cubic_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([a, b,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
-                               0],
-                              xp)
-    fn.__name__ = ('cubic_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero'
+            return np.polyval([a, b, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0], xp)
+    fn.__name__ = ('cubic_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
@@ -294,16 +284,16 @@ def poly4_fit_linear_j_tz_jtz_dependence_with_forced_zero(zero):
     return fn
 
 
-def poly4_fit_linear_n_l_j_tz_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, d, d1, d2, d3, d4, *constants):
+def poly4_fit_linear_n_j_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, d, d1, d3, d4, *constants):
         xp = x - zero
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
             qnums = constants[0]
             n, l, j, tz = qnums
-            return np.polyval([a, b, c, d+d1*n+d2*l+d3*j+d4*tz, 0], xp)
-    fn.__name__ = ('poly4_fit_linear_n_l_j_tz_dependence_with_forced_zero'
+            return np.polyval([a, b, c, d+d1*n+d3*j+d4*tz, 0], xp)
+    fn.__name__ = ('poly4_fit_linear_n_j_tz_dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
@@ -323,23 +313,39 @@ def poly4_fit_quadratic_j_tz_dependence_with_forced_zero(zero):
     return fn
 
 
-def poly4_fit_quadratic_n_l_j_tz_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, c1, c2, c3, c4, d, d1, d2, d3, d4, *constants):
+def poly4_fit_quadratic_j_tz_linear_n_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, d, d1, d3, d4,
+           *constants):
+        xp = x - zero
+        if len(constants) == 0:
+            return np.polyval([a, b, c, d, 0], xp)
+        else:
+            qnums, e, hw = constants[0:3]
+            n, l, j, tz = qnums
+            return np.polyval([a, b, c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz, 0], xp)
+    fn.__name__ = ('poly4_fit_quadratic_j_tz_linear_n_'
+                   'dependence_with_forced_zero'
+                   '_at_{z}'.format(z=zero))
+    return fn
+
+
+def poly4_fit_quadratic_n_j_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c3, c4, d, d1, d3, d4, *constants):
         xp = x - zero
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
             qnums = constants[0]
             n, l, j, tz = qnums
-            return np.polyval([a, b, c+c1*n+c2*l+c3*j+c4*tz,
-                               d+d1*n+d2*l+d3*j+d4*tz, 0], xp)
-    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_dependence_with_forced_zero'
+            return np.polyval([a, b, c+c1*n+c3*j+c4*tz, d+d1*n+d3*j+d4*tz, 0],
+                              xp)
+    fn.__name__ = ('poly4_fit_quadratic_n_j_tz_dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def poly4_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, d, d1, d2, d3, d4, d5, d6, *constants):
+def poly4_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, d, d1, d3, d4, d5, d6, *constants):
         xp = x - zero
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
@@ -348,15 +354,14 @@ def poly4_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
             e = constants[1]
             hw = constants[2]
             n, l, j, tz = qnums
-            return np.polyval([a, b, c, d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw, 0],
-                              xp)
-    fn.__name__ = ('poly4_fit_linear_n_l_j_tz_e_hw_dependence_with_forced_zero'
+            return np.polyval([a, b, c, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0], xp)
+    fn.__name__ = ('poly4_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def poly4_fit_quadratic_j_tz_linear_n_l_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, c1, c2, d, d1, d2, d3, d4, d5, d6,
+def poly4_fit_quadratic_j_tz_linear_n_ephw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, d, d1, d3, d4, d5,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -364,19 +369,17 @@ def poly4_fit_quadratic_j_tz_linear_n_l_e_hw_dependence_with_forced_zero(zero):
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([a, b,
-                               c+c1*j+c2*tz,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
+            return np.polyval([a, b, c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz+d5*(e+hw),
                                0],
                               xp)
-    fn.__name__ = ('poly4_fit_quadratic_j_tz_linear_n_l_e_hw_'
+    fn.__name__ = ('poly4_fit_quadratic_j_tz_linear_n_ephw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def poly4_fit_quadratic_n_l_j_tz_linear_ephw_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, c1, c2, c3, c4, d, d1, d2, d3, d4, d5,
+def poly4_fit_quadratic_j_tz_linear_n_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, d, d1, d3, d4, d5, d6,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -384,19 +387,17 @@ def poly4_fit_quadratic_n_l_j_tz_linear_ephw_dependence_with_forced_zero(zero):
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([a, b,
-                               c+c1*n+c2*l+c3*j+c4*tz,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*(e+hw),
+            return np.polyval([a, b, c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz+d5*e+d6*hw,
                                0],
                               xp)
-    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_linear_ephw_'
+    fn.__name__ = ('poly4_fit_quadratic_j_tz_linear_n_e_hw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def poly4_fit_quadratic_n_l_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, c1, c2, c3, c4, d, d1, d2, d3, d4, d5, d6,
+def poly4_fit_quadratic_n_j_tz_linear_ephw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c3, c4, d, d1, d3, d4, d5,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -404,19 +405,17 @@ def poly4_fit_quadratic_n_l_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([a, b,
-                               c+c1*n+c2*l+c3*j+c4*tz,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
-                               0],
+            return np.polyval([a, b, c+c1*n+c3*j+c4*tz,
+                               d+d1*n+d3*j+d4*tz+d5*(e+hw), 0],
                               xp)
-    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_linear_e_hw_'
+    fn.__name__ = ('poly4_fit_quadratic_n_j_tz_linear_ephw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn
 
 
-def poly4_fit_quadratic_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
-    def fn(x, a, b, c, c1, c2, c3, c4, c5, c6, d, d1, d2, d3, d4, d5, d6,
+def poly4_fit_quadratic_n_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c3, c4, d, d1, d3, d4, d5, d6,
            *constants):
         xp = x - zero
         if len(constants) == 0:
@@ -424,12 +423,28 @@ def poly4_fit_quadratic_n_l_j_tz_e_hw_dependence_with_forced_zero(zero):
         else:
             qnums, e, hw = constants[0:3]
             n, l, j, tz = qnums
-            return np.polyval([a, b,
-                               c+c1*n+c2*l+c3*j+c4*tz+c5*e+c6*hw,
-                               d+d1*n+d2*l+d3*j+d4*tz+d5*e+d6*hw,
-                               0],
+            return np.polyval([a, b, c+c1*n+c3*j+c4*tz,
+                               d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
                               xp)
-    fn.__name__ = ('poly4_fit_quadratic_n_l_j_tz_e_hw_'
+    fn.__name__ = ('poly4_fit_quadratic_n_j_tz_linear_e_hw_'
+                   'dependence_with_forced_zero'
+                   '_at_{z}'.format(z=zero))
+    return fn
+
+
+def poly4_fit_quadratic_n_j_tz_e_hw_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c3, c4, c5, c6, d, d1, d3, d4, d5, d6,
+           *constants):
+        xp = x - zero
+        if len(constants) == 0:
+            return np.polyval([a, b, c, d, 0], xp)
+        else:
+            qnums, e, hw = constants[0:3]
+            n, l, j, tz = qnums
+            return np.polyval([a, b, c+c1*n+c3*j+c4*tz+c5*e+c6*hw,
+                               d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
+                              xp)
+    fn.__name__ = ('poly4_fit_quadratic_n_j_tz_e_hw_'
                    'dependence_with_forced_zero'
                    '_at_{z}'.format(z=zero))
     return fn

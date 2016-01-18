@@ -125,20 +125,20 @@ def comment_lines(filename, comment_char=COMMENT_CHAR):
     return lines
 
 
-def index_lines(comment_lines, index_comment=INDEX_COMMENT):
+def index_lines(commnt_lines, index_comment=INDEX_COMMENT):
     """From the set of comment lines taken from a data file, returns the
     lines that relate the orbital indices to their quantum numbers. Assumes
     these lines always occur at the end of the commented section and are
     directly preceded with a line beginning with the word "Index"
     :param index_comment:
-    :param comment_lines:
+    :param commnt_lines:
     """
     start_index = -1
-    for cl, index in zip(comment_lines, range(len(comment_lines) + 1)):
+    for cl, index in zip(commnt_lines, range(len(commnt_lines) + 1)):
         if cl.find(index_comment) is 0:
             start_index = index + 1
             break
-    return comment_lines[start_index:]
+    return commnt_lines[start_index:]
 
 
 def header_list(lines, header_pos=HEADER_POS):
@@ -183,17 +183,17 @@ def orbital_energies_from_filename(filename):
 # ............................................................
 # Map construction
 # ............................................................ 
-def index_map(index_lines):
+def index_map(idx_lines):
     """Returns a map from the orbital index to its descriptive quantum
     numbers
-    :param index_lines:
+    :param idx_lines:
     """
-    index_map = dict()
-    for line in index_lines:
+    idx_map = dict()
+    for line in idx_lines:
         row = line.split()
         row[0] = int(row[0])
-        index_map[row[0]] = tuple(row[1:])
-    return index_map
+        idx_map[row[0]] = tuple(row[1:])
+    return idx_map
 
 
 def index_tuple_map(filename):

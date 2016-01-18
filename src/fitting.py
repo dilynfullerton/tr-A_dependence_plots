@@ -53,13 +53,13 @@ def single_particle_per_nucleon_power_curvefit(fitfn, e=E, hw=HW,
                                                xpow=1, ypow=1,
                                                **kwargs):
     if xpow != 1:
-        xlabel='[A]^{xp}'.format(xp=xpow)
+        xlabel = '[A]^{xp}'.format(xp=xpow)
     else:
-        xlabel='A'
+        xlabel = 'A'
     if ypow != 1:
-        ylabel='[Energy per nucleon]^{yp} (MeV)^{yp}'.format(yp=ypow)
+        ylabel = '[Energy per nucleon]^{yp} (MeV)^{yp}'.format(yp=ypow)
     else:
-        ylabel='Energy per nucleon (MeV)'
+        ylabel = 'Energy per nucleon (MeV)'
     return _single_particle_curvefit(
             fitfn, e, hw, code='sppnp',
             transform=lambda x, y: power(xpow, ypow)(*per_nucleon(x, y)),
@@ -69,13 +69,13 @@ def single_particle_per_nucleon_power_curvefit(fitfn, e=E, hw=HW,
 
 def single_particle_power_curvefit(fitfn, e=E, hw=HW, xpow=1, ypow=1, **kwargs):
     if xpow != 1:
-        xlabel='[A]^{xp}'.format(xp=xpow)
+        xlabel = '[A]^{xp}'.format(xp=xpow)
     else:
-        xlabel='A'
+        xlabel = 'A'
     if ypow != 1:
-        ylabel='[Energy per nucleon]^{yp} (MeV)^{yp}'.format(yp=ypow)
+        ylabel = '[Energy per nucleon]^{yp} (MeV)^{yp}'.format(yp=ypow)
     else:
-        ylabel='Energy per nucleon (MeV)'
+        ylabel = 'Energy per nucleon (MeV)'
     return _single_particle_curvefit(fitfn, e, hw,
                                      code='spp', transform=power(xpow, ypow),
                                      xlabel=xlabel, ylabel=ylabel,
