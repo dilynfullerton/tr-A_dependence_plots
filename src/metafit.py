@@ -53,7 +53,7 @@ def single_particle_max_r2_value(metafitter, fitfns, e_hw_pairs,
         rank_map[i+1] = (fitfn, r2)
         result_map[fitfn] = res
     if print_r2_results is True:
-        _printer_for_single_particle_max_r2_value(rank_map, metafitter, fitfns,
+        _printer_for_single_particle_max_r2_value(rank_map, metafitter,
                                                   e_hw_pairs)
     return rank_map[1][0], rank_map[1][1], rank_map, result_map
 

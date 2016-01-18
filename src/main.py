@@ -34,14 +34,14 @@ fitfn, res, rank_map, result_map = max_r2(metaspr, fitfns_to_test,
                                           [(14, 20), (14, 24)],
                                           print_r2_results=True)
 
-
+'''
 ans = metasprpn(
         quadratic_fit_quadratic_j_tz_linear_n_l_e_hw_dependence_with_forced_zero(17),
         [(12, 20), (14, 20), (14, 24)],
         showplot=True,
         printkey=True,
         printresults=True)
-
+'''
 
 ans = compare(metafitter=metaspr,
               fitfn=poly4_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero(

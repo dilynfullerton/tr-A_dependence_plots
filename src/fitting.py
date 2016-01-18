@@ -271,7 +271,9 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
 
 
 def map_to_arrays(m):
-    """Convert a map of dimensionality 2 into an x and y array"""
+    """Convert a map of dimensionality 2 into an x and y array
+    :param m: The map to refactor
+    """
     length = len(m)
     x = np.empty(length)
     y = np.empty(length)
