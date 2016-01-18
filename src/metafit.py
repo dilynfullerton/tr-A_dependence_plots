@@ -1,21 +1,139 @@
 from __future__ import division
 from __future__ import print_function
 
+from itertools import combinations
+
 import numpy as np
+
 from scipy.optimize import leastsq
 from scipy.optimize import curve_fit
 from scipy.stats import linregress
+
 from matplotlib import pyplot as plt
 from matplotlib import colors
 from matplotlib import cm
 
 from constants import *
-from fittransforms import relative
+from fittransforms import *
+
 from ImsrgDataMap import ImsrgDataMap, Exp
 from fitting import print_key
 from fitting import map_to_arrays
 
 
+# STATISTICAL ANALYSIS TOOLS
+def single_particle_max_r2_value(metafitter, fitfns, e_hw_pairs, **kwargs):
+    """Returns the fit function (and its optimized results) that produces the
+    largest total r^2 value
+
+    :param metafitter: the metafitter method (e.g.
+    single_particle_relative_metafigt)
+    :param fitfns: the list of fitfns to test
+    :param e_hw_pairs: the (e, hw) pairs to optimize
+    :param kwargs: keyword arguments to pass to the metafitter
+    :return: best fit function, results
+    """
+    fn_res_r2_map = dict()
+    for fitfn in fitfns:
+        res = metafitter(fitfn, e_hw_pairs, **kwargs)
+        lg_res = res[1]
+        r2 = 0
+        length = 0
+        for v in lg_res.values():
+            r = v.rvalue
+            r2 += r ** 2
+            length += 1
+        r2 = r2 / length
+        fn_res_r2_map[fitfn] = (res, r2)
+    rank_map = dict()
+    result_map = dict()
+    for fitfn, i in zip(sorted(fn_res_r2_map.keys(),
+                               key=lambda f: -1 * fn_res_r2_map[f][1]),
+                        range(len(fn_res_r2_map))):
+        res, r2 = fn_res_r2_map[fitfn]
+        rank_map[i+1] = (fitfn, r2)
+        result_map[fitfn] = res
+    return rank_map[1][0], rank_map[1][1], rank_map, result_map
+
+
+def single_particle_compare_params(metafitter, fitfn, e_hw_pairs,
+                                   depth, statfn=np.std,
+                                   print_compare_results=False,
+                                   **kwargs):
+    """Compare parameter results for a given metafitter on a given fitfn using
+    combinations of the given e_hw_pairs to the depth given by depth. The
+    method of comparison is given by the statistical function statfn, whose
+    default is the standard deviation.
+
+    :param metafitter: the meta-fitting method to use (e.g.
+    single_particle_relative_metafit)
+    :param fitfn: the fit function to use
+    :param e_hw_pairs: the set of (e, hw) pairs to look at
+    :param depth: the depth of sub-combinations of e_hw_pairs to look at.
+    For example, if e_hw_pairs = {(1, 1), (2, 2), (3, 3), (4, 4)} and depth is
+    2, all of the length 4, length 3, and length 2 sub-combinations will be
+    added to the analysis
+    :param statfn: The comparison function to perform on the distribution of
+    single-parameter results. Must take a single ndarray object as input and
+    return a float output.
+    :param print_compare_results: whether to print the results in a neat table
+    :param kwargs: keyword arguments to be passed to the metafitter
+    :return: a list of (param, result, relative result) 3-tuples
+    """
+    if depth > len(e_hw_pairs) - 1:
+        depth = len(e_hw_pairs) - 1
+    params = metafitter(fitfn, e_hw_pairs, **kwargs)[0][0]
+    all_params_lists = list([params])
+    for length in range(len(e_hw_pairs) - 1, len(e_hw_pairs) - depth - 1, -1):
+        for sub_e_hw_pairs in combinations(e_hw_pairs, length):
+            mod_params = metafitter(fitfn, sub_e_hw_pairs)[0][0]
+            all_params_lists.append(mod_params)
+    individual_params_lists = _distributions_from_lol(all_params_lists)
+    param_result_list = list()
+    for param, param_list in zip(params, individual_params_lists):
+        param_array = np.array(param_list)
+        result = statfn(param_array)
+        rel_result = result / param
+        param_result_list.append((param, result, rel_result))
+    if print_compare_results is True:
+        _printer_for_single_particle_compare_params(param_result_list,
+                                                    depth, statfn,
+                                                    e_hw_pairs, metafitter,
+                                                    fitfn)
+    return param_result_list
+
+
+def _distributions_from_lol(lol):
+    sublist_size = len(lol[0])
+    distributions_list = list()
+    for i in range(sublist_size):
+        distributions_list.append(list(map(lambda sl: sl[i], lol)))
+    return distributions_list
+
+
+def _printer_for_single_particle_compare_params(params_result_list,
+                                                depth, statfn,
+                                                e_hw_pairs, metafitter,
+                                                fitfn):
+    title_str = ('Depth {d} comparison of {sfn} for {ehw} using meta-fitter '
+                 '{mf} and fit function {ffn}'
+                 '').format(d=depth,
+                            sfn=statfn.__name__,
+                            ehw=e_hw_pairs,
+                            mf=metafitter.__name__,
+                            ffn=fitfn.__name__)
+    print(P_TITLE + title_str + '\n' + P_BREAK + P_END)
+    temp_str = '{p:>20}\t{std:>20}\t{rel:>20}'
+    print(P_HEAD +
+          temp_str.format(p='Parameter val',
+                          std='Compare result',
+                          rel='Rel compare result') +
+          P_END)
+    for p, std, rel in params_result_list:
+        print(temp_str.format(p=p, std=std, rel=rel))
+
+
+# META-FITTERS
 def single_particle_relative_metafit(fitfn, e_hw_pairs, **kwargs):
     return _single_particle_metafit(fitfn, e_hw_pairs,
                                     sourcedir=FILES_DIR, savedir=PLOTS_DIR,
@@ -23,6 +141,70 @@ def single_particle_relative_metafit(fitfn, e_hw_pairs, **kwargs):
                                     **kwargs)
 
 
+def single_particle_relative_per_nucleon_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_per_nucleon,
+                                    code='sprpn',
+                                    ylabel='Relative Energy per Nucleon (MeV)',
+                                    **kwargs)
+
+
+def single_particle_relative_log_log_per_nucleon_metafit(fitfn, e_hw_pairs,
+                                                         **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_log_log_per_nucleon,
+                                    code='sprllpn',
+                                    xlabel='log(A)',
+                                    ylabel='relative log(Energy per Nucleon)',
+                                    **kwargs)
+
+
+def single_particle_relative_flip_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_flip,
+                                    code='sprf',
+                                    xlabel='Relative Energy (MeV)',
+                                    ylabel='A',
+                                    **kwargs)
+
+
+def single_particle_relative_flip_per_nucleon_metafit(fitfn, e_hw_pairs,
+                                                      **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_flip_per_nucleon,
+                                    code='sprfpn',
+                                    xlabel='Energy per Nucleon (MeV)',
+                                    ylabel='Relative A',
+                                    **kwargs)
+
+
+def single_particle_flip_relative_per_nucleon_metafit(fitfn, e_hw_pairs,
+                                                      **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=flip_relative_per_nucleon,
+                                    code='spfrpn',
+                                    xlabel='Relative Energy per Nucleon',
+                                    ylabel='A',
+                                    **kwargs)
+
+
+def single_particle_relative_flip_relative_per_nuceon_metafit(fitfn, e_hw_pairs,
+                                                              **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_flip_relative_per_nucleon,
+                                    code='sprfrpn',
+                                    xlabel='Relative Energy per Nucleon',
+                                    ylabel='Relative A',
+                                    **kwargs)
+
+
+# HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative,
                              printkey=False,
@@ -60,7 +242,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     all_data_map = ImsrgDataMap(parent_directory=sourcedir)
 
     plots = list()
-    for e, hw in e_hw_pairs:
+    for e, hw in sorted(e_hw_pairs):
         data_maps = all_data_map.map[Exp(e, hw)]
         io_map = data_maps.index_orbital_map
         ime_map = data_maps.index_mass_energy_map()
@@ -98,7 +280,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
     # Print results
     if printresults is True:
-        _print_results(mf_results, lr_results)
+        print_results(mf_results, lr_results)
 
     # Plot results
     if showplot is True:
@@ -121,19 +303,21 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             labelstr = '{e}, {hw}, {i}'.format(e=e, hw=hw, i=index)
             ax.plot(x, y, label=labelstr, color=cval)
             ax.plot(xfit, yfit, '--', label=labelstr+' fit', color=cval)
-            plt.xlabel(xlabel)
-            plt.ylabel(ylabel)
-            title = ('Metafit for single particle energy {tr} data '
-                     'using {fn} with e={e} hw={hw}'
-                     '').format(tr=transform.__name__,
-                                fn=fitfn.__name__, e=e, hw=hw)
-            plt.title(title)
-            plt.legend()
-            plt.savefig(savedir + '/meta_{c}-{t}.png'.format(c=code, t=title))
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        title = ('Metafit for single particle energy {tr} data '
+                 'using {fn} for (e, hw) = {ehw}'
+                 '').format(tr=transform.__name__, fn=fitfn.__name__,
+                            ehw=e_hw_pairs)
+        plt.title(title)
+        plt.legend()
+        plt.savefig(savedir + '/meta_{c}-{t}.png'.format(c=code, t=title))
     plt.show()
 
+    return mf_results, lr_results
 
-def _print_results(metafit_results, linregress_results):
+
+def print_results(metafit_results, linregress_results):
     params, cov, info, msg, ier = metafit_results
     print('\n' + P_TITLE + 'Meta-fit results:\n' + '-' * 80 + P_END)
     print(P_SUB + 'PARAMS =' + P_END)

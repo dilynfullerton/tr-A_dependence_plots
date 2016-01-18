@@ -35,9 +35,33 @@ def relative(xarr, yarr, *args):
     return (xarr, yarr - yarr[0]) + args
 
 
+def flip(xarr, yarr, *args):
+    return (yarr, xarr) + args
+
+
 # TRANSFORM COMPOSITIONS
 def relative_per_nucleon(xarr, yarr, *args):
     return relative(*per_nucleon(xarr, yarr, *args))
+
+
+def relative_log_log_per_nucleon(xarr, yarr, *args):
+    return relative(*log_log(*per_nucleon(xarr, yarr, *args)))
+
+
+def relative_flip(xarr, yarr, *args):
+    return relative(*flip(xarr, yarr, *args))
+
+
+def relative_flip_per_nucleon(xarr, yarr, *args):
+    return relative(*flip(*per_nucleon(xarr, yarr, *args)))
+
+
+def flip_relative_per_nucleon(xarr, yarr, *args):
+    return flip(*relative(*per_nucleon(xarr, yarr, *args)))
+
+
+def relative_flip_relative_per_nucleon(xarr, yarr, *args):
+    return relative(*flip_relative_per_nucleon(xarr, yarr, *args))
 
 
 # TRANSFORM GENERATORS
