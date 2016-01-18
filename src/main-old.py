@@ -1,6 +1,7 @@
 from __future__ import print_function
-from numpy import *
+
 from matplotlib import pyplot as plt
+from numpy import *
 
 # Constants
 FILES_DIR = '../files/'

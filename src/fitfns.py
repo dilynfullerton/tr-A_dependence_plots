@@ -1,9 +1,7 @@
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
 
 import numpy as np
-
-from constants import *
 
 
 def polyfit4(x, a, b, c, d, e, *constants):

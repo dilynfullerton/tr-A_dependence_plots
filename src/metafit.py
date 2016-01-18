@@ -3,22 +3,18 @@ from __future__ import print_function
 
 from itertools import combinations
 
-import numpy as np
-
-from scipy.optimize import leastsq
+from matplotlib import cm
+from matplotlib import colors
+from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
+from scipy.optimize import leastsq
 from scipy.stats import linregress
 
-from matplotlib import pyplot as plt
-from matplotlib import colors
-from matplotlib import cm
-
-from constants import *
-from fittransforms import *
-
 from ImsrgDataMap import ImsrgDataMap, Exp
-from fitting import print_key
+from constants import *
 from fitting import map_to_arrays
+from fitting import print_key
+from fittransforms import *
 
 
 # STATISTICAL ANALYSIS TOOLS

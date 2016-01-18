@@ -1,30 +1,9 @@
 from __future__ import division
 from __future__ import print_function
 
-from plotting import plot_energy_vs_mass_for_interactions as iplot
-from plotting import plot_energy_vs_mass_for_orbitals as oplot
-
 from fitfns import *
-
-from fitting import single_particle_deriv_curvefit as spd
-from fitting import single_particle_identity_curvefit as spi
-from fitting import single_particle_log_log_curvefit as spll
-from fitting import single_particle_per_nucleon_curvefit as sppn
-from fitting import single_particle_per_nucleon_power_curvefit as sppnp
-from fitting import single_particle_power_curvefit as spp
-
-from metafit import single_particle_relative_metafit as metaspr
-from metafit import single_particle_relative_per_nucleon_metafit as metasprpn
-from metafit import single_particle_relative_log_log_per_nucleon_metafit as metasprllpn
-from metafit import single_particle_relative_flip_metafit as metasprf
-from metafit import single_particle_relative_flip_per_nucleon_metafit as metasprfpn
-from metafit import single_particle_flip_relative_per_nucleon_metafit as metaspfrpn
-from metafit import single_particle_relative_flip_relative_per_nuceon_metafit as metasprfrpn
-
-from metafit import single_particle_max_r2_value as max_r2
 from metafit import single_particle_compare_params as compare
-
-from metafit import print_results
+from metafit import single_particle_relative_metafit as metaspr
 
 DIR = '../files'
 SAVE = '../plots'

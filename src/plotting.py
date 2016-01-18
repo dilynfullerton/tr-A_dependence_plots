@@ -1,8 +1,10 @@
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
+
 from matplotlib import pyplot as plt
-from ImsrgDataMap import ImsrgDataMap
+
 from ImsrgDataMap import Exp
+from ImsrgDataMap import ImsrgDataMap
 
 
 def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir, **kwargs):

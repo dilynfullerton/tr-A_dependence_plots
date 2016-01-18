@@ -1,8 +1,9 @@
-from __future__ import print_function
 from __future__ import division
-from collections import namedtuple
-import parse
+from __future__ import print_function
 
+from collections import namedtuple
+
+import parse
 
 QuantumNumbers = namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])
 InteractionTuple = namedtuple('InteractionTuple', ['a', 'b', 'c', 'd', 'j'])
