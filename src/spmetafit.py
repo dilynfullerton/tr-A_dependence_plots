@@ -234,10 +234,12 @@ def single_particle_relative_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
 # HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative,
-                             printkey=False,
-                             printresults=False,
-                             showplot=False,
-                             sortkey=lambda k: k,
+                             print_key=False,
+                             print_results=False,
+                             show_plot=False,
+                             show_fit=True,
+                             show_legend=True,
+                             sort_key=lambda k: k,
                              code='',
                              xlabel='A',
                              ylabel='Relative Energy (MeV)',
@@ -254,10 +256,10 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     :param transform: A transformation to apply to the data before fitting,
     t(xarr, yarr, *args) -> (newxarr, newyarr, *args), where xarr, yarr,
     newxarr, and newyarr are arrays
-    :param printkey: whether to print the index -> orbital key
-    :param printresults: whether to print fit results
-    :param showplot: whether to show the fit plot
-    :param sortkey: key for ordering items
+    :param print_key: whether to print the index -> orbital key
+    :param print_results: whether to print fit results
+    :param show_plot: whether to show the fit plot
+    :param sort_key: key for ordering items
     :param code: code name to precede file name in saving of plot
     :param xlabel: x label for plot
     :param ylabel: y label for plot
@@ -274,8 +276,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         ime_map = data_maps.index_mass_energy_map()
         mzbt_map = data_maps.mass_zero_body_term_map
 
-        if printkey is True:
-            print_io_key(io_map, sortkey,
+        if print_key is True:
+            print_io_key(io_map, sort_key,
                          'Index key for e={e} hw={hw}:'.format(e=e, hw=hw))
 
         # Get list of plots
@@ -307,11 +309,11 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         lr_results[(e, hw, qnums)] = linregress(yarr, ypred)
 
     # Print results
-    if printresults is True:
+    if print_results is True:
         _printer_for_single_particle_metafit(mf_results, lr_results)
 
     # Plot results
-    if showplot is True:
+    if show_plot is True:
         fig = plt.figure()
         ax = fig.add_subplot(111)
         # Make color map
@@ -330,7 +332,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             cval = scalar_map.to_rgba(i)
             labelstr = '{e}, {hw}, {i}'.format(e=e, hw=hw, i=index)
             ax.plot(x, y, label=labelstr, color=cval)
-            ax.plot(xfit, yfit, '--', label=labelstr+' fit', color=cval)
+            if show_fit is not False:
+                ax.plot(xfit, yfit, '--', label=labelstr+' fit', color=cval)
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         title = ('Metafit for single particle energy {tr} data '
@@ -338,7 +341,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                  '').format(tr=transform.__name__, fn=fitfn.__name__,
                             ehw=e_hw_pairs)
         plt.title(title)
-        plt.legend()
+        if show_legend is not False:
+            plt.legend()
         plt.savefig(savedir + '/meta_{c}-{t}.png'.format(c=code, t=title))
     plt.show()
 

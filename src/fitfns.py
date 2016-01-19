@@ -4,6 +4,7 @@ from __future__ import print_function
 import numpy as np
 
 
+# SIMPLE FITS
 def polyfit4(x, a, b, c, d, e, *constants):
     return _polyfitn(x, a, b, c, d, e)
 
@@ -44,6 +45,10 @@ def sqrtfit1(x, a, b, *constants):
     return a * np.sqrt(x) + b
 
 
+def rel1(x, a, b, c, d, *constants):
+    return a * np.sqrt(b * x ** 2 + c) + d
+
+
 def invfit1(x, a, b, *constants):
     return a / (x + 1) + b
 
@@ -56,11 +61,7 @@ def asymptote1(x, a, b, c, *constants):
     return a * (1 - b / x) + c
 
 
-def rel1(x, a, b, c, d, *constants):
-    return a * np.sqrt(b * x ** 2 + c) + d
-
-
-# Involving quantum numbers
+# INVOLVING CONSTANTS
 def linear_j_and_tz_dependence(x, a, b, c, d, *constants):
     if len(constants) == 0:
         return a * x + c
@@ -93,6 +94,146 @@ def quadratic_j_and_tz_dependence(x, a, b, c, d, e, f, g, *constants):
 
 
 # Fit function generators
+def asymptote1_with_forced_zero(zero):
+    def fn(x, a, *constants):
+        return a * (1 / zero - 1 / x)
+    fn.__name__ = ('asymptote1_with_forced_zero'
+                   '_at_{z}').format(z=zero)
+    return fn
+
+
+def asymptote2_with_forced_zero(zero):
+    def fn(x, a, *constants):
+        return a * (1 / zero ** 2 - 1 / x ** 2)
+    fn.__name__ = ('asymptote2_with_forced_zero'
+                   '_at_{z}').format(z=zero)
+    return fn
+
+
+def asymptote2_linear_j_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero**2 - 1 / x**2)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            return a * (1/zero**2 - 1/x**2) + (b*j + c*tz) * (x-zero)
+    fn.__name__ = ('asymptote2_linear_j_tz_dependence_with_forced_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote1_linear_joff2_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b1, b2, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero - 1 / x)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            joff2 = (j-1) * abs(j-1)
+            return a*(1/zero-1/x)+(b1*joff2+b2*tz)*xp
+    fn.__name__ = ('asymptote1_linear_joff2_tz_dependence_with_forced_zero'
+                   '_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote2_linear_joff2_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b1, b2, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero**2 - 1 / x**2)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            joff2 = (j-1) * abs(j-1)
+            return a*(1/zero**2-1/x**2)+(b1*joff2+b2*tz)*xp
+    fn.__name__ = ('asymptote2_linear_joff2_tz_dependence_with_forced_zero'
+                   '_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote12_linear_joff2_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c1, c2, *constants):
+        if len(constants) == 0:
+            return a*(1/zero**2 - 1/x**2) + b*(1/zero - 1/x)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            joff2 = (j-1) * abs(j-1)
+            return a*(1/zero**2-1/x**2)+b*(1/zero-1/x)+(c1*joff2+c2*tz)*xp
+    fn.__name__ = ('asymptote12_linear_joff2_tz_dependence_with_forced_zero'
+                   '_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote2_quadratic_j_linear_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c1, c2, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero**2 - 1 / x**2)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            return a*(1/zero**2-1/x**2)+(b*j)*xp**2+(c1*j+c2*tz)*xp
+    fn.__name__ = ('asymptote2_quadratic_j_linear_tz_dependence_with_forced_'
+                   'zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote2_linear_with_linear_joff2_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, b1, b2, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero**2 - 1 / x**2)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            joff2 = (j-1) * abs(j-1)
+            return a*(1/zero**2-1/x**2)+(b+b1*joff2+b2*tz)*xp
+    fn.__name__ = ('asymptote2_linear_with_linear_joff2_tz_dependence_with'
+                   '_forced_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote2_linear_jjoff_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b1, b2, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero**2 - 1 / x**2)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            jjoff = (j-1) * j
+            return a*(1/zero**2-1/x**2)+(b1*jjoff+b2*tz)*xp
+    fn.__name__ = ('asymptote2_linear_jjoff_tz_dependence_with_forced_zero'
+                   '_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
+def asymptote2_quadratic_with_linear_joff2_tz_dependence_with_forced_zero(zero):
+    def fn(x, a, b, c, c1, c2, *constants):
+        if len(constants) == 0:
+            return a * (1 / zero**2 - 1 / x**2)
+        else:
+            qnums = constants[0]
+            n, l, j, tz = qnums
+            xp = x - zero
+            joff2 = (j-1) * abs(j-1)
+            return a*(1/zero**2-1/x**2)+b*xp**2+(c+c1*joff2+c2*tz)*xp
+    fn.__name__ = ('asymptote2_quadratic_with_linear_joff2_tz_dependence_with'
+                   '_forced_zero'
+                   '_at_{}'.format(zero))
+    return fn
+
+
 def linear_fit_linear_n_j_tz_ephw_dependence_with_forced_zero(zero):
     def fn(x, c, c1, c3, c4, c5,
            *constants):
