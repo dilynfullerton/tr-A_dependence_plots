@@ -141,7 +141,7 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
     orbital_fit_map = dict()
 
     if printkey:
-        print_key(io_map, sortkey)
+        print_io_key(io_map, sortkey)
 
     for index in sorted(ime_map.keys(), key=sortkey):
         qnums = io_map[index]
@@ -283,7 +283,7 @@ def map_to_arrays(m):
     return x, y
 
 
-def print_key(iomap, sortkey, heading='Index key:'):
+def print_io_key(iomap, sortkey, heading='Index key:'):
     print('\n' + P_TITLE + heading + '\n' + '-' * 80 + P_END)
     for index in sorted(iomap.keys(), key=sortkey):
         print(str(index) + ': ' + str(iomap[index]))

@@ -116,6 +116,24 @@ class ImsrgDatum:
                 ime_map[index][mass] = mie_map[mass][index]
         return ime_map
 
+    def interaction_qnums_mass_energy_map(self):
+        iqme_map = dict()
+        iime_map = self.interaction_index_mass_energy_map()
+        for interaction_tuple in sorted(iime_map.keys()):
+            inter_qnums = self.interaction_indices_to_interaction_qnums(
+                    interaction_tuple)
+            iqme_map[inter_qnums] = iime_map[interaction_tuple]
+        return iqme_map
+
+    def interaction_indices_to_interaction_qnums(self, ii):
+        next_tup = tuple()
+        for index in ii[0:4]:
+            qnums = self.index_orbital_map[index]
+            next_tup += qnums
+        next_tup += ii.j
+        return InteractionTuple(*next_tup)
+
+
 
 def qnums_to_list(qnums):
     qn_list = list()
@@ -126,3 +144,4 @@ def qnums_to_list(qnums):
         else:
             qn_list.append(float(n))
     return qn_list
+

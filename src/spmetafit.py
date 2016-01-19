@@ -12,15 +12,15 @@ from scipy.stats import linregress
 
 from ImsrgDataMap import ImsrgDataMap, Exp
 from constants import *
-from fitting import map_to_arrays
-from fitting import print_key
+from spfitting import map_to_arrays
+from spfitting import print_io_key
 from fittransforms import *
 
 
 # STATISTICAL ANALYSIS TOOLS
-def single_particle_max_r2_value(metafitter, fitfns, e_hw_pairs,
-                                 print_r2_results=False,
-                                 **kwargs):
+def max_r2_value(metafitter, fitfns, e_hw_pairs,
+                 print_r2_results=False,
+                 **kwargs):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
 
@@ -53,12 +53,12 @@ def single_particle_max_r2_value(metafitter, fitfns, e_hw_pairs,
         rank_map[i+1] = (fitfn, r2)
         result_map[fitfn] = res
     if print_r2_results is True:
-        _printer_for_single_particle_max_r2_value(rank_map, metafitter,
-                                                  e_hw_pairs)
+        _printer_for_max_r2_value(rank_map, metafitter,
+                                  e_hw_pairs)
     return rank_map[1][0], rank_map[1][1], rank_map, result_map
 
 
-def _printer_for_single_particle_max_r2_value(rank_map, metafitter, e_hw_pairs):
+def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
     title_str = ('\nR^2 values for fit functions under metafit {mf} for '
                  '(e, hw) = {ehw}\n'.format(mf=metafitter.__name__,
                                             ehw=e_hw_pairs))
@@ -72,10 +72,10 @@ def _printer_for_single_particle_max_r2_value(rank_map, metafitter, e_hw_pairs):
         print(body_str)
 
 
-def single_particle_compare_params(metafitter, fitfn, e_hw_pairs,
-                                   depth, statfn=np.std,
-                                   print_compare_results=False,
-                                   **kwargs):
+def compare_params(metafitter, fitfn, e_hw_pairs,
+                   depth, statfn=np.std,
+                   print_compare_results=False,
+                   **kwargs):
     """Compare parameter results for a given metafitter on a given fitfn using
     combinations of the given e_hw_pairs to the depth given by depth. The
     method of comparison is given by the statistical function statfn, whose
@@ -112,10 +112,10 @@ def single_particle_compare_params(metafitter, fitfn, e_hw_pairs,
         rel_result = result / param
         param_result_list.append((param, result, rel_result))
     if print_compare_results is True:
-        _printer_for_single_particle_compare_params(param_result_list,
-                                                    depth, statfn,
-                                                    e_hw_pairs, metafitter,
-                                                    fitfn)
+        _printer_for_compare_params(param_result_list,
+                                    depth, statfn,
+                                    e_hw_pairs, metafitter,
+                                    fitfn)
     return param_result_list
 
 
@@ -127,10 +127,10 @@ def _distributions_from_lol(lol):
     return distributions_list
 
 
-def _printer_for_single_particle_compare_params(params_result_list,
-                                                depth, statfn,
-                                                e_hw_pairs, metafitter,
-                                                fitfn):
+def _printer_for_compare_params(params_result_list,
+                                depth, statfn,
+                                e_hw_pairs, metafitter,
+                                fitfn):
     title_str = ('\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
                  '{mf} and fit function {ffn}'
                  '').format(d=depth,
@@ -263,8 +263,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         ime_map = data_maps.index_mass_energy_map()
 
         if printkey is True:
-            print_key(io_map, sortkey,
-                      'Index key for e={e} hw={hw}:'.format(e=e, hw=hw))
+            print_io_key(io_map, sortkey,
+                         'Index key for e={e} hw={hw}:'.format(e=e, hw=hw))
 
         # Get list of plots
         for index in sorted(io_map.keys()):
