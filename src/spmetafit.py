@@ -109,7 +109,7 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
     for param, param_list in zip(params, individual_params_lists):
         param_array = np.array(param_list)
         result = statfn(param_array)
-        rel_result = result / param
+        rel_result = abs(result / param)
         param_result_list.append((param, result, rel_result))
     if print_compare_results is True:
         _printer_for_compare_params(param_result_list,
@@ -243,7 +243,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              code='',
                              xlabel='A',
                              ylabel='Relative Energy (MeV)',
-                             cmap='brg'):
+                             cmap=PLOT_CMAP):
     """A meta-fit for all the orbitals with a given e and hw, based on the
     given fit function
 

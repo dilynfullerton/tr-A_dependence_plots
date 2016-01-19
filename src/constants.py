@@ -8,3 +8,5 @@ P_BOLD = '\033[1m'
 P_END = '\033[0m'
 
 P_BREAK = '-' * 80
+
+PLOT_CMAP = 'brg'
