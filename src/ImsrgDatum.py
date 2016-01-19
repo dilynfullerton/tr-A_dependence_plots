@@ -44,7 +44,7 @@ class ImsrgDatum:
             v = index_orbital_map[k]
             nextv = QuantumNumbers(*qnums_to_list(v))
             index_orbital_map[k] = nextv
-            
+
         self.index_orbital_map = index_orbital_map
 
     def _set_mass_index_energy_map(self):
@@ -53,7 +53,7 @@ class ImsrgDatum:
         mapping for the directory
         """
         self.mass_index_energy_map = parse.mass_index_energy_map_map(self.dir)
-        
+
     def _set_mass_interaction_index_energy_map(self):
         """Retrieves the
             mass number -> (a, b, c, d, j) -> energy
@@ -73,7 +73,7 @@ class ImsrgDatum:
                 nextk = InteractionTuple(*nextk)
                 next_tuple_energy_map[nextk] = v
             miiem[A] = next_tuple_energy_map
-        
+
         self.mass_interaction_index_energy_map = miiem
 
     def _set_zero_body_term(self):
@@ -139,7 +139,6 @@ class ImsrgDatum:
         return InteractionTuple(*next_tup)
 
 
-
 def qnums_to_list(qnums):
     qn_list = list()
     for n in qnums:
@@ -149,4 +148,3 @@ def qnums_to_list(qnums):
         else:
             qn_list.append(float(n))
     return qn_list
-

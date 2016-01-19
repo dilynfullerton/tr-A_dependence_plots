@@ -286,8 +286,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             me_map = ime_map[index]
 
             x, y = map_to_arrays(me_map)
-            zbt = map_to_arrays(mzbt_map)[1]
-            plots.append(transform(x, y, [qnums, e, hw, index, zbt]))
+            zero_body_term = map_to_arrays(mzbt_map)[1]
+            plots.append(transform(x, y, [qnums, e, hw, index, zero_body_term]))
 
     # Make an initial parameter guess based on the first plot
     x0, y0, c0 = plots[0]
