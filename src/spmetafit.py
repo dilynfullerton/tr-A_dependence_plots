@@ -220,6 +220,17 @@ def single_particle_relative_flip_relative_per_nuceon_metafit(fitfn, e_hw_pairs,
             **kwargs)
 
 
+def single_particle_relative_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_zbt,
+                                    code='sprz',
+                                    xlabel='A',
+                                    ylabel='Relative Single Particle Energy + '
+                                           'Zero Body Term (MeV)',
+                                    **kwargs)
+
+
 # HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative,
@@ -261,6 +272,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         data_maps = all_data_map.map[Exp(e, hw)]
         io_map = data_maps.index_orbital_map
         ime_map = data_maps.index_mass_energy_map()
+        mzbt_map = data_maps.mass_zero_body_term_map
 
         if printkey is True:
             print_io_key(io_map, sortkey,
@@ -272,7 +284,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             me_map = ime_map[index]
 
             x, y = map_to_arrays(me_map)
-            plots.append(transform(x, y, [qnums, e, hw, index]))
+            zbt = map_to_arrays(mzbt_map)[1]
+            plots.append(transform(x, y, [qnums, e, hw, index, zbt]))
 
     # Make an initial parameter guess based on the first plot
     x0, y0, c0 = plots[0]
@@ -286,7 +299,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     lr_results = dict()
     for p in plots:
         x, y, constants = p
-        qnums, e, hw, index = constants
+        qnums, e, hw, index = constants[0:4]
         args = list(params)
         args.extend(constants)
         yarr = np.array(y)
@@ -308,7 +321,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         # Do plots
         for p, i in zip(plots, range(len(plots))):
             x, y, constants = p
-            qnums, e, hw, index = constants
+            qnums, e, hw, index = constants[0:4]
             args = list(params)
             args.extend(constants)
             xfit = np.linspace(x[0], x[-1])

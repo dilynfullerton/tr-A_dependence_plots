@@ -14,6 +14,7 @@ ORBITAL_ENERGY_START_INDEX = 1
 MAX_NUM_ORBITALS = 6
 COMMENT_CHAR = '!'
 INDEX_COMMENT = 'Index'
+ZERO_BODY_TERM_COMMENT = 'Zero body term'
 
 
 # ======================================================================
@@ -98,6 +99,7 @@ def name_from_filename(filename, split_char=FILENAME_SPLIT):
     """
     return _filename_elts_list(filename, split_char)[1]
 
+
 # ............................................................
 # File content parsing
 # ............................................................
@@ -150,6 +152,26 @@ def index_lines(commnt_lines, index_comment=INDEX_COMMENT):
             start_index = index + 1
             break
     return commnt_lines[start_index:]
+
+
+def zero_body_term_line(cmnt_lines, zbt_comment=ZERO_BODY_TERM_COMMENT):
+    """From the set of comment lines taken from a data file, returns the line
+    that tells the zero body term.
+
+    :param cmnt_lines: lines that are comments in the data file
+    :param zbt_comment: the descriptive flag that indicates that the given line
+    is the zero body term line
+    :return: The zero body term line, as a string
+    """
+    for cl in reversed(cmnt_lines):
+        if cl.find(zbt_comment) == 0:
+            return cl
+    else:
+        return -1
+
+
+def zero_body_term(zbt_line):
+    return float(zbt_line.split(':')[1].strip())
 
 
 def header_list(lines, header_pos=HEADER_POS):
@@ -273,3 +295,18 @@ def mass_interaction_tuple_energy_map_map(directory):
             nextv[tup] = energy
         mida_map[k] = nextv
     return mida_map
+
+
+def mass_zero_body_term_map(directory):
+    """Given a directory, creates a mapping
+            mass -> zero body term
+    using the files in the directory
+    :param directory: the directory from which to get files
+    """
+    mzbt_map = dict()
+    files = files_with_ext_in_directory(directory)
+    for f in files:
+        mass_number = mass_number_from_filename(f)
+        zbt = zero_body_term(zero_body_term_line(comment_lines(f)))
+        mzbt_map[mass_number] = zbt
+    return mzbt_map

@@ -20,11 +20,13 @@ class ImsrgDatum:
         self.index_orbital_map = dict()
         self.mass_index_energy_map = dict()
         self.mass_interaction_index_energy_map = dict()
+        self.mass_zero_body_term_map = dict()
 
         # Perform setup methods
         self._set_index_orbital_map()
         self._set_mass_index_energy_map()
         self._set_mass_interaction_index_energy_map()
+        self._set_zero_body_term()
         self._set_name()
 
     def _set_index_orbital_map(self):
@@ -73,6 +75,9 @@ class ImsrgDatum:
             miiem[A] = next_tuple_energy_map
         
         self.mass_interaction_index_energy_map = miiem
+
+    def _set_zero_body_term(self):
+        self.mass_zero_body_term_map = parse.mass_zero_body_term_map(self.dir)
 
     def _set_name(self):
         """Sets the incidence name variable
