@@ -250,7 +250,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              show_plot=False,
                              show_fit=True,
                              show_legend=True,
-                             sort_key=lambda k: k,
+                             plot_sort_key=lambda p: p[2][0],
                              code='',
                              xlabel='A',
                              ylabel='Relative Energy (MeV)',
@@ -270,7 +270,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     :param print_key: whether to print the index -> orbital key
     :param print_results: whether to print fit results
     :param show_plot: whether to show the fit plot
-    :param sort_key: key for ordering items
+    :param plot_sort_key: key for ordering plots, default is by Quantum numbers
     :param code: code name to precede file name in saving of plot
     :param xlabel: x label for plot
     :param ylabel: y label for plot
@@ -288,7 +288,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         mzbt_map = data_maps.mass_zero_body_term_map
 
         if print_key is True:
-            print_io_key(io_map, sort_key,
+            print_io_key(io_map,
                          'Index key for e={e} hw={hw}:'.format(e=e, hw=hw))
 
         # Get list of plots
@@ -297,8 +297,10 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             me_map = ime_map[index]
 
             x, y = map_to_arrays(me_map)
-            zero_body_term = map_to_arrays(mzbt_map)[1]
-            plots.append(transform(x, y, [qnums, e, hw, index, zero_body_term]))
+            y0 = y[0]
+            zbt_arr = map_to_arrays(mzbt_map)[1]
+            plots.append(transform(x, y, [qnums, e, hw, index, zbt_arr,
+                                          y0]))
 
     # Make an initial parameter guess based on the first plot
     x0, y0, c0 = plots[0]
@@ -325,6 +327,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
     # Plot results
     if show_plot is True:
+        #plt.style.use('dark_background')
         fig = plt.figure()
         ax = fig.add_subplot(111)
         # Make color map
@@ -332,7 +335,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         c_norm = colors.Normalize(vmin=0, vmax=len(plots) - 1)
         scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
         # Do plots
-        for p, i in zip(plots, range(len(plots))):
+        for p, i in zip(sorted(plots, key=plot_sort_key),
+                        range(len(plots))):
             x, y, constants = p
             qnums, e, hw, index = constants[0:4]
             args = list(params)
