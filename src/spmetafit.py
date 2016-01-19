@@ -231,6 +231,17 @@ def single_particle_relative_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
                                     **kwargs)
 
 
+def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=zbt,
+                                    code='spz',
+                                    xlabel='A',
+                                    ylabel='Single Particle Energy + '
+                                           'Zero Body Term (MeV)',
+                                    **kwargs)
+
+
 # HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative,

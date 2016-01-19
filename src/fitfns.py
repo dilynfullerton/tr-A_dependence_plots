@@ -62,6 +62,16 @@ def asymptote1(x, a, b, c, *constants):
 
 
 # INVOLVING CONSTANTS
+def asymptote2_linear_joff2_tz_dependence(x, a, b1, b2, c, *constants):
+    if len(constants) == 0:
+        return a * (- 1 / x**2) + c
+    else:
+        qnums = constants[0]
+        n, l, j, tz = qnums
+        joff2 = (j-1) * abs(j-1)
+        return a*(-1/x**2)+(b1*joff2+b2*tz)*x+c
+
+
 def linear_j_and_tz_dependence(x, a, b, c, d, *constants):
     if len(constants) == 0:
         return a * x + c
@@ -134,7 +144,6 @@ def asymptote1_linear_joff2_tz_dependence_with_forced_zero(zero):
             joff2 = (j-1) * abs(j-1)
             return a*(1/zero-1/x)+(b1*joff2+b2*tz)*xp
     fn.__name__ = ('asymptote1_linear_joff2_tz_dependence_with_forced_zero'
-                   '_zero'
                    '_at_{}'.format(zero))
     return fn
 
@@ -150,7 +159,6 @@ def asymptote2_linear_joff2_tz_dependence_with_forced_zero(zero):
             joff2 = (j-1) * abs(j-1)
             return a*(1/zero**2-1/x**2)+(b1*joff2+b2*tz)*xp
     fn.__name__ = ('asymptote2_linear_joff2_tz_dependence_with_forced_zero'
-                   '_zero'
                    '_at_{}'.format(zero))
     return fn
 
@@ -166,7 +174,6 @@ def asymptote12_linear_joff2_tz_dependence_with_forced_zero(zero):
             joff2 = (j-1) * abs(j-1)
             return a*(1/zero**2-1/x**2)+b*(1/zero-1/x)+(c1*joff2+c2*tz)*xp
     fn.__name__ = ('asymptote12_linear_joff2_tz_dependence_with_forced_zero'
-                   '_zero'
                    '_at_{}'.format(zero))
     return fn
 
@@ -213,7 +220,6 @@ def asymptote2_linear_jjoff_tz_dependence_with_forced_zero(zero):
             jjoff = (j-1) * j
             return a*(1/zero**2-1/x**2)+(b1*jjoff+b2*tz)*xp
     fn.__name__ = ('asymptote2_linear_jjoff_tz_dependence_with_forced_zero'
-                   '_zero'
                    '_at_{}'.format(zero))
     return fn
 
