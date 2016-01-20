@@ -24,7 +24,7 @@ class FitFunction:
             f = self.fn
             return f(x, params, constants) - f(self.fz, params, constants)
         else:
-            return self.fn(x, *params)
+            return self.fn(x, params, constants)
 
 
 def combine(list_of_ffn, name_pref='', name_sep=' with '):
@@ -81,81 +81,97 @@ def asymptote_fit(n, force_zero=None):
 
 
 # DEPENDENTS
-def scalar_dependence(dep_keys, force_zero=None):
-    def sd(x, params, constants):
-        a = 0
-        for k, a0 in zip(dep_keys, params):
-            a += a0 * constants[k]
-        return a
-    return FitFunction(sd,
-                       num_fit_params=len(dep_keys),
+def scalar_dependence(dep_keys, ctfs=[], force_zero=None):
+    return _dependence(f=np.polyval,
+                       num_params=1,
+                       dep_keys=dep_keys,
+                       ctfs=ctfs,
                        force_zero=force_zero,
-                       name='scalar dependence on {}'.format(dep_keys))
+                       name='scalar dependence')
 
 
-def linear_dependence(dep_keys, force_zero=None):
-    def ld(x, params, constants):
-        a = 0
-        b = 0
-        for k, a0, b0 in zip(dep_keys, params[0::2], params[1::2]):
-            a += a0 * constants[k]
-            b += b0 * constants[k]
-        return a * x + b
-    return FitFunction(ld,
-                       num_fit_params=2*len(dep_keys),
+def linear_dependence(dep_keys, ctfs=[], force_zero=None):
+    return _dependence(np.polyval,
+                       num_params=2,
+                       dep_keys=dep_keys,
+                       ctfs=ctfs,
                        force_zero=force_zero,
-                       name='linear dependence on {}'.format(dep_keys))
+                       name='linear dependence')
 
 
-def quadratic_dependence(dep_keys, force_zero=None):
-    def qd(x, params, constants):
-        a = 0
-        b = 0
-        c = 0
-        for k, a0, b0, c0 in zip(dep_keys,
-                                 params[0::3], params[1::3], params[2::3]):
+def quadratic_dependence(dep_keys, ctfs=[], force_zero=None):
+    return _dependence(np.polyval,
+                       num_params=3,
+                       dep_keys=dep_keys,
+                       ctfs=ctfs,
+                       force_zero=force_zero,
+                       name='quadratic dependence')
+
+
+def poly_dependence(n, dep_keys, ctfs=[], force_zero=None):
+    return _dependence(np.polyval,
+                       num_params=n+1,
+                       dep_keys=dep_keys,
+                       ctfs=ctfs,
+                       force_zero=force_zero,
+                       name='poly{n} dependence'.format(n=n))
+
+
+def _dependence(f, num_params, dep_keys, name, ctfs=[], force_zero=None):
+    def d(x, params, constants):
+        more_constants = _do_transforms(ctfs, constants)
+        p = np.zeros(num_params)
+        dep_params_sublists = list()
+        ctf_params_sublists = list()
+        for i in range(num_params):
+            ii = len(dep_keys) * num_params
+            dep_params_sublists.append(params[i:ii:num_params])
+            ctf_params_sublists.append(params[ii+i::num_params])
+        for dep in zip(dep_keys, *dep_params_sublists):
+            k, p0 = dep[0], dep[1:]
             v = constants[k]
-            a += a0 * v
-            b += b0 * v
-            c += c0 * v
-        return a * x**2 + b * x + c
-    return FitFunction(qd,
-                       num_fit_params=3 * len(dep_keys),
+            for j, p0j in zip(range(num_params), p0):
+                p[j] = p[j] + p0j * v
+        for ctf in zip(more_constants, *ctf_params_sublists):
+            c, p0 = ctf[0], ctf[1:]
+            for j, p0j in zip(range(num_params), p0):
+                p[j] = p[j] + p0j * c
+        return f(p, x)
+    return FitFunction(d,
+                       num_fit_params=(len(dep_keys)+len(ctfs))*num_params,
                        force_zero=force_zero,
-                       name='quadratic dependence on {}'.format(dep_keys))
+                       name=name + ' on {}'.format(_dep_str(dep_keys, ctfs)))
 
 
-def poly_dependence(n, dep_keys, force_zero=None):
-    def pd(x, params, constants):
-        p = np.zeros(n+1)
-        params_sublists = list()
-        for i in range(n+1):
-            params_sublists.append(params[i::n+1])
-        for s in zip(dep_keys, *params_sublists):
-            k = s[0]
-            v = constants[k]
-            p0 = s[1:]
-            for j, p0j in zip(range(n+1), p0):
-                p[i] = p[i] + p0j * v
-        return np.polyval(p, x)
-    return FitFunction(pd,
-                       num_fit_params=(n+1)*len(dep_keys),
-                       force_zero=force_zero,
-                       name='poly{n} dependence on {d}'.format(n=n, d=dep_keys))
+def _dep_str(dep_keys, ctfs):
+    return str(dep_keys + list(map(lambda c: c.__name__, ctfs)))
 
 
 # FITTERS WITH DEPENDENCIES
-def linear_fit_with_linear_dependence(dep_keys, force_zero=None):
+def linear_fit_with_linear_dependence(dep_keys, ctfs=[], force_zero=None):
     return combine([linear_fit(force_zero),
-                    linear_dependence(dep_keys, force_zero)])
+                    linear_dependence(dep_keys, ctfs, force_zero)])
 
 
-def poly_fit_with_linear_dependence(n, dep_keys, force_zero=None):
+def poly_fit_with_linear_dependence(n, dep_keys, ctfs=[], force_zero=None):
     return combine([poly_fit(n, force_zero),
-                    linear_dependence(dep_keys, force_zero)])
+                    linear_dependence(dep_keys, ctfs, force_zero)])
 
 
-def asymptote_fit_with_linear_dependence(n, dep_keys, force_zero=None):
+def asymptote_fit_with_linear_dependence(n, dep_keys, ctfs=[],
+                                         force_zero=None):
     return combine([asymptote_fit(n, force_zero),
-                    linear_dependence(dep_keys, force_zero)])
+                    linear_dependence(dep_keys, ctfs, force_zero)])
 
+
+# CONSTANT TRANSFORMS
+def _do_transforms(ctfs, constants):
+    r = list()
+    for ctf in ctfs:
+        r.append(ctf(constants))
+    return r
+
+
+def joff2(constants):
+    j = constants['j']
+    return (j-1) * abs(j-1)
