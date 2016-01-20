@@ -303,8 +303,8 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                                           y0]))
 
     # Make an initial parameter guess based on the first plot
-    x0, y0, c0 = plots[0]
-    param_guess = curve_fit(fitfn, x0, y0)[0]
+    param_guess = _meta_fit([plots[0]], fitfn,
+                            np.ones(fitfn.__code__.co_argcount - 1))[0]
 
     # Do the meta-fit
     mf_results = _meta_fit(plots, fitfn, param_guess)

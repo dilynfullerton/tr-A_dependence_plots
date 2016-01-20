@@ -34,3 +34,6 @@ class ImsrgDataMap:
             
             self.sub_dir_tuple_map[sd] = key
             self.map[key] = value
+
+    def all_e_hw_pairs(self):
+        return set(self.map.keys())
