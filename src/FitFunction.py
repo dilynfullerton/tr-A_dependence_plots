@@ -28,7 +28,8 @@ class FitFunction:
 
 
 def combine(list_of_ffn, name_pref='', name_sep=' with '):
-    params_lengths = list([len(list_of_ffn)])
+    #params_lengths = list([len(list_of_ffn)])
+    params_lengths = list()
     params_lengths.extend(list(map(lambda ffn: ffn.fit_params, list_of_ffn)))
     total_params_length = reduce(lambda x, y: x + y, params_lengths)
 
@@ -44,9 +45,11 @@ def combine(list_of_ffn, name_pref='', name_sep=' with '):
             params_lists.append(params[t:t+pl])
             t += pl
         result = 0
-        for ffn, p0, params_list in zip(list_of_ffn, params_lists[0],
-                                        params_lists[1:]):
-            result += p0 * ffn.eval(x, params_list, constants)
+        # for ffn, p0, params_list in zip(list_of_ffn, params_lists[0],
+        #                                 params_lists[1:]):
+        #     result += p0 * ffn.eval(x, params_list, constants)
+        for ffn, params_list in zip(list_of_ffn, params_lists):
+            result += ffn.eval(x, params_list, constants)
         return result
 
     return FitFunction(combined_ffns, total_params_length, name=combined_name)
@@ -81,7 +84,7 @@ def asymptote_fit(n, force_zero=None):
 
 
 # DEPENDENTS
-def scalar_dependence(dep_keys, ctfs=[], force_zero=None):
+def scalar_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(f=np.polyval,
                        num_params=1,
                        dep_keys=dep_keys,
@@ -90,7 +93,7 @@ def scalar_dependence(dep_keys, ctfs=[], force_zero=None):
                        name='scalar dependence')
 
 
-def linear_dependence(dep_keys, ctfs=[], force_zero=None):
+def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(np.polyval,
                        num_params=2,
                        dep_keys=dep_keys,
@@ -99,7 +102,7 @@ def linear_dependence(dep_keys, ctfs=[], force_zero=None):
                        name='linear dependence')
 
 
-def quadratic_dependence(dep_keys, ctfs=[], force_zero=None):
+def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(np.polyval,
                        num_params=3,
                        dep_keys=dep_keys,
@@ -108,7 +111,7 @@ def quadratic_dependence(dep_keys, ctfs=[], force_zero=None):
                        name='quadratic dependence')
 
 
-def poly_dependence(n, dep_keys, ctfs=[], force_zero=None):
+def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None):
     return _dependence(np.polyval,
                        num_params=n+1,
                        dep_keys=dep_keys,
@@ -117,7 +120,7 @@ def poly_dependence(n, dep_keys, ctfs=[], force_zero=None):
                        name='poly{n} dependence'.format(n=n))
 
 
-def _dependence(f, num_params, dep_keys, name, ctfs=[], force_zero=None):
+def _dependence(f, num_params, dep_keys, name, ctfs=list(), force_zero=None):
     def d(x, params, constants):
         more_constants = _do_transforms(ctfs, constants)
         p = np.zeros(num_params)
@@ -148,17 +151,17 @@ def _dep_str(dep_keys, ctfs):
 
 
 # FITTERS WITH DEPENDENCIES
-def linear_fit_with_linear_dependence(dep_keys, ctfs=[], force_zero=None):
+def linear_fit_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None):
     return combine([linear_fit(force_zero),
                     linear_dependence(dep_keys, ctfs, force_zero)])
 
 
-def poly_fit_with_linear_dependence(n, dep_keys, ctfs=[], force_zero=None):
+def poly_fit_with_linear_dependence(n, dep_keys, ctfs=list(), force_zero=None):
     return combine([poly_fit(n, force_zero),
                     linear_dependence(dep_keys, ctfs, force_zero)])
 
 
-def asymptote_fit_with_linear_dependence(n, dep_keys, ctfs=[],
+def asymptote_fit_with_linear_dependence(n, dep_keys, ctfs=list(),
                                          force_zero=None):
     return combine([asymptote_fit(n, force_zero),
                     linear_dependence(dep_keys, ctfs, force_zero)])

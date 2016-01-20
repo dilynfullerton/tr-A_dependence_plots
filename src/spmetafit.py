@@ -10,11 +10,12 @@ from scipy.optimize import curve_fit
 from scipy.optimize import leastsq
 from scipy.stats import linregress
 
-from ImsrgDataMap import ImsrgDataMap, Exp
 from constants import *
+from fittransforms import *
+from ImsrgDataMap import ImsrgDataMap, Exp
+from FitFunction import FitFunction
 from spfitting import map_to_arrays
 from spfitting import print_io_key
-from fittransforms import *
 
 
 # STATISTICAL ANALYSIS TOOLS
