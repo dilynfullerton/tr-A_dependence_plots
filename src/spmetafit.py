@@ -17,6 +17,8 @@ from FitFunction import FitFunction
 from spfitting import map_to_arrays
 from spfitting import print_io_key
 
+from time import time
+
 
 # STATISTICAL ANALYSIS TOOLS
 def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
@@ -330,7 +332,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             np.ones(num_fit_params))[0]
 
     # Do the meta-fit
-    mf_results = _meta_fit(plots, fitfn, param_guess)
+    mf_results = _meta_fit(plots, fitfn, param_guess, full_output=True)
     params = mf_results[0]
 
     # Test goodness of fits
@@ -432,7 +434,7 @@ def _printer_for_single_particle_metafit(metafit_results, linregress_results):
         print()
 
 
-def _meta_fit(plots, fitfn, params_guess, **lsqkwargs):
+def _meta_fit(plots, fitfn, params_guess, full_output=False, **lsqkwargs):
     """Perform a least squares fit using fitfn for multiple plots
 
     :param plots: A list of the 3-tuples each with (x, y, const), where x is an
@@ -462,10 +464,11 @@ def _meta_fit(plots, fitfn, params_guess, **lsqkwargs):
         combined_y.append(y)
         constants_lists.append(const_list)
         constants_dicts.append(const_dict)
+
     return leastsq(func=_mls, x0=params_guess,
                    args=(fitfn, combined_x, combined_y,
-                         constants_lists, constants_dicts),
-                   full_output=True,
+                   constants_lists, constants_dicts),
+                   full_output=full_output,
                    **lsqkwargs)
 
 
@@ -482,6 +485,8 @@ def _mls(params, fitfn, lox, loy, const_lists, const_dicts):
     :return: The difference between the flattened loy array and the flattened
     yfit array
     """
+    t = dict()
+
     yfit = list()
     for x, cl, cd in zip(lox, const_lists, const_dicts):
         if isinstance(fitfn, FitFunction):

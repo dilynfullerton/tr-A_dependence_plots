@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-
+from time import time
 
 class FitFunction:
     def __init__(self, function, num_fit_params, force_zero=None, name=None):
@@ -133,7 +133,7 @@ def asymptote_n(force_zero=None):
 # DEPENDENTS
 def scalar_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(f=np.polyval,
-                       num_params=1,
+                       n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -142,7 +142,7 @@ def scalar_dependence(dep_keys, ctfs=list(), force_zero=None):
 
 def x1_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(lambda p, x: p[0] * x,
-                       num_params=1,
+                       n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -151,7 +151,7 @@ def x1_dependence(dep_keys, ctfs=list(), force_zero=None):
 
 def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(np.polyval,
-                       num_params=2,
+                       n_params=2,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -160,7 +160,7 @@ def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
 
 def x2_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(lambda p, x: p[0] * x ** 2,
-                       num_params=1,
+                       n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -169,7 +169,7 @@ def x2_dependence(dep_keys, ctfs=list(), force_zero=None):
 
 def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(np.polyval,
-                       num_params=3,
+                       n_params=3,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -178,7 +178,7 @@ def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None):
 
 def x_power_dependence(n, dep_keys, ctfs=list(), force_zero=None):
     return _dependence(lambda p, x: p[0] * x ** n,
-                       num_params=1,
+                       n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -187,7 +187,7 @@ def x_power_dependence(n, dep_keys, ctfs=list(), force_zero=None):
 
 def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None):
     return _dependence(np.polyval,
-                       num_params=n+1,
+                       n_params=n + 1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
@@ -196,21 +196,21 @@ def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None):
 
 def asymptotic_dependence(n, dep_keys, ctfs=list(), force_zero=None):
     return _dependence(lambda p, x: - p[0] / x**n,
-                       num_params=1,
+                       n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
                        name='asymptotic{} dependence'.format(n))
 
 
-def _dependence(f, num_params, dep_keys, name, ctfs=list(), force_zero=None):
+def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None):
     """An abstract function to determine f-dependence on constants given by
     dep_keys and ctfs
 
     :param f: f(p, x) -> y, a function that maps an array of parameters and an
     x value to a y value. Example: If one wants linear dependence on x,
     f(p, x) = p[0] * x + p[1], would be the correct function to use
-    :param num_params: the number of parameters that f requires
+    :param n_params: the number of parameters that f requires
     :param dep_keys: the keys to use with a constants dictionary to determine
     constants values. Example: If one wants dependence on the values of n and
     j, dep_keys=['n', 'j']
@@ -223,27 +223,28 @@ def _dependence(f, num_params, dep_keys, name, ctfs=list(), force_zero=None):
     function to be 0
     :return: The dependence fit function
     """
+    l1 = len(dep_keys) * n_params
+    l2 = len(ctfs) * n_params
+    
     def d(x, params, const_list, const_dict):
         more_constants = _do_transforms(ctfs, const_dict)
-        p = np.zeros(num_params)
-        dep_params_sublists = list()
-        ctf_params_sublists = list()
-        for i in range(num_params):
-            ii = len(dep_keys) * num_params
-            dep_params_sublists.append(params[i:ii:num_params])
-            ctf_params_sublists.append(params[ii+i::num_params])
-        for dep in zip(dep_keys, *dep_params_sublists):
+        p = np.zeros(n_params)
+
+        dep_psubs = [params[i:i + n_params] for i in range(0, l1, n_params)]
+        ctf_psubs = [params[i:i + n_params] for i in range(l1, l1+l2, n_params)]
+
+        for dep in zip(dep_keys, *dep_psubs):
             k, p0 = dep[0], dep[1:]
             v = const_dict[k]
-            for j, p0j in zip(range(num_params), p0):
+            for j, p0j in zip(range(n_params), p0):
                 p[j] = p[j] + p0j * v
-        for ctf in zip(more_constants, *ctf_params_sublists):
+        for ctf in zip(more_constants, *ctf_psubs):
             c, p0 = ctf[0], ctf[1:]
-            for j, p0j in zip(range(num_params), p0):
+            for j, p0j in zip(range(n_params), p0):
                 p[j] = p[j] + p0j * c
         return f(p, x)
     return FitFunction(d,
-                       num_fit_params=(len(dep_keys)+len(ctfs))*num_params,
+                       num_fit_params=(len(dep_keys)+len(ctfs)) * n_params,
                        force_zero=force_zero,
                        name=name + ' on {}'.format(_dep_str(dep_keys, ctfs)))
 
