@@ -19,12 +19,12 @@ from spfitting import print_io_key
 
 
 # STATISTICAL ANALYSIS TOOLS
-def max_r2_value(metafitter, fitfns, e_hw_pairs,
-                 print_r2_results=False,
-                 **kwargs):
+def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
+                 sourcedir=FILES_DIR, **kwargs):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
 
+    :param sourcedir: the directory from which to retrieve the data
     :param print_r2_results: whether to print the results of this analysis
     :param metafitter: the metafitter method (e.g.
     single_particle_relative_metafigt)
@@ -33,9 +33,11 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs,
     :param kwargs: keyword arguments to pass to the metafitter
     :return: best fit function, results
     """
+    imsrg_data_map = ImsrgDataMap(parent_directory=sourcedir)
     fn_res_r2_map = dict()
     for fitfn in fitfns:
-        res = metafitter(fitfn, e_hw_pairs, **kwargs)
+        res = metafitter(fitfn, e_hw_pairs,
+                         imsrg_data_map=imsrg_data_map, **kwargs)
         lg_res = res[1]
         r2 = 0
         length = 0
@@ -76,7 +78,7 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
 def compare_params(metafitter, fitfn, e_hw_pairs,
                    depth, statfn=np.std,
                    print_compare_results=False,
-                   **kwargs):
+                   sourcedir=FILES_DIR, **kwargs):
     """Compare parameter results for a given metafitter on a given fitfn using
     combinations of the given e_hw_pairs to the depth given by depth. The
     method of comparison is given by the statistical function statfn, whose
@@ -97,13 +99,16 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
     :param kwargs: keyword arguments to be passed to the metafitter
     :return: a list of (param, result, relative result) 3-tuples
     """
+    imsrg_data_map = ImsrgDataMap(sourcedir)
     if depth > len(e_hw_pairs) - 1:
         depth = len(e_hw_pairs) - 1
-    params = metafitter(fitfn, e_hw_pairs, **kwargs)[0][0]
+    params = metafitter(fitfn, e_hw_pairs,
+                        imsrg_data_map=imsrg_data_map, **kwargs)[0][0]
     all_params_lists = list([params])
     for length in range(len(e_hw_pairs) - 1, len(e_hw_pairs) - depth - 1, -1):
         for sub_e_hw_pairs in combinations(e_hw_pairs, length):
-            mod_params = metafitter(fitfn, sub_e_hw_pairs)[0][0]
+            mod_params = metafitter(fitfn, sub_e_hw_pairs,
+                                    imsrg_data_map=imsrg_data_map)[0][0]
             all_params_lists.append(mod_params)
     individual_params_lists = _distributions_from_lol(all_params_lists)
     param_result_list = list()
@@ -246,6 +251,7 @@ def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
 # HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative,
+                             imsrg_data_map=None,
                              print_key=False,
                              print_results=False,
                              show_plot=False,
@@ -279,7 +285,10 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     :return:
     """
     # Get index->orbital and index->mass->energy maps
-    all_data_map = ImsrgDataMap(parent_directory=sourcedir)
+    if imsrg_data_map is not None:
+        all_data_map = imsrg_data_map
+    else:
+        all_data_map = ImsrgDataMap(parent_directory=sourcedir)
 
     plots = list()
     for e, hw in sorted(e_hw_pairs):

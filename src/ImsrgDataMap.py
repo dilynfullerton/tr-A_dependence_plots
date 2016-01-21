@@ -25,7 +25,10 @@ class ImsrgDataMap:
                                                             extension='')
         for sd in sub_directories:
             files = parse.files_with_ext_in_directory(sd)
-            f0 = files[0]
+            try:
+                f0 = files[0]
+            except IndexError:
+                continue
             
             e = parse.e_level_from_filename(f0)
             hw = parse.hw_from_filename(f0)

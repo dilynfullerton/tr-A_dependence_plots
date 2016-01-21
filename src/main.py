@@ -33,33 +33,34 @@ iplot(14, 24, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
 '''
 
 
-asymps = [asymptote1_with_forced_zero(17),
-          asymptote2_with_forced_zero(17),
-          asymptote_n_with_forced_zero(17),
-          asymptote2_asymptotic_y0_dependence_with_forced_zero(17),
-          asymptote2_asymptotic_y0pzbt0_dependence_with_forced_zero(17),
-          asymptote2_asymptotic_joff2_dependence_with_forced_zero(17),
-          asymptote2_asymptotic_and_linear_y0_dependence_with_forced_zero(17),
-          asymptote2_linear_y0_dependence_with_forced_zero(17),
-          asymptote2_linear_y0pzbt0_dependence_with_forced_zero(17),
-          asymptote2_linear_y0_zbt0_dependence_with_forced_zero(17),
-          asymptote2_linear_j_tz_dependence_with_forced_zero(17),
-          asymptote2_linear_jjoff_tz_dependence_with_forced_zero(17),
-          asymptote1_linear_joff2_tz_dependence_with_forced_zero(17),
-          asymptote2_linear_joff2_tz_dependence_with_forced_zero(17),
-          asymptote12_linear_joff2_tz_dependence_with_forced_zero(17),
-          asymptote2_linear_j_y0_dependence_with_forced_zero(17),
-          asymptote2_linear_joff2_y0_dependence_with_forced_zero(17),
-          asymptote2_linear_j_tz_y0_dependence_with_forced_zero(17),
-          asymptote2_quadratic_j_linear_tz_dependence_with_forced_zero(17),
-          asymptote2_linear_with_linear_joff2_tz_dependence_with_forced_zero(17),
-          asymptote2_quadratic_with_linear_joff2_tz_dependence_with_forced_zero(17),
-          asymptote_with_linear_dependence(2, ['y0'], force_zero=17)]
+asymps = [asymptote(1, 17),
+          asymptote(2, 17),
+          asymptote_n(17),
+          asymptote_with_linear_dependence(2, ['y0'], force_zero=17),
+          asymptote_with_asymptotic_dependence(2, [], [y0pzbt0], 17),
+          asymptote_with_asymptotic_dependence(2, [], [joff2], 17),
+          combine([asymptote(2), asymptotic_dependence(2, ['y0']),
+                   linear_dependence(['y0'])], force_zero=17),
+          asymptote_with_linear_dependence(2, [], [y0pzbt0], 17),
+          asymptote_with_linear_dependence(2, ['y0', 'zbt0'], force_zero=17),
+          asymptote_with_linear_dependence(2, ['j', 'tz'], force_zero=17),
+          asymptote_with_linear_dependence(2, ['tz'], [jjoff], 17),
+          asymptote_with_linear_dependence(1, ['tz'], [joff2], 17),
+          asymptote_with_linear_dependence(2, ['tz'], [joff2], 17),
+          combine([asymptote(2), asymptote(1),
+                   linear_dependence(['tz'], [joff2])], force_zero=17),
+          asymptote_with_linear_dependence(2, ['j', 'y0'], force_zero=17),
+          asymptote_with_linear_dependence(2, ['y0'], [joff2], 17),
+          asymptote_with_linear_dependence(2, ['j', 'tz', 'y0'], force_zero=17),
+          combine([asymptote(2), quadratic_dependence(['j']),
+                   linear_dependence(['tz'])], force_zero=17),
+          combine([asymptote(2), linear(), linear_dependence(['tz'], [joff2])],
+                  force_zero=17),
+          combine([asymptote(2), quadratic(),
+                   linear_dependence(['tz'], [joff2])], force_zero=17)]
 
 
-fitfn, res, rank_map, result_map = max_r2(metasprz, asymps,
-                                          [(12, 20), (14, 20), (14, 24)],
-                                          print_r2_results=True)
+max_r2(metasprz, asymps, [(12, 20), (14, 20), (14, 24)], print_r2_results=True)
 
 
 ans = compare(metafitter=metasprz,
