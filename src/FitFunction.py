@@ -225,7 +225,7 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None):
     """
     l1 = len(dep_keys) * n_params
     l2 = len(ctfs) * n_params
-    
+
     def d(x, params, const_list, const_dict):
         more_constants = _do_transforms(ctfs, const_dict)
         p = np.zeros(n_params)

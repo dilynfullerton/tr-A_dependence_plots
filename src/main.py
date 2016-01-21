@@ -34,37 +34,36 @@ iplot(14, 24, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
 '''
 
 
-asymps = [# asymptote(1, 17),
-          # asymptote(2, 17),
-          # asymptote_n(17),
-          # asymptote_with_linear_dependence(2, ['y0'], force_zero=17),
-          # asymptote_with_asymptotic_dependence(2, [], [y0pzbt0], 17),
-          # asymptote_with_asymptotic_dependence(2, [], [joff2], 17),
-          # combine([asymptote(2), asymptotic_dependence(2, ['y0']),
-          #          linear_dependence(['y0'])], force_zero=17),
-          # asymptote_with_linear_dependence(2, [], [y0pzbt0], 17),
-          # asymptote_with_linear_dependence(2, ['y0', 'zbt0'], force_zero=17),
-          # asymptote_with_linear_dependence(2, ['j', 'tz'], force_zero=17),
-          # asymptote_with_linear_dependence(2, ['tz'], [jjoff], 17),
-          # asymptote_with_linear_dependence(1, ['tz'], [joff2], 17),
-          # asymptote_with_linear_dependence(2, ['tz'], [joff2], 17),
-          # combine([asymptote(2), asymptote(1),
-          #          linear_dependence(['tz'], [joff2])], force_zero=17),
+asymps = [asymptote(1, 17),
+          asymptote(2, 17),
+          asymptote_n(17),
+          asymptote_with_linear_dependence(2, ['y0'], force_zero=17),
+          asymptote_with_asymptotic_dependence(2, [], [y0pzbt0], 17),
+          asymptote_with_asymptotic_dependence(2, [], [joff2], 17),
+          combine([asymptote(2), asymptotic_dependence(2, ['y0']),
+                   linear_dependence(['y0'])], force_zero=17),
+          asymptote_with_linear_dependence(2, [], [y0pzbt0], 17),
+          asymptote_with_linear_dependence(2, ['y0', 'zbt0'], force_zero=17),
+          asymptote_with_linear_dependence(2, ['j', 'tz'], force_zero=17),
+          asymptote_with_linear_dependence(2, ['tz'], [jjoff], 17),
+          asymptote_with_linear_dependence(1, ['tz'], [joff2], 17),
+          asymptote_with_linear_dependence(2, ['tz'], [joff2], 17),
+          combine([asymptote(2), asymptote(1),
+                   linear_dependence(['tz'], [joff2])], force_zero=17),
           asymptote_with_linear_dependence(2, ['j', 'y0'], force_zero=17),
           asymptote_with_linear_dependence(2, ['y0'], [joff2], 17),
           asymptote_with_linear_dependence(2, ['j', 'tz', 'y0'], force_zero=17),
-          # combine([asymptote(2), quadratic_dependence(['j']),
-          #          linear_dependence(['tz'])], force_zero=17),
-          # combine([asymptote(2), linear(), linear_dependence(['tz'], [joff2])],
-          #         force_zero=17),
-          # combine([asymptote(2), quadratic(),
-          #          linear_dependence(['tz'], [joff2])], force_zero=17),
-          asymptote(1, 17)]
+          combine([asymptote(2), quadratic_dependence(['j']),
+                   linear_dependence(['tz'])], force_zero=17),
+          combine([asymptote(2), linear(), linear_dependence(['tz'], [joff2])],
+                  force_zero=17),
+          combine([asymptote(2), quadratic(),
+                   linear_dependence(['tz'], [joff2])], force_zero=17)]
 
 t0 = time()
 max_r2(metasprz, asymps, [(12, 20), (14, 20), (14, 24)], print_r2_results=True)
 t1 = time()
-print(t1 - t0)
+print((t1 - t0)/len(asymps))
 
 '''
 ans = compare(metafitter=metasprz,
