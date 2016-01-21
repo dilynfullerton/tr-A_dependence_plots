@@ -52,7 +52,8 @@ def asymptote2_linear_joff2_tz_dependence(x, a, b1, b2, c, *constants):
     if len(constants) == 0:
         return a * (- 1 / x**2) + c
     else:
-        qnums = constants[0]
+        const_list, const_dict = constants
+        qnums = const_dict['qnums']
         n, l, j, tz = qnums
         joff2 = (j-1) * abs(j-1)
         return a*(-1/x**2)+(b1*joff2+b2*tz)*x+c
@@ -61,7 +62,8 @@ def linear_j_and_tz_dependence(x, a, b, c, d, *constants):
     if len(constants) == 0:
         return a * x + c
     else:
-        quantum_numbers = constants[0]
+        const_list, const_dict = constants
+        quantum_numbers = const_dict['qnums']
         j = quantum_numbers.j
         tz = quantum_numbers.tz
         return a * x + b * j * x + c * tz * x + d
@@ -72,7 +74,8 @@ def linear_fit_linear_n_j_tz_ephw_dependence_common_zero(
     if len(constants) == 0:
         return np.polyval([c, 0], xp)
     else:
-        qnums, e, hw = constants[0:3]
+        const_list, const_dict = constants
+        qnums, e, hw = const_list[0:3]
         n, l, j, tz = qnums
         return np.polyval([c+c1*n+c3*j+c4*tz+c5*(e+hw), 0], xp)
 
@@ -80,7 +83,8 @@ def quadratic_j_and_tz_dependence(x, a, b, c, d, e, f, g, *constants):
     if len(constants) == 0:
         return np.polyval([a, d, g], x)
     else:
-        qnums = constants[0]
+        const_list, const_dict = constants
+        qnums = const_dict['qnums']
         j = qnums.j
         tz = qnums.tz
         return np.polyval([a + b*j + c*tz, d + e*j + f*tz, g], x)
@@ -112,9 +116,9 @@ def asymptote2_asymptotic_y0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
-            n, l, j, tz = qnums
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
             return (a + a1*y0) * (1/zero**2 - 1/x**2)
     fn.__name__ = ('asymptote2_asymptotic_y0_dependence_with_forced_zero'
                    '_at_{}'.format(zero))
@@ -125,10 +129,10 @@ def asymptote2_asymptotic_y0pzbt0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
-            zbt0 = constants[4][0]
-            n, l, j, tz = qnums
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
+            zbt0 = const_dict['zbt_arr'][0]
             return (a + a1*(y0+zbt0)) * (1/zero**2 - 1/x**2)
     fn.__name__ = ('asymptote2_asymptotic_y0pzbt0_dependence_with_forced_zero'
                    '_at_{}'.format(zero))
@@ -139,7 +143,8 @@ def asymptote2_asymptotic_joff2_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
             n, l, j, tz = qnums
             joff2 = (j - 1) * abs(j - 1)
             return (a + a1*joff2) * (1/zero**2 - 1/x**2)
@@ -152,9 +157,9 @@ def asymptote2_asymptotic_and_linear_y0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
-            n, l, j, tz = qnums
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
             return (a + a1*y0) * (1/zero**2 - 1/x**2) + b1*y0*(x-zero)
     fn.__name__ = ('asymptote2_asymptotic_and_linear_y0_dependence_with_'
                    'forced_zero'
@@ -166,9 +171,9 @@ def asymptote2_linear_y0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
-            n, l, j, tz = qnums
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
             return a * (1/zero**2 - 1/x**2) + (b1*y0) * (x-zero)
     fn.__name__ = ('asymptote2_linear_y0_dependence_with_forced_zero'
                    '_at_{}'.format(zero))
@@ -179,10 +184,10 @@ def asymptote2_linear_y0pzbt0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
-            zbt0 = constants[4][0]
-            n, l, j, tz = qnums
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
+            zbt0 = const_dict['zbt_arr'][0]
             return a * (1/zero**2 - 1/x**2) + b1*(y0+zbt0)*(x-zero)
     fn.__name__ = ('asymptote2_linear_y0pzbt0_dependence_with_forced_zero'
                    '_at_{}'.format(zero))
@@ -193,9 +198,9 @@ def asymptote2_linear_y0_zbt0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
-            zbt0 = constants[4][0]
+            const_list, const_dict = constants
+            y0 = const_dict['y0']
+            zbt0 = const_dict['zbt_arr'][0]
             return a*(1/zero**2 - 1/x**2) + (b1*y0 + b2*zbt0)*(x-zero)
     fn.__name__ = ('asymptote2_linear_y0_zbt0_dependence_with_forced_zero'
                    '_at_{}'.format(zero))
@@ -206,7 +211,8 @@ def asymptote2_linear_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
             n, l, j, tz = qnums
             return a * (1/zero**2 - 1/x**2) + (b*j + c*tz) * (x-zero)
     fn.__name__ = ('asymptote2_linear_j_tz_dependence_with_forced_zero'
@@ -218,7 +224,8 @@ def asymptote1_linear_joff2_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero - 1 / x)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
             n, l, j, tz = qnums
             xp = x - zero
             joff2 = (j-1) * abs(j-1)
@@ -232,7 +239,8 @@ def asymptote2_linear_joff2_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
             n, l, j, tz = qnums
             xp = x - zero
             joff2 = (j-1) * abs(j-1)
@@ -246,7 +254,8 @@ def asymptote12_linear_joff2_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a*(1/zero**2 - 1/x**2) + b*(1/zero - 1/x)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
             n, l, j, tz = qnums
             xp = x - zero
             joff2 = (j-1) * abs(j-1)
@@ -260,8 +269,9 @@ def asymptote2_linear_j_y0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
             n, l, j, tz = qnums
             return a * (1/zero**2 - 1/x**2) + (b1*j + b2*y0) * (x-zero)
     fn.__name__ = ('asymptote2_linear_j_y0_dependence_with_forced_zero'
@@ -273,8 +283,9 @@ def asymptote2_linear_joff2_y0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
             n, l, j, tz = qnums
             joff2 = (j - 1) * abs(j - 1)
             return a * (1/zero**2 - 1/x**2) + (b1*joff2 + b2*y0) * (x-zero)
@@ -287,8 +298,9 @@ def asymptote2_linear_j_tz_y0_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
-            y0 = constants[5]
+            const_list, const_dict = constants
+            qnums = const_dict['qnums']
+            y0 = const_dict['y0']
             n, l, j, tz = qnums
             return a * (1/zero**2 - 1/x**2) + (b1*j + b2*tz + b3*y0) * (x-zero)
     fn.__name__ = ('asymptote2_linear_j_tz_y0_dependence_with_forced_zero'
@@ -300,7 +312,8 @@ def asymptote2_quadratic_j_linear_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             n, l, j, tz = qnums
             xp = x - zero
             return a*(1/zero**2-1/x**2)+(b*j)*xp**2+(c1*j+c2*tz)*xp
@@ -314,7 +327,8 @@ def asymptote2_linear_with_linear_joff2_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             n, l, j, tz = qnums
             xp = x - zero
             joff2 = (j-1) * abs(j-1)
@@ -329,7 +343,8 @@ def asymptote2_linear_jjoff_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             n, l, j, tz = qnums
             xp = x - zero
             jjoff = (j-1) * j
@@ -343,7 +358,8 @@ def asymptote2_quadratic_with_linear_joff2_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a * (1 / zero**2 - 1 / x**2)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             n, l, j, tz = qnums
             xp = x - zero
             joff2 = (j-1) * abs(j-1)
@@ -360,7 +376,8 @@ def linear_fit_linear_n_j_tz_ephw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([c, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([c+c1*n+c3*j+c4*tz+c5*(e+hw), 0], xp)
     fn.__name__ = ('linear_fit_linear_n_j_tz_ephw_dependence_with_forced_zero'
@@ -372,7 +389,8 @@ def quadratic_j_and_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a*(x - zero)**2 + d*(x - zero)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             j = qnums.j
             tz = qnums.tz
             return (a + b*j + c*tz)*(x-zero)**2 + (d + e*j + f*tz)*(x-zero)
@@ -385,7 +403,8 @@ def quadratic_fit_linear_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a*(x - zero)**2 + d*(x - zero)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             j = qnums.j
             tz = qnums.tz
             return a*(x-zero)**2 + (d + e*j + f*tz)*(x-zero)
@@ -400,7 +419,8 @@ def quadratic_fit_quadratic_e_hw_linear_n_j_tz_dependence_with_forced_zero(zero)
         if len(constants) == 0:
             return np.polyval([c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([c+c1*e+c2*hw, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
                               xp)
@@ -416,7 +436,8 @@ def quadratic_fit_quadratic_j_tz_linear_ephw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([c+c1*j+c2*tz,
                                d+d1*(e+hw),
@@ -434,7 +455,8 @@ def quadratic_fit_quadratic_j_tz_linear_n_ephw_dependence_with_forced_zero(zero)
         if len(constants) == 0:
             return np.polyval([c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([c+c1*j+c2*tz, d+d1*(e+hw)+d3*n, 0], xp)
     fn.__name__ = ('quadratic_fit_quadratic_j_tz_linear_n_ephw_'
@@ -449,7 +471,8 @@ def quadratic_fit_quadratic_j_tz_linear_n_e_hw_dependence_with_forced_zero(zero)
         if len(constants) == 0:
             return np.polyval([c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
                               xp)
@@ -465,7 +488,8 @@ def quadratic_fit_quadratic_n_j_tz_linear_e_hw_dependence_with_forced_zero(zero)
         if len(constants) == 0:
             return np.polyval([c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([c+c1*n+c3*j+c4*tz,
                                d+d1*n+d3*j+d4*tz+d5*e+d6*hw,
@@ -481,7 +505,8 @@ def cubic_fit_linear_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return a*(x - zero)**3 + b*(x-zero)**2 + d*(x - zero)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             j = qnums.j
             tz = qnums.tz
             xp = x - zero
@@ -497,7 +522,8 @@ def cubic_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0], xp)
     fn.__name__ = ('cubic_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero'
@@ -510,7 +536,8 @@ def poly4_fit_linear_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             j = qnums.j
             tz = qnums.tz
             return np.polyval([a, b, c, d + e*j + f*tz, 0], xp)
@@ -524,7 +551,8 @@ def poly4_fit_linear_j_tz_jtz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             j = qnums.j
             tz = qnums.tz
             return np.polyval([a, b, c, d + d1*j + d2*tz + d12*j*tz, 0], xp)
@@ -538,7 +566,8 @@ def poly4_fit_linear_n_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             n, l, j, tz = qnums
             return np.polyval([a, b, c, d+d1*n+d3*j+d4*tz, 0], xp)
     fn.__name__ = ('poly4_fit_linear_n_j_tz_dependence_with_forced_zero'
@@ -551,7 +580,8 @@ def poly4_fit_quadratic_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             j = qnums.j
             tz = qnums.tz
             return np.polyval([a, b, c+c1*j+c2*tz, d+d1*j+d2*tz, 0], xp)
@@ -566,7 +596,8 @@ def poly4_fit_quadratic_j_tz_linear_n_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz, 0], xp)
     fn.__name__ = ('poly4_fit_quadratic_j_tz_linear_n_'
@@ -580,7 +611,8 @@ def poly4_fit_quadratic_n_j_tz_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums = constants[0]
+            const_list, const_dict = constants
+            qnums = const_list[0]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*n+c3*j+c4*tz, d+d1*n+d3*j+d4*tz, 0],
                               xp)
@@ -594,9 +626,10 @@ def poly4_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums = constants[0]
-            e = constants[1]
-            hw = constants[2]
+            const_list, const_dict = constants
+            qnums = const_list[0]
+            e = const_list[1]
+            hw = const_list[2]
             n, l, j, tz = qnums
             return np.polyval([a, b, c, d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0], xp)
     fn.__name__ = ('poly4_fit_linear_n_j_tz_e_hw_dependence_with_forced_zero'
@@ -610,7 +643,8 @@ def poly4_fit_quadratic_j_tz_linear_n_ephw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz+d5*(e+hw),
                                0],
@@ -627,7 +661,8 @@ def poly4_fit_quadratic_j_tz_linear_n_e_hw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*j+c2*tz, d+d1*n+d3*j+d4*tz+d5*e+d6*hw,
                                0],
@@ -644,7 +679,8 @@ def poly4_fit_quadratic_n_j_tz_linear_ephw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*n+c3*j+c4*tz,
                                d+d1*n+d3*j+d4*tz+d5*(e+hw), 0],
@@ -661,7 +697,8 @@ def poly4_fit_quadratic_n_j_tz_linear_e_hw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*n+c3*j+c4*tz,
                                d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],
@@ -678,7 +715,8 @@ def poly4_fit_quadratic_n_j_tz_e_hw_dependence_with_forced_zero(zero):
         if len(constants) == 0:
             return np.polyval([a, b, c, d, 0], xp)
         else:
-            qnums, e, hw = constants[0:3]
+            const_list, const_dict = constants
+            qnums, e, hw = const_list[0:3]
             n, l, j, tz = qnums
             return np.polyval([a, b, c+c1*n+c3*j+c4*tz+c5*e+c6*hw,
                                d+d1*n+d3*j+d4*tz+d5*e+d6*hw, 0],

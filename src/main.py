@@ -3,6 +3,7 @@ from __future__ import print_function
 
 from constants import *
 from fitfns import *
+from FitFunction import *
 from fittransforms import *
 from spmetafit import compare_params as compare
 from spmetafit import max_r2_value as max_r2
@@ -52,7 +53,8 @@ asymps = [asymptote1_with_forced_zero(17),
           asymptote2_linear_j_tz_y0_dependence_with_forced_zero(17),
           asymptote2_quadratic_j_linear_tz_dependence_with_forced_zero(17),
           asymptote2_linear_with_linear_joff2_tz_dependence_with_forced_zero(17),
-          asymptote2_quadratic_with_linear_joff2_tz_dependence_with_forced_zero(17)]
+          asymptote2_quadratic_with_linear_joff2_tz_dependence_with_forced_zero(17),
+          asymptote_with_linear_dependence(2, ['y0'], force_zero=17)]
 
 
 fitfn, res, rank_map, result_map = max_r2(metasprz, asymps,
@@ -61,7 +63,7 @@ fitfn, res, rank_map, result_map = max_r2(metasprz, asymps,
 
 
 ans = compare(metafitter=metasprz,
-              fitfn=asymptote2_with_forced_zero(17),
+              fitfn=asymptote_with_linear_dependence(2, ['y0'], force_zero=17),
               e_hw_pairs=[(12, 20), (14, 20), (14, 24)],
               depth=2,
               print_compare_results=True,

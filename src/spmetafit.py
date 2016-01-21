@@ -300,12 +300,20 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             x, y = map_to_arrays(me_map)
             y0 = y[0]
             zbt_arr = map_to_arrays(mzbt_map)[1]
-            plots.append(transform(x, y, [qnums, e, hw, index, zbt_arr,
-                                          y0]))
+            const_list = [qnums, e, hw, index, zbt_arr, y0]
+            const_dict = {'qnums': qnums, 'e': e, 'hw': hw, 'index': index,
+                          'zbt_arr': zbt_arr, 'y0': y0}
+            const_dict = dict(const_dict.items() +
+                              dict(qnums._asdict()).items())
+            plots.append(transform(x, y, const_list, const_dict))
 
     # Make an initial parameter guess based on the first plot
+    if isinstance(fitfn, FitFunction):
+        num_fit_params = fitfn.num_fit_params
+    else:
+        num_fit_params = fitfn.__code__.co_argcount - 1
     param_guess = _meta_fit([plots[0]], fitfn,
-                            np.ones(fitfn.__code__.co_argcount - 1))[0]
+                            np.ones(num_fit_params))[0]
 
     # Do the meta-fit
     mf_results = _meta_fit(plots, fitfn, param_guess)
@@ -314,12 +322,17 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     # Test goodness of fits
     lr_results = dict()
     for p in plots:
-        x, y, constants = p
-        qnums, e, hw, index = constants[0:4]
-        args = list(params)
-        args.extend(constants)
+        x, y, const_list, const_dict = p
+        qnums, e, hw, index = const_list[0:4]
+        if isinstance(fitfn, FitFunction):
+            args = list([params, const_list, const_dict])
+            ypred = np.array(list(map(lambda xi: fitfn.eval(xi, *args), x)))
+        else:
+            args = list(params)
+            args.append(const_list)
+            args.append(const_dict)
+            ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
         yarr = np.array(y)
-        ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
         lr_results[(e, hw, qnums)] = linregress(yarr, ypred)
 
     # Print results
@@ -338,13 +351,18 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         # Do plots
         for p, i in zip(sorted(plots, key=plot_sort_key),
                         range(len(plots))):
-            x, y, constants = p
-            qnums, e, hw, index = constants[0:4]
-            args = list(params)
-            args.extend(constants)
+            x, y, const_list, const_dict = p
+            qnums, e, hw, index = const_list[0:4]
             xfit = np.linspace(x[0], x[-1])
-            yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
-
+            if isinstance(fitfn, FitFunction):
+                args = list([params, const_list, const_dict])
+                yfit = np.array(list(map(lambda xi: fitfn.eval(xi, *args),
+                                         xfit)))
+            else:
+                args = list(params)
+                args.append(const_list)
+                args.append(const_dict)
+                yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
             cval = scalar_map.to_rgba(i)
             labelstr = '{e}, {hw}, {i}'.format(e=e, hw=hw, i=index)
             ax.plot(x, y, label=labelstr, color=cval)
@@ -414,23 +432,30 @@ def _meta_fit(plots, fitfn, params_guess, **lsqkwargs):
     :return: output of the leastsq function, i.e. (final_params, covariance_arr,
     infodict, message, integer_flag)
     """
-    if len(params_guess) != fitfn.__code__.co_argcount - 1:
+    if isinstance(fitfn, FitFunction):
+        num_fit_params = fitfn.num_fit_params
+    else:
+        num_fit_params = fitfn.__code__.co_argcount - 1
+    if len(params_guess) != num_fit_params:
         raise FunctionDoesNotMatchParameterGuessException
     combined_x = list()
     combined_y = list()
     constants_lists = list()
+    constants_dicts = list()
     for p in plots:
-        x, y, constants = p
+        x, y, const_list, const_dict = p
         combined_x.append(x)
         combined_y.append(y)
-        constants_lists.append(constants)
+        constants_lists.append(const_list)
+        constants_dicts.append(const_dict)
     return leastsq(func=_mls, x0=params_guess,
-                   args=(fitfn, combined_x, combined_y, constants_lists),
+                   args=(fitfn, combined_x, combined_y,
+                         constants_lists, constants_dicts),
                    full_output=True,
                    **lsqkwargs)
 
 
-def _mls(params, fitfn, lox, loy, const_lists):
+def _mls(params, fitfn, lox, loy, const_lists, const_dicts):
     """Meta least squares function to be minimized.
 
     :param params: the parameters to give to the fit function
@@ -444,10 +469,15 @@ def _mls(params, fitfn, lox, loy, const_lists):
     yfit array
     """
     yfit = list()
-    for x, cl in zip(lox, const_lists):
-        args = list(params)
-        args.extend(cl)
-        yfit.extend(list(map(lambda xi: fitfn(xi, *args), x)))
+    for x, cl, cd in zip(lox, const_lists, const_dicts):
+        if isinstance(fitfn, FitFunction):
+            args = list([params, cl, cd])
+            yfit.extend(list(map(lambda xi: fitfn.eval(xi, *args), x)))
+        else:
+            args = list(params)
+            args.append(cl)
+            args.append(cd)
+            yfit.extend(list(map(lambda xi: fitfn(xi, *args), x)))
     yflat = [item for y in loy for item in y]
     return np.array(yflat) - np.array(yfit)
 
