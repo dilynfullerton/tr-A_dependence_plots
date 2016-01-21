@@ -300,9 +300,14 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             x, y = map_to_arrays(me_map)
             y0 = y[0]
             zbt_arr = map_to_arrays(mzbt_map)[1]
-            const_list = [qnums, e, hw, index, zbt_arr, y0]
-            const_dict = {'qnums': qnums, 'e': e, 'hw': hw, 'index': index,
-                          'zbt_arr': zbt_arr, 'y0': y0}
+            const_list = [qnums, e, hw, index, zbt_arr, y0, zbt_arr[0]]
+            const_dict = {'qnums': qnums,
+                          'e': e,
+                          'hw': hw,
+                          'index': index,
+                          'zbt_arr': zbt_arr,
+                          'y0': y0,
+                          'zbt0': zbt_arr[0]}
             const_dict = dict(const_dict.items() +
                               dict(qnums._asdict()).items())
             plots.append(transform(x, y, const_list, const_dict))

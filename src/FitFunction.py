@@ -83,6 +83,13 @@ def asymptote(n, force_zero=None):
     return FitFunction(af, 2, force_zero, name='asymptote{}'.format(n))
 
 
+def asymptote_n(force_zero=None):
+    def anf(x, params, const_list, const_dict):
+        a, b, n = params[0:3]
+        return - a / x**n + b
+    return FitFunction(anf, 3, force_zero, name='asymptote_n')
+
+
 # DEPENDENTS
 def scalar_dependence(dep_keys, ctfs=list(), force_zero=None):
     return _dependence(f=np.polyval,
