@@ -6,11 +6,15 @@ import numpy as np
 
 class FitFunction:
     def __init__(self, function, num_fit_params, force_zero=None, name=None,
-                 force_zero_func=None):
+                 force_zero_func=None,
+                 force_k=None,
+                 force_k_func=None):
         self.fn = function
         self.num_fit_params = num_fit_params
         self.fz = force_zero
         self.fzfn = force_zero_func
+        self.fk = force_k
+        self.fkfn = force_k_func
         if name is not None:
             self.__name__ = name
         else:
@@ -23,9 +27,21 @@ class FitFunction:
                     f(self.fz, params, const_list, const_dict))
         elif self.fzfn is not None:
             f = self.fn
-            zero = self.fzfn(const_dict)
+            x0 = self.fzfn(const_dict)
             return (f(x, params, const_list, const_dict) -
-                    f(zero, params, const_list, const_dict))
+                    f(x0, params, const_list, const_dict))
+        elif self.fk is not None:
+            f = self.fn
+            x0, k = self.fk
+            return (f(x, params, const_list, const_dict) -
+                    f(x0, params, const_list, const_dict) +
+                    k)
+        elif self.fkfn is not None:
+            f = self.fn
+            x0, k = self.fkfn(const_dict)
+            return (f(x, params, const_list, const_dict) -
+                    f(x0, params, const_list, const_dict) +
+                    k)
         else:
             return self.fn(x, params, const_list, const_dict)
 
