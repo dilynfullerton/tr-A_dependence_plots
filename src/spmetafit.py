@@ -259,6 +259,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              show_plot=False,
                              show_fit=True,
                              show_legend=True,
+                             full_output=False,
                              plot_sort_key=lambda p: p[2][0],
                              code='',
                              xlabel='A',
@@ -332,7 +333,9 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             np.ones(num_fit_params))[0]
 
     # Do the meta-fit
-    mf_results = _meta_fit(plots, fitfn, param_guess, full_output=True)
+    if print_results:
+        full_output = True
+    mf_results = _meta_fit(plots, fitfn, param_guess, full_output=full_output)
     params = mf_results[0]
 
     # Test goodness of fits
