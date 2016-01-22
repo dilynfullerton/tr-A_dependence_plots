@@ -32,16 +32,17 @@ def files_with_ext_in_directory(directory, extension=FILE_EXT):
 # ............................................................
 # File name parsing
 # ............................................................
-def mass_number_from_filename(filename):
+def mass_number_from_filename(filename, split_char=FILENAME_SPLIT):
     """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
     :param filename:
     """
-    index_of_extension = filename.rfind('.')
-    filename = filename[:index_of_extension]
-    index_of_mass_number = filename.rfind('A') + 1
-    mass_number = int(filename[index_of_mass_number:])
-    return mass_number
+    filename_elts = _filename_elts_list(filename, split_char)
+    for elt in reversed(filename_elts):
+        if elt[0] == 'A':
+            return int(elt[1:])
+    else:
+        return None
 
 
 def _filename_elts_list(filename, split_char):
@@ -59,7 +60,7 @@ def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
         ..._[...]_e[e-level]_[...]_...
     Also assumes that the name element containing th e-level is the last
     element which begins with an e.
-    Returns -1 if not found.
+    Returns None if not found.
     :param split_char:
     :param filename:
     """
@@ -67,11 +68,12 @@ def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
     for elt in reversed(filename_elts_list):
         if str(elt[0]) == 'e':
             return int(elt[1:])
-    return -1
+    else:
+        return None
 
 
 def hw_from_filename(filename, split_char=FILENAME_SPLIT):
-    """Gets the hw frequency number from the file name. Returns -1 if not
+    """Gets the hw frequency number from the file name. Returns None if not
     found.
     + Assumes files are named according to the convention:
           ..._[...]_hw[hw number]_[...]_...
@@ -85,7 +87,25 @@ def hw_from_filename(filename, split_char=FILENAME_SPLIT):
     for elt in reversed(filename_elts_list):
         if str(elt[0:2]) == 'hw':
             return int(elt[2:])
-    return -1
+    else:
+        return None
+
+
+def rp_from_filename(filename, split_char=FILENAME_SPLIT):
+    """Gets the Rp (proton radius) label from the file name, returns None if
+    not found.
+
+    :param filename: the name of the file to parse
+    :param split_char: the character which separates filename elements
+    :return: the Rp (integer) label, if found, otherwise returns None
+    """
+    filename_elts_list = _filename_elts_list(filename, split_char)
+    for elt in reversed(filename_elts_list):
+        i = elt.find('Rp')
+        if i != -1:
+            return int(elt[i+2:])
+    else:
+        return None
 
 
 def name_from_filename(filename, split_char=FILENAME_SPLIT):
@@ -97,6 +117,7 @@ def name_from_filename(filename, split_char=FILENAME_SPLIT):
     :param split_char: the split character for name
     :return: name
     """
+    # todo: needs to be fixed to handle targeted file names
     return _filename_elts_list(filename, split_char)[1]
 
 
@@ -167,7 +188,7 @@ def zero_body_term_line(cmnt_lines, zbt_comment=ZERO_BODY_TERM_COMMENT):
         if cl.find(zbt_comment) == 0:
             return cl
     else:
-        return -1
+        return None
 
 
 def zero_body_term(zbt_line):
@@ -237,26 +258,27 @@ def index_tuple_map(filename):
     return index_map(index_lines(comment_lines(filename)))
 
 
-def mass_energy_array_map(directory):
+def mass_energy_array_map(directory, filterfn=lambda x: True):
     """Returns a map from atomic mass to orbital energy arrays
     :param directory:
     """
     d = dict()
     files = files_with_ext_in_directory(directory)
-    for f in files:
+    filtered_files = list(filter(filterfn, files))
+    for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         orbital_energies_list = orbital_energies_from_filename(f)
         d[mass_number] = orbital_energies_list
     return d
 
 
-def mass_index_energy_map_map(directory):
+def mass_index_energy_map_map(directory, filterfn=lambda x: True):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
     :param directory:
     """
-    mea_map = mass_energy_array_map(directory)
+    mea_map = mass_energy_array_map(directory, filterfn)
     for k in mea_map.keys():
         v = mea_map[k]
         nextv = dict()
@@ -266,26 +288,27 @@ def mass_index_energy_map_map(directory):
     return mea_map
 
 
-def _mass_interaction_data_array_map(directory):
+def _mass_interaction_data_array_map(directory, filterfn=lambda x: True):
     """Creates a mapping from mass number to an array of interaction data
     for each file in the directory
     """
     mida_map = dict()
     files = files_with_ext_in_directory(directory)
-    for f in files:
+    filtered_files = list(filter(filterfn, files))
+    for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         ida = interaction_data_array(content_lines(f))
         mida_map[mass_number] = ida
     return mida_map
 
 
-def mass_interaction_tuple_energy_map_map(directory):
+def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True):
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
     :param directory:
     """
-    mida_map = _mass_interaction_data_array_map(directory)
+    mida_map = _mass_interaction_data_array_map(directory, filterfn)
     for k in mida_map.keys():
         v = mida_map[k]
         nextv = dict()
@@ -297,7 +320,7 @@ def mass_interaction_tuple_energy_map_map(directory):
     return mida_map
 
 
-def mass_zero_body_term_map(directory):
+def mass_zero_body_term_map(directory, filterfn=lambda x: True):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
@@ -305,7 +328,8 @@ def mass_zero_body_term_map(directory):
     """
     mzbt_map = dict()
     files = files_with_ext_in_directory(directory)
-    for f in files:
+    filtered_files = list(filter(filterfn, files))
+    for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         zbt = zero_body_term(zero_body_term_line(comment_lines(f)))
         mzbt_map[mass_number] = zbt
