@@ -89,3 +89,21 @@ def relative_xy_zbt(xarr, yarr, *args):
 # TRANSFORM GENERATORS
 def power(xpow, ypow):
     return lambda xarr, yarr, *args: (xarr ** xpow, yarr ** ypow) + args
+
+
+def relative_to_y(x):
+    def r(xarr, yarr, *args):
+        return (xarr, yarr - yarr[np.where(xarr == x)[0][0]]) + args
+    r.__name__ = 'relative_to_y({})'.format(x)
+    return r
+
+
+def multi(list_of_transform, t_name_sep=' '):
+    def m(xarr, yarr, *args):
+        a = (xarr, yarr) + args
+        for t in reversed(list_of_transform):
+            a = t(*a)
+        return a
+    names = [t.__name__ for t in list_of_transform]
+    m.__name__ = t_name_sep.join(names)
+    return m
