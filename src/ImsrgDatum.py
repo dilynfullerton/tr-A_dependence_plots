@@ -10,11 +10,13 @@ InteractionTuple = namedtuple('InteractionTuple', ['a', 'b', 'c', 'd', 'j'])
 
 
 class ImsrgDatum:
-    def __init__(self, directory, e, hw, name=None):
+    def __init__(self, directory, e, hw, rp=None, name=None):
         self.e = e
         self.hw = hw
+        self.rp = rp
         self.name = name
         self.dir = directory
+        self._fname_filter = None
 
         # Create maps initially empty
         self.index_orbital_map = dict()
@@ -23,6 +25,7 @@ class ImsrgDatum:
         self.mass_zero_body_term_map = dict()
 
         # Perform setup methods
+        self._set_fname_filter()
         self._set_index_orbital_map()
         self._set_mass_index_energy_map()
         self._set_mass_interaction_index_energy_map()
@@ -36,7 +39,7 @@ class ImsrgDatum:
         files = parse.files_with_ext_in_directory(directory=self.dir)
 
         # Assuming all files in a given directory have the same indexing...
-        f0 = files[0]
+        f0 = list(filter(self._fname_filter, files))[0]
         index_orbital_map = parse.index_tuple_map(f0)
 
         # Turn each tuple in the map into a named tuple
@@ -52,14 +55,17 @@ class ImsrgDatum:
             mass number -> orbital index -> energy
         mapping for the directory
         """
-        self.mass_index_energy_map = parse.mass_index_energy_map_map(self.dir)
+        self.mass_index_energy_map = (
+            parse.mass_index_energy_map_map(self.dir, self._fname_filter))
 
     def _set_mass_interaction_index_energy_map(self):
         """Retrieves the
             mass number -> (a, b, c, d, j) -> energy
         mapping for the directory
         """
-        miiem = parse.mass_interaction_tuple_energy_map_map(self.dir)
+        miiem = (
+            parse.mass_interaction_tuple_energy_map_map(self.dir,
+                                                        self._fname_filter))
 
         # Turn each tuple into a named tuple
         for A in miiem.keys():
@@ -77,13 +83,25 @@ class ImsrgDatum:
         self.mass_interaction_index_energy_map = miiem
 
     def _set_zero_body_term(self):
-        self.mass_zero_body_term_map = parse.mass_zero_body_term_map(self.dir)
+        self.mass_zero_body_term_map = (
+            parse.mass_zero_body_term_map(self.dir, self._fname_filter))
 
     def _set_name(self):
         """Sets the incidence name variable
         """
-        f0 = parse.files_with_ext_in_directory(directory=self.dir)[0]
+        files = parse.files_with_ext_in_directory(self.dir)
+        f0 = list(filter(self._fname_filter, files))[0]
         self.name = parse.name_from_filename(f0)
+
+    def _set_fname_filter(self):
+        """Returns a filter function that filters a set of filenames such that
+        only those that have the same signature (e, hw, rp) values as self
+        """
+        def f(fname):
+            return (parse.e_level_from_filename(fname) == self.e and
+                    parse.hw_from_filename(fname) == self.hw and
+                    parse.rp_from_filename(fname) == self.rp)
+        self._fname_filter = f
 
     def folded_mass_interaction_index_energy_map(self):
         """Return a flat version of the map"""
