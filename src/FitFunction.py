@@ -35,8 +35,11 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
     :return: A combined fit function object, which may be used to optimize with
     respect to all of the degrees of freedom of its sub-functions
     """
-    params_lengths = list(map(lambda ffn: ffn.num_fit_params, list_of_ffn))
-    total_params_length = reduce(lambda x, y: x + y, params_lengths)
+    params_lengths = [ffn.num_fit_params for ffn in list_of_ffn]
+    params_breaks = [0]
+    for pl, i in zip(params_lengths, range(len(params_lengths))):
+        params_breaks.append(pl + params_breaks[i])
+    total_params_length = params_breaks[-1]
 
     combined_name = name_pref
     for ffn in list_of_ffn:
@@ -44,14 +47,9 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
     combined_name = combined_name[:combined_name.rfind(name_sep)]
 
     def combined_ffns(x, params, const_list, const_dict):
-        params_lists = list()
-        t = 0
-        for pl in params_lengths:
-            params_lists.append(params[t:t+pl])
-            t += pl
         result = 0
-        for ffn, params_list in zip(list_of_ffn, params_lists):
-            result += ffn.eval(x, params_list, const_list, const_dict)
+        for ffn, i, j in zip(list_of_ffn, params_breaks, params_breaks[1:]):
+            result += ffn.eval(x, params[i:j], const_list, const_dict)
         return result
 
     return FitFunction(combined_ffns, total_params_length,
