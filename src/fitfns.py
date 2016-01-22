@@ -359,7 +359,7 @@ def asymptote2_quadratic_with_linear_joff2_tz_dependence_with_forced_zero(zero):
             return a * (1 / zero**2 - 1 / x**2)
         else:
             const_list, const_dict = constants
-            qnums = const_list[0]
+            qnums = const_dict['qnums']
             n, l, j, tz = qnums
             xp = x - zero
             joff2 = (j-1) * abs(j-1)

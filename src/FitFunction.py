@@ -4,6 +4,9 @@ from __future__ import print_function
 import numpy as np
 from time import time
 
+TOTAL = 0
+
+
 class FitFunction:
     def __init__(self, function, num_fit_params, force_zero=None, name=None):
         self.fn = function
@@ -38,7 +41,6 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
     :return: A combined fit function object, which may be used to optimize with
     respect to all of the degrees of freedom of its sub-functions
     """
-    #params_lengths = list([len(list_of_ffn)])
     params_lengths = list()
     params_lengths.extend(list(map(lambda ffn: ffn.num_fit_params,
                                    list_of_ffn)))
@@ -56,9 +58,6 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
             params_lists.append(params[t:t+pl])
             t += pl
         result = 0
-        # for ffn, p0, params_list in zip(list_of_ffn, params_lists[0],
-        #                                 params_lists[1:]):
-        #     result += p0 * ffn.eval(x, params_list, constants)
         for ffn, params_list in zip(list_of_ffn, params_lists):
             result += ffn.eval(x, params_list, const_list, const_dict)
         return result
@@ -141,12 +140,20 @@ def scalar_dependence(dep_keys, ctfs=list(), force_zero=None):
 
 
 def x1_dependence(dep_keys, ctfs=list(), force_zero=None):
-    return _dependence(lambda p, x: p[0] * x,
-                       n_params=1,
-                       dep_keys=dep_keys,
-                       ctfs=ctfs,
-                       force_zero=force_zero,
-                       name='x dependence')
+    if force_zero is not None:
+        return _dependence(lambda p, x: p[0] * (x - force_zero),
+                           n_params=1,
+                           dep_keys=dep_keys,
+                           ctfs=ctfs,
+                           force_zero=None,
+                           name='x dependence')
+    else:
+        return _dependence(lambda p, x: p[0] * x,
+                           n_params=1,
+                           dep_keys=dep_keys,
+                           ctfs=ctfs,
+                           force_zero=force_zero,
+                           name='x dependence')
 
 
 def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
@@ -229,10 +236,8 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None):
     def d(x, params, const_list, const_dict):
         more_constants = _do_transforms(ctfs, const_dict)
         p = np.zeros(n_params)
-
         dep_psubs = [params[i:i + n_params] for i in range(0, l1, n_params)]
         ctf_psubs = [params[i:i + n_params] for i in range(l1, l1+l2, n_params)]
-
         for dep in zip(dep_keys, *dep_psubs):
             k, p0 = dep[0], dep[1:]
             v = const_dict[k]
@@ -250,7 +255,9 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None):
 
 
 def _dep_str(dep_keys, ctfs):
-    return str(dep_keys + list(map(lambda c: c.__name__, ctfs)))
+    return ('(' +
+            ', '.join((dep_keys + list(map(lambda c: c.__name__, ctfs)))) +
+            ')')
 
 
 # FITTERS WITH DEPENDENCIES

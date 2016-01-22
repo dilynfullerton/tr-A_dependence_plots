@@ -485,8 +485,6 @@ def _mls(params, fitfn, lox, loy, const_lists, const_dicts):
     :return: The difference between the flattened loy array and the flattened
     yfit array
     """
-    t = dict()
-
     yfit = list()
     for x, cl, cd in zip(lox, const_lists, const_dicts):
         if isinstance(fitfn, FitFunction):
