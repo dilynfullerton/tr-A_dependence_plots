@@ -9,6 +9,7 @@ from spmetafit import max_r2_value as max_r2
 from spmetafit import single_particle_relative_metafit as metaspr
 from spmetafit import single_particle_relative_per_nucleon_metafit as metasprpn
 from spmetafit import single_particle_relative_zbt_metafit as metasprz
+from spmetafit import single_particle_relative_xy_zbt_metafit as metasprrz
 from spmetafit import single_particle_zbt_metafit as metaspz
 
 from plotting import plot_energy_vs_mass_for_interactions as iplot
@@ -32,7 +33,7 @@ iplot(14, 20, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
 iplot(14, 24, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
 '''
 
-'''
+
 asymps = [asymptote(1, 17),
           asymptote(2, 17),
           asymptote_n(17),
@@ -59,25 +60,20 @@ asymps = [asymptote(1, 17),
                   force_zero=17),
           combine([asymptote(2), quadratic(),
                    linear_dependence(['tz'], [joff2])], force_zero=17)]
-'''
-
 
 '''
-max_r2(metasprz, asymps2, [(12, 20), (14, 20), (14, 24)],
-       print_r2_results=False,
-       print_results=False)
-
-max_r2(metasprz, asymps, [(12, 20), (14, 20), (14, 24)],
+max_r2(metasprz, asymps, [(12, 20), (12, 24), (12, 24, 2), (14, 20), (14, 24)],
        print_r2_results=False,
        print_results=False)
 '''
 
 ans = compare(metafitter=metasprz,
-              fitfn=asymptote(2, 17),
-              e_hw_pairs=[(12, 20), (14, 20), (14, 24)],
+              fitfn=asymptote_with_linear_dependence(2, ['y0'],
+                                                     force_zero_func=fz_to_x0),
+              e_hw_pairs=[(12, 24), (12, 24, 2)],
               depth=2,
-              print_compare_results=True,
+              print_compare_results=False,
               show_plot=True,
-              show_fit=True,
-              print_key=False,
+              show_fit=False,
+              print_key=True,
               print_results=False)

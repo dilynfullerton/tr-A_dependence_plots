@@ -65,8 +65,7 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
 
 def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
     title_str = ('\nR^2 values for fit functions under metafit {mf} for '
-                 '(e, hw) = {ehw}\n'.format(mf=metafitter.__name__,
-                                            ehw=e_hw_pairs))
+                 '{ehw}\n'.format(mf=metafitter.__name__, ehw=e_hw_pairs))
     print(P_TITLE + title_str + P_BREAK + P_END)
     template_str = '{r:>4}\t{fn:>80}\t{r2:>15}'
     head_str = template_str.format(r='Rank', fn='Fit function', r2='R^2')
@@ -250,9 +249,20 @@ def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
                                     **kwargs)
 
 
+def single_particle_relative_xy_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=relative_xy_zbt,
+                                    code='sprrz',
+                                    xlabel='Relative A',
+                                    ylabel='Relative Single Particle Energy + '
+                                           'Zero Body Term (MeV)',
+                                    **kwargs)
+
+
 # HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
-                             transform=relative,
+                             transform=relative_y,
                              imsrg_data_map=None,
                              print_key=False,
                              print_results=False,
@@ -294,15 +304,18 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         all_data_map = ImsrgDataMap(parent_directory=sourcedir)
 
     plots = list()
-    for e, hw in sorted(e_hw_pairs):
-        data_maps = all_data_map.map[Exp(e, hw)]
+    for e_hw_pair in sorted(e_hw_pairs):
+        data_maps = all_data_map.map[Exp(*e_hw_pair)]
         io_map = data_maps.index_orbital_map
         ime_map = data_maps.index_mass_energy_map()
         mzbt_map = data_maps.mass_zero_body_term_map
 
+        e, hw, rp = Exp(*e_hw_pair)
+
         if print_key is True:
             print_io_key(io_map,
-                         'Index key for e={e} hw={hw}:'.format(e=e, hw=hw))
+                         heading='Index key for e={e} hw={hw} rp={rp}:'
+                                 ''.format(e=e, hw=hw, rp=rp))
 
         # Get list of plots
         for index in sorted(io_map.keys()):
@@ -310,14 +323,17 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             me_map = ime_map[index]
 
             x, y = map_to_arrays(me_map)
+            x0 = x[0]
             y0 = y[0]
             zbt_arr = map_to_arrays(mzbt_map)[1]
-            const_list = [qnums, e, hw, index, zbt_arr, y0, zbt_arr[0]]
+            const_list = [qnums, e, hw, index, zbt_arr, y0, zbt_arr[0], rp, x0]
             const_dict = {'qnums': qnums,
                           'e': e,
                           'hw': hw,
+                          'rp': rp,
                           'index': index,
                           'zbt_arr': zbt_arr,
+                          'x0': x0,
                           'y0': y0,
                           'zbt0': zbt_arr[0]}
             const_dict = dict(const_dict.items() +
@@ -342,7 +358,10 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     lr_results = dict()
     for p in plots:
         x, y, const_list, const_dict = p
+
         qnums, e, hw, index = const_list[0:4]
+        rp = const_dict['rp']
+
         if isinstance(fitfn, FitFunction):
             args = list([params, const_list, const_dict])
             ypred = np.array(list(map(lambda xi: fitfn.eval(xi, *args), x)))
@@ -352,7 +371,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             args.append(const_dict)
             ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
         yarr = np.array(y)
-        lr_results[(e, hw, qnums)] = linregress(yarr, ypred)
+        lr_results[(e, hw, rp, qnums)] = linregress(yarr, ypred)
 
     # Print results
     if print_results is True:
@@ -371,7 +390,10 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         for p, i in zip(sorted(plots, key=plot_sort_key),
                         range(len(plots))):
             x, y, const_list, const_dict = p
+
             qnums, e, hw, index = const_list[0:4]
+            rp = const_dict['rp']
+
             xfit = np.linspace(x[0], x[-1])
             if isinstance(fitfn, FitFunction):
                 args = list([params, const_list, const_dict])
@@ -382,15 +404,17 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                 args.append(const_list)
                 args.append(const_dict)
                 yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
+
             cval = scalar_map.to_rgba(i)
-            labelstr = '{e}, {hw}, {i}'.format(e=e, hw=hw, i=index)
+            labelstr = '{e}, {hw}, {rp}, {i}'.format(e=e, hw=hw, rp=rp, i=index)
             ax.plot(x, y, label=labelstr, color=cval)
             if show_fit is not False:
                 ax.plot(xfit, yfit, '--', label=labelstr+' fit', color=cval)
+
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         title = ('Metafit for single particle energy {tr} data '
-                 'using {fn} for (e, hw) = {ehw}'
+                 'using {fn} for {ehw}'
                  '').format(tr=transform.__name__, fn=fitfn.__name__,
                             ehw=e_hw_pairs)
         plt.title(title)
@@ -419,10 +443,11 @@ def _printer_for_single_particle_metafit(metafit_results, linregress_results):
     print('{}'.format(ier))
 
     print('\n' + P_TITLE + 'Line regression results:\n' + '-' * 80 + P_END)
-    for e, hw, qnums in sorted(linregress_results.keys()):
-        slope, intercept, rvalue, pvalue, stderr = linregress_results[(e, hw,
-                                                                       qnums)]
-        print(P_HEAD + 'e={e} hw={hw}: {qn}'.format(e=e, hw=hw, qn=qnums) +
+    for e, hw, rp, qnums in sorted(linregress_results.keys()):
+        slope, intercept, rvalue, pvalue, stderr = (
+            linregress_results[(e, hw, rp, qnums)])
+        print(P_HEAD + 'e={e} hw={hw} rp={rp}: {qn}'.format(e=e, hw=hw, rp=rp,
+                                                            qn=qnums) +
               P_END)
         print(P_SUB + 'SLOPE = ' + P_END)
         print('  ' + str(slope))
