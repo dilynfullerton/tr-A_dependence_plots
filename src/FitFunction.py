@@ -5,10 +5,12 @@ import numpy as np
 
 
 class FitFunction:
-    def __init__(self, function, num_fit_params, force_zero=None, name=None):
+    def __init__(self, function, num_fit_params, force_zero=None, name=None,
+                 force_zero_func=None):
         self.fn = function
         self.num_fit_params = num_fit_params
         self.fz = force_zero
+        self.fzfn = force_zero_func
         if name is not None:
             self.__name__ = name
         else:
@@ -19,11 +21,17 @@ class FitFunction:
             f = self.fn
             return (f(x, params, const_list, const_dict) -
                     f(self.fz, params, const_list, const_dict))
+        elif self.fzfn is not None:
+            f = self.fn
+            zero = self.fzfn(const_dict)
+            return (f(x, params, const_list, const_dict) -
+                    f(zero, params, const_list, const_dict))
         else:
             return self.fn(x, params, const_list, const_dict)
 
 
-def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
+def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', ',
+            **kwargs):
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
 
@@ -52,7 +60,7 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
         return result
 
     return FitFunction(combined_ffns, total_params_length,
-                       force_zero=force_zero, name=combined_name)
+                       force_zero=force_zero, name=combined_name, **kwargs)
 
 
 # INDEPENDENT
@@ -63,76 +71,78 @@ def scalar():
     return FitFunction(sf, 1, name='scalar')
 
 
-def x1(force_zero=None):
+def x1(force_zero=None, **kwargs):
     def x1f(x, params, const_list, const_dict):
         a = params[0]
         return a * x
-    return FitFunction(x1f, 1, force_zero, name='x^1')
+    return FitFunction(x1f, 1, force_zero, name='x^1', **kwargs)
 
 
-def linear(force_zero=None):
+def linear(force_zero=None, **kwargs):
     if force_zero is None:
         def lf(x, params, const_list, const_dict):
             a, b = params[0:2]
             return a * x + b
-        return FitFunction(lf, 2, force_zero, name='linear')
+        return FitFunction(lf, 2, force_zero, name='linear', **kwargs)
     else:
         def lf(x, params, const_list, const_dict):
             a = params[0]
             return a * x
-        return FitFunction(lf, 1, force_zero, name='linear')
+        return FitFunction(lf, 1, force_zero, name='linear', **kwargs)
 
 
-def x2(force_zero=None):
+def x2(force_zero=None, **kwargs):
     def x2f(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** 2
-    return FitFunction(x2f, 1, force_zero, name='x^2')
+    return FitFunction(x2f, 1, force_zero, name='x^2', **kwargs)
 
 
-def quadratic(force_zero=None):
+def quadratic(force_zero=None, **kwargs):
     if force_zero is None:
         def qf(x, params, const_list, const_dict):
             a, b, c = params[0:3]
             return np.polyval([a, b, c], x)
-        return FitFunction(qf, 3, force_zero, name='quadratic')
+        return FitFunction(qf, 3, force_zero, name='quadratic', **kwargs)
     else:
         def qf(x, params, const_list, const_dict):
             a, b = params[0:2]
             return np.polyval([a, b, 0], x)
-        return FitFunction(qf, 2, force_zero, name='quadratic')
+        return FitFunction(qf, 2, force_zero, name='quadratic', **kwargs)
 
 
-def x_power(n, force_zero=None):
+def x_power(n, force_zero=None, **kwargs):
     def xnf(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** n
-    return FitFunction(xnf, 1, force_zero, name='x^{}'.format(n))
+    return FitFunction(xnf, 1, force_zero, name='x^{}'.format(n), **kwargs)
 
 
-def poly(n, force_zero=None):
+def poly(n, force_zero=None, **kwargs):
     if force_zero is None:
         def pf(x, params, const_list, const_dict):
             return np.polyval(params, x)
-        return FitFunction(pf, n+1, force_zero, name='poly{}'.format(n))
+        return FitFunction(pf, n+1, force_zero, name='poly{}'.format(n),
+                           **kwargs)
     else:
         def pf(x, params, const_list, const_dict):
             return np.polyval(np.concatenate((params, np.zeros(1))), x)
-        return FitFunction(pf, n, force_zero, name='poly{}'.format(n))
+        return FitFunction(pf, n, force_zero, name='poly{}'.format(n), **kwargs)
 
 
-def asymptote(n, force_zero=None):
+def asymptote(n, force_zero=None, **kwargs):
     def af(x, params, const_list, const_dict):
         a = params[0]
         return - a / x**n
-    return FitFunction(af, 1, force_zero, name='asymptote{}'.format(n))
+    return FitFunction(af, 1, force_zero, name='asymptote{}'.format(n),
+                       **kwargs)
 
 
-def asymptote_n(force_zero=None):
+def asymptote_n(force_zero=None, **kwargs):
     def anf(x, params, const_list, const_dict):
         a, n = params[0:2]
         return - a / x**n
-    return FitFunction(anf, 2, force_zero, name='asymptote_n')
+    return FitFunction(anf, 2, force_zero, name='asymptote_n', **kwargs)
 
 
 # DEPENDENTS
@@ -144,23 +154,25 @@ def scalar_dependence(dep_keys, ctfs=list()):
                        name='scalar dependence')
 
 
-def x1_dependence(dep_keys, ctfs=list(), force_zero=None):
+def x1_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
     return _dependence(lambda p, x: p[0] * x,
                        n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
-                       name='x dependence')
+                       name='x dependence',
+                       **kwargs)
 
 
-def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
+def linear_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
     if force_zero is None:
         return _dependence(np.polyval,
                            n_params=2,
                            dep_keys=dep_keys,
                            ctfs=ctfs,
                            force_zero=force_zero,
-                           name='linear dependence')
+                           name='linear dependence',
+                           **kwargs)
     else:
         return _dependence(lambda p, x:
                            np.polyval(np.concatenate((p, np.zeros(1))), x),
@@ -168,26 +180,29 @@ def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
                            dep_keys=dep_keys,
                            ctfs=ctfs,
                            force_zero=force_zero,
-                           name='linear dependence')
+                           name='linear dependence',
+                           **kwargs)
 
 
-def x2_dependence(dep_keys, ctfs=list(), force_zero=None):
+def x2_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
     return _dependence(lambda p, x: p[0] * x ** 2,
                        n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
-                       name='x^2 dependence')
+                       name='x^2 dependence',
+                       **kwargs)
 
 
-def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None):
+def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
     if force_zero is None:
         return _dependence(np.polyval,
                            n_params=3,
                            dep_keys=dep_keys,
                            ctfs=ctfs,
                            force_zero=force_zero,
-                           name='quadratic dependence')
+                           name='quadratic dependence',
+                           **kwargs)
     else:
         return _dependence(lambda p, x:
                            np.polyval(np.concatenate((p, np.zeros(1))), x),
@@ -195,26 +210,29 @@ def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None):
                            dep_keys=dep_keys,
                            ctfs=ctfs,
                            force_zero=force_zero,
-                           name='quadratic dependence')
+                           name='quadratic dependence',
+                           **kwargs)
 
 
-def x_power_dependence(n, dep_keys, ctfs=list(), force_zero=None):
+def x_power_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
     return _dependence(lambda p, x: p[0] * x ** n,
                        n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
-                       name='x^{} dependence'.format(n))
+                       name='x^{} dependence'.format(n),
+                       **kwargs)
 
 
-def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None):
+def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
     if force_zero is None:
         return _dependence(np.polyval,
                            n_params=n + 1,
                            dep_keys=dep_keys,
                            ctfs=ctfs,
                            force_zero=force_zero,
-                           name='poly{n} dependence'.format(n=n))
+                           name='poly{n} dependence'.format(n=n),
+                           **kwargs)
     else:
         return _dependence(lambda p, x:
                            np.polyval(np.concatenate((p, np.zeros(1))), x),
@@ -222,19 +240,22 @@ def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None):
                            dep_keys=dep_keys,
                            ctfs=ctfs,
                            force_zero=force_zero,
-                           name='poly{n} dependence'.format(n=n))
+                           name='poly{n} dependence'.format(n=n),
+                           **kwargs)
 
 
-def asymptotic_dependence(n, dep_keys, ctfs=list(), force_zero=None):
+def asymptotic_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
     return _dependence(lambda p, x: - p[0] / x**n,
                        n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        force_zero=force_zero,
-                       name='asymptotic{} dependence'.format(n))
+                       name='asymptotic{} dependence'.format(n),
+                       **kwargs)
 
 
-def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None):
+def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
+                **kwargs):
     """An abstract function to determine f-dependence on constants given by
     dep_keys and ctfs
 
@@ -275,7 +296,8 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None):
     return FitFunction(d,
                        num_fit_params=(len(dep_keys)+len(ctfs)) * n_params,
                        force_zero=force_zero,
-                       name=name + ' on {}'.format(_dep_str(dep_keys, ctfs)))
+                       name=name + ' on {}'.format(_dep_str(dep_keys, ctfs)),
+                       **kwargs)
 
 
 def _dep_str(dep_keys, ctfs):
@@ -285,27 +307,33 @@ def _dep_str(dep_keys, ctfs):
 
 
 # FITTERS WITH DEPENDENCIES
-def linear_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None):
+def linear_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None,
+                                  **kwargs):
     return combine([linear(force_zero=force_zero),
                     linear_dependence(dep_keys, ctfs, force_zero=force_zero)],
-                   force_zero=force_zero)
+                   force_zero=force_zero,
+                   **kwargs)
 
 
-def poly_with_linear_dependence(n, dep_keys, ctfs=list(), force_zero=None):
+def poly_with_linear_dependence(n, dep_keys, ctfs=list(), force_zero=None,
+                                **kwargs):
     return combine([poly(n), linear_dependence(dep_keys, ctfs)],
-                   force_zero=force_zero)
+                   force_zero=force_zero,
+                   **kwargs)
 
 
 def asymptote_with_linear_dependence(n, dep_keys, ctfs=list(),
-                                     force_zero=None):
+                                     force_zero=None,
+                                     **kwargs):
     return combine([asymptote(n), linear_dependence(dep_keys, ctfs)],
-                   force_zero=force_zero)
+                   force_zero=force_zero,
+                   **kwargs)
 
 
 def asymptote_with_asymptotic_dependence(n, dep_keys, ctfs=list(),
-                                         force_zero=None):
+                                         force_zero=None, **kwargs):
     return combine([asymptote(n), asymptotic_dependence(n, dep_keys, ctfs)],
-                   force_zero=force_zero)
+                   force_zero=force_zero, **kwargs)
 
 
 # CONSTANT TRANSFORMS
@@ -336,3 +364,8 @@ def y0pzbt0(const_dict):
     y0 = const_dict['y0']
     zbt0 = const_dict['zbt0']
     return y0 + zbt0
+
+
+# FORCE ZERO FUNCTIONS
+def fz_to_x0(const_dict):
+    return const_dict['x0']
