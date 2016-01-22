@@ -9,12 +9,9 @@ class FitFunction:
         self.fn = function
         self.num_fit_params = num_fit_params
         self.fz = force_zero
-        self.__name__ = name
-
-        self._set_name()
-
-    def _set_name(self):
-        if self.__name__ is None:
+        if name is not None:
+            self.__name__ = name
+        else:
             self.__name__ = self.fn.__name__
 
     def eval(self, x, params, const_list, const_dict):
@@ -38,9 +35,7 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
     :return: A combined fit function object, which may be used to optimize with
     respect to all of the degrees of freedom of its sub-functions
     """
-    params_lengths = list()
-    params_lengths.extend(list(map(lambda ffn: ffn.num_fit_params,
-                                   list_of_ffn)))
+    params_lengths = list(map(lambda ffn: ffn.num_fit_params, list_of_ffn))
     total_params_length = reduce(lambda x, y: x + y, params_lengths)
 
     combined_name = name_pref

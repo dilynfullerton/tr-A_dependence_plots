@@ -92,11 +92,11 @@ a = True
 
 
 t0 = time()
-max_r2(metasprz, asymps, [(12, 20), (14, 20), (14, 24)],
+max_r2(metasprz, asymps2, [(12, 20), (14, 20), (14, 24)],
        print_r2_results=False,
        print_results=False)
 t1 = time()
-max_r2(metasprz, asymps2, [(12, 20), (14, 20), (14, 24)],
+max_r2(metasprz, asymps, [(12, 20), (14, 20), (14, 24)],
        print_r2_results=False,
        print_results=False)
 t2 = time()
