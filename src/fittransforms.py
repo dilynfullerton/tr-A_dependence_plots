@@ -32,8 +32,12 @@ def absval(xarr, yarr, *args):
     return (np.abs(xarr), np.abs(yarr)) + args
 
 
-def relative(xarr, yarr, *args):
+def relative_y(xarr, yarr, *args):
     return (xarr, yarr - yarr[0]) + args
+
+
+def relative_x(xarr, yarr, *args):
+    return (xarr - xarr[0], yarr) + args
 
 
 def flip(xarr, yarr, *args):
@@ -47,31 +51,39 @@ def zbt(xarr, yarr, *args):
 
 # TRANSFORM COMPOSITIONS
 def relative_per_nucleon(xarr, yarr, *args):
-    return relative(*per_nucleon(xarr, yarr, *args))
+    return relative_y(*per_nucleon(xarr, yarr, *args))
 
 
 def relative_log_log_per_nucleon(xarr, yarr, *args):
-    return relative(*log_log(*per_nucleon(xarr, yarr, *args)))
+    return relative_y(*log_log(*per_nucleon(xarr, yarr, *args)))
 
 
 def relative_flip(xarr, yarr, *args):
-    return relative(*flip(xarr, yarr, *args))
+    return relative_y(*flip(xarr, yarr, *args))
 
 
 def relative_flip_per_nucleon(xarr, yarr, *args):
-    return relative(*flip(*per_nucleon(xarr, yarr, *args)))
+    return relative_y(*flip(*per_nucleon(xarr, yarr, *args)))
 
 
 def flip_relative_per_nucleon(xarr, yarr, *args):
-    return flip(*relative(*per_nucleon(xarr, yarr, *args)))
+    return flip(*relative_y(*per_nucleon(xarr, yarr, *args)))
 
 
 def relative_flip_relative_per_nucleon(xarr, yarr, *args):
-    return relative(*flip_relative_per_nucleon(xarr, yarr, *args))
+    return relative_y(*flip_relative_per_nucleon(xarr, yarr, *args))
 
 
 def relative_zbt(xarr, yarr, *args):
-    return relative(*zbt(xarr, yarr, *args))
+    return relative_y(*zbt(xarr, yarr, *args))
+
+
+def relative_xy(xarr, yarr, *args):
+    return relative_x(*relative_y(xarr, yarr, *args))
+
+
+def relative_xy_zbt(xarr, yarr, *args):
+    relative_xy(*zbt(xarr, yarr, *args))
 
 
 # TRANSFORM GENERATORS
