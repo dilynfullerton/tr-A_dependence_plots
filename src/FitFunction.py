@@ -2,9 +2,6 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
-from time import time
-
-TOTAL = 0
 
 
 class FitFunction:
@@ -67,11 +64,11 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', '):
 
 
 # INDEPENDENT
-def scalar(force_zero=None):
+def scalar():
     def sf(x, params, const_list, const_dict):
         a = params[0]
         return a
-    return FitFunction(sf, 1, force_zero, name='scalar')
+    return FitFunction(sf, 1, name='scalar')
 
 
 def x1(force_zero=None):
@@ -130,30 +127,21 @@ def asymptote_n(force_zero=None):
 
 
 # DEPENDENTS
-def scalar_dependence(dep_keys, ctfs=list(), force_zero=None):
-    return _dependence(f=np.polyval,
+def scalar_dependence(dep_keys, ctfs=list()):
+    return _dependence(f=lambda p, x: p[0],
                        n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
-                       force_zero=force_zero,
                        name='scalar dependence')
 
 
 def x1_dependence(dep_keys, ctfs=list(), force_zero=None):
-    if force_zero is not None:
-        return _dependence(lambda p, x: p[0] * (x - force_zero),
-                           n_params=1,
-                           dep_keys=dep_keys,
-                           ctfs=ctfs,
-                           force_zero=None,
-                           name='x dependence')
-    else:
-        return _dependence(lambda p, x: p[0] * x,
-                           n_params=1,
-                           dep_keys=dep_keys,
-                           ctfs=ctfs,
-                           force_zero=force_zero,
-                           name='x dependence')
+    return _dependence(lambda p, x: p[0] * x,
+                       n_params=1,
+                       dep_keys=dep_keys,
+                       ctfs=ctfs,
+                       force_zero=force_zero,
+                       name='x dependence')
 
 
 def linear_dependence(dep_keys, ctfs=list(), force_zero=None):
