@@ -260,6 +260,33 @@ def single_particle_relative_xy_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
                                     **kwargs)
 
 
+def single_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
+    return _single_particle_metafit(fitfn, e_hw_pairs,
+                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                    transform=identity,
+                                    code='spi',
+                                    xlabel='A',
+                                    ylabel='Single Particle Energy (MeV)',
+                                    **kwargs)
+
+
+def single_particle_relative_to_y_zbt_metafit(x):
+    def spryz(fitfn, e_hw_pairs, **kwargs):
+        return _single_particle_metafit(fitfn, e_hw_pairs,
+                                        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                        transform=multi([relative_to_y(x),
+                                                         zbt]),
+                                        code='spryz',
+                                        xlabel='A',
+                                        ylabel='Relative Single Particle Energy'
+                                               ' + Zero Body Term '
+                                               'with respect to A = '
+                                               '{}'.format(x),
+                                        **kwargs)
+    spryz.__name__ = 'single_particle_relative_to_y({})_zbt_metafit'.format(x)
+    return spryz
+
+
 # HELPER FUNCTIONS
 def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                              transform=relative_y,
