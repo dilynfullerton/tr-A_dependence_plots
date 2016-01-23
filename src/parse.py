@@ -35,7 +35,9 @@ def files_with_ext_in_directory(directory, extension=FILE_EXT):
 def mass_number_from_filename(filename, split_char=FILENAME_SPLIT):
     """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
-    :param filename:
+
+    :param filename: the filename from which to get the mass number
+    :param split_char: the character that separates name elements
     """
     filename_elts = _filename_elts_list(filename, split_char)
     for elt in reversed(filename_elts):
@@ -260,7 +262,9 @@ def index_tuple_map(filename):
 
 def mass_energy_array_map(directory, filterfn=lambda x: True):
     """Returns a map from atomic mass to orbital energy arrays
-    :param directory:
+    :param directory: the directory which is a direct parent to the files to use
+    :param filterfn: the function to use to filter the file names in the
+    directory
     """
     d = dict()
     files = files_with_ext_in_directory(directory)
@@ -276,7 +280,10 @@ def mass_index_energy_map_map(directory, filterfn=lambda x: True):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
-    :param directory:
+    :param directory: the directory that is a direct parent to the files from
+    which the map is to be constructed
+    :param filterfn: the filter to apply to the files prior to constructing the
+    map
     """
     mea_map = mass_energy_array_map(directory, filterfn)
     for k in mea_map.keys():
@@ -306,7 +313,10 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True):
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
-    :param directory:
+    :param directory: the directory which is a direct parent to the files from
+    which to generate the map
+    :param filterfn: the filter function to apply to the files before
+    constructing the map
     """
     mida_map = _mass_interaction_data_array_map(directory, filterfn)
     for k in mida_map.keys():
@@ -324,7 +334,10 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
-    :param directory: the directory from which to get files
+    :param directory: the directory that is a direct parent to the files from
+    which to construct the map
+    :param filterfn: the filter to apply to the files before constructing the
+    map
     """
     mzbt_map = dict()
     files = files_with_ext_in_directory(directory)

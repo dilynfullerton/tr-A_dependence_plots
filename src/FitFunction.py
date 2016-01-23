@@ -71,8 +71,8 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', ',
 
     def combined_ffns(x, params, const_list, const_dict):
         result = 0
-        for ffn, i, j in zip(list_of_ffn, params_breaks, params_breaks[1:]):
-            result += ffn.eval(x, params[i:j], const_list, const_dict)
+        for fitfn, ii, jj in zip(list_of_ffn, params_breaks, params_breaks[1:]):
+            result += fitfn.eval(x, params[ii:jj], const_list, const_dict)
         return result
 
     return FitFunction(combined_ffns, total_params_length,
@@ -81,6 +81,7 @@ def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', ',
 
 # INDEPENDENT
 def scalar():
+    # noinspection PyUnusedLocal
     def sf(x, params, const_list, const_dict):
         a = params[0]
         return a
@@ -88,6 +89,7 @@ def scalar():
 
 
 def x1(force_zero=None, **kwargs):
+    # noinspection PyUnusedLocal
     def x1f(x, params, const_list, const_dict):
         a = params[0]
         return a * x
@@ -96,11 +98,13 @@ def x1(force_zero=None, **kwargs):
 
 def linear(force_zero=None, **kwargs):
     if force_zero is None:
+        # noinspection PyUnusedLocal
         def lf(x, params, const_list, const_dict):
             a, b = params[0:2]
             return a * x + b
         return FitFunction(lf, 2, force_zero, name='linear', **kwargs)
     else:
+        # noinspection PyUnusedLocal
         def lf(x, params, const_list, const_dict):
             a = params[0]
             return a * x
@@ -108,6 +112,7 @@ def linear(force_zero=None, **kwargs):
 
 
 def x2(force_zero=None, **kwargs):
+    # noinspection PyUnusedLocal
     def x2f(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** 2
@@ -116,11 +121,13 @@ def x2(force_zero=None, **kwargs):
 
 def quadratic(force_zero=None, **kwargs):
     if force_zero is None:
+        # noinspection PyUnusedLocal
         def qf(x, params, const_list, const_dict):
             a, b, c = params[0:3]
             return np.polyval([a, b, c], x)
         return FitFunction(qf, 3, force_zero, name='quadratic', **kwargs)
     else:
+        # noinspection PyUnusedLocal
         def qf(x, params, const_list, const_dict):
             a, b = params[0:2]
             return np.polyval([a, b, 0], x)
@@ -128,6 +135,7 @@ def quadratic(force_zero=None, **kwargs):
 
 
 def x_power(n, force_zero=None, **kwargs):
+    # noinspection PyUnusedLocal
     def xnf(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** n
@@ -136,17 +144,20 @@ def x_power(n, force_zero=None, **kwargs):
 
 def poly(n, force_zero=None, **kwargs):
     if force_zero is None:
+        # noinspection PyUnusedLocal
         def pf(x, params, const_list, const_dict):
             return np.polyval(params, x)
         return FitFunction(pf, n+1, force_zero, name='poly{}'.format(n),
                            **kwargs)
     else:
+        # noinspection PyUnusedLocal
         def pf(x, params, const_list, const_dict):
             return np.polyval(np.concatenate((params, np.zeros(1))), x)
         return FitFunction(pf, n, force_zero, name='poly{}'.format(n), **kwargs)
 
 
 def asymptote(n, force_zero=None, **kwargs):
+    # noinspection PyUnusedLocal
     def af(x, params, const_list, const_dict):
         a = params[0]
         return - a / x**n
@@ -155,6 +166,7 @@ def asymptote(n, force_zero=None, **kwargs):
 
 
 def asymptote_n(force_zero=None, **kwargs):
+    # noinspection PyUnusedLocal
     def anf(x, params, const_list, const_dict):
         a, n = params[0:2]
         return - a / x**n
@@ -294,6 +306,7 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
     l1 = len(dep_keys) * n_params
     l2 = len(ctfs) * n_params
 
+    # noinspection PyUnusedLocal
     def d(x, params, const_list, const_dict):
         more_constants = _do_transforms(ctfs, const_dict)
         p = np.zeros(n_params)

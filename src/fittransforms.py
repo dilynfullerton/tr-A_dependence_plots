@@ -115,8 +115,8 @@ def rtrim(n):
 def multi(list_of_transform, t_name_sep=' '):
     def m(xarr, yarr, *args):
         a = (xarr, yarr) + args
-        for t in reversed(list_of_transform):
-            a = t(*a)
+        for tr in reversed(list_of_transform):
+            a = tr(*a)
         return a
     names = [t.__name__ for t in list_of_transform]
     m.__name__ = t_name_sep.join(names)

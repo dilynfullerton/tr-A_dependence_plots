@@ -6,18 +6,15 @@ from itertools import combinations
 from matplotlib import cm
 from matplotlib import colors
 from matplotlib import pyplot as plt
-from scipy.optimize import curve_fit
 from scipy.optimize import leastsq
 from scipy.stats import linregress
 
+from FitFunction import FitFunction
+from ImsrgDataMap import ImsrgDataMap, Exp
 from constants import *
 from fittransforms import *
-from ImsrgDataMap import ImsrgDataMap, Exp
-from FitFunction import FitFunction
 from spfitting import map_to_arrays
 from spfitting import print_io_key
-
-from time import time
 
 
 # STATISTICAL ANALYSIS TOOLS
@@ -53,7 +50,7 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
                                key=lambda f: -1 * fn_res_r2_map[f][1]),
                         range(len(fn_res_r2_map))):
         res, r2 = fn_res_r2_map[fitfn]
-        rank_map[i+1] = (fitfn, r2)
+        rank_map[i + 1] = (fitfn, r2)
         result_map[fitfn] = res
     if print_r2_results is True:
         _printer_for_max_r2_value(rank_map, metafitter,
@@ -95,6 +92,7 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
     single-parameter results. Must take a single ndarray object as input and
     return a float output.
     :param print_compare_results: whether to print the results in a neat table
+    :param sourcedir: the directory from which to retrieve the files
     :param kwargs: keyword arguments to be passed to the metafitter
     :return: a list of (param, result, relative result) 3-tuples
     """
@@ -118,7 +116,7 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
         param_result_list.append((param, result, rel_result))
     if print_compare_results is True:
         _printer_for_compare_params(param_result_list,
-                                    depth, statfn,
+                                    depth, statfn.__name__,
                                     e_hw_pairs, metafitter,
                                     fitfn)
     return param_result_list
@@ -139,7 +137,7 @@ def _printer_for_compare_params(params_result_list,
     title_str = ('\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
                  '{mf} and fit function {ffn}'
                  '').format(d=depth,
-                            sfn=statfn.__name__,
+                            sfn=statfn,
                             ehw=e_hw_pairs,
                             mf=metafitter.__name__,
                             ffn=fitfn.__name__)
@@ -282,6 +280,7 @@ def single_particle_relative_to_y_zbt_metafit(x):
                                                'with respect to A = '
                                                '{}'.format(x),
                                         **kwargs)
+
     spryz.__name__ = 'single_particle_relative_to_y({})_zbt_metafit'.format(x)
     return spryz
 
@@ -298,6 +297,7 @@ def single_particle_ltrim_relative_zbt_metafit(n):
                                         ylabel='Relative Single Particle Energy'
                                                ' + Zero Body Term',
                                         **kwargs)
+
     spltrz.__name__ = 'single_particle_ltrim({})_relative_zbt_metafit'.format(n)
     return spltrz
 
@@ -378,6 +378,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                           'x0': x0,
                           'y0': y0,
                           'zbt0': zbt_arr[0]}
+            # noinspection PyProtectedMember
             const_dict = dict(const_dict.items() +
                               dict(qnums._asdict()).items())
             plots.append(transform(x, y, const_list, const_dict))
@@ -421,7 +422,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
     # Plot results
     if show_plot is True:
-        #plt.style.use('dark_background')
+        # plt.style.use('dark_background')
         fig = plt.figure()
         ax = fig.add_subplot(111)
         # Make color map
@@ -451,7 +452,7 @@ def _single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             labelstr = '{e}, {hw}, {rp}, {i}'.format(e=e, hw=hw, rp=rp, i=index)
             ax.plot(x, y, label=labelstr, color=cval)
             if show_fit is not False:
-                ax.plot(xfit, yfit, '--', label=labelstr+' fit', color=cval)
+                ax.plot(xfit, yfit, '--', label=labelstr + ' fit', color=cval)
 
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
@@ -537,7 +538,7 @@ def _meta_fit(plots, fitfn, params_guess, full_output=False, **lsqkwargs):
 
     return leastsq(func=_mls, x0=params_guess,
                    args=(fitfn, combined_x, combined_y,
-                   constants_lists, constants_dicts),
+                         constants_lists, constants_dicts),
                    full_output=full_output,
                    **lsqkwargs)
 
