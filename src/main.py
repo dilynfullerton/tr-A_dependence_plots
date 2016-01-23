@@ -110,12 +110,12 @@ mixed = [
 asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
           multi_dep_asymps + mixed)
 
-
+'''
 max_r2(sprz, asymps, [(12, 20),
                       (14, 20), (14, 24)],
        print_r2_results=True,
        print_results=False)
-
+'''
 
 f = asymptote_with_linear_dependence(2, ['y0'], [], force_zero=17)
 
