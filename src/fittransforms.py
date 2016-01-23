@@ -98,6 +98,20 @@ def relative_to_y(x):
     return r
 
 
+def ltrim(n):
+    def t(xarr, yarr, *args):
+        return (xarr[n:], yarr[n:]) + args
+    t.__name__ = 'ltrim({})'.format(n)
+    return t
+
+
+def rtrim(n):
+    def t(xarr, yarr, *args):
+        return (xarr[:-n], yarr[:-n]) + args
+    t.__name__ = 'rtrim({})'.format(n)
+    return t
+
+
 def multi(list_of_transform, t_name_sep=' '):
     def m(xarr, yarr, *args):
         a = (xarr, yarr) + args

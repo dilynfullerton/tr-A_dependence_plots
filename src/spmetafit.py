@@ -42,12 +42,10 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
                          imsrg_data_map=imsrg_data_map, **kwargs)
         lg_res = res[1]
         r2 = 0
-        length = 0
         for v in lg_res.values():
             r = v.rvalue
             r2 += r ** 2
-            length += 1
-        r2 = r2 / length
+        r2 /= len(lg_res)
         fn_res_r2_map[fitfn] = (res, r2)
     rank_map = dict()
     result_map = dict()
@@ -270,6 +268,7 @@ def single_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
                                     **kwargs)
 
 
+# META-FITTER GENERATORS
 def single_particle_relative_to_y_zbt_metafit(x):
     def spryz(fitfn, e_hw_pairs, **kwargs):
         return _single_particle_metafit(fitfn, e_hw_pairs,
@@ -285,6 +284,22 @@ def single_particle_relative_to_y_zbt_metafit(x):
                                         **kwargs)
     spryz.__name__ = 'single_particle_relative_to_y({})_zbt_metafit'.format(x)
     return spryz
+
+
+def single_particle_ltrim_relative_zbt_metafit(n):
+    def spltrz(fitfn, e_hw_pairs, **kwargs):
+        return _single_particle_metafit(fitfn, e_hw_pairs,
+                                        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                        transform=multi([
+                                            ltrim(n), relative_zbt
+                                        ]),
+                                        code='spltrz',
+                                        xlabel='A',
+                                        ylabel='Relative Single Particle Energy'
+                                               ' + Zero Body Term',
+                                        **kwargs)
+    spltrz.__name__ = 'single_particle_ltrim({})_relative_zbt_metafit'.format(n)
+    return spltrz
 
 
 # HELPER FUNCTIONS
