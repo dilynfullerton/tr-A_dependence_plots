@@ -174,6 +174,7 @@ def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map):
                   'x0': x0,
                   'y0': y0,
                   'zbt0': zbt0}
+    # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(qnums._asdict()).items())
     return x, y, const_list, const_dict
 
@@ -217,16 +218,12 @@ def _printer_for_single_particle_metafit(metafit_results, linregress_results):
 def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             transform=relative_y,
                             imsrg_data_map=None,
-                            get_data=lambda dm: dm.index_mass_energy_map(),
-                            get_plot=_single_particle_plot,
                             print_key=False,
                             print_results=False,
-                            printer=_printer_for_single_particle_metafit,
                             show_plot=False,
                             show_fit=True,
                             show_legend=True,
                             full_output=False,
-                            plot_sort_key=lambda p: p[2][0],
                             code='',
                             title=('Metafit for single particle energy'
                                    ' {tr} data using {fn} for {ehw}'),
@@ -235,28 +232,70 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             xlabel='A',
                             ylabel='Relative Energy (MeV)',
                             savename='meta_{c}-{t}',
-                            cmap=PLOT_CMAP):
-    """A meta-fit for all the orbitals with a given e and hw, based on the
+                            cmap=PLOT_CMAP,
+                            plot_sort_key=lambda p: p[3]['qnums'],
+                            _get_data=lambda dm: dm.index_mass_energy_map(),
+                            _get_plot=_single_particle_plot,
+                            _printer=_printer_for_single_particle_metafit):
+    """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
     given fit function
 
-    :param fitfn: The fit function to use for fitting of the form
-    f(x, a0, a1, ..., aN, *constants) -> y, where x, y, and a0...aN are floats
-    :param e_hw_pairs: pairs (e, hw)
-    :param sourcedir: main files directory to use for initializing the
+    :param fitfn: The FitFunction object to use for fitting. Alternatively,
+    may be of the form in fitfns.py, although this is deprecated.
+    :param e_hw_pairs: A list of tuples of (e, hw [, rp]), which fully specify
+    the data set(s) to use. If rp is not included, it is assumed to be None.
+    :param sourcedir: The main files directory to use for initializing the
     ImsrgDataMaps
-    :param savedir: the directory in which to save plots
-    :param transform: A transformation to apply to the data before fitting,
-    t(xarr, yarr, *args) -> (newxarr, newyarr, *args), where xarr, yarr,
-    newxarr, and newyarr are arrays
-    :param print_key: whether to print the index -> orbital key
-    :param print_results: whether to print fit results
-    :param show_plot: whether to show the fit plot
-    :param plot_sort_key: key for ordering plots, default is by Quantum numbers
-    :param code: code name to precede file name in saving of plot
+    :param savedir: The directory in which to save plots
+    :param transform: (Optional) A transformation to apply to the data before
+    fitting,
+        t(xarr, yarr, *args) -> (newxarr, newyarr, *args),
+    where xarr, yarr, newxarr, and newyarr are arrays.
+    :param imsrg_data_map: (Optional) If included, will not retrieve data map
+    from sourcedir and will instead take the given data map
+    :param print_key: (Optional) Whether to print the index -> orbital key.
+    Default is False.
+    :param print_results: (Optional) Whether to print fit results. Default is
+    False.
+    :param show_plot: (Optional) Whether to show the data plot. Default False.
+    :param show_fit: (Optional) Whether to show the fit plot when show_plot is
+    True. Default True.
+    :param show_legend: (Optional) Whether to show the legend when show_plot is
+    True. Default True.
+    :param full_output: (Optional) Whether the returned results should be the
+    full output given by the leastsq function. Default False.
+    :param code: (Optional) An identifier for the specific implementation of
+    this function, to distinguish saved files.
+    :param title: (Optional) The title by which to name the plot. Use the
+    following keys to include information:
+        {tr}: name of the transformation performed
+        {fn}: name of the fit function applied
+        {ehw}: (e, hw, rp) identifier of the data
+    :param label: (Optional) The labeling scheme for the plot legend. Use the
+    following keys to include information:
+        {e}: emax
+        {hw}: h-bar omega frequency
+        {rp}: proton radius
+        {i}: index
+    :param idxfn: (Optional) The function to apply to the indexing keys of the
+    datasets before adding to the legend.
     :param xlabel: x label for plot
     :param ylabel: y label for plot
-    :param cmap: colormap string to use for plotting
-    :return:
+    :param savename: (Optional) The save name for the plot figure. Use the
+    following keys to include information:
+        {c}: code
+        {t}: title
+    :param cmap: (Optional) colormap string to use for plotting
+    :param plot_sort_key: (Optional) key for ordering plots, default is by
+    Quantum numbers.
+    :param _get_data: The function to be used to get data from the data map.
+    Defult gets single particle data
+    :param _get_plot: The function to be used to get a tuple that represents
+    a particle plot from the available maps. Default gets the appropriate
+    tuple for a single particle plot.
+    :param _printer: The function to use to print results.
+    :return: (mf_results, lr_results), A 2-tuple containing the meta-fit results
+    and the regressional results for the fit.
     """
     # Get index->orbital and index->mass->energy maps
     if imsrg_data_map is not None:
@@ -269,7 +308,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         exp = Exp(*e_hw_pair)
         data_maps = all_data_map.map[exp]
         io_map = data_maps.index_orbital_map
-        ime_map = get_data(data_maps)
+        ime_map = _get_data(data_maps)
         mzbt_map = data_maps.mass_zero_body_term_map
 
         e, hw, rp = exp
@@ -281,8 +320,8 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
         # Get list of plots
         for k in sorted(ime_map.keys()):
-            plots.append(transform(*get_plot(k, exp,
-                                             io_map, ime_map[k], mzbt_map)))
+            plots.append(transform(*_get_plot(k, exp,
+                                              io_map, ime_map[k], mzbt_map)))
 
     # Make an initial parameter guess based on the first plot
     if isinstance(fitfn, FitFunction):
@@ -319,7 +358,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
     # Print results
     if print_results is True:
-        printer(mf_results, lr_results)
+        _printer(mf_results, lr_results)
 
     # Plot results
     if show_plot is True:
@@ -385,7 +424,9 @@ def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map):
                   'zbt_arr': zbt_arr,
                   'x0': x0,
                   'y0': y0,
-                  'zbt0': zbt0}
+                  'zbt0': zbt0,
+                  'io_map': io_map}
+    # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(k._asdict()).items())
     return x, y, const_list, const_dict
 
@@ -411,9 +452,9 @@ def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                            **kwargs):
     return single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                                    transform=transform,
-                                   get_data=get_data,
-                                   get_plot=get_plot,
-                                   printer=printer,
+                                   _get_data=get_data,
+                                   _get_plot=get_plot,
+                                   _printer=printer,
                                    show_legend=show_legend,
                                    plot_sort_key=plot_sort_key,
                                    title=title,

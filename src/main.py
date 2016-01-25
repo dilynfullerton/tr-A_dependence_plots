@@ -3,12 +3,9 @@ from __future__ import print_function
 
 from FitFunction import *
 from metafit import compare_params as compare
-from metafit import single_particle_identity_metafit as spi
-from metafit import single_particle_zbt_metafit as spz
 from metafitters_sp import single_particle_relative_zbt_metafit as sprz, \
     single_particle_zbt_metafit, single_particle_identity_metafit, \
     single_particle_relative_to_y_zbt_metafit
-from metafit import single_particle_relative_to_y_zbt_metafit as spryz
 from metafit import max_r2_value as max_r2
 
 '''
