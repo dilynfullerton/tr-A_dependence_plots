@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import glob
 import os
+import re
 
 # ======================================================================
 # Constants
@@ -15,6 +16,7 @@ MAX_NUM_ORBITALS = 6
 COMMENT_CHAR = '!'
 INDEX_COMMENT = 'Index'
 ZERO_BODY_TERM_COMMENT = 'Zero body term'
+NAME_REGEX = '[a-z]+'
 
 
 # ======================================================================
@@ -110,17 +112,26 @@ def rp_from_filename(filename, split_char=FILENAME_SPLIT):
         return None
 
 
-def name_from_filename(filename, split_char=FILENAME_SPLIT):
+def name_from_filename(filename, split_char=FILENAME_SPLIT,
+                       name_regex=NAME_REGEX):
     """Gets the analysis method name from the filename
 
-    Assumes that the name is the second element in the split filename
+    Assumes that the name is the first element (from left to right) that will
+    be entirely matched by name_regex
 
     :param filename: the name of the data file
     :param split_char: the split character for name
+    :param name_regex: the regular expression which should be entirely matched
+    by the name
     :return: name
     """
-    # todo: needs to be fixed to handle targeted file names
-    return _filename_elts_list(filename, split_char)[1]
+    felts_list = _filename_elts_list(filename, split_char)
+    for elt in felts_list:
+        m = re.match(name_regex, elt)
+        if m is not None and m.group(0) == elt:
+            return elt
+    else:
+        return None
 
 
 # ............................................................

@@ -3,7 +3,8 @@ from __future__ import print_function
 
 from FitFunction import *
 from spmetafit import compare_params as compare
-from spmetafit import single_particle_ltrim_relative_zbt_metafit as spltrz
+from spmetafit import single_particle_relative_zbt_metafit as sprz
+from spmetafit import max_r2_value as max_r2
 
 '''
 oplot(12, 20, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True,
@@ -95,21 +96,22 @@ mixed = [
 asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
           multi_dep_asymps + mixed)
 
-'''
+
 max_r2(sprz, asymps, [(12, 20),
                       (14, 20), (14, 24)],
        print_r2_results=True,
        print_results=False)
-'''
+
 
 f = asymptote_with_linear_dependence(2, ['y0'], [], force_zero=17)
 
-ans = compare(metafitter=spltrz(0),
+ans = compare(metafitter=sprz,
               fitfn=f,
               e_hw_pairs=[
                   (12, 20),
                   (14, 20), (14, 24),
-                  # (12, 24)  # , (12, 24, 2)
+                  # (12, 24),
+                  # (12, 24, 2)
               ],
               depth=2,
               print_compare_results=True,
