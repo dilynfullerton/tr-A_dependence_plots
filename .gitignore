@@ -6,5 +6,4 @@
 .DS_Store
 *.png
 *.coverfiles
-/files
 /old
