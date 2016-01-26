@@ -10,10 +10,12 @@ InteractionTuple = namedtuple('InteractionTuple', ['a', 'b', 'c', 'd', 'j'])
 
 
 class ImsrgDatum:
-    def __init__(self, directory, e, hw, rp=None, name=None):
+    def __init__(self, directory, e, hw, rp=None, b=None, name=None):
         self.e = e
         self.hw = hw
         self.rp = rp
+        self.b = b
+
         self.name = name
         self.dir = directory
         self._fname_filter = None
@@ -100,7 +102,8 @@ class ImsrgDatum:
         def f(fname):
             return (parse.e_level_from_filename(fname) == self.e and
                     parse.hw_from_filename(fname) == self.hw and
-                    parse.rp_from_filename(fname) == self.rp)
+                    parse.rp_from_filename(fname) == self.rp and
+                    parse.base_from_filename(fname) == self.b)
         self._fname_filter = f
 
     def folded_mass_interaction_index_energy_map(self):
