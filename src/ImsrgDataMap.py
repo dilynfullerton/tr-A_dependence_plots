@@ -30,16 +30,11 @@ class ImsrgDataMap:
                 continue
 
             for f in files:
-                e = parse.e_level_from_filename(f)
-                hw = parse.hw_from_filename(f)
-                b = parse.base_from_filename(f)
-                rp = parse.rp_from_filename(f)
-
-                key = Exp(e, hw, b, rp)
-                value = ImsrgDatum(sd, e, hw, b, rp)
+                key = Exp(*parse.exp_from_filename(f))
 
                 if key not in self.map:
                     # self.sub_dir_tuple_map[sd] = key
+                    value = ImsrgDatum(sd, *key)
                     self.map[key] = value
 
     def all_e_hw_pairs(self):
