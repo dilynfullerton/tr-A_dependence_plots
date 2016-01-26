@@ -134,7 +134,7 @@ def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
                                    super_transform_post=s_combine_like(qnums),
                                    xlabel='A',
                                    ylabel='Energy (MeV)',
-                                   data_line_style='o',
+                                   data_line_style='-',
                                    fit_line_style='--',
                                    **kwargs)
 

@@ -17,7 +17,11 @@ COMMENT_CHAR = '!'
 INDEX_COMMENT = 'Index'
 ZERO_BODY_TERM_COMMENT = 'Zero body term'
 NAME_REGEX = '[a-z]+'
+MASS_REGEX = 'A\d+'
+E_REGEX = 'e\d+'
+HW_REGEX = 'hw\d+'
 BASE_REGEX = 'O\d+'
+RP_REGEX = '[a-z]+\d\.\d+Rp\d'
 
 
 # ======================================================================
@@ -35,31 +39,8 @@ def files_with_ext_in_directory(directory, extension=FILE_EXT):
 # ............................................................
 # File name parsing
 # ............................................................
-def mass_number_from_filename(filename, split_char=FILENAME_SPLIT):
-    """Gets the mass number from the file name. Assumes files are named
-    according to the convention *A[mass number][file extension]
-
-    :param filename: the filename from which to get the mass number
-    :param split_char: the character that separates name elements
-    """
-    filename_elts = _filename_elts_list(filename, split_char)
-    for elt in reversed(filename_elts):
-        if elt[0] == 'A':
-            return int(elt[1:])
-    else:
-        return None
-
-
-def _filename_elts_list(filename, split_char):
-    """Get a list of the elements in the filename where name elements are
-    separated by split_char
-    """
-    ext_index = filename.rfind('.')
-    filename_woext = filename[:ext_index]
-    return filename_woext.split(split_char)
-
-
-def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
+def e_level_from_filename(filename, split_char=FILENAME_SPLIT,
+                          e_regex=E_REGEX):
     """Gets the e-level number from the file name. 
     Assumes files are named accoding to the convention:
         ..._[...]_e[e-level]_[...]_...
@@ -69,15 +50,17 @@ def e_level_from_filename(filename, split_char=FILENAME_SPLIT):
     :param split_char:
     :param filename:
     """
-    filename_elts_list = _filename_elts_list(filename, split_char)
-    for elt in reversed(filename_elts_list):
-        if str(elt[0]) == 'e':
-            return int(elt[1:])
-    else:
-        return None
+    return _e_from_felts(_filename_elts_list(filename, split_char),
+                         e_regex)
 
 
-def hw_from_filename(filename, split_char=FILENAME_SPLIT):
+def _e_from_felts(felts, e_regex):
+    e = _elt_from_felts(felts, e_regex)
+    return int(e[1:]) if e is not None else None
+
+
+def hw_from_filename(filename, split_char=FILENAME_SPLIT,
+                     hw_regex=HW_REGEX):
     """Gets the hw frequency number from the file name. Returns None if not
     found.
     + Assumes files are named according to the convention:
@@ -88,15 +71,39 @@ def hw_from_filename(filename, split_char=FILENAME_SPLIT):
     :param split_char:
     :param filename:
     """
-    filename_elts_list = _filename_elts_list(filename, split_char)
-    for elt in reversed(filename_elts_list):
-        if str(elt[0:2]) == 'hw':
-            return int(elt[2:])
-    else:
-        return None
+    return _hw_from_felts(_filename_elts_list(filename, split_char),
+                          hw_regex)
 
 
-def rp_from_filename(filename, split_char=FILENAME_SPLIT):
+def _hw_from_felts(felts, hw_regex):
+    hw = _elt_from_felts(felts, hw_regex)
+    return int(hw[2:]) if hw is not None else None
+
+
+def base_from_filename(filename, split_char=FILENAME_SPLIT,
+                       base_regex=BASE_REGEX):
+    """Gets the base A-number from the filename
+
+    Assumes that the base number is the first element (from left to right) that
+    will be matched by the base_regex
+
+    :param filename: the name of the file
+    :param split_char: the character that separates file elements
+    :param base_regex: the regular expression which will entirely match the
+    element
+    :return: the integer value of the base or None, if not found
+    """
+    return _base_from_felts(_filename_elts_list(filename, split_char),
+                            base_regex)
+
+
+def _base_from_felts(felts, base_regex):
+    b = _elt_from_felts(felts, base_regex)
+    return int(b[1:]) if b is not None else None
+
+
+def rp_from_filename(filename, split_char=FILENAME_SPLIT,
+                     rp_regex=RP_REGEX):
     """Gets the Rp (proton radius) label from the file name, returns None if
     not found.
 
@@ -104,13 +111,26 @@ def rp_from_filename(filename, split_char=FILENAME_SPLIT):
     :param split_char: the character which separates filename elements
     :return: the Rp (integer) label, if found, otherwise returns None
     """
-    filename_elts_list = _filename_elts_list(filename, split_char)
-    for elt in reversed(filename_elts_list):
-        i = elt.find('Rp')
-        if i != -1:
-            return int(elt[i+2:])
-    else:
-        return None
+    return _rp_from_felts(reversed(_filename_elts_list(filename, split_char)),
+                          rp_regex)
+
+
+def _rp_from_felts(felts, rp_regex):
+    rp = _elt_from_felts(felts, rp_regex)
+    return int(rp[rp.find('Rp')+2]) if rp is not None else None
+
+
+def mass_number_from_filename(filename, split_char=FILENAME_SPLIT,
+                              mass_regex=MASS_REGEX):
+    """Gets the mass number from the file name. Assumes files are named
+    according to the convention *A[mass number][file extension]
+
+    :param filename: the filename from which to get the mass number
+    :param split_char: the character that separates name elements
+    """
+    filename_elts = reversed(_filename_elts_list(filename, split_char))
+    mass = _elt_from_felts(filename_elts, mass_regex)
+    return int(mass[1:]) if mass is not None else None
 
 
 def name_from_filename(filename, split_char=FILENAME_SPLIT,
@@ -127,32 +147,39 @@ def name_from_filename(filename, split_char=FILENAME_SPLIT,
     :return: name
     """
     felts_list = _filename_elts_list(filename, split_char)
-    for elt in felts_list:
-        m = re.match(name_regex, elt)
+    return _elt_from_felts(felts_list, name_regex)
+
+
+def exp_from_filename(filename, split_char=FILENAME_SPLIT,
+                      e_regex=E_REGEX,
+                      hw_regex=HW_REGEX,
+                      b_regex=BASE_REGEX,
+                      rp_regex=RP_REGEX):
+    felts = _filename_elts_list(filename, split_char)
+    return (_e_from_felts(felts, e_regex),
+            _hw_from_felts(felts, hw_regex),
+            _base_from_felts(felts, b_regex),
+            _rp_from_felts(felts, rp_regex))
+
+
+def _filename_elts_list(filename, split_char):
+    """Get a list of the elements in the filename where name elements are
+    separated by split_char
+    """
+    ext_index = filename.rfind('.')
+    dir_index = filename.rfind('/')
+    if dir_index != -1:
+        filename_woext = filename[dir_index:ext_index]
+    else:
+        filename_woext = filename[:ext_index]
+    return filename_woext.split(split_char)
+
+
+def _elt_from_felts(felts, elt_regex):
+    for elt in felts:
+        m = re.match(elt_regex, elt)
         if m is not None and m.group(0) == elt:
             return elt
-    else:
-        return None
-
-
-def base_from_filename(filename, split_char=FILENAME_SPLIT,
-                       base_regex=BASE_REGEX):
-    """Gets the base A-number from the filename
-
-    Assumes that the base number is the first element (from left to right) that
-    will be matched by the base_regex
-
-    :param filename: the name of the file
-    :param split_char: the character that separates file elements
-    :param base_regex: the regular expression which will entirely match the
-    element
-    :return: the integer value of the base or None, if not found
-    """
-    felts_list = _filename_elts_list(filename, split_char)
-    for elt in felts_list:
-        m = re.match(base_regex, elt)
-        if m is not None and m.group(0) == elt:
-            return int(elt[1:])
     else:
         return None
 
