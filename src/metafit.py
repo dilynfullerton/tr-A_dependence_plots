@@ -230,15 +230,21 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             code='',
                             title=('Metafit for single particle energy'
                                    ' {tr} data using {fn} for {ehw}'),
-                            label='{e}, {hw}, {b}, \t{i}',
+                            label='{e}, {hw}, {b}, {i}',
                             idx='qnums',
                             xlabel='A',
                             ylabel='Relative Energy (MeV)',
-                            savename='meta_{c}-{t}',
                             data_line_style='-',
                             fit_line_style='--',
                             cmap=PLOT_CMAP,
-                            plot_sort_key=lambda p: p[3]['qnums'],
+                            max_legend_cols=LEGEND_MAX_COLS,
+                            max_legend_space=LEGEND_MAX_SPACE,
+                            max_legend_fontsize=LEGEND_MAX_FONTSIZE,
+                            legend_total_fontsize=LEGEND_TOTAL_FONTSIZE,
+                            legend_rows_per_col=LEGEND_ROWS_PER_COL,
+                            legend_space_scale=LEGEND_SPACE_SCALE,
+                            savename='meta_{c}-{t}',
+                            _plot_sort_key=lambda p: p[3]['qnums'],
                             _get_data=lambda dm: dm.index_mass_energy_map(),
                             _get_plot=_single_particle_plot,
                             _printer=_printer_for_single_particle_metafit):
@@ -291,7 +297,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         {c}: code
         {t}: title
     :param cmap: (Optional) colormap string to use for plotting
-    :param plot_sort_key: (Optional) key for ordering plots, default is by
+    :param _plot_sort_key: (Optional) key for ordering plots, default is by
     Quantum numbers.
     :param _get_data: The function to be used to get data from the data map.
     Defult gets single particle data
@@ -378,7 +384,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         c_norm = colors.Normalize(vmin=0, vmax=len(plots) - 1)
         scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
         # Do plots
-        for p, i in zip(sorted(plots, key=plot_sort_key),
+        for p, i in zip(sorted(plots, key=_plot_sort_key),
                         range(len(plots))):
             x, y, const_list, const_dict = p
 
@@ -419,12 +425,17 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         plt.title(title)
         if show_legend is not False:
             l = len(plots)
-            ncol = int(min(ceil(l/75), 3))
+            ncol = int(min(ceil(l/legend_rows_per_col), max_legend_cols))
             box = ax.get_position()
+            fontsize = min(ncol*legend_total_fontsize/l, max_legend_fontsize)
             ax.set_position([box.x0, box.y0,
-                             box.width * (1 - .13*ncol), box.height])
+                             (box.width *
+                              (1 - (max_legend_space*ncol/max_legend_cols) *
+                               (fontsize / max_legend_fontsize) *
+                               legend_space_scale)),
+                             box.height])
             plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
-                       fontsize=min(ncol*500/l, 14))
+                       fontsize=fontsize)
         plt.savefig((savedir + '/' + savename + '.png').format(c=code, t=title))
     plt.show()
 
@@ -480,7 +491,7 @@ def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                                    _get_plot=get_plot,
                                    _printer=printer,
                                    show_legend=show_legend,
-                                   plot_sort_key=plot_sort_key,
+                                   _plot_sort_key=plot_sort_key,
                                    title=title,
                                    idx=idx,
                                    ylabel=ylabel,
