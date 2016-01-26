@@ -44,9 +44,14 @@ def flip(xarr, yarr, *args):
     return (yarr, xarr) + args
 
 
-def zbt(xarr, yarr, *args):
-    zbt_arr = args[0][4]
+def pzbt(xarr, yarr, *args):
+    zbt_arr = args[1]['zbt_arr']
     return (xarr, yarr + zbt_arr) + args
+
+
+def zbt(xarr, yarr, *args):
+    zbt_arr = args[1]['zbt_arr']
+    return (xarr, zbt_arr) + args
 
 
 # TRANSFORM COMPOSITIONS
@@ -75,7 +80,7 @@ def relative_flip_relative_per_nucleon(xarr, yarr, *args):
 
 
 def relative_zbt(xarr, yarr, *args):
-    return relative_y(*zbt(xarr, yarr, *args))
+    return relative_y(*pzbt(xarr, yarr, *args))
 
 
 def relative_xy(xarr, yarr, *args):
@@ -83,7 +88,7 @@ def relative_xy(xarr, yarr, *args):
 
 
 def relative_xy_zbt(xarr, yarr, *args):
-    relative_xy(*zbt(xarr, yarr, *args))
+    relative_xy(*pzbt(xarr, yarr, *args))
 
 
 # TRANSFORM GENERATORS
