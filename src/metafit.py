@@ -343,8 +343,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         x, y, const_list, const_dict = p
 
         qnums, e, hw, index = const_list[0:4]
-        rp = const_dict['rp']
-        b = const_dict['b']
 
         if isinstance(fitfn, FitFunction):
             args = list([params, const_list, const_dict])

@@ -157,7 +157,6 @@ def base_from_filename(filename, split_char=FILENAME_SPLIT,
         return None
 
 
-
 # ............................................................
 # File content parsing
 # ............................................................

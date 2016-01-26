@@ -3,26 +3,16 @@ from __future__ import print_function
 
 from FitFunction import *
 from metafit import compare_params as compare
-from metafitters_sp import single_particle_relative_zbt_metafit as sprz, \
-    single_particle_zbt_metafit, single_particle_identity_metafit, \
-    single_particle_relative_to_y_zbt_metafit
 from metafit import max_r2_value as max_r2
 
-'''
-oplot(12, 20, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True,
-      transform=relative)
-oplot(14, 20, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True,
-      transform=relative)
-'''
-'''
-oplot(14, 24, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True,
-      transform=relative)
-'''
-'''
-iplot(12, 20, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
-iplot(14, 20, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
-iplot(14, 24, filesdir=FILES_DIR, savedir=PLOTS_DIR, show=True)
-'''
+from metafitters_sp import single_particle_relative_pzbt_metafit as sprz
+from metafitters_sp import single_particle_relative_to_y_pzbt_metafit as spryz
+from metafitters_sp import single_particle_pzbt_metafit as spz
+from metafitters_sp import single_particle_identity_metafit as spi
+
+from metafitters_mp import multi_particle_relative_pzbt_metafit as mprz
+from metafitters_mp import multi_particle_pzbt_metafit as mpz
+
 
 
 simple_asymps = [
@@ -107,24 +97,33 @@ max_r2(sprz, asymps, [(12, 20),
 
 f = combine([asymptote(2),
              linear_dependence(['y0'])], force_zero=17)
-'''
-ans = compare(metafitter=sprz,
+
+ans = compare(metafitter=spz,
               fitfn=f,
               e_hw_pairs=[
                   (12, 20),
                   (14, 20), (14, 24),
-                  # (12, 24),
-                  # (12, 24, 2)
+                  (12, 24, None, 22),
+                  (12, 24, None, 24)
               ],
               depth=2,
               print_compare_results=True,
               show_plot=True,
-              show_fit=True,
+              show_fit=False,
+              show_legend=True,
               print_key=False,
               print_results=False)
 '''
-sprz(fitfn=f,
-     e_hw_pairs=[(12, 20)],
-     show_plot=True,
-     show_fit=False,
-     print_key=True)
+mpz(fitfn=asymptote(2, force_zero=17),
+    e_hw_pairs=[
+        #(12, 20),
+        #(14, 20),
+        #(14, 24),
+        #(12, 24),
+        (12, 24, 2)
+    ],
+    show_plot=True,
+    show_fit=False,
+    show_legend=True,
+    print_key=True)
+'''

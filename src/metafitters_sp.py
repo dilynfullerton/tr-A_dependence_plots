@@ -158,5 +158,6 @@ def single_particle_ltrim_relative_pzbt_metafit(n):
                                               ' + Zero Body Term',
                                        **kwargs)
 
-    spltrz.__name__ = 'single_particle_ltrim({})_relative_pzbt_metafit'.format(n)
+    spltrz.__name__ = ('single_particle_ltrim({})_relative_pzbt_metafit'
+                       '').format(n)
     return spltrz
