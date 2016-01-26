@@ -6,8 +6,8 @@ from collections import namedtuple
 import parse
 from ImsrgDatum import ImsrgDatum
 
-Exp = namedtuple('Exp', ['e', 'hw', 'rp'])
-Exp.__new__.__defaults__ = (None,)
+Exp = namedtuple('Exp', ['e', 'hw', 'rp', 'b'])
+Exp.__new__.__defaults__ = (None, None)
 
 
 class ImsrgDataMap:
@@ -33,9 +33,10 @@ class ImsrgDataMap:
                 e = parse.e_level_from_filename(f)
                 hw = parse.hw_from_filename(f)
                 rp = parse.rp_from_filename(f)
+                b = parse.base_from_filename(f)
 
-                key = Exp(e, hw, rp)
-                value = ImsrgDatum(sd, e, hw, rp)
+                key = Exp(e, hw, rp, b)
+                value = ImsrgDatum(sd, e, hw, rp, b)
 
                 if key not in self.map:
                     # self.sub_dir_tuple_map[sd] = key
