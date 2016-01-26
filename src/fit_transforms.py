@@ -55,6 +55,14 @@ def zbt(xarr, yarr, *args):
     return (xarr, zbt_arr) + args
 
 
+def firstp(xarr, yarr, *args):
+    return (xarr[0:1], yarr[0:1]) + args
+
+
+def first2p(xarr, yarr, *args):
+    return (xarr[0:2], yarr[0:2]) + args
+
+
 # TRANSFORM COMPOSITIONS
 def relative_per_nucleon(xarr, yarr, *args):
     return relative_y(*per_nucleon(xarr, yarr, *args))
