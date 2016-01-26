@@ -5,16 +5,48 @@ from collections import namedtuple
 
 import parse
 
-QuantumNumbers = namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])
-InteractionTuple = namedtuple('InteractionTuple', ['a', 'b', 'c', 'd', 'j'])
+
+class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
+    __slots__ = ()
+
+    def __str__(self):
+        n = str(int(self.n))
+        l = str(self.l)
+        j = str(self.j)
+        tz = '+' + str(self.tz) if self.tz > 0 else str(self.tz)
+        return '(n={n}, l={l}, j={j}, tz={tz})'.format(n=n, l=l, j=j, tz=tz)
+
+
+class InteractionTuple(namedtuple('InteractionTuple',
+                                  ['a', 'b', 'c', 'd', 'j'])):
+    __slots__ = ()
+
+    def __str__(self):
+        a = str(int(self.a))
+        b = str(int(self.b))
+        c = str(int(self.c))
+        d = str(int(self.d))
+        j = str(self.j)
+        # sep = unichr(9474).encode('utf-8')
+        # left = unichr(12296).encode('utf-8')
+        # right = unichr(12297).encode('utf-8')
+        sep = '|'
+        left = '<'
+        right = '>'
+        return ('({left}{a},{b}{s}'
+                ' V '
+                '{s}{c},{d}{right}, j={j})'
+                '').format(a=a, b=b, c=c, d=d, j=j,
+                           left=left, right=right,
+                           s=sep)
 
 
 class ImsrgDatum:
-    def __init__(self, directory, e, hw, rp=None, b=None, name=None):
+    def __init__(self, directory, e, hw, b=None, rp=None, name=None):
         self.e = e
         self.hw = hw
-        self.rp = rp
         self.b = b
+        self.rp = rp
 
         self.name = name
         self.dir = directory
