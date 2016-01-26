@@ -15,7 +15,7 @@ from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMap, Exp
 
 from constants import *
-from fittransforms import *
+from fit_transforms import *
 
 from spfitting import map_to_arrays
 from spfitting import print_io_key
@@ -158,14 +158,14 @@ def _printer_for_compare_params(params_result_list,
 
 # HELPER FUNCTIONS
 def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map):
-    e, hw, rp, b = identifier
+    e, hw, b, rp = identifier
     qnums = io_map[k]
     x, y = map_to_arrays(me_map)
     x0 = x[0]
     y0 = y[0]
     zbt_arr = map_to_arrays(mzbt_map)[1]
     zbt0 = zbt_arr[0]
-    const_list = [qnums, e, hw, k, zbt_arr, y0, zbt0, rp, x0, b]
+    const_list = [qnums, e, hw, k, zbt_arr, y0, zbt0, rp, x0, b, identifier]
     const_dict = {'qnums': qnums,
                   'e': e,
                   'hw': hw,
@@ -175,7 +175,8 @@ def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map):
                   'x0': x0,
                   'y0': y0,
                   'zbt0': zbt0,
-                  'b': b}
+                  'b': b,
+                  'exp': identifier}
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(qnums._asdict()).items())
     return x, y, const_list, const_dict
@@ -217,6 +218,8 @@ def _printer_for_single_particle_metafit(metafit_results, linregress_results):
 
 def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             transform=relative_y,
+                            super_transform_pre=None,
+                            super_transform_post=None,
                             imsrg_data_map=None,
                             print_key=False,
                             print_results=False,
@@ -227,11 +230,13 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             code='',
                             title=('Metafit for single particle energy'
                                    ' {tr} data using {fn} for {ehw}'),
-                            label='{e}, {hw}, {rp}, {b}, {i}',
-                            idxfn=lambda i: i,
+                            label='{e}, {hw}, {b}, \t{i}',
+                            idx='qnums',
                             xlabel='A',
                             ylabel='Relative Energy (MeV)',
                             savename='meta_{c}-{t}',
+                            data_line_style='-',
+                            fit_line_style='--',
                             cmap=PLOT_CMAP,
                             plot_sort_key=lambda p: p[3]['qnums'],
                             _get_data=lambda dm: dm.index_mass_energy_map(),
@@ -311,17 +316,21 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         ime_map = _get_data(data_maps)
         mzbt_map = data_maps.mass_zero_body_term_map
 
-        e, hw, rp, b = exp
-
         if print_key is True:
             print_io_key(io_map,
-                         heading='Index key for e={e} hw={hw} rp={rp} b={b}:'
-                                 ''.format(e=e, hw=hw, rp=rp, b=b))
+                         heading='Index key for {}:'.format(exp))
 
         # Get list of plots
         for k in sorted(ime_map.keys()):
-            plots.append(transform(*_get_plot(k, exp,
-                                              io_map, ime_map[k], mzbt_map)))
+            plots.append(_get_plot(k, exp, io_map, ime_map[k], mzbt_map))
+
+    # Transform plots
+    if super_transform_pre is not None:
+        plots = super_transform_pre(plots)
+    if transform is not None:
+        plots = [transform(*plot) for plot in plots]
+    if super_transform_post is not None:
+        plots = super_transform_post(plots)
 
     # Make an initial parameter guess based on the first plot
     if isinstance(fitfn, FitFunction):
@@ -353,7 +362,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             args.append(const_dict)
             ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
         yarr = np.array(y)
-        lr_results[(exp, idxfn(index))] = linregress(yarr, ypred)
+        lr_results[(exp, const_dict[idx])] = linregress(yarr, ypred)
 
     # Print results
     if print_results is True:
@@ -379,11 +388,13 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
             cval = scalar_map.to_rgba(i)
 
+            e_str = '' if e is None else str(e)
+            hw_str = '' if hw is None else str(hw)
             rp_str = '' if rp is None else str(rp)
             b_str = '' if b is None else str(b)
-            labelstr = label.format(e=e, hw=hw, rp=rp_str,
-                                    b=b_str, i=idxfn(index))
-            ax.plot(x, y, label=labelstr, color=cval)
+            labelstr = label.format(e=e_str, hw=hw_str, b=b_str, rp=rp_str,
+                                    i=const_dict[idx])
+            ax.plot(x, y, data_line_style, label=labelstr, color=cval)
 
             if show_fit is not False:
                 xfit = np.linspace(x[0], x[-1])
@@ -397,7 +408,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                     args.append(const_dict)
                     yfit = np.array(list(map(lambda xi: fitfn(xi, *args),
                                              xfit)))
-                ax.plot(xfit, yfit, '--', color=cval)
+                ax.plot(xfit, yfit, fit_line_style, color=cval)
                 # label=labelstr + ' fit',
 
         plt.xlabel(xlabel)
@@ -421,14 +432,14 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
 
 def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map):
-    e, hw, rp, b = identifier
+    e, hw, b, rp = identifier
     qnums = None
     x, y = map_to_arrays(me_map)
     x0 = x[0]
     y0 = y[0]
     zbt_arr = map_to_arrays(mzbt_map)[1]
     zbt0 = zbt_arr[0]
-    const_list = [qnums, e, hw, k, zbt_arr, y0, zbt0, rp, x0, b]
+    const_list = [qnums, e, hw, k, zbt_arr, y0, zbt0, rp, x0, b, identifier]
     const_dict = {'e': e,
                   'hw': hw,
                   'rp': rp,
@@ -438,7 +449,8 @@ def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map):
                   'y0': y0,
                   'zbt0': zbt0,
                   'io_map': io_map,
-                  'b': b}
+                  'b': b,
+                  'exp': identifier}
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(k._asdict()).items())
     return x, y, const_list, const_dict
@@ -459,8 +471,7 @@ def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                            plot_sort_key=lambda p: p[3]['interaction'],
                            title=('Metafit for multiparticle matrix elements '
                                   '{tr} data using {fn} for {ehw}'),
-                           label='{e}, {hw}, {rp}, {i}',
-                           idxfn=lambda i: tuple(i),
+                           idx='interaction',
                            ylabel='Energy (MeV)',
                            **kwargs):
     return single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
@@ -471,8 +482,7 @@ def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                                    show_legend=show_legend,
                                    plot_sort_key=plot_sort_key,
                                    title=title,
-                                   label=label,
-                                   idxfn=idxfn,
+                                   idx=idx,
                                    ylabel=ylabel,
                                    **kwargs)
 
