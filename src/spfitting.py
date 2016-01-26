@@ -7,7 +7,7 @@ from scipy.stats import linregress as lg
 
 from ImsrgDataMap import ImsrgDataMap, Exp
 from constants import *
-from fittransforms import *
+from fit_transforms import *
 
 E = 12
 HW = 20

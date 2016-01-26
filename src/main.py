@@ -5,14 +5,8 @@ from FitFunction import *
 from metafit import compare_params as compare
 from metafit import max_r2_value as max_r2
 
-from metafitters_sp import single_particle_relative_pzbt_metafit as sprz
-from metafitters_sp import single_particle_relative_to_y_pzbt_metafit as spryz
-from metafitters_sp import single_particle_pzbt_metafit as spz
-from metafitters_sp import single_particle_identity_metafit as spi
-
-from metafitters_mp import multi_particle_relative_pzbt_metafit as mprz
-from metafitters_mp import multi_particle_pzbt_metafit as mpz
-
+from metafitters_sp import *
+from metafitters_mp import *
 
 
 simple_asymps = [
@@ -97,14 +91,15 @@ max_r2(sprz, asymps, [(12, 20),
 
 f = combine([asymptote(2),
              linear_dependence(['y0'])], force_zero=17)
-
-ans = compare(metafitter=spz,
+'''
+ans = compare(metafitter=spi,
               fitfn=f,
               e_hw_pairs=[
                   (12, 20),
-                  (14, 20), (14, 24),
-                  (12, 24, None, 22),
-                  (12, 24, None, 24)
+                  (14, 20),
+                  (14, 24),
+                  (12, 24, 22),
+                  (12, 24, 24)
               ],
               depth=2,
               print_compare_results=True,
@@ -114,16 +109,36 @@ ans = compare(metafitter=spz,
               print_key=False,
               print_results=False)
 '''
-mpz(fitfn=asymptote(2, force_zero=17),
+'''
+single_particle_firstp_metafit(
+    fitfn=combine([asymptote(2),
+                   scalar()]),
     e_hw_pairs=[
-        #(12, 20),
-        #(14, 20),
-        #(14, 24),
-        #(12, 24),
-        (12, 24, 2)
+        (12, 20),
+        (14, 20),
+        (14, 24),
+        (12, 24, 22),
+        (12, 24, 24)
     ],
     show_plot=True,
-    show_fit=False,
-    show_legend=True,
-    print_key=True)
+    show_fit=True,
+    print_key=True,
+    print_results=True
+)
 '''
+
+multi_particle_relative_metafit(
+        fitfn=asymptote(2, force_zero=17),
+        e_hw_pairs=[
+            # (12, 20),
+            # (14, 20),
+            # (14, 24),
+            # (12, 24, 22),
+            (12, 24, 24)
+        ],
+        show_plot=True,
+        show_fit=False,
+        show_legend=True,
+        print_key=True,
+        print_results=True)
+

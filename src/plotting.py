@@ -6,7 +6,7 @@ import numpy as np
 
 from ImsrgDataMap import Exp
 from ImsrgDataMap import ImsrgDataMap
-from fittransforms import identity
+from fit_transforms import identity
 
 
 def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
