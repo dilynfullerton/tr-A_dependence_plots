@@ -74,33 +74,33 @@ def single_particle_relative_flip_relative_per_nuceon_metafit(fitfn, e_hw_pairs,
             **kwargs)
 
 
-def single_particle_relative_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+def single_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit(fitfn, e_hw_pairs,
                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
                                    transform=relative_zbt,
-                                   code='sprz',
+                                   code='sprpz',
                                    xlabel='A',
                                    ylabel='Relative Single Particle Energy + '
                                           'Zero Body Term (MeV)',
                                    **kwargs)
 
 
-def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+def single_particle_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit(fitfn, e_hw_pairs,
                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
-                                   transform=zbt,
-                                   code='spz',
+                                   transform=pzbt,
+                                   code='sppz',
                                    xlabel='A',
                                    ylabel='Single Particle Energy + '
                                           'Zero Body Term (MeV)',
                                    **kwargs)
 
 
-def single_particle_relative_xy_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+def single_particle_relative_xy_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit(fitfn, e_hw_pairs,
                                    sourcedir=FILES_DIR, savedir=PLOTS_DIR,
                                    transform=relative_xy_zbt,
-                                   code='sprrz',
+                                   code='sprrpz',
                                    xlabel='Relative A',
                                    ylabel='Relative Single Particle Energy + '
                                           'Zero Body Term (MeV)',
@@ -117,14 +117,23 @@ def single_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
                                    **kwargs)
 
 
+def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+    return single_particle_metafit(fitfn, e_hw_pairs,
+                                   sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                   transform=zbt,
+                                   xlabel='A',
+                                   ylabel='Zero Body Term (MeV)',
+                                   **kwargs)
+
+
 # META-FITTER GENERATORS
-def single_particle_relative_to_y_zbt_metafit(x):
+def single_particle_relative_to_y_pzbt_metafit(x):
     def spryz(fitfn, e_hw_pairs, **kwargs):
         return single_particle_metafit(fitfn, e_hw_pairs,
                                        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
                                        transform=multi([relative_to_y(x),
-                                                        zbt]),
-                                       code='spryz',
+                                                        pzbt]),
+                                       code='sprypz',
                                        xlabel='A',
                                        ylabel='Relative Single Particle Energy'
                                               ' + Zero Body Term '
@@ -132,11 +141,11 @@ def single_particle_relative_to_y_zbt_metafit(x):
                                               '{}'.format(x),
                                        **kwargs)
 
-    spryz.__name__ = 'single_particle_relative_to_y({})_zbt_metafit'.format(x)
+    spryz.__name__ = 'single_particle_relative_to_y({})_pzbt_metafit'.format(x)
     return spryz
 
 
-def single_particle_ltrim_relative_zbt_metafit(n):
+def single_particle_ltrim_relative_pzbt_metafit(n):
     def spltrz(fitfn, e_hw_pairs, **kwargs):
         return single_particle_metafit(fitfn, e_hw_pairs,
                                        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
@@ -149,5 +158,5 @@ def single_particle_ltrim_relative_zbt_metafit(n):
                                               ' + Zero Body Term',
                                        **kwargs)
 
-    spltrz.__name__ = 'single_particle_ltrim({})_relative_zbt_metafit'.format(n)
+    spltrz.__name__ = 'single_particle_ltrim({})_relative_pzbt_metafit'.format(n)
     return spltrz
