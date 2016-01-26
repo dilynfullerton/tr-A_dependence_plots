@@ -1,5 +1,6 @@
 from constants import FILES_DIR, PLOTS_DIR
-from fittransforms import *
+from fit_transforms import *
+from fit_transforms_s import *
 from metafit import single_particle_metafit
 
 
@@ -123,6 +124,27 @@ def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
                                    transform=zbt,
                                    xlabel='A',
                                    ylabel='Zero Body Term (MeV)',
+                                   **kwargs)
+
+
+def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
+    return single_particle_metafit(fitfn, e_hw_pairs,
+                                   sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                   transform=firstp,
+                                   super_transform_post=s_combine_like(qnums),
+                                   xlabel='A',
+                                   ylabel='Energy (MeV)',
+                                   data_line_style='o',
+                                   fit_line_style='--',
+                                   **kwargs)
+
+
+def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
+    return single_particle_metafit(fitfn, e_hw_pairs,
+                                   sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+                                   transform=first2p,
+                                   xlabel='A',
+                                   ylabel='Energy (MeV)',
                                    **kwargs)
 
 
