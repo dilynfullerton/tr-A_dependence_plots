@@ -17,6 +17,7 @@ COMMENT_CHAR = '!'
 INDEX_COMMENT = 'Index'
 ZERO_BODY_TERM_COMMENT = 'Zero body term'
 NAME_REGEX = '[a-z]+'
+BASE_REGEX = 'O\d+'
 
 
 # ======================================================================
@@ -132,6 +133,29 @@ def name_from_filename(filename, split_char=FILENAME_SPLIT,
             return elt
     else:
         return None
+
+
+def base_from_filename(filename, split_char=FILENAME_SPLIT,
+                       base_regex=BASE_REGEX):
+    """Gets the base A-number from the filename
+
+    Assumes that the base number is the first element (from left to right) that
+    will be matched by the base_regex
+
+    :param filename: the name of the file
+    :param split_char: the character that separates file elements
+    :param base_regex: the regular expression which will entirely match the
+    element
+    :return: the integer value of the base or None, if not found
+    """
+    felts_list = _filename_elts_list(filename, split_char)
+    for elt in felts_list:
+        m = re.match(base_regex, elt)
+        if m is not None and m.group(0) == elt:
+            return int(elt[1:])
+    else:
+        return None
+
 
 
 # ............................................................
