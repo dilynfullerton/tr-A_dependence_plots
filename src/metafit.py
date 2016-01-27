@@ -78,7 +78,9 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
 def compare_params(metafitter, fitfn, e_hw_pairs,
                    depth, statfn=np.std,
                    print_compare_results=False,
-                   sourcedir=FILES_DIR, **kwargs):
+                   sourcedir=FILES_DIR,
+                   std_io_map=STANDARD_IO_MAP,
+                   **kwargs):
     """Compare parameter results for a given metafitter on a given fitfn using
     combinations of the given e_hw_pairs to the depth given by depth. The
     method of comparison is given by the statistical function statfn, whose
@@ -100,7 +102,10 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
     :param kwargs: keyword arguments to be passed to the metafitter
     :return: a list of (param, result, relative result) 3-tuples
     """
-    imsrg_data_map = ImsrgDataMap(sourcedir)
+    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
+    imsrg_data_map = ImsrgDataMap(sourcedir,
+                                  exp_list=exp_list,
+                                  standard_indices=std_io_map)
     if depth > len(e_hw_pairs) - 1:
         depth = len(e_hw_pairs) - 1
     params = metafitter(fitfn, e_hw_pairs,
@@ -221,6 +226,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             super_transform_pre=None,
                             super_transform_post=None,
                             imsrg_data_map=None,
+                            std_io_map=STANDARD_IO_MAP,
                             print_key=False,
                             print_results=False,
                             show_plot=False,
@@ -309,26 +315,32 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     and the regressional results for the fit.
     """
     # Get index->orbital and index->mass->energy maps
+    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
     if imsrg_data_map is not None:
         all_data_map = imsrg_data_map
     else:
-        all_data_map = ImsrgDataMap(parent_directory=sourcedir)
+        all_data_map = ImsrgDataMap(parent_directory=sourcedir,
+                                    exp_list=exp_list,
+                                    standard_indices=std_io_map)
 
     plots = list()
-    for e_hw_pair in sorted(e_hw_pairs):
-        exp = Exp(*e_hw_pair)
+    for exp in sorted(exp_list):
         data_maps = all_data_map.map[exp]
         io_map = data_maps.index_orbital_map
         ime_map = _get_data(data_maps)
         mzbt_map = data_maps.mass_zero_body_term_map
 
-        if print_key is True:
-            print_io_key(io_map,
-                         heading='Index key for {}:'.format(exp))
+        # Print index orbital map for dataset, if not standard
+        if print_key is True and std_io_map is None:
+            print_io_key(io_map, heading='Index key for {}:'.format(exp))
 
         # Get list of plots
         for k in sorted(ime_map.keys()):
             plots.append(_get_plot(k, exp, io_map, ime_map[k], mzbt_map))
+
+    # Print index orbital map, if standard
+    if print_key is True and std_io_map is not None:
+        print_io_key(std_io_map, heading='Index key')
 
     # Transform plots
     if super_transform_pre is not None:
@@ -356,9 +368,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     lr_results = dict()
     for p in plots:
         x, y, const_list, const_dict = p
-
-        qnums, e, hw, index = const_list[0:4]
-
         if isinstance(fitfn, FitFunction):
             args = list([params, const_list, const_dict])
             ypred = np.array(list(map(lambda xi: fitfn.eval(xi, *args), x)))
