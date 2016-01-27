@@ -24,7 +24,7 @@ from spfitting import print_io_key
 
 # STATISTICAL ANALYSIS TOOLS
 def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-                 sourcedir=FILES_DIR,
+                 sourcedir=DIR_FILES,
                  std_io_map=STANDARD_IO_MAP,
                  **kwargs):
     """Returns the fit function (and its optimized results) that produces the
@@ -85,7 +85,7 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
 def compare_params(metafitter, fitfn, e_hw_pairs,
                    depth, statfn=np.std,
                    print_compare_results=False,
-                   sourcedir=FILES_DIR,
+                   sourcedir=DIR_FILES,
                    std_io_map=STANDARD_IO_MAP,
                    **kwargs):
     """Compare parameter results for a given metafitter on a given fitfn using
@@ -169,26 +169,35 @@ def _printer_for_compare_params(params_result_list,
 
 
 # HELPER FUNCTIONS
-def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map):
-    e, hw, b, rp = identifier
-    qnums = io_map[k]
+def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
+    e, hw, base, rp = identifier
     x, y = map_to_arrays(me_map)
     x0 = x[0]
     y0 = y[0]
     zbt_arr = map_to_arrays(mzbt_map)[1]
     zbt0 = zbt_arr[0]
-    const_list = [qnums, e, hw, k, zbt_arr, y0, zbt0, rp, x0, b, identifier]
-    const_dict = {'qnums': qnums,
-                  'e': e,
+    const_list = [None, e, hw, k, zbt_arr, y0, zbt0, rp, x0, base, identifier]
+    const_dict = {'e': e,
                   'hw': hw,
                   'rp': rp,
-                  'index': k,
                   'zbt_arr': zbt_arr,
                   'x0': x0,
                   'y0': y0,
                   'zbt0': zbt0,
-                  'base': b,
-                  'exp': identifier}
+                  'io_map': io_map,
+                  'base': base,
+                  'exp': identifier,
+                  'others': other_constants}
+    return x, y, const_list, const_dict
+
+
+def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others):
+    x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
+                                              mzbt_map, others)
+    qnums = io_map[k]
+    const_list[0] = qnums
+    const_dict['index'] = k
+    const_dict['qnums'] = qnums
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(qnums._asdict()).items())
     return x, y, const_list, const_dict
@@ -257,6 +266,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             legend_rows_per_col=LEGEND_ROWS_PER_COL,
                             legend_space_scale=LEGEND_SPACE_SCALE,
                             savename='meta_{c}-{t}',
+                            mf_name='single_particle_metafit',
                             _plot_sort_key=lambda p: p[3]['qnums'],
                             _get_data=lambda dm: dm.index_mass_energy_map(),
                             _get_plot=_single_particle_plot,
@@ -336,6 +346,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         io_map = data_maps.index_orbital_map
         ime_map = _get_data(data_maps)
         mzbt_map = data_maps.mass_zero_body_term_map
+        other_constants = data_maps.other_constants
 
         # Print index orbital map for dataset, if not standard
         if print_key is True and std_io_map is None:
@@ -343,7 +354,8 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
         # Get list of plots
         for k in sorted(ime_map.keys()):
-            plots.append(_get_plot(k, exp, io_map, ime_map[k], mzbt_map))
+            plots.append(_get_plot(k, exp, io_map, ime_map[k], mzbt_map,
+                                   other_constants))
 
     # Print index orbital map, if standard
     if print_key is True and std_io_map is not None:
@@ -457,29 +469,16 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         plt.savefig((savedir + '/' + savename + '.png').format(c=code, t=title))
     plt.show()
 
-    return mf_results, lr_results
+    # Make an info dict
+    info = {'fitfn': fitfn, 'code': code, 'mf_name': mf_name}
+
+    return mf_results, lr_results, info
 
 
-def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map):
-    e, hw, b, rp = identifier
-    qnums = None
-    x, y = map_to_arrays(me_map)
-    x0 = x[0]
-    y0 = y[0]
-    zbt_arr = map_to_arrays(mzbt_map)[1]
-    zbt0 = zbt_arr[0]
-    const_list = [qnums, e, hw, k, zbt_arr, y0, zbt0, rp, x0, b, identifier]
-    const_dict = {'e': e,
-                  'hw': hw,
-                  'rp': rp,
-                  'interaction': k,
-                  'zbt_arr': zbt_arr,
-                  'x0': x0,
-                  'y0': y0,
-                  'zbt0': zbt0,
-                  'io_map': io_map,
-                  'base': b,
-                  'exp': identifier}
+def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others):
+    x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
+                                              mzbt_map, others)
+    const_dict['interaction'] = k
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(k._asdict()).items())
     return x, y, const_list, const_dict
