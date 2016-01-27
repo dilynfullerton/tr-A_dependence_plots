@@ -2,8 +2,9 @@ from __future__ import unicode_literals
 from ImsrgDatum import QuantumNumbers
 
 # Directories
-FILES_DIR = '../files'
-PLOTS_DIR = '../plots'
+DIR_FILES = '../files'
+DIR_PLOTS = '../plots'
+DIR_GEN_INT = '../gen_files'
 
 # Printing
 P_TITLE = '\033[91m'
@@ -32,10 +33,22 @@ STANDARD_IO_MAP = {
 }
 
 # File generating
-TITLE_ROW =           '! {}'
-ZERO_BODY_TERM_ROW =  '! Zero body term: {:3f}'
-INDEX_KEY_HEAD_ROW =  '! Index   n l j tz'
-INDEX_KEY_ROW =       '!  {}   {} {} {} {}'
-BLANK_ROW =           '!'
-SINGLE_PARTICLE_ROW = '-999  {:6f}  {:6f}  {:6f}  {:6f}  {:6f}  {:6f}    {}  {}  {:5f}'
-INTERACTION_ROW =     '{:4}{:4}{:4}{:4}{:8}{:5}{:19.6f}'
+GEN_INT_SUBDIR = '/{mf}_{ffn}_A{min}-{max}'
+GEN_INT_FILE_NAME = '/fit_generated_sd-shell_{mf}_{ffn}_A{mass}.int'
+GEN_INT_ROW_TITLE = (
+    '! Interaction file generated from fitter {mf} ({code}) using {ffn}')
+GEN_INT_FIT_PARAMS = (
+    '! Fit params: {}')
+GEN_INT_ROW_ZERO_BODY_TERM = (
+    '! Zero body term: {:3f}')
+GEN_INT_ROW_INDEX_KEY_HEAD = (
+    '! Index   n l j tz')
+GEN_INT_ROW_INDEX_KEY = (
+    '!  {}   {} {} {} {}')
+GEN_INT_ROW_BLANK = (
+    '!')
+GEN_INT_ROW_SINGLE_PARTICLE = (
+    '-999  {:6f}  {:6f}  {:6f}  {:6f}  {:6f}  {:6f}    {}  {}  {:5f}'
+)
+GEN_INT_ROW_INTERACTION = (
+    '{:4}{:4}{:4}{:4}{:8}{:5}{:19.6f}')
