@@ -11,9 +11,10 @@ class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
 
     def __str__(self):
         n = str(int(self.n))
-        l = str(self.l)
-        j = str(self.j)
-        tz = '+' + str(self.tz) if self.tz > 0 else str(self.tz)
+        l = str(int(self.l))
+        j = str(int(2*self.j)) + '/2'
+        tz = str(int(2*self.tz)) + '/2'
+        tz = '+' + tz if self.tz > 0 else tz
         return '(n={n}, l={l}, j={j}, tz={tz})'.format(n=n, l=l, j=j, tz=tz)
 
 
@@ -22,10 +23,10 @@ class InteractionTuple(namedtuple('InteractionTuple',
     __slots__ = ()
 
     def __str__(self):
-        a = str(int(self.a))
-        b = str(int(self.b))
-        c = str(int(self.c))
-        d = str(int(self.d))
+        a = str(self.a)
+        b = str(self.b)
+        c = str(self.c)
+        d = str(self.d)
         j = str(self.j)
         # sep = unichr(9474).encode('utf-8')
         # left = unichr(12296).encode('utf-8')
