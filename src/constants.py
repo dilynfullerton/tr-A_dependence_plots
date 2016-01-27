@@ -29,3 +29,12 @@ STANDARD_IO_MAP = {
     5: QuantumNumbers(0.0, 2.0, 1.5, 0.5),
     6: QuantumNumbers(1.0, 0.0, 0.5, 0.5)
 }
+
+# File generating
+TITLE_ROW =           '! {}'
+ZERO_BODY_TERM_ROW =  '! Zero body term: {:3f}'
+INDEX_KEY_HEAD_ROW =  '! Index   n l j tz'
+INDEX_KEY_ROW =       '!  {}   {} {} {} {}'
+BLANK_ROW =           '!'
+SINGLE_PARTICLE_ROW = '-999  {:6f}  {:6f}  {:6f}  {:6f}  {:6f}  {:6f}    {}  {}  {:5f}'
+INTERACTION_ROW =     '{:4}{:4}{:4}{:4}{:8}{:5}{:19.6f}'
