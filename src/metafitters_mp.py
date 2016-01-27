@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from constants import FILES_DIR, PLOTS_DIR
 from fit_transforms import *
 from metafit import multi_particle_metafit

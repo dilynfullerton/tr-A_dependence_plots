@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 from FitFunction import *
 from metafit import compare_params as compare
@@ -110,29 +111,29 @@ ans = compare(metafitter=single_particle_identity_metafit,
               print_results=False)
 '''
 
-single_particle_firstp_metafit(
+single_particle_identity_metafit(
     fitfn=combine([asymptote(2),
                    scalar()]),
     e_hw_pairs=[
         (12, 20),
-        #(14, 20),
-        #(14, 24),
+        (14, 20),
+        (14, 24),
         (12, 24, 22, None),
         (12, 24, 24, None)
     ],
     show_plot=True,
     show_fit=True,
     print_key=True,
-    print_results=False
+    print_results=True
 )
 
-'''
+
 multi_particle_identity_metafit(
         fitfn=asymptote(2, force_zero=17),
         e_hw_pairs=[
-            (12, 20),
-            (14, 20),
-            (14, 24),
+            #(12, 20),
+            #(14, 20),
+            #(14, 24),
             (12, 24, 22),
             (12, 24, 24)
         ],
@@ -141,4 +142,4 @@ multi_particle_identity_metafit(
         show_legend=True,
         print_key=True,
         print_results=False)
-'''
+

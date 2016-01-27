@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import numpy as np
 
@@ -18,7 +19,7 @@ def s_combine_like(f):
             else:
                 m[const] = plot
         return m.values()
-    scl.__name__ = 's_combine_like {}'.format(f.__name__)
+    scl.__name__ = b's_combine_like {}'.format(f.__name__)
     return scl
 
 

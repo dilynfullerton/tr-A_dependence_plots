@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import numpy as np
 
@@ -108,25 +109,25 @@ def power(xpow, ypow):
 def relative_to_y(x):
     def r(xarr, yarr, *args):
         return (xarr, yarr - yarr[np.where(xarr == x)[0][0]]) + args
-    r.__name__ = 'relative_to_y({})'.format(x)
+    r.__name__ = b'relative_to_y({})'.format(x)
     return r
 
 
 def ltrim(n):
     def t(xarr, yarr, *args):
         return (xarr[n:], yarr[n:]) + args
-    t.__name__ = 'ltrim({})'.format(n)
+    t.__name__ = b'ltrim({})'.format(n)
     return t
 
 
 def rtrim(n):
     def t(xarr, yarr, *args):
         return (xarr[:-n], yarr[:-n]) + args
-    t.__name__ = 'rtrim({})'.format(n)
+    t.__name__ = b'rtrim({})'.format(n)
     return t
 
 
-def multi(list_of_transform, t_name_sep=' '):
+def multi(list_of_transform, t_name_sep=b' '):
     def m(xarr, yarr, *args):
         a = (xarr, yarr) + args
         for tr in reversed(list_of_transform):

@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from constants import FILES_DIR, PLOTS_DIR
 from fit_transforms import *
 from fit_transforms_s import *
@@ -163,7 +167,7 @@ def single_particle_relative_to_y_pzbt_metafit(x):
                                               '{}'.format(x),
                                        **kwargs)
 
-    spryz.__name__ = 'single_particle_relative_to_y({})_pzbt_metafit'.format(x)
+    spryz.__name__ = b'single_particle_relative_to_y({})_pzbt_metafit'.format(x)
     return spryz
 
 
@@ -180,6 +184,6 @@ def single_particle_ltrim_relative_pzbt_metafit(n):
                                               ' + Zero Body Term',
                                        **kwargs)
 
-    spltrz.__name__ = ('single_particle_ltrim({})_relative_pzbt_metafit'
-                       '').format(n)
+    spltrz.__name__ = (b'single_particle_ltrim({})_relative_pzbt_metafit'
+                       b'').format(n)
     return spltrz

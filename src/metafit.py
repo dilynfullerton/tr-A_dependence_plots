@@ -1,5 +1,6 @@
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 from math import ceil
 from itertools import combinations
@@ -186,7 +187,7 @@ def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map):
                   'x0': x0,
                   'y0': y0,
                   'zbt0': zbt0,
-                  'b': b,
+                  'base': b,
                   'exp': identifier}
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(qnums._asdict()).items())
@@ -404,17 +405,19 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             x, y, const_list, const_dict = p
 
             qnums, e, hw, index = const_list[0:4]
-            rp = const_dict['rp']
-            b = const_dict['b']
 
-            cval = scalar_map.to_rgba(i)
+            rp = const_dict['rp']
+            b = const_dict['base']
 
             e_str = '' if e is None else str(e)
             hw_str = '' if hw is None else str(hw)
             rp_str = '' if rp is None else str(rp)
             b_str = '' if b is None else str(b)
+
             labelstr = label.format(e=e_str, hw=hw_str, b=b_str, rp=rp_str,
                                     i=const_dict[idx])
+
+            cval = scalar_map.to_rgba(i)
             ax.plot(x, y, data_line_style, label=labelstr, color=cval)
 
             if show_fit is not False:
@@ -475,7 +478,7 @@ def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map):
                   'y0': y0,
                   'zbt0': zbt0,
                   'io_map': io_map,
-                  'b': b,
+                  'base': b,
                   'exp': identifier}
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(k._asdict()).items())
