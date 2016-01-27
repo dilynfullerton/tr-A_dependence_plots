@@ -132,15 +132,16 @@ def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs,
-                                   sourcedir=FILES_DIR, savedir=PLOTS_DIR,
-                                   transform=firstp,
-                                   super_transform_post=s_combine_like(qnums),
-                                   xlabel='A',
-                                   ylabel='Energy (MeV)',
-                                   data_line_style='-',
-                                   fit_line_style='--',
-                                   **kwargs)
+    return single_particle_metafit(
+            fitfn, e_hw_pairs,
+            sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+            transform=firstp,
+            super_transform_post=s_combine_like(['qnums']),
+            xlabel='A',
+            ylabel='Energy (MeV)',
+            data_line_style='-',
+            fit_line_style='--',
+            **kwargs)
 
 
 def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
@@ -152,13 +153,25 @@ def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
                                    **kwargs)
 
 
+def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+    return single_particle_metafit(
+        fitfn, e_hw_pairs,
+        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
+        transform=compose_transforms([firstp, zbt]),
+        super_transform_post=s_combine_like(['qnums']),
+        xlabel='A',
+        ylabel='Zero Body Term (MeV)',
+        **kwargs
+    )
+
+
 # META-FITTER GENERATORS
 def single_particle_relative_to_y_pzbt_metafit(x):
     def spryz(fitfn, e_hw_pairs, **kwargs):
         return single_particle_metafit(fitfn, e_hw_pairs,
                                        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
-                                       transform=multi([relative_to_y(x),
-                                                        pzbt]),
+                                       transform=compose_transforms([relative_to_y(x),
+                                                                     pzbt]),
                                        code='sprypz',
                                        xlabel='A',
                                        ylabel='Relative Single Particle Energy'
@@ -175,7 +188,7 @@ def single_particle_ltrim_relative_pzbt_metafit(n):
     def spltrz(fitfn, e_hw_pairs, **kwargs):
         return single_particle_metafit(fitfn, e_hw_pairs,
                                        sourcedir=FILES_DIR, savedir=PLOTS_DIR,
-                                       transform=multi([
+                                       transform=compose_transforms([
                                            ltrim(n), relative_zbt
                                        ]),
                                        code='spltrz',
