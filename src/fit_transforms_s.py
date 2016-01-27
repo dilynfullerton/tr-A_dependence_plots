@@ -14,6 +14,16 @@ def qnums(plot):
     return plot[3]['qnums']
 
 
+def _keys(list_of_key):
+    def const_vals(plot):
+        const_dict = plot[3]
+        vals = tuple(map(lambda k: const_dict[k] if k in const_dict else None,
+                         list_of_key))
+        return vals
+    const_vals.__name__ = str(list_of_key)
+    return const_vals
+
+
 # COMBINE RULES FOR s_combine_like
 def keep_lesser_x0_y0_zbt0_pair_in_dict(p, p1, p2):
     const_dict = p[3]
@@ -31,7 +41,7 @@ def keep_lesser_x0_y0_zbt0_pair_in_dict(p, p1, p2):
     return p
 
 
-def s_combine_like(f,
+def s_combine_like(keys=None, f=None,
                    combine_rules=list([keep_lesser_x0_y0_zbt0_pair_in_dict])):
     """Returns a super-fit-transform that combines all plots that share the
     same value returned by the given f, which acts on a single plot
@@ -41,6 +51,11 @@ def s_combine_like(f,
     :param combine_rules: function of the form f(plot, plot, plot) -> plot
      that define ways that the constants lists and dicts should be merged
     """
+    if keys is not None:
+        f = _keys(keys)
+    elif f is None:
+        return lambda p: p
+
     def scl(plots):
         m = dict()
         for plot in plots:
@@ -67,7 +82,7 @@ def _combine_plots(p1, p2, combine_rules=None):
     # Combine constant lists
     const_list = list()
     for c1, c2 in zip(p1[2], p2[2]):
-        if c1 is not None and c2 is not None and c1 == c2:
+        if c1 is not None and c2 is not None and _const_equals(c1, c2):
             const_list.append(c1)
         else:
             const_list.append(None)
@@ -77,7 +92,7 @@ def _combine_plots(p1, p2, combine_rules=None):
     for k in set(d1.keys() + d2.keys()):
         if k in d1 and k in d2:
             v1, v2 = d1[k], d2[k]
-            if v1 is not None and v2 is not None and v1 == v2:
+            if v1 is not None and v2 is not None and _const_equals(v1, v2):
                 const_dict[k] = d1[k]
             else:
                 const_dict[k] = None
@@ -89,3 +104,10 @@ def _combine_plots(p1, p2, combine_rules=None):
         for rule in combine_rules:
             p = rule(p, p1, p2)
     return p
+
+
+def _const_equals(c1, c2):
+    if isinstance(c1, np.ndarray) and isinstance(c2, np.ndarray):
+        return c1.all() == c2.all()
+    else:
+        return c1 == c2
