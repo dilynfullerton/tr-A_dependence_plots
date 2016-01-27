@@ -290,11 +290,35 @@ def orbital_energies(header_items_list,
     return header_items_list[start_index: start_index + num_orbitals]
 
 
+def other_constants(header_items_list,
+                    start_index=ORBITAL_ENERGY_START_INDEX,
+                    num_orbitals=MAX_NUM_ORBITALS):
+    """Return the other values in the header items list, following the
+    orbital energies
+
+    :param header_items_list:
+    :param start_index:
+    :param num_orbitals:
+    :return:
+    """
+    return header_items_list[start_index + num_orbitals:]
+
+
 def orbital_energies_from_filename(filename):
     """Returns the orbital energies from the given filename through
     functional composition
     :param filename: """
     return orbital_energies(header_list(content_lines(filename)))
+
+
+def other_constants_from_filename(filename):
+    """Given a filename, returns all of the items in the header items list
+    following the orbital energies
+
+    :param filename:
+    :return:
+    """
+    return other_constants(header_list(content_lines(filename)))
 
 
 # ............................................................
@@ -408,3 +432,21 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True):
         zbt = zero_body_term(zero_body_term_line(comment_lines(f)))
         mzbt_map[mass_number] = zbt
     return mzbt_map
+
+
+def mass_other_constants_map(directory, filterfn=lambda x: True):
+    """Given a directory, creates a mapping from mass number to the other
+    constants following the orbital energies in the first line of data
+
+    :param directory:
+    :param filterfn:
+    :return:
+    """
+    moc_map = dict()
+    files = files_with_ext_in_directory(directory)
+    filtered_files = list(filter(filterfn, files))
+    for f in filtered_files:
+        mass_number = mass_number_from_filename(f)
+        oc = other_constants_from_filename(f)
+        moc_map[mass_number] = oc
+    return moc_map

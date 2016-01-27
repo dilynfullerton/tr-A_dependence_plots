@@ -63,17 +63,22 @@ class ImsrgDatum:
         self.mass_index_energy_map = dict()
         self.mass_interaction_index_energy_map = dict()
         self.mass_zero_body_term_map = dict()
+        self.other_constants = None
 
         # Perform setup methods
         self._set_fname_filter()
-        self._set_index_orbital_map()
-        self._set_mass_index_energy_map()
-        self._set_mass_interaction_index_energy_map()
-        self._set_zero_body_term()
+        self._set_maps()
         self._set_name()
+        self._set_other_constants()
         if self.standard_index_orbital_map is not None and standardize is True:
             self._standardize_indexing()
             self.standardized = True
+
+    def _set_maps(self):
+        self._set_index_orbital_map()
+        self._set_mass_index_energy_map()
+        self._set_mass_interaction_index_energy_map()
+        self._set_zero_body_term_map()
 
     def _set_index_orbital_map(self):
         """Retrieves the index -> orbital map from a file in the directory
@@ -125,7 +130,7 @@ class ImsrgDatum:
 
         self.mass_interaction_index_energy_map = miiem
 
-    def _set_zero_body_term(self):
+    def _set_zero_body_term_map(self):
         self.mass_zero_body_term_map = (
             parse.mass_zero_body_term_map(self.dir, self._fname_filter))
 
@@ -146,6 +151,14 @@ class ImsrgDatum:
                     parse.rp_from_filename(fname) == self.rp and
                     parse.base_from_filename(fname) == self.b)
         self._fname_filter = f
+
+    def _set_other_constants(self):
+        """Sets other heading constants. Assumes all files in a given directory
+        have the same constants
+        """
+        files = parse.files_with_ext_in_directory(self.dir)
+        f0 = list(filter(self._fname_filter, files))[0]
+        self.other_constants = parse.other_constants_from_filename(f0)
 
     def _standardize_indexing(self):
         self._standardize_mass_index_energy_map_indexing()
