@@ -84,8 +84,8 @@ def single_particle_power_curvefit(fitfn, e=E, hw=HW, xpow=1, ypow=1, **kwargs):
 
 
 def _single_particle_curvefit(fitfn, e=E, hw=HW,
-                              sourcedir=FILES_DIR,
-                              savedir=PLOTS_DIR,
+                              sourcedir=DIR_FILES,
+                              savedir=DIR_PLOTS,
                               show_fits=False,
                               show_data_compare=False,
                               show_rel_data_compare=False,
