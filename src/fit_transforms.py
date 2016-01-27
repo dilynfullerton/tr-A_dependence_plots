@@ -113,6 +113,13 @@ def relative_to_y(x):
     return r
 
 
+def relative_to_x(x):
+    def r(xarr, yarr, *args):
+        return (xarr - x, yarr) + args
+    r.__name___ = b'relative_to_x={}'.format(x)
+    return r
+
+
 def ltrim(n):
     def t(xarr, yarr, *args):
         return (xarr[n:], yarr[n:]) + args
@@ -127,7 +134,7 @@ def rtrim(n):
     return t
 
 
-def multi(list_of_transform, t_name_sep=b' '):
+def compose_transforms(list_of_transform, t_name_sep=b' '):
     def m(xarr, yarr, *args):
         a = (xarr, yarr) + args
         for tr in reversed(list_of_transform):
