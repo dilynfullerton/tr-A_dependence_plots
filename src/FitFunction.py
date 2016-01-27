@@ -16,10 +16,21 @@ class FitFunction:
         self.fzfn = force_zero_func
         self.fk = force_k
         self.fkfn = force_k_func
-        if name is not None:
-            self.__name__ = name
-        else:
+        self.__name__ = name
+
+        self._set_name()
+
+    def _set_name(self):
+        if self.__name__ is None:
             self.__name__ = self.fn.__name__
+        if self.fz is not None:
+            self.__name__ += b' force zero {}'.format(self.fz)
+        elif self.fzfn is not None:
+            self.__name__ += b' force zero with {}'.format(self.fzfn.__name__)
+        elif self.fk is not None:
+            self.__name__ += b' force point {}'.format(self.fk)
+        elif self.fkfn is not None:
+            self.__name__ += b' force point with {}'.format(self.fkfn.__name__)
 
     def eval(self, x, params, const_list, const_dict):
         if self.fz is not None:
