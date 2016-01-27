@@ -97,6 +97,7 @@ def scalar():
     def sf(x, params, const_list, const_dict):
         a = params[0]
         return a
+
     return FitFunction(sf, 1, name='scalar')
 
 
@@ -105,6 +106,7 @@ def x1(force_zero=None, **kwargs):
     def x1f(x, params, const_list, const_dict):
         a = params[0]
         return a * x
+
     return FitFunction(x1f, 1, force_zero, name='x^1', **kwargs)
 
 
@@ -114,12 +116,14 @@ def linear(force_zero=None, **kwargs):
         def lf(x, params, const_list, const_dict):
             a, b = params[0:2]
             return a * x + b
+
         return FitFunction(lf, 2, force_zero, name='linear', **kwargs)
     else:
         # noinspection PyUnusedLocal
         def lf(x, params, const_list, const_dict):
             a = params[0]
             return a * x
+
         return FitFunction(lf, 1, force_zero, name='linear', **kwargs)
 
 
@@ -128,6 +132,7 @@ def x2(force_zero=None, **kwargs):
     def x2f(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** 2
+
     return FitFunction(x2f, 1, force_zero, name='x^2', **kwargs)
 
 
@@ -137,12 +142,14 @@ def quadratic(force_zero=None, **kwargs):
         def qf(x, params, const_list, const_dict):
             a, b, c = params[0:3]
             return np.polyval([a, b, c], x)
+
         return FitFunction(qf, 3, force_zero, name='quadratic', **kwargs)
     else:
         # noinspection PyUnusedLocal
         def qf(x, params, const_list, const_dict):
             a, b = params[0:2]
             return np.polyval([a, b, 0], x)
+
         return FitFunction(qf, 2, force_zero, name='quadratic', **kwargs)
 
 
@@ -151,6 +158,7 @@ def x_power(n, force_zero=None, **kwargs):
     def xnf(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** n
+
     return FitFunction(xnf, 1, force_zero, name='x^{}'.format(n), **kwargs)
 
 
@@ -159,12 +167,14 @@ def poly(n, force_zero=None, **kwargs):
         # noinspection PyUnusedLocal
         def pf(x, params, const_list, const_dict):
             return np.polyval(params, x)
-        return FitFunction(pf, n+1, force_zero, name='poly{}'.format(n),
+
+        return FitFunction(pf, n + 1, force_zero, name='poly{}'.format(n),
                            **kwargs)
     else:
         # noinspection PyUnusedLocal
         def pf(x, params, const_list, const_dict):
             return np.polyval(np.concatenate((params, np.zeros(1))), x)
+
         return FitFunction(pf, n, force_zero, name='poly{}'.format(n), **kwargs)
 
 
@@ -172,7 +182,8 @@ def asymptote(n, force_zero=None, **kwargs):
     # noinspection PyUnusedLocal
     def af(x, params, const_list, const_dict):
         a = params[0]
-        return - a / x**n
+        return - a / x ** n
+
     return FitFunction(af, 1, force_zero, name='asymptote{}'.format(n),
                        **kwargs)
 
@@ -181,7 +192,8 @@ def asymptote_n(force_zero=None, **kwargs):
     # noinspection PyUnusedLocal
     def anf(x, params, const_list, const_dict):
         a, n = params[0:2]
-        return - a / x**n
+        return - a / x ** n
+
     return FitFunction(anf, 2, force_zero, name='asymptote_n', **kwargs)
 
 
@@ -285,7 +297,7 @@ def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
 
 
 def asymptotic_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
-    return _dependence(lambda p, x: - p[0] / x**n,
+    return _dependence(lambda p, x: - p[0] / x ** n,
                        n_params=1,
                        dep_keys=dep_keys,
                        ctfs=ctfs,
@@ -323,7 +335,8 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
         more_constants = _do_transforms(ctfs, const_dict)
         p = np.zeros(n_params)
         dep_psubs = [params[i:i + n_params] for i in range(0, l1, n_params)]
-        ctf_psubs = [params[i:i + n_params] for i in range(l1, l1+l2, n_params)]
+        ctf_psubs = [params[i:i + n_params] for i in
+                     range(l1, l1 + l2, n_params)]
         for dep in zip(dep_keys, *dep_psubs):
             k, p0 = dep[0], dep[1:]
             v = const_dict[k]
@@ -334,8 +347,9 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
             for j, p0j in zip(range(n_params), p0):
                 p[j] = p[j] + p0j * c
         return f(p, x)
+
     return FitFunction(d,
-                       num_fit_params=(len(dep_keys)+len(ctfs)) * n_params,
+                       num_fit_params=(len(dep_keys) + len(ctfs)) * n_params,
                        force_zero=force_zero,
                        name=name + ' on {}'.format(_dep_str(dep_keys, ctfs)),
                        **kwargs)
@@ -351,7 +365,8 @@ def _dep_str(dep_keys, ctfs):
 def linear_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None,
                                   **kwargs):
     return combine_ffns([linear(force_zero=force_zero),
-                         linear_dependence(dep_keys, ctfs, force_zero=force_zero)],
+                         linear_dependence(dep_keys, ctfs,
+                                           force_zero=force_zero)],
                         force_zero=force_zero,
                         **kwargs)
 
@@ -373,8 +388,9 @@ def asymptote_with_linear_dependence(n, dep_keys, ctfs=list(),
 
 def asymptote_with_asymptotic_dependence(n, dep_keys, ctfs=list(),
                                          force_zero=None, **kwargs):
-    return combine_ffns([asymptote(n), asymptotic_dependence(n, dep_keys, ctfs)],
-                        force_zero=force_zero, **kwargs)
+    return combine_ffns(
+            [asymptote(n), asymptotic_dependence(n, dep_keys, ctfs)],
+            force_zero=force_zero, **kwargs)
 
 
 # CONSTANT TRANSFORMS
@@ -387,7 +403,7 @@ def _do_transforms(ctfs, const_dict):
 
 def joff2(const_dict):
     j = const_dict['j']
-    return (j-1) * abs(j-1)
+    return (j - 1) * abs(j - 1)
 
 
 def jjoff(const_dict):

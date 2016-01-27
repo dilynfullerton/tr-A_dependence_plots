@@ -47,8 +47,10 @@ def e_level_from_filename(filename, split_char=FILENAME_SPLIT,
     Also assumes that the name element containing th e-level is the last
     element which begins with an e.
     Returns None if not found.
-    :param split_char:
-    :param filename:
+
+    :param filename: the name of the file
+    :param split_char: the character with which filename elements are separated
+    :param e_regex: the regex that fully matches the element with e
     """
     return _e_from_felts(_filename_elts_list(filename, split_char),
                          e_regex)
@@ -68,8 +70,9 @@ def hw_from_filename(filename, split_char=FILENAME_SPLIT,
     + Assumes that the instance of the string 'hw' in the beginning of the
     element containing the number is the last instance of such that begins
     an element.
-    :param split_char:
-    :param filename:
+    :param filename: the name of the file
+    :param split_char: the character with which filename elements are separated
+    :param hw_regex: the regex that fully matches the element with hw
     """
     return _hw_from_felts(_filename_elts_list(filename, split_char),
                           hw_regex)
@@ -109,6 +112,7 @@ def rp_from_filename(filename, split_char=FILENAME_SPLIT,
 
     :param filename: the name of the file to parse
     :param split_char: the character which separates filename elements
+    :param rp_regex: the regex that fully matches the rp element
     :return: the Rp (integer) label, if found, otherwise returns None
     """
     return _rp_from_felts(reversed(_filename_elts_list(filename, split_char)),
@@ -127,6 +131,7 @@ def mass_number_from_filename(filename, split_char=FILENAME_SPLIT,
 
     :param filename: the filename from which to get the mass number
     :param split_char: the character that separates name elements
+    :param mass_regex: the regex that fully matches the mass element
     """
     filename_elts = reversed(_filename_elts_list(filename, split_char))
     mass = _elt_from_felts(filename_elts, mass_regex)

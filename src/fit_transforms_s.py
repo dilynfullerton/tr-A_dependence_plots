@@ -46,6 +46,8 @@ def s_combine_like(keys=None, f=None,
     """Returns a super-fit-transform that combines all plots that share the
     same value returned by the given f, which acts on a single plot
 
+    :param keys: keys for the const_dict by which to specify the set of values,
+     by ALL of which plots are to be compared
     :param f: a function which acts on a single plot and returns a comparable
     item
     :param combine_rules: function of the form f(plot, plot, plot) -> plot

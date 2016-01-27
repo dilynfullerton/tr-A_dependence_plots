@@ -36,6 +36,7 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
     single_particle_relative_metafigt)
     :param fitfns: the list of fitfns to test
     :param e_hw_pairs: the (e, hw) pairs to optimize
+    :param std_io_map: A standard io-mapping scheme to use
     :param kwargs: keyword arguments to pass to the metafitter
     :return: best fit function, results
     """
@@ -106,6 +107,8 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
     return a float output.
     :param print_compare_results: whether to print the results in a neat table
     :param sourcedir: the directory from which to retrieve the files
+    :param std_io_map: a standard index -> orbital mapping scheme to use fo the
+    generated imsrg_data_map
     :param kwargs: keyword arguments to be passed to the metafitter
     :return: a list of (param, result, relative result) 3-tuples
     """
@@ -285,8 +288,14 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     fitting,
         t(xarr, yarr, *args) -> (newxarr, newyarr, *args),
     where xarr, yarr, newxarr, and newyarr are arrays.
+    :param super_transform_pre: (Optional) A transform to transform all of the
+    plots together prior to the individual transform. Default is None.
+    :param super_transform_post: (Optional) A transform to transform all of the
+    plots together after the individual transform. Default is None.
     :param imsrg_data_map: (Optional) If included, will not retrieve data map
     from sourcedir and will instead take the given data map
+    :param std_io_map: A standard index -> orbital mapping scheme to use for
+    generating the data representations
     :param print_key: (Optional) Whether to print the index -> orbital key.
     Default is False.
     :param print_results: (Optional) Whether to print fit results. Default is
@@ -311,15 +320,31 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         {hw}: h-bar omega frequency
         {rp}: proton radius
         {i}: index
-    :param idxfn: (Optional) The function to apply to the indexing keys of the
-    datasets before adding to the legend.
+    :param idx: the key to use to get the index (for the label) from the
+    constants dictionary for each plot
     :param xlabel: x label for plot
     :param ylabel: y label for plot
+    :param data_line_style: (Optional) The style of line to use for plotting the
+    data. Default is '-'
+    :param fit_line_style: (Optional) The style of line to use for plotting the
+    fit. Default is '--'
     :param savename: (Optional) The save name for the plot figure. Use the
     following keys to include information:
         {c}: code
         {t}: title
     :param cmap: (Optional) colormap string to use for plotting
+    :param max_legend_cols: (Optional) The maximum number of columns to allow
+    the legend to have
+    :param max_legend_space: (Optional) The maximum proportion of horizonal
+    space to allow for the legend
+    :param max_legend_fontsize: (Optional) The maximum legend fontsize to allow
+    :param legend_total_fontsize: (Optional) The "total fontsize" which
+    represents the fontsize * the number of rows
+    :param legend_rows_per_col: (Optional) The number of rows to warrant an
+    additional column.
+    :param legend_space_scale: (Optional) A scale-factor to append to
+    calculation of legend space proportion
+    :param mf_name: The name of the metafitter
     :param _plot_sort_key: (Optional) key for ordering plots, default is by
     Quantum numbers.
     :param _get_data: The function to be used to get data from the data map.

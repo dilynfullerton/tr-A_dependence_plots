@@ -7,6 +7,7 @@ from collections import namedtuple
 import parse
 
 
+# noinspection PyClassHasNoInit
 class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
     __slots__ = ()
 
@@ -19,6 +20,7 @@ class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
         return '(n={n}, l={l}, j={j}, tz={tz})'.format(n=n, l=l, j=j, tz=tz)
 
 
+# noinspection PyClassHasNoInit
 class InteractionTuple(namedtuple('InteractionTuple',
                                   ['a', 'b', 'c', 'd', 'j'])):
     __slots__ = ()
