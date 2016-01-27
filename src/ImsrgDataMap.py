@@ -7,7 +7,7 @@ from collections import namedtuple
 import parse
 from ImsrgDatum import ImsrgDatum
 
-Exp = namedtuple('Exp', ['e', 'hw', 'b', 'rp'])
+Exp = namedtuple('Exp', ['e', 'hw', 'base', 'rp'])
 Exp.__new__.__defaults__ = (None, None)
 
 
@@ -38,7 +38,6 @@ class ImsrgDataMap:
                     continue
 
                 if key not in self.map:
-                    # self.sub_dir_tuple_map[sd] = key
                     value = ImsrgDatum(sd, *key, std_io_map=self.std_io_map)
                     self.map[key] = value
 
