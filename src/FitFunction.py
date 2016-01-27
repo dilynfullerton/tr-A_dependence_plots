@@ -47,8 +47,8 @@ class FitFunction:
             return self.fn(x, params, const_list, const_dict)
 
 
-def combine(list_of_ffn, force_zero=None, name_pref='', name_sep=', ',
-            **kwargs):
+def combine_ffns(list_of_ffn, force_zero=None, name_pref='', name_sep=', ',
+                 **kwargs):
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
 
@@ -339,31 +339,31 @@ def _dep_str(dep_keys, ctfs):
 # FITTERS WITH DEPENDENCIES
 def linear_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None,
                                   **kwargs):
-    return combine([linear(force_zero=force_zero),
-                    linear_dependence(dep_keys, ctfs, force_zero=force_zero)],
-                   force_zero=force_zero,
-                   **kwargs)
+    return combine_ffns([linear(force_zero=force_zero),
+                         linear_dependence(dep_keys, ctfs, force_zero=force_zero)],
+                        force_zero=force_zero,
+                        **kwargs)
 
 
 def poly_with_linear_dependence(n, dep_keys, ctfs=list(), force_zero=None,
                                 **kwargs):
-    return combine([poly(n), linear_dependence(dep_keys, ctfs)],
-                   force_zero=force_zero,
-                   **kwargs)
+    return combine_ffns([poly(n), linear_dependence(dep_keys, ctfs)],
+                        force_zero=force_zero,
+                        **kwargs)
 
 
 def asymptote_with_linear_dependence(n, dep_keys, ctfs=list(),
                                      force_zero=None,
                                      **kwargs):
-    return combine([asymptote(n), linear_dependence(dep_keys, ctfs)],
-                   force_zero=force_zero,
-                   **kwargs)
+    return combine_ffns([asymptote(n), linear_dependence(dep_keys, ctfs)],
+                        force_zero=force_zero,
+                        **kwargs)
 
 
 def asymptote_with_asymptotic_dependence(n, dep_keys, ctfs=list(),
                                          force_zero=None, **kwargs):
-    return combine([asymptote(n), asymptotic_dependence(n, dep_keys, ctfs)],
-                   force_zero=force_zero, **kwargs)
+    return combine_ffns([asymptote(n), asymptotic_dependence(n, dep_keys, ctfs)],
+                        force_zero=force_zero, **kwargs)
 
 
 # CONSTANT TRANSFORMS
@@ -404,3 +404,7 @@ def fz_to_x0(const_dict):
 # FORCE K FUNCTIONS
 def fk_to_y0(const_dict):
     return const_dict['x0'], const_dict['y0']
+
+
+def fk_to_zbt0(const_dict):
+    return const_dict['x0'], const_dict['zbt0']
