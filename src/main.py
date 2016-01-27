@@ -83,15 +83,15 @@ mixed = [
 asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
           multi_dep_asymps + mixed)
 
-'''
-max_r2(single_particle_relative_pzbt_metafit,
-       asymps, [(12, 20), (14, 20), (14, 24)],
-       print_r2_results=True,
-       print_results=False)
-'''
 
-f = combine_ffns([asymptote(2),
-                  linear_dependence(['y0'])], force_zero=17)
+# max_r2(single_particle_relative_pzbt_metafit,
+#        asymps, [(12, 20), (14, 20), (14, 24)],
+#        print_r2_results=True,
+#        print_results=False)
+
+
+# f = combine_ffns([asymptote(2),
+#                   linear_dependence(['y0'])], force_zero=17)
 
 # ans = compare(metafitter=single_particle_identity_metafit,
 #               fitfn=f,
@@ -141,20 +141,20 @@ single_particle_firstp_zbt_metafit(
     print_results=False
 )
 
-multi_particle_identity_metafit(
-        fitfn=asymptote(2,
-                        #force_zero=17,
-                        force_k_func=fk_to_y0),
-        e_hw_pairs=[
-            (12, 20),
-            (12, 24, 22),
-            (12, 24, 24)
-        ],
-        show_plot=True,
-        show_fit=True,
-        show_legend=True,
-        print_key=False,
-        print_results=False)
+# multi_particle_identity_metafit(
+#         fitfn=asymptote(2,
+#                         #force_zero=17,
+#                         force_k_func=fk_to_y0),
+#         e_hw_pairs=[
+#             (12, 20),
+#             (12, 24, 22),
+#             (12, 24, 24)
+#         ],
+#         show_plot=True,
+#         show_fit=True,
+#         show_legend=True,
+#         print_key=False,
+#         print_results=False)
 
 # multi_particle_relative_pzbt_metafit(
 #     fitfn=combine_ffns([asymptote(2)], force_zero_func=fz_to_x0),
