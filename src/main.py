@@ -111,9 +111,10 @@ ans = compare(metafitter=single_particle_identity_metafit,
               print_results=False)
 '''
 
-single_particle_identity_metafit(
-    fitfn=combine([asymptote(2),
-                   scalar()]),
+single_particle_firstp_metafit(
+    fitfn=combine([asymptote(2)],
+                  force_k_func=fk_to_y0
+                  ),
     e_hw_pairs=[
         (12, 20),
         (14, 20),
@@ -127,7 +128,7 @@ single_particle_identity_metafit(
     print_results=True
 )
 
-
+'''
 multi_particle_identity_metafit(
         fitfn=asymptote(2, force_zero=17),
         e_hw_pairs=[
@@ -142,4 +143,4 @@ multi_particle_identity_metafit(
         show_legend=True,
         print_key=True,
         print_results=False)
-
+'''

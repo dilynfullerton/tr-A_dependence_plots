@@ -399,3 +399,8 @@ def y0pzbt0(const_dict):
 # FORCE ZERO FUNCTIONS
 def fz_to_x0(const_dict):
     return const_dict['x0']
+
+
+# FORCE K FUNCTIONS
+def fk_to_y0(const_dict):
+    return const_dict['x0'], const_dict['y0']
