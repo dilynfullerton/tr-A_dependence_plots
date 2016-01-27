@@ -23,7 +23,9 @@ from spfitting import print_io_key
 
 # STATISTICAL ANALYSIS TOOLS
 def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-                 sourcedir=FILES_DIR, **kwargs):
+                 sourcedir=FILES_DIR,
+                 std_io_map=STANDARD_IO_MAP,
+                 **kwargs):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
 
@@ -36,10 +38,13 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
     :param kwargs: keyword arguments to pass to the metafitter
     :return: best fit function, results
     """
-    imsrg_data_map = ImsrgDataMap(parent_directory=sourcedir)
+    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
+    imsrg_data_map = ImsrgDataMap(parent_directory=sourcedir,
+                                  exp_list=exp_list,
+                                  standard_indices=std_io_map)
     fn_res_r2_map = dict()
     for fitfn in fitfns:
-        res = metafitter(fitfn, e_hw_pairs,
+        res = metafitter(fitfn, exp_list,
                          imsrg_data_map=imsrg_data_map, **kwargs)
         lg_res = res[1]
         r2 = 0
@@ -58,11 +63,12 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
         result_map[fitfn] = res
     if print_r2_results is True:
         _printer_for_max_r2_value(rank_map, metafitter,
-                                  e_hw_pairs)
+                                  exp_list)
     return rank_map[1][0], rank_map[1][1], rank_map, result_map
 
 
 def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
+    e_hw_pairs = [tuple(e_hw_pair) for e_hw_pair in e_hw_pairs]
     title_str = ('\nR^2 values for fit functions under metafit {mf} for '
                  '{ehw}\n'.format(mf=metafitter.__name__, ehw=e_hw_pairs))
     print(P_TITLE + title_str + P_BREAK + P_END)
