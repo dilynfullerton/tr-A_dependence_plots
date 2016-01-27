@@ -17,7 +17,7 @@ class ImsrgDataMap:
     def __init__(self, parent_directory, exp_list=None, standard_indices=None):
         self.parent_dir = parent_directory
         self.map = dict()
-        self.exp_list = exp_list
+        self.exp_list = [Exp(*exp_item) for exp_item in exp_list]
         self.std_io_map = standard_indices
 
         self._set_maps()
