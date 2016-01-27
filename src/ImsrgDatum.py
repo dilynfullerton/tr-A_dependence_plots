@@ -42,17 +42,21 @@ class InteractionTuple(namedtuple('InteractionTuple',
 
 
 class ImsrgDatum:
-    def __init__(self, directory, e, hw, b=None, rp=None, name=None):
+    def __init__(self, directory, e, hw, b=None, rp=None, std_io_map=None,
+                 standardize=True):
         self.e = e
         self.hw = hw
         self.b = b
         self.rp = rp
 
-        self.name = name
+        self.name = None
         self.dir = directory
         self._fname_filter = None
+        self.standardized = False
 
         # Create maps initially empty
+        self.standard_index_orbital_map = std_io_map
+        self._particular_index_orbital_map = None
         self.index_orbital_map = dict()
         self.mass_index_energy_map = dict()
         self.mass_interaction_index_energy_map = dict()
@@ -65,6 +69,9 @@ class ImsrgDatum:
         self._set_mass_interaction_index_energy_map()
         self._set_zero_body_term()
         self._set_name()
+        if self.standard_index_orbital_map is not None and standardize is True:
+            self._standardize_indexing()
+            self.standardized = True
 
     def _set_index_orbital_map(self):
         """Retrieves the index -> orbital map from a file in the directory
@@ -137,6 +144,50 @@ class ImsrgDatum:
                     parse.rp_from_filename(fname) == self.rp and
                     parse.base_from_filename(fname) == self.b)
         self._fname_filter = f
+
+    def _standardize_indexing(self):
+        self._standardize_mass_index_energy_map_indexing()
+        self._standardize_mass_interaction_index_energy_map_indexing()
+        self._particular_index_orbital_map = self.index_orbital_map
+        self.index_orbital_map = self.standard_index_orbital_map
+
+    def _standardize_mass_index_energy_map_indexing(self):
+        """Reformat the mass -> index -> energy map indices to be with respect
+        to the standard io_map
+        """
+        mie_map = self.mass_index_energy_map
+        std_mie_map = dict()
+        for m, ie_map in mie_map.iteritems():
+            std_ie_map = dict()
+            for idx, energy in ie_map.iteritems():
+                next_idx = self._standard_index(idx)
+                std_ie_map[next_idx] = energy
+            std_mie_map[m] = std_ie_map
+        self.mass_index_energy_map = std_mie_map
+
+    def _standardize_mass_interaction_index_energy_map_indexing(self):
+        miie_map = self.mass_interaction_index_energy_map
+        std_miie_map = dict()
+        for m, iie_map in miie_map.iteritems():
+            std_iie_map = dict()
+            for ii, energy in iie_map.iteritems():
+                next_ii = self._standardize_interaction_index_tuple(ii)
+                std_iie_map[next_ii] = energy
+            std_miie_map[m] = std_iie_map
+        self.mass_interaction_index_energy_map = std_miie_map
+
+    def _standard_orbital_index_map(self):
+        return {v: k for k, v in self.standard_index_orbital_map.iteritems()}
+
+    def _standardize_interaction_index_tuple(self, ii_tuple):
+        next_tuple = [self._standard_index(i) for i in ii_tuple[0:4]]
+        next_tuple.append(ii_tuple[4])
+        return InteractionTuple(*next_tuple)
+
+    def _standard_index(self, i):
+        io_map = self.index_orbital_map
+        soi_map = self._standard_orbital_index_map()
+        return soi_map[io_map[i]]
 
     def folded_mass_interaction_index_energy_map(self):
         """Return a flat version of the map"""
