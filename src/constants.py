@@ -33,13 +33,15 @@ STANDARD_IO_MAP = {
 }
 
 # File generating
-GEN_INT_SUBDIR = '/{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}'
-GEN_INT_FILE_NAME = '/fit-generated-sd-shell_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int'
+GEN_INT_SUBDIR = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}'
+GEN_INT_FILE_NAME = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int'
 GEN_INT_ROW_LINES_TITLE = [
     '! Interaction file generated from:',
     '!  + zero body term fitter:  {mf:<40} ({code:<7}) using fit function: {ffn:<40} ({ffn_code:<7})',
     '!  + single particle fitter: {mf:<40} ({code:<7}) using fit function: {ffn:<40} ({ffn_code:<7})',
-    '!  + interaction fitter:     {mf:<40} ({code:<7}) using fit function: {ffn:<40} ({ffn_code:<7})']
+    '!  + interaction fitter:     {mf:<40} ({code:<7}) using fit function: {ffn:<40} ({ffn_code:<7})',
+    '!',
+    '! Fit performed on: {ehw}']
 GEN_INT_ROW_LINES_FIT_PARAMS = [
     '! Fit params: ',
     '!  + zero body term fit:  {}',
