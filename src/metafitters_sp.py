@@ -182,7 +182,7 @@ def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
         fitfn, e_hw_pairs,
         sourcedir=DIR_FILES, savedir=DIR_PLOTS,
         transform=compose_transforms([firstp, zbt]),
-        super_transform_post=s_combine_like(['qnums']),
+        super_transform_post=s_combine_like([]),
         code='spfpz',
         mf_name='single_particle_firstp_zbt_metafit',
         xlabel='A',
