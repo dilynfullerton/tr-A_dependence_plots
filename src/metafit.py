@@ -194,7 +194,8 @@ def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
     return x, y, const_list, const_dict
 
 
-def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others):
+def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
+                          *args):
     x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
                                               mzbt_map, others)
     qnums = io_map[k]
@@ -495,12 +496,17 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     plt.show()
 
     # Make an info dict
-    info = {'fitfn': fitfn, 'code': code, 'mf_name': mf_name}
+    info = {
+        'mf_code': code,
+        'mf_name': mf_name,
+        'ffn_name': fitfn.__name__,
+        'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else ''}
 
-    return mf_results, lr_results, info
+    return mf_results, lr_results, plots, fitfn, info
 
 
-def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others):
+def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
+                         *args):
     x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
                                               mzbt_map, others)
     const_dict['interaction'] = k
