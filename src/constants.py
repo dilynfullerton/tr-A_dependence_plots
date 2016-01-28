@@ -46,7 +46,7 @@ GEN_INT_ROW_LINES_FIT_PARAMS = [
     '!  + single particle fit: {}',
     '!  + interactions fit:    {}']
 GEN_INT_ROW_ZERO_BODY_TERM = (
-    '! Zero body term: {:3f}')
+    '! Zero body term: {:.3f}')
 GEN_INT_ROW_INDEX_KEY_HEAD = (
     '! Index   n l j tz')
 GEN_INT_ROW_INDEX_KEY = (

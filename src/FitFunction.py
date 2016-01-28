@@ -22,6 +22,7 @@ class FitFunction:
         self.code = code
 
         self._set_name()
+        self._set_code()
         self.__name__ = self.name
 
     def _set_name(self):
@@ -35,6 +36,18 @@ class FitFunction:
             self.name += b' force point {}'.format(self.fk)
         elif self.fkfn is not None:
             self.name += b' force point with {}'.format(self.fkfn.__name__)
+
+    def _set_code(self):
+        if self.code is '':
+            self.code = self.name if self.name is not None else self.fn.__name__
+        if self.fz is not None:
+            self.code += b'fz{}'.format(self.fz)
+        elif self.fzfn is not None:
+            self.code += b'fzfz'
+        elif self.fk is not None:
+            self.code += b'fk{}'.format(self.k)
+        elif self.fkfn is not None:
+            self.code += b'fkfn'
 
     def eval(self, x, params, const_list, const_dict):
         if self.fz is not None:

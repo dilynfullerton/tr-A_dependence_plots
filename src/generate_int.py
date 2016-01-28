@@ -224,7 +224,12 @@ class OverlapOfZbtDataException(Exception):
 def _index_lines(row_index_key, io_map):
     lines = list()
     for k, v in sorted(io_map.items()):
-        lines.append(row_index_key.format(k, *v))
+        n, l, j, tz = v
+        lines.append(row_index_key.format(k,
+                                          int(n),
+                                          int(l),
+                                          str(int(2*j)) + '/2',
+                                          str(int(2*tz)) + '/2'))
     return lines
 
 
