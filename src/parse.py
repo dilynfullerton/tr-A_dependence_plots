@@ -413,7 +413,7 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True):
         v = mida_map[k]
         nextv = dict()
         for row in v:
-            tup = tuple(row[0:5])
+            tup = tuple(row[0:6])
             energy = float(row[6])
             nextv[tup] = energy
         mida_map[k] = nextv

@@ -3,11 +3,13 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from FitFunction import *
+from metafitters_sp import *
+from metafitters_mp import *
+
 from metafit import compare_params as compare
 from metafit import max_r2_value as max_r2
 
-from metafitters_sp import *
-from metafitters_mp import *
+from generate_int import generate_int_file_from_fit
 
 
 simple_asymps = [
@@ -109,42 +111,38 @@ asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
 #               show_legend=True,
 #               print_key=False,
 #               print_results=False)
-
-single_particle_firstp_metafit(
-    fitfn=combine_ffns([linear()],
-                       force_k_func=fk_to_y0
-                       ),
-    e_hw_pairs=[
-        (12, 20),
-        (12, 24, 22),
-        (12, 24, 24)
-    ],
-    show_plot=True,
-    show_fit=True,
-    print_key=False,
-    print_results=False
-
-)
-
-single_particle_firstp_zbt_metafit(
-    fitfn=combine_ffns([asymptote(1)],
-                       force_k_func=fk_to_zbt0
-                       ),
-    e_hw_pairs=[
-        (12, 20),
-        (12, 24, 22, None),
-        (12, 24, 24, None)
-    ],
-    show_plot=True,
-    show_fit=True,
-    print_key=False,
-    print_results=False
-)
-
-# multi_particle_identity_metafit(
-#         fitfn=asymptote(2,
-#                         #force_zero=17,
-#                         force_k_func=fk_to_y0),
+#
+# single_particle_firstp_metafit(
+#     fitfn=combine_ffns([linear()],
+#                        force_k_func=fk_to_y0),
+#     e_hw_pairs=[
+#         (12, 20),
+#         (12, 24, 22),
+#         (12, 24, 24)
+#     ],
+#     show_plot=True,
+#     show_fit=True,
+#     print_key=False,
+#     print_results=False
+#
+# )
+#
+# single_particle_firstp_zbt_metafit(
+#     fitfn=combine_ffns([linear()],
+#                        force_k_func=fk_to_zbt0),
+#     e_hw_pairs=[
+#         (12, 20),
+#         (12, 24, 22),
+#         (12, 24, 24)
+#     ],
+#     show_plot=True,
+#     show_fit=True,
+#     print_key=False,
+#     print_results=False
+# )
+#
+# multi_particle_firstp_metafit(
+#         fitfn=linear(force_k_func=fk_to_y0),
 #         e_hw_pairs=[
 #             (12, 20),
 #             (12, 24, 22),
@@ -155,6 +153,12 @@ single_particle_firstp_zbt_metafit(
 #         show_legend=True,
 #         print_key=False,
 #         print_results=False)
+
+generate_int_file_from_fit(fitfn_zbt=linear(force_k_func=fk_to_zbt0),
+                           fitfn_sp=linear(force_k_func=fk_to_y0),
+                           fitfn_mp=linear(force_k_func=fk_to_y0),
+                           e_hw_pairs=[(12, 20), (12, 24, 22), (12, 24, 24)],
+                           mass_range=range(16, 32))
 
 # multi_particle_relative_pzbt_metafit(
 #     fitfn=combine_ffns([asymptote(2)], force_zero_func=fz_to_x0),
