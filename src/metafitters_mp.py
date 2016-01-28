@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from constants import DIR_FILES, DIR_PLOTS
 from fit_transforms import *
+from fit_transforms_s import *
 from metafit import multi_particle_metafit
 
 
@@ -62,3 +63,16 @@ def multi_particle_relative_metafit(fitfn, e_hw_pairs, **kwargs):
                                   xlabel='A',
                                   ylabel='Relative Energy (MeV)',
                                   **kwargs)
+
+
+def multi_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
+    return multi_particle_metafit(
+            fitfn, e_hw_pairs,
+            sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+            transform=firstp,
+            super_transform_post=s_combine_like(['interaction']),
+            code='mpfp',
+            mf_name='multi_particle_firstp_metafit',
+            xlabel='A',
+            ylabel='Energy (MeV)',
+            **kwargs)
