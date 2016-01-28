@@ -167,14 +167,16 @@ def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs,
-                                   sourcedir=DIR_FILES, savedir=DIR_PLOTS,
-                                   transform=first2p,
-                                   code='spf2p',
-                                   mf_name='single_particle_first2p_metafit',
-                                   xlabel='A',
-                                   ylabel='Energy (MeV)',
-                                   **kwargs)
+    return single_particle_metafit(
+            fitfn, e_hw_pairs,
+            sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+            transform=first2p,
+            super_transform_post=s_combine_like(['qnums']),
+            code='spf2p',
+            mf_name='single_particle_first2p_metafit',
+            xlabel='A',
+            ylabel='Energy (MeV)',
+            **kwargs)
 
 
 def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
@@ -185,6 +187,20 @@ def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
         super_transform_post=s_combine_like([]),
         code='spfpz',
         mf_name='single_particle_firstp_zbt_metafit',
+        xlabel='A',
+        ylabel='Zero Body Term (MeV)',
+        **kwargs
+    )
+
+
+def single_particle_first2p_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
+    return single_particle_metafit(
+        fitfn, e_hw_pairs,
+        sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+        transform=compose_transforms([first2p, zbt]),
+        super_transform_post=s_combine_like([]),
+        code='spfpz',
+        mf_name='single_particle_first2p_zbt_metafit',
         xlabel='A',
         ylabel='Zero Body Term (MeV)',
         **kwargs
@@ -231,3 +247,39 @@ def single_particle_ltrim_relative_pzbt_metafit(n):
 
     spltrz.__name__ = name
     return spltrz
+
+
+def single_particle_first_np_zbt_metafit(n):
+    name = b'single_particle_first_{}p_zbt_metafit'.format(n)
+
+    def spfnpz(fitfn, e_hw_pairs, **kwargs):
+        return single_particle_metafit(
+                fitfn, e_hw_pairs,
+                sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                transform=compose_transforms([first_np(n), zbt]),
+                super_transform_post=s_combine_like([]),
+                code='spfnpz',
+                mf_name=name,
+                xlabel='A',
+                ylabel='Zero Body Term (MeV)',
+                **kwargs)
+    spfnpz.__name__ = name
+    return spfnpz
+
+
+def single_particle_first_np_metafit(n):
+    name = b'single_particle_first_{}p_metafit'.format(n)
+
+    def spfnpz(fitfn, e_hw_pairs, **kwargs):
+        return single_particle_metafit(
+                fitfn, e_hw_pairs,
+                sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                transform=first_np(n),
+                super_transform_post=s_combine_like(['qnums']),
+                code='spfnp',
+                mf_name=name,
+                xlabel='A',
+                ylabel='Energy (MeV)',
+                **kwargs)
+    spfnpz.__name__ = name
+    return spfnpz
