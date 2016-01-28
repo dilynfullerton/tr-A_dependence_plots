@@ -42,6 +42,7 @@ def generate_int_file_from_fit(
     results_sp = metafitter_sp(fitfn_sp, e_hw_pairs)
     results_mp = metafitter_mp(fitfn_mp, e_hw_pairs)
     _generate_int_file_from_fit(results_zbt, results_sp, results_mp,
+                                e_hw_pairs=e_hw_pairs,
                                 io_map=std_io_map,
                                 mass_range=mass_range,
                                 **kwargs)
@@ -51,6 +52,7 @@ def _generate_int_file_from_fit(results_zbt,
                                 results_sp,
                                 results_mp,
                                 mass_range,
+                                e_hw_pairs,
                                 io_map,
                                 file_save_dir=DIR_GEN_INT,
                                 _file_save_subdir=GEN_INT_SUBDIR,
@@ -104,7 +106,8 @@ def _generate_int_file_from_fit(results_zbt,
     info_sp = results_sp[4]
     info_mp = results_mp[4]
 
-    fname_args = {'mf1': info_zbt['mf_code'], 'ffn1': info_zbt['ffn_code'],
+    fname_args = {'ehw': str(e_hw_pairs),
+                  'mf1': info_zbt['mf_code'], 'ffn1': info_zbt['ffn_code'],
                   'mf2': info_sp['mf_code'], 'ffn2': info_sp['ffn_code'],
                   'mf3': info_mp['mf_code'], 'ffn3': info_mp['ffn_code']}
 
@@ -117,15 +120,16 @@ def _generate_int_file_from_fit(results_zbt,
     for x in mass_range:
         # GET LINES
         file_lines = _get_file_lines(x, results_zbt, results_sp, results_mp,
-                                     io_map,
-                                     _row_lines_title,
-                                     _row_lines_subtitle,
-                                     _row_zbt,
-                                     _row_idx_key_head,
-                                     _row_idx_key,
-                                     _row_blank,
-                                     _row_sp,
-                                     _row_mp)
+                                     io_map=io_map,
+                                     e_hw_pairs=e_hw_pairs,
+                                     row_lines_title=_row_lines_title,
+                                     row_lines_subtitle=_row_lines_subtitle,
+                                     row_zbt=_row_zbt,
+                                     row_idx_key_head=_row_idx_key_head,
+                                     row_idx_key=_row_idx_key,
+                                     row_blank=_row_blank,
+                                     row_sp=_row_sp,
+                                     row_mp=_row_mp)
 
         # NAME FILE
         fname_args['mass'] = x
@@ -140,6 +144,7 @@ def _generate_int_file_from_fit(results_zbt,
 
 
 def _get_file_lines(x, results_zbt, results_sp, results_mp, io_map,
+                    e_hw_pairs,
                     row_lines_title,
                     row_lines_subtitle,
                     row_zbt,
@@ -167,7 +172,8 @@ def _get_file_lines(x, results_zbt, results_sp, results_mp, io_map,
     file_lines = list()
     # + TITLE
     file_lines.extend(
-            _title_lines(row_lines_title, info_zbt, info_sp, info_mp))
+            _title_lines(row_lines_title, info_zbt, info_sp, info_mp,
+                         e_hw_pairs=e_hw_pairs))
     file_lines.append(row_blank)
     # + SUBTITLE
     file_lines.extend(
@@ -192,11 +198,12 @@ def _get_file_lines(x, results_zbt, results_sp, results_mp, io_map,
     return file_lines
 
 
-def _title_lines(row_lines_title, info_zbt, info_sp, info_mp):
+def _title_lines(row_lines_title, info_zbt, info_sp, info_mp, e_hw_pairs):
     for i, info in zip(range(1, 4), [info_zbt, info_sp, info_mp]):
         row_lines_title[i] = row_lines_title[i].format(
             mf=info['mf_name'], code=info['mf_code'],
             ffn=info['ffn_name'], ffn_code=info['ffn_code'])
+    row_lines_title[5] = row_lines_title[5].format(ehw=e_hw_pairs)
     return row_lines_title
 
 
