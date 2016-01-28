@@ -22,7 +22,7 @@ class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
 
 # noinspection PyClassHasNoInit
 class InteractionTuple(namedtuple('InteractionTuple',
-                                  ['a', 'b', 'c', 'd', 'j'])):
+                                  ['a', 'b', 'c', 'd', 'j', 'zzz'])):
     __slots__ = ()
 
     def __str__(self):
@@ -43,6 +43,10 @@ class InteractionTuple(namedtuple('InteractionTuple',
                 '').format(a=a, b=b, c=c, d=d, j=j,
                            left=left, right=right,
                            s=sep)
+
+    def __eq__(self, other):
+        return self[0:5] == other[0:5]
+InteractionTuple.__new__.__defaults__ = (None,)
 
 
 class ImsrgDatum:
@@ -198,7 +202,7 @@ class ImsrgDatum:
 
     def _standardize_interaction_index_tuple(self, ii_tuple):
         next_tuple = [self._standard_index(i) for i in ii_tuple[0:4]]
-        next_tuple.append(ii_tuple[4])
+        next_tuple += tuple(ii_tuple[4:])
         return InteractionTuple(*next_tuple)
 
     def _standard_index(self, i):
