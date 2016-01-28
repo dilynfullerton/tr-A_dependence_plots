@@ -9,6 +9,7 @@ import numpy as np
 from constants import *
 
 from FitFunction import FitFunction
+from ImsrgDataMap import ImsrgDataMap
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
 from metafitters_mp import multi_particle_firstp_metafit
@@ -21,6 +22,7 @@ def generate_int_file_from_fit(
         metafitter_zbt=single_particle_firstp_zbt_metafit,
         metafitter_sp=single_particle_firstp_metafit,
         metafitter_mp=multi_particle_firstp_metafit,
+        sourcedir=DIR_FILES,
         **kwargs):
     """Given fit functions for zbt, sp, and mp, as well as a set of e_hw_pairs,
     a range of mass numbers, and specific metafitter algorithms, generates
@@ -38,9 +40,15 @@ def generate_int_file_from_fit(
     :param kwargs: (Optional) Additional keyword arguments to pass to the helper
     function
     """
-    results_zbt = metafitter_zbt(fitfn_zbt, e_hw_pairs)
-    results_sp = metafitter_sp(fitfn_sp, e_hw_pairs)
-    results_mp = metafitter_mp(fitfn_mp, e_hw_pairs)
+    imsrg_data_map = ImsrgDataMap(sourcedir,
+                                  exp_list=e_hw_pairs,
+                                  standard_indices=std_io_map)
+    results_zbt = metafitter_zbt(fitfn_zbt, e_hw_pairs,
+                                 imsrg_data_map=imsrg_data_map)
+    results_sp = metafitter_sp(fitfn_sp, e_hw_pairs,
+                               imsrg_data_map=imsrg_data_map)
+    results_mp = metafitter_mp(fitfn_mp, e_hw_pairs,
+                               imsrg_data_map=imsrg_data_map)
     _generate_int_file_from_fit(results_zbt, results_sp, results_mp,
                                 e_hw_pairs=e_hw_pairs,
                                 io_map=std_io_map,
