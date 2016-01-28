@@ -134,6 +134,14 @@ def rtrim(n):
     return t
 
 
+def first_np(n):
+    def t(xarr, yarr, *args):
+        return (xarr[:n], yarr[:n]) + args
+    t.__name__ = b'first_{}p'.format(n)
+    return t
+
+
+# TRANSFORM CHAIN GENERATION
 def compose_transforms(list_of_transform, t_name_sep=b' '):
     def m(xarr, yarr, *args):
         a = (xarr, yarr) + args
