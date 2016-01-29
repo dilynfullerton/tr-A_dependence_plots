@@ -7,7 +7,12 @@ from collections import namedtuple
 import parse
 from ImsrgDatum import ImsrgDatum
 
-Exp = namedtuple('Exp', ['e', 'hw', 'base', 'rp'])
+
+class Exp(namedtuple('Exp', ['e', 'hw', 'base', 'rp'])):
+    __slots__ = ()
+
+    def __str__(self):
+        return str(tuple(self._asdict().values())).replace(', None', '')
 Exp.__new__.__defaults__ = (None, None)
 
 
