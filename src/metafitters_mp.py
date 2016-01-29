@@ -71,7 +71,7 @@ def multi_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=firstp,
             super_transform_post=s_combine_like(['interaction']),
-            code='mpfp',
+            code='mpf1p',
             mf_name='multi_particle_firstp_metafit',
             xlabel='A',
             ylabel='Energy (MeV)',
