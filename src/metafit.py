@@ -447,13 +447,15 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             rp = const_dict['rp']
             b = const_dict['base']
 
-            e_str = '' if e is None else str(e)
-            hw_str = '' if hw is None else str(hw)
-            rp_str = '' if rp is None else str(rp)
-            b_str = '' if b is None else str(b)
+            e_str = '' if e is None else e
+            hw_str = '' if hw is None else hw
+            rp_str = '' if rp is None else rp
+            b_str = '' if b is None else b
+            idxv = const_dict[idx]
+            idxv_str = '' if idxv is None else idxv
 
             labelstr = label.format(e=e_str, hw=hw_str, b=b_str, rp=rp_str,
-                                    i=const_dict[idx])
+                                    i=idxv_str)
 
             cval = scalar_map.to_rgba(i)
             ax.plot(x, y, data_line_style, label=labelstr, color=cval)
