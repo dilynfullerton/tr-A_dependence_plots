@@ -46,8 +46,11 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
                                   standard_indices=std_io_map)
     fn_res_r2_map = dict()
     for fitfn in fitfns:
-        res = metafitter(fitfn, exp_list,
-                         imsrg_data_map=imsrg_data_map, **kwargs)
+        try:
+            res = metafitter(fitfn, exp_list,
+                             imsrg_data_map=imsrg_data_map, **kwargs)
+        except TypeError:
+            continue
         lg_res = res[1]
         r2 = 0
         for v in lg_res.values():
@@ -74,7 +77,7 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
     title_str = ('\nR^2 values for fit functions under metafit {mf} for '
                  '{ehw}\n'.format(mf=metafitter.__name__, ehw=e_hw_pairs))
     print(P_TITLE + title_str + P_BREAK + P_END)
-    template_str = '{r:>4}\t{fn:>80}\t{r2:>15}'
+    template_str = '{r:>4}\t{fn:>100}\t{r2:>15}'
     head_str = template_str.format(r='Rank', fn='Fit function', r2='R^2')
     print(P_HEAD + head_str + P_END)
     for k in sorted(rank_map.keys()):
