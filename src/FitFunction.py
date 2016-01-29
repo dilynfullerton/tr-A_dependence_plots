@@ -76,8 +76,8 @@ class FitFunction:
 
 
 def combine_ffns(list_of_ffn, force_zero=None,
-                 name_pref='', name_sep=', ',
-                 code_pref='', code_sep='-',
+                 name_pref='[', name_sep=', ', name_suff=']',
+                 code_pref='', code_sep='-', code_suff='',
                  **kwargs):
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
@@ -97,13 +97,14 @@ def combine_ffns(list_of_ffn, force_zero=None,
     for pl, i in zip(params_lengths, range(len(params_lengths))):
         params_breaks.append(pl + params_breaks[i])
     total_params_length = params_breaks[-1]
+
     combined_name = name_pref
     combined_code = code_pref
     for ffn in list_of_ffn:
         combined_name += ffn.name + name_sep
         combined_code += ffn.code + code_sep
-    combined_name = combined_name[:combined_name.rfind(name_sep)]
-    combined_code = combined_code[:combined_code.rfind(code_sep)]
+    combined_name = combined_name[:combined_name.rfind(name_sep)] + name_suff
+    combined_code = combined_code[:combined_code.rfind(code_sep)] + code_suff
 
     def combined_ffns(x, params, const_list, const_dict):
         result = 0
@@ -137,7 +138,7 @@ def x1(force_zero=None, **kwargs):
 
 
 def linear(force_zero=None, **kwargs):
-    if force_zero is None:
+    if force_zero is None and len(kwargs) == 0:
         # noinspection PyUnusedLocal
         def lf(x, params, const_list, const_dict):
             a, b = params[0:2]
@@ -165,7 +166,7 @@ def x2(force_zero=None, **kwargs):
 
 
 def quadratic(force_zero=None, **kwargs):
-    if force_zero is None:
+    if force_zero is None and len(kwargs) == 0:
         # noinspection PyUnusedLocal
         def qf(x, params, const_list, const_dict):
             a, b, c = params[0:3]
@@ -195,7 +196,7 @@ def x_power(n, force_zero=None, **kwargs):
 
 
 def poly(n, force_zero=None, **kwargs):
-    if force_zero is None:
+    if force_zero is None and len(kwargs) == 0:
         # noinspection PyUnusedLocal
         def pf(x, params, const_list, const_dict):
             return np.polyval(params, x)
@@ -258,7 +259,7 @@ def x1_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
 
 
 def linear_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
-    if force_zero is None:
+    if force_zero is None and len(kwargs) == 0:
         return _dependence(np.polyval,
                            n_params=2,
                            dep_keys=dep_keys,
@@ -291,7 +292,7 @@ def x2_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
 
 
 def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
-    if force_zero is None:
+    if force_zero is None and len(kwargs) == 0:
         return _dependence(np.polyval,
                            n_params=3,
                            dep_keys=dep_keys,
@@ -324,7 +325,7 @@ def x_power_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
 
 
 def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
-    if force_zero is None:
+    if force_zero is None and len(kwargs) == 0:
         return _dependence(np.polyval,
                            n_params=n + 1,
                            dep_keys=dep_keys,
@@ -389,7 +390,10 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
                      range(l1, l1 + l2, n_params)]
         for dep in zip(dep_keys, *dep_psubs):
             k, p0 = dep[0], dep[1:]
-            v = const_dict[k]
+            if k not in const_dict:
+                continue
+            else:
+                v = const_dict[k]
             for j, p0j in zip(range(n_params), p0):
                 p[j] = p[j] + p0j * v
         for ctf in zip(more_constants, *ctf_psubs):
