@@ -129,7 +129,8 @@ rz = single_particle_first_np_zbt_metafit(1)(
         show_plot=True,
         show_fit=True,
         print_key=False,
-        print_results=False
+        print_results=True,
+        print_lr_results=False
 )
 
 rsp = single_particle_first_np_metafit(1)(
@@ -143,7 +144,8 @@ rsp = single_particle_first_np_metafit(1)(
         show_plot=True,
         show_fit=True,
         print_key=False,
-        print_results=False
+        print_results=True,
+        print_lr_results=False
 )
 
 rmp = multi_particle_firstp_metafit(
@@ -158,12 +160,13 @@ rmp = multi_particle_firstp_metafit(
         show_fit=True,
         show_legend=True,
         print_key=False,
-        print_results=False)
+        print_results=True,
+        print_lr_results=False)
 
-generate_int_file_from_fit_results(
-        results_zbt=rz, results_sp=rsp, results_mp=rmp,
-        e_hw_pairs=[(12, 20), (12, 24, 22), (12, 24, 24)],
-        mass_range=range(16, 32))
+# generate_int_file_from_fit_results(
+#         results_zbt=rz, results_sp=rsp, results_mp=rmp,
+#         e_hw_pairs=[(12, 20), (12, 24, 22), (12, 24, 24)],
+#         mass_range=range(16, 32))
 
 
 # multi_particle_relative_pzbt_metafit(

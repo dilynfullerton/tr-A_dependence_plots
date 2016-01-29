@@ -208,26 +208,40 @@ def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
     return x, y, const_list, const_dict
 
 
-def _printer_for_single_particle_metafit(metafit_results, linregress_results):
-    params, cov, info, msg, ier = metafit_results
-    print('\n' + P_TITLE + 'Meta-fit results:\n' + '-' * 80 + P_END)
-    print(P_SUB + 'PARAMS =' + P_END)
-    print('{}'.format(params))
-    print(P_SUB + 'COV =' + P_END)
-    print('{}'.format(cov))
-    print(P_SUB + 'INFO =' + P_END)
-    for k in info.keys():
-        print('{k}:'.format(k=k))
-        print('{v}'.format(v=info[k]))
-    print(P_SUB + 'MESSAGE =' + P_END)
-    print('{}'.format(msg))
-    print(P_SUB + 'IER =' + P_END)
-    print('{}'.format(ier))
+def _printer_for_single_particle_metafit(metafit_results, linregress_results,
+                                         print_mf_results=True,
+                                         print_lr_results=True,
+                                         full_output=False,
+                                         header=''):
+    if print_mf_results or print_lr_results:
+        print('\n' + P_TITLE + header + '\n' + '=' * 80 + P_END)
+    if print_mf_results:
+        if full_output:
+            params, cov, info, msg, ier = metafit_results
+        else:
+            params, cov = metafit_results[0:2]
+        print('\n' + P_TITLE + 'META-FIT RESULTS:\n' +
+              '-' * 80 + P_END)
+        print(P_SUB + 'PARAMS =' + P_END)
+        print('{}'.format(params))
+        print(P_SUB + 'COV =' + P_END)
+        print('{}'.format(cov))
+        if full_output:
+            print(P_SUB + 'INFO =' + P_END)
+            for k in info.keys():
+                print('{k}:'.format(k=k))
+                print('{v}'.format(v=info[k]))
+            print(P_SUB + 'MESSAGE =' + P_END)
+            print('{}'.format(msg))
+            print(P_SUB + 'IER =' + P_END)
+            print('{}'.format(ier))
 
-    print('\n' + P_TITLE + 'Line regression results:\n' + '-' * 80 + P_END)
-    for exp, qnums in sorted(linregress_results.keys()):
-        slope, intercept, rvalue, pvalue, stderr = (
-            linregress_results[(exp, qnums)])
+    if print_lr_results:
+        print('\n' + P_TITLE + 'LINE REGRESSION RESULTS:\n' +
+              '-' * 80 + P_END)
+        for exp, qnums in sorted(linregress_results.keys()):
+            slope, intercept, rvalue, pvalue, stderr = (
+                linregress_results[(exp, qnums)])
         print(P_HEAD + '{exp}: {qn}'.format(exp=exp, qn=qnums) + P_END)
         print(P_SUB + 'SLOPE = ' + P_END)
         print('  ' + str(slope))
@@ -250,6 +264,8 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             std_io_map=STANDARD_IO_MAP,
                             print_key=False,
                             print_results=False,
+                            print_mf_results=True,
+                            print_lr_results=True,
                             show_plot=False,
                             show_fit=True,
                             show_legend=True,
@@ -405,8 +421,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             np.ones(num_fit_params))[0]
 
     # Do the meta-fit
-    if print_results:
-        full_output = True
     mf_results = _meta_fit(plots, fitfn, param_guess, full_output=full_output)
     params = mf_results[0]
 
@@ -427,7 +441,11 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
 
     # Print results
     if print_results is True:
-        _printer(mf_results, lr_results)
+        _printer(mf_results, lr_results, print_mf_results, print_lr_results,
+                 full_output,
+                 header=title.format(tr=transform.__name__,
+                                     fn=fitfn.__name__,
+                                     ehw=exp))
 
     # Plot results
     if show_plot is True:
@@ -519,9 +537,17 @@ def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
     return x, y, const_list, const_dict
 
 
-def _printer_for_multiparticle_metafit(metafit_results, linregress_results):
+def _printer_for_multiparticle_metafit(metafit_results, linregress_results,
+                                       print_mf_results=True,
+                                       print_lr_results=True,
+                                       full_output=False,
+                                       header=''):
     return _printer_for_single_particle_metafit(metafit_results,
-                                                linregress_results)
+                                                linregress_results,
+                                                print_mf_results,
+                                                print_lr_results,
+                                                full_output,
+                                                header)
 
 
 def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
