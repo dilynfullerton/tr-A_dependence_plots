@@ -47,30 +47,30 @@ def generate_int_file_from_fit(
                                imsrg_data_map=imsrg_data_map)
     results_mp = metafitter_mp(fitfn_mp, e_hw_pairs,
                                imsrg_data_map=imsrg_data_map)
-    _generate_int_file_from_fit(results_zbt, results_sp, results_mp,
-                                e_hw_pairs=e_hw_pairs,
-                                io_map=std_io_map,
-                                mass_range=mass_range,
-                                **kwargs)
+    generate_int_file_from_fit_results(results_zbt=results_zbt,
+                                       results_sp=results_sp,
+                                       results_mp=results_mp,
+                                       e_hw_pairs=e_hw_pairs,
+                                       io_map=std_io_map,
+                                       mass_range=mass_range,
+                                       **kwargs)
 
 
-def _generate_int_file_from_fit(results_zbt,
-                                results_sp,
-                                results_mp,
-                                mass_range,
-                                e_hw_pairs,
-                                io_map,
-                                file_save_dir=DIR_GEN_INT,
-                                _file_save_subdir=GEN_INT_SUBDIR,
-                                _file_save_name=GEN_INT_FILE_NAME,
-                                _row_lines_title=GEN_INT_ROW_LINES_TITLE,
-                                _row_lines_subtitle=GEN_INT_ROW_LINES_FIT_PARAMS,
-                                _row_zbt=GEN_INT_ROW_ZERO_BODY_TERM,
-                                _row_idx_key_head=GEN_INT_ROW_INDEX_KEY_HEAD,
-                                _row_idx_key=GEN_INT_ROW_INDEX_KEY,
-                                _row_blank=GEN_INT_ROW_BLANK,
-                                _row_sp=GEN_INT_ROW_SINGLE_PARTICLE,
-                                _row_mp=GEN_INT_ROW_INTERACTION):
+def generate_int_file_from_fit_results(
+        results_zbt, results_sp, results_mp,
+        mass_range, e_hw_pairs,
+        io_map=STANDARD_IO_MAP,
+        file_save_dir=DIR_GEN_INT,
+        _file_save_subdir=GEN_INT_SUBDIR,
+        _file_save_name=GEN_INT_FILE_NAME,
+        _row_lines_title=GEN_INT_ROW_LINES_TITLE,
+        _row_lines_subtitle=GEN_INT_ROW_LINES_FIT_PARAMS,
+        _row_zbt=GEN_INT_ROW_ZERO_BODY_TERM,
+        _row_idx_key_head=GEN_INT_ROW_INDEX_KEY_HEAD,
+        _row_idx_key=GEN_INT_ROW_INDEX_KEY,
+        _row_blank=GEN_INT_ROW_BLANK,
+        _row_sp=GEN_INT_ROW_SINGLE_PARTICLE,
+        _row_mp=GEN_INT_ROW_INTERACTION):
     """Generate a set of .int interaction files from a set of sp results, mp
     results, and zbt results for a given mass range.
 
