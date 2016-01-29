@@ -45,7 +45,7 @@ class FitFunction:
         elif self.fzfn is not None:
             self.code += b'fzfz'
         elif self.fk is not None:
-            self.code += b'fk{}'.format(self.k)
+            self.code += b'fk{}'.format(self.fk)
         elif self.fkfn is not None:
             self.code += b'fkfn'
 
@@ -82,6 +82,8 @@ def combine_ffns(list_of_ffn, force_zero=None,
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
 
+    :param code_sep:
+    :param code_pref:
     :param list_of_ffn: A list of FitFunctions to combine into one
     :param force_zero: (optional) force the zero of the overall result to a
     specified point

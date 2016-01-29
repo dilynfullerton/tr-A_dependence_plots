@@ -8,6 +8,7 @@ import parse
 from ImsrgDatum import ImsrgDatum
 
 
+# noinspection PyClassHasNoInit
 class Exp(namedtuple('Exp', ['e', 'hw', 'base', 'rp'])):
     __slots__ = ()
 
@@ -43,7 +44,8 @@ class ImsrgDataMap:
                     continue
 
                 if key not in self.map:
-                    value = ImsrgDatum(sd, *key, std_io_map=self.std_io_map)
+                    value = ImsrgDatum(sd, *tuple(key),
+                                       std_io_map=self.std_io_map)
                     self.map[key] = value
 
     def all_e_hw_pairs(self):

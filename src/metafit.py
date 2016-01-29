@@ -194,6 +194,7 @@ def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
     return x, y, const_list, const_dict
 
 
+# noinspection PyUnusedLocal
 def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
                           *args):
     x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
@@ -507,6 +508,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     return mf_results, lr_results, plots, fitfn, info
 
 
+# noinspection PyUnusedLocal
 def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
                          *args):
     x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,

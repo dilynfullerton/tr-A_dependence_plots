@@ -7,7 +7,7 @@ from os import mkdir, path
 from constants import *
 
 from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMap, Exp
+from ImsrgDataMap import ImsrgDataMap
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
 from metafitters_mp import multi_particle_firstp_metafit
@@ -26,6 +26,7 @@ def generate_int_file_from_fit(
     a range of mass numbers, and specific metafitter algorithms, generates
     fake interaction files based on the fit functions
 
+    :param sourcedir:
     :param fitfn_zbt: fit function for zero body term
     :param fitfn_sp: fit function for single particle
     :param fitfn_mp: fit function for interaction
@@ -74,6 +75,7 @@ def generate_int_file_from_fit_results(
     """Generate a set of .int interaction files from a set of sp results, mp
     results, and zbt results for a given mass range.
 
+    :param e_hw_pairs:
     :param results_sp: Results of a single particle metafit. This should be an
     identity fit, with a standard io_map, also passed to this function.
     :param results_mp: Results of a multi-particle metafit. This should be an
@@ -209,8 +211,8 @@ def _get_file_lines(x, results_zbt, results_sp, results_mp, io_map,
 def _title_lines(row_lines_title, info_zbt, info_sp, info_mp, e_hw_pairs):
     for i, info in zip(range(1, 4), [info_zbt, info_sp, info_mp]):
         row_lines_title[i] = row_lines_title[i].format(
-            mf=info['mf_name'], code=info['mf_code'],
-            ffn=info['ffn_name'], ffn_code=info['ffn_code'])
+                mf=info['mf_name'], code=info['mf_code'],
+                ffn=info['ffn_name'], ffn_code=info['ffn_code'])
     row_lines_title[5] = row_lines_title[5].format(ehw=e_hw_pairs)
     return row_lines_title
 
@@ -243,8 +245,8 @@ def _index_lines(row_index_key, io_map):
         lines.append(row_index_key.format(k,
                                           int(n),
                                           int(l),
-                                          str(int(2*j)) + '/2',
-                                          str(int(2*tz)) + '/2'))
+                                          str(int(2 * j)) + '/2',
+                                          str(int(2 * tz)) + '/2'))
     return lines
 
 

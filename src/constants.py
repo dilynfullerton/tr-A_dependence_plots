@@ -33,8 +33,11 @@ STANDARD_IO_MAP = {
 }
 
 # File generating
+# noinspection PyPep8
 GEN_INT_SUBDIR = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}'
+# noinspection PyPep8
 GEN_INT_FILE_NAME = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int'
+# noinspection PyPep8
 GEN_INT_ROW_LINES_TITLE = [
     '! Interaction file generated from:',
     '!  + zero body term fitter:  {mf:<40} ({code:<7})\n!        using fit function: {ffn:<40} ({ffn_code:<7})',

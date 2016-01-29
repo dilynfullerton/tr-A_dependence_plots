@@ -145,9 +145,7 @@ rsp = single_particle_first_np_metafit(1)(
         print_key=False,
         print_results=False
 )
-# #
 
-#
 rmp = multi_particle_firstp_metafit(
         fitfn=combine_ffns([linear(),
                             scalar_dependence(['y0'])]),
