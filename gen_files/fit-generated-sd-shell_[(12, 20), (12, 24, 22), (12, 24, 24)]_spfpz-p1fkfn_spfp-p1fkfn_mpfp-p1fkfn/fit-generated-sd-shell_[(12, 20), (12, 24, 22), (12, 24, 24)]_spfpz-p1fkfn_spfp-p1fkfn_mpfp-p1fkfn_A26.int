@@ -1,7 +1,12 @@
 ! Interaction file generated from:
-!  + zero body term fitter:  single_particle_firstp_zbt_metafit       (spfpz  ) using fit function: linear force point with fk_to_zbt0       (p1fkfn )
-!  + single particle fitter: single_particle_firstp_metafit           (spfp   ) using fit function: linear force point with fk_to_y0         (p1fkfn )
-!  + interaction fitter:     multi_particle_firstp_metafit            (mpfp   ) using fit function: linear force point with fk_to_y0         (p1fkfn )
+!  + zero body term fitter:  single_particle_firstp_zbt_metafit       (spfpz  )
+!        using fit function: linear force point with fk_to_zbt0       (p1fkfn )
+!  + single particle fitter: single_particle_firstp_metafit           (spfp   )
+!        using fit function: linear force point with fk_to_y0         (p1fkfn )
+!  + interaction fitter:     multi_particle_firstp_metafit            (mpfp   )
+!        using fit function: linear force point with fk_to_y0         (p1fkfn )
+!
+! Fit performed on: [(12, 20), (12, 24, 22), (12, 24, 24)]
 !
 ! Fit params: 
 !  + zero body term fit:  [ 0.8989  1.    ]
