@@ -82,6 +82,8 @@ def combine_ffns(list_of_ffn, force_zero=None,
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
 
+    :param code_suff:
+    :param name_suff:
     :param code_sep:
     :param code_pref:
     :param list_of_ffn: A list of FitFunctions to combine into one

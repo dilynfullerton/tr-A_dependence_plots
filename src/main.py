@@ -3,14 +3,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from FitFunction import *
-from metafitters_sp import *
-from metafitters_mp import *
-
-from metafit import compare_params as compare
-from mf_compare import max_r2_value as max_r2, compare_params
-
-from generate_int import generate_int_file_from_fit
 from generate_int import generate_int_file_from_fit_results
+from metafitters_mp import *
+from metafitters_sp import *
 
 fz = None
 fzfn = None

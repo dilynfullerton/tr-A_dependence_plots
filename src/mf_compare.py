@@ -1,6 +1,6 @@
 from itertools import combinations
 
-import numpy
+import numpy as np
 
 from ImsrgDataMap import Exp, ImsrgDataMap
 from constants import DIR_FILES, STANDARD_IO_MAP

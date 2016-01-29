@@ -140,6 +140,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             show_fit=True,
                             show_legend=True,
                             full_output=False,
+                            mf_name='single_particle_metafit',
                             code='',
                             title=('Metafit for single particle energy'
                                    ' {tr} data using {fn} for {ehw}'),
@@ -157,7 +158,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             legend_rows_per_col=LEGEND_ROWS_PER_COL,
                             legend_space_scale=LEGEND_SPACE_SCALE,
                             savename='meta_{c}-{t}',
-                            mf_name='single_particle_metafit',
                             _plot_sort_key=lambda p: p[3]['qnums'],
                             _get_data=lambda dm: dm.index_mass_energy_map(),
                             _get_plot=_single_particle_plot,
@@ -165,6 +165,8 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
     given fit function
 
+    :param print_lr_results:
+    :param print_mf_results:
     :param fitfn: The FitFunction object to use for fitting. Alternatively,
     may be of the form in fitfns.py, although this is deprecated.
     :param e_hw_pairs: A list of tuples of (e, hw [, rp]), which fully specify
