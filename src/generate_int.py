@@ -4,12 +4,10 @@ from __future__ import unicode_literals
 
 from os import mkdir, path
 
-import numpy as np
-
 from constants import *
 
 from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMap
+from ImsrgDataMap import ImsrgDataMap, Exp
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
 from metafitters_mp import multi_particle_firstp_metafit
@@ -114,7 +112,9 @@ def _generate_int_file_from_fit(results_zbt,
     info_sp = results_sp[4]
     info_mp = results_mp[4]
 
-    fname_args = {'ehw': str(e_hw_pairs),
+    e_hw_pairs_strings = [str(pair) for pair in e_hw_pairs]
+
+    fname_args = {'ehw': '[' + ', '.join(e_hw_pairs_strings) + ']',
                   'mf1': info_zbt['mf_code'], 'ffn1': info_zbt['ffn_code'],
                   'mf2': info_sp['mf_code'], 'ffn2': info_sp['ffn_code'],
                   'mf3': info_mp['mf_code'], 'ffn3': info_mp['ffn_code']}
