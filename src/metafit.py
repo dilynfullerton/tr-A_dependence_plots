@@ -3,178 +3,21 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from math import ceil
-from itertools import combinations
 
 from matplotlib import cm
 from matplotlib import colors
 from matplotlib import pyplot as plt
-
 from scipy.optimize import leastsq
 from scipy.stats import linregress
 
 from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMap, Exp
-
 from constants import *
 from fit_transforms import *
-
 from spfitting import map_to_arrays
 from spfitting import print_io_key
 
 
-# STATISTICAL ANALYSIS TOOLS
-def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-                 sourcedir=DIR_FILES,
-                 std_io_map=STANDARD_IO_MAP,
-                 **kwargs):
-    """Returns the fit function (and its optimized results) that produces the
-    largest total r^2 value
-
-    :param sourcedir: the directory from which to retrieve the data
-    :param print_r2_results: whether to print the results of this analysis
-    :param metafitter: the metafitter method (e.g.
-    single_particle_relative_metafigt)
-    :param fitfns: the list of fitfns to test
-    :param e_hw_pairs: the (e, hw) pairs to optimize
-    :param std_io_map: A standard io-mapping scheme to use
-    :param kwargs: keyword arguments to pass to the metafitter
-    :return: best fit function, results
-    """
-    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
-    imsrg_data_map = ImsrgDataMap(parent_directory=sourcedir,
-                                  exp_list=exp_list,
-                                  standard_indices=std_io_map)
-    fn_res_r2_map = dict()
-    for fitfn in fitfns:
-        try:
-            res = metafitter(fitfn, exp_list,
-                             imsrg_data_map=imsrg_data_map, **kwargs)
-        except TypeError:
-            continue
-        lg_res = res[1]
-        r2 = 0
-        for v in lg_res.values():
-            r = v.rvalue
-            r2 += r ** 2
-        r2 /= len(lg_res)
-        fn_res_r2_map[fitfn] = (res, r2)
-    rank_map = dict()
-    result_map = dict()
-    for fitfn, i in zip(sorted(fn_res_r2_map.keys(),
-                               key=lambda f: -1 * fn_res_r2_map[f][1]),
-                        range(len(fn_res_r2_map))):
-        res, r2 = fn_res_r2_map[fitfn]
-        rank_map[i + 1] = (fitfn, r2)
-        result_map[fitfn] = res
-    if print_r2_results is True:
-        _printer_for_max_r2_value(rank_map, metafitter,
-                                  exp_list)
-    return rank_map[1][0], rank_map[1][1], rank_map, result_map
-
-
-def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
-    e_hw_pairs = [tuple(e_hw_pair) for e_hw_pair in e_hw_pairs]
-    title_str = ('\nR^2 values for fit functions under metafit {mf} for '
-                 '{ehw}\n'.format(mf=metafitter.__name__, ehw=e_hw_pairs))
-    print(P_TITLE + title_str + P_BREAK + P_END)
-    template_str = '{r:>4}\t{fn:>100}\t{r2:>15}'
-    head_str = template_str.format(r='Rank', fn='Fit function', r2='R^2')
-    print(P_HEAD + head_str + P_END)
-    for k in sorted(rank_map.keys()):
-        body_str = template_str.format(r=k, fn=rank_map[k][0].__name__,
-                                       r2=rank_map[k][1])
-        print(body_str)
-
-
-def compare_params(metafitter, fitfn, e_hw_pairs,
-                   depth, statfn=np.std,
-                   print_compare_results=False,
-                   sourcedir=DIR_FILES,
-                   std_io_map=STANDARD_IO_MAP,
-                   **kwargs):
-    """Compare parameter results for a given metafitter on a given fitfn using
-    combinations of the given e_hw_pairs to the depth given by depth. The
-    method of comparison is given by the statistical function statfn, whose
-    default is the standard deviation.
-
-    :param metafitter: the meta-fitting method to use (e.g.
-    single_particle_relative_metafit)
-    :param fitfn: the fit function to use
-    :param e_hw_pairs: the set of (e, hw) pairs to look at
-    :param depth: the depth of sub-combinations of e_hw_pairs to look at.
-    For example, if e_hw_pairs = {(1, 1), (2, 2), (3, 3), (4, 4)} and depth is
-    2, all of the length 4, length 3, and length 2 sub-combinations will be
-    added to the analysis
-    :param statfn: The comparison function to perform on the distribution of
-    single-parameter results. Must take a single ndarray object as input and
-    return a float output.
-    :param print_compare_results: whether to print the results in a neat table
-    :param sourcedir: the directory from which to retrieve the files
-    :param std_io_map: a standard index -> orbital mapping scheme to use fo the
-    generated imsrg_data_map
-    :param kwargs: keyword arguments to be passed to the metafitter
-    :return: a list of (param, result, relative result) 3-tuples
-    """
-    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
-    imsrg_data_map = ImsrgDataMap(sourcedir,
-                                  exp_list=exp_list,
-                                  standard_indices=std_io_map)
-    if depth > len(e_hw_pairs) - 1:
-        depth = len(e_hw_pairs) - 1
-    params = metafitter(fitfn, e_hw_pairs,
-                        imsrg_data_map=imsrg_data_map, **kwargs)[0][0]
-    all_params_lists = list([params])
-    for length in range(len(e_hw_pairs) - 1, len(e_hw_pairs) - depth - 1, -1):
-        for sub_e_hw_pairs in combinations(e_hw_pairs, length):
-            mod_params = metafitter(fitfn, sub_e_hw_pairs,
-                                    imsrg_data_map=imsrg_data_map)[0][0]
-            all_params_lists.append(mod_params)
-    individual_params_lists = _distributions_from_lol(all_params_lists)
-    param_result_list = list()
-    for param, param_list in zip(params, individual_params_lists):
-        param_array = np.array(param_list)
-        result = statfn(param_array)
-        rel_result = abs(result / param)
-        param_result_list.append((param, result, rel_result))
-    if print_compare_results is True:
-        _printer_for_compare_params(param_result_list,
-                                    depth, statfn.__name__,
-                                    e_hw_pairs, metafitter,
-                                    fitfn)
-    return param_result_list
-
-
-def _distributions_from_lol(lol):
-    sublist_size = len(lol[0])
-    distributions_list = list()
-    for i in range(sublist_size):
-        distributions_list.append(list(map(lambda sl: sl[i], lol)))
-    return distributions_list
-
-
-def _printer_for_compare_params(params_result_list,
-                                depth, statfn,
-                                e_hw_pairs, metafitter,
-                                fitfn):
-    title_str = ('\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
-                 '{mf} and fit function {ffn}'
-                 '').format(d=depth,
-                            sfn=statfn,
-                            ehw=e_hw_pairs,
-                            mf=metafitter.__name__,
-                            ffn=fitfn.__name__)
-    print(P_TITLE + title_str + '\n' + P_BREAK + P_END)
-    temp_str = '{p:>20}\t{std:>20}\t{rel:>20}'
-    print(P_HEAD +
-          temp_str.format(p='Parameter val',
-                          std='Compare result',
-                          rel='Rel compare result') +
-          P_END)
-    for p, std, rel in params_result_list:
-        print(temp_str.format(p=p, std=std, rel=rel))
-
-
-# HELPER FUNCTIONS
 def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
     e, hw, base, rp = identifier
     x, y = map_to_arrays(me_map)
@@ -208,6 +51,17 @@ def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
     const_dict['qnums'] = qnums
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(qnums._asdict()).items())
+    return x, y, const_list, const_dict
+
+
+# noinspection PyUnusedLocal
+def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
+                         *args):
+    x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
+                                              mzbt_map, others)
+    const_dict['interaction'] = k
+    # noinspection PyProtectedMember
+    const_dict = dict(const_dict.items() + dict(k._asdict()).items())
     return x, y, const_list, const_dict
 
 
@@ -257,6 +111,19 @@ def _printer_for_single_particle_metafit(metafit_results, linregress_results,
         print(P_SUB + 'STDERR = ' + P_END)
         print('  ' + str(stderr))
         print()
+
+
+def _printer_for_multiparticle_metafit(metafit_results, linregress_results,
+                                       print_mf_results=True,
+                                       print_lr_results=True,
+                                       full_output=False,
+                                       header=''):
+    return _printer_for_single_particle_metafit(metafit_results,
+                                                linregress_results,
+                                                print_mf_results,
+                                                print_lr_results,
+                                                full_output,
+                                                header)
 
 
 def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
@@ -527,30 +394,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else ''}
 
     return mf_results, lr_results, plots, fitfn, info
-
-
-# noinspection PyUnusedLocal
-def _multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
-                         *args):
-    x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
-                                              mzbt_map, others)
-    const_dict['interaction'] = k
-    # noinspection PyProtectedMember
-    const_dict = dict(const_dict.items() + dict(k._asdict()).items())
-    return x, y, const_list, const_dict
-
-
-def _printer_for_multiparticle_metafit(metafit_results, linregress_results,
-                                       print_mf_results=True,
-                                       print_lr_results=True,
-                                       full_output=False,
-                                       header=''):
-    return _printer_for_single_particle_metafit(metafit_results,
-                                                linregress_results,
-                                                print_mf_results,
-                                                print_lr_results,
-                                                full_output,
-                                                header)
 
 
 def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
