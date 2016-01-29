@@ -76,3 +76,21 @@ def multi_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
             xlabel='A',
             ylabel='Energy (MeV)',
             **kwargs)
+
+
+def multi_particle_first_np_metafit(n):
+    name = b'multi_particle_first_{}p_metafit'.format(n)
+
+    def mpfnp(fitfn, e_hw_pairs, **kwargs):
+        return multi_particle_metafit(
+            fitfn, e_hw_pairs,
+            sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+            transform=first_np(n),
+            super_transform_post=s_combine_like(['interaction']),
+            code='mpf{}p'.format(n),
+            mf_name=name,
+            xlabel='A',
+            ylabel='Energy (MeV)',
+            **kwargs)
+    mpfnp.__name__ = name
+    return mpfnp
