@@ -4,6 +4,6 @@
 *.pyc
 *#*
 .DS_Store
-*.png
 *.coverfiles
 /old
+/plots
