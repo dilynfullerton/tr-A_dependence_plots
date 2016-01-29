@@ -1,3 +1,7 @@
+"""Various tools to compare multiple meta-fits of functional forms based on
+their parameter variance, regression agreement, etc.
+"""
+
 from itertools import combinations
 
 import numpy as np

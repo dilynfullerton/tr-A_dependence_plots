@@ -1,3 +1,7 @@
+"""Simple curve-fitter. I don't know if this really has much use now that the
+meta-fitter is developed
+"""
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals

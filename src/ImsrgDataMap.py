@@ -1,3 +1,7 @@
+"""Holds all of the data for different data sets (specified by their Exp) in
+a map
+"""
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals

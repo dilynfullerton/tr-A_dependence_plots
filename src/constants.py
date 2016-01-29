@@ -1,3 +1,6 @@
+"""Constants for use throughout the project
+"""
+
 from __future__ import unicode_literals
 from ImsrgDatum import QuantumNumbers
 

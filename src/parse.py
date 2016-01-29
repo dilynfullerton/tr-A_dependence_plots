@@ -1,3 +1,7 @@
+"""Functions for parsing interaction files and extracting information from
+their file names
+"""
+
 from __future__ import print_function
 
 import glob

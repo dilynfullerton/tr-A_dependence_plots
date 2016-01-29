@@ -1,3 +1,8 @@
+"""Primary algorithms for fitting onto multiple single particle or
+multiparticle plots simultaneously based on universal and specific parameters
+for each plot
+"""
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals

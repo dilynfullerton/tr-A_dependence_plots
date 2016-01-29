@@ -1,3 +1,7 @@
+"""(Deprecated) Fit functions. Although these are still supported, use
+fit functions of type FitFunction instead
+"""
+
 from __future__ import division
 from __future__ import print_function
 
