@@ -243,7 +243,7 @@ def scalar_dependence(dep_keys, ctfs=list()):
                        dep_keys=dep_keys,
                        ctfs=ctfs,
                        name='scalar dependence',
-                       code='(s:{})')
+                       code='s:{}')
 
 
 def x1_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
@@ -253,7 +253,7 @@ def x1_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
                        ctfs=ctfs,
                        force_zero=force_zero,
                        name='x dependence',
-                       code='(x1:{})',
+                       code='x1:{}',
                        **kwargs)
 
 
@@ -265,7 +265,7 @@ def linear_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
                            ctfs=ctfs,
                            force_zero=force_zero,
                            name='linear dependence',
-                           code='(p1:{})',
+                           code='p1:{}',
                            **kwargs)
     else:
         return _dependence(lambda p, x:
@@ -275,7 +275,7 @@ def linear_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
                            ctfs=ctfs,
                            force_zero=force_zero,
                            name='linear dependence',
-                           code='(p1:{})',
+                           code='p1:{}',
                            **kwargs)
 
 
@@ -286,7 +286,7 @@ def x2_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
                        ctfs=ctfs,
                        force_zero=force_zero,
                        name='x^2 dependence',
-                       code='(x2:{})',
+                       code='x2:{}',
                        **kwargs)
 
 
@@ -298,7 +298,7 @@ def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
                            ctfs=ctfs,
                            force_zero=force_zero,
                            name='quadratic dependence',
-                           code='(p2:{})',
+                           code='p2:{}',
                            **kwargs)
     else:
         return _dependence(lambda p, x:
@@ -308,7 +308,7 @@ def quadratic_dependence(dep_keys, ctfs=list(), force_zero=None, **kwargs):
                            ctfs=ctfs,
                            force_zero=force_zero,
                            name='quadratic dependence',
-                           code='(p2:{})',
+                           code='p2:{}',
                            **kwargs)
 
 
@@ -319,7 +319,7 @@ def x_power_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
                        ctfs=ctfs,
                        force_zero=force_zero,
                        name='x^{} dependence'.format(n),
-                       code='(x{}'.format(n)+':{})',
+                       code='x{}'.format(n)+':{}',
                        **kwargs)
 
 
@@ -331,7 +331,7 @@ def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
                            ctfs=ctfs,
                            force_zero=force_zero,
                            name='poly{n} dependence'.format(n=n),
-                           code='(p{}'.format(n) + ':{})',
+                           code='p{}'.format(n) + ':{}',
                            **kwargs)
     else:
         return _dependence(lambda p, x:
@@ -341,7 +341,7 @@ def poly_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
                            ctfs=ctfs,
                            force_zero=force_zero,
                            name='poly{n} dependence'.format(n=n),
-                           code='(p{}'.format(n) + ':{})',
+                           code='p{}'.format(n) + ':{}',
                            **kwargs)
 
 
@@ -352,7 +352,7 @@ def asymptotic_dependence(n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
                        ctfs=ctfs,
                        force_zero=force_zero,
                        name='asymptotic{} dependence'.format(n),
-                       code='(a{}'.format(n) + ':{})',
+                       code='a{}'.format(n) + ':{}',
                        **kwargs)
 
 

@@ -2,9 +2,9 @@
 !  + zero body term fitter:  single_particle_first_1p_zbt_metafit     (spf1pz )
 !        using fit function: asymptote2 force point with fk_to_zbt0   (a2fkfn )
 !  + single particle fitter: single_particle_first_1p_metafit         (spf1p  )
-!        using fit function: linear, scalar dependence on (y0)        (p1-(s:(y0)))
+!        using fit function: linear, scalar dependence on (y0)        (p1-s:(y0))
 !  + interaction fitter:     multi_particle_firstp_metafit            (mpf1p  )
-!        using fit function: linear, scalar dependence on (y0)        (p1-(s:(y0)))
+!        using fit function: linear, scalar dependence on (y0)        (p1-s:(y0))
 !
 ! Fit performed on: [(12, 20), (12, 24, 22), (12, 24, 24)]
 !
