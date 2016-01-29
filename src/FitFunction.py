@@ -7,6 +7,9 @@ from __future__ import unicode_literals
 
 import numpy as np
 
+from constants import FF_NAME_PREF, FF_NAME_SEP, FF_NAME_SUFF
+from constants import FF_CODE_PREF, FF_CODE_SEP, FF_CODE_SUFF
+
 
 class FitFunction:
     def __init__(self, function, num_fit_params, force_zero=None,
@@ -46,11 +49,11 @@ class FitFunction:
         if self.fz is not None:
             self.code += b'fz{}'.format(self.fz)
         elif self.fzfn is not None:
-            self.code += b'fzfz'
+            self.code += b'fz:' + str(self.fzfn.__name__[6:])
         elif self.fk is not None:
             self.code += b'fk{}'.format(self.fk)
         elif self.fkfn is not None:
-            self.code += b'fkfn'
+            self.code += b'fk:' + str(self.fkfn.__name__[6:])
 
     def eval(self, x, params, const_list, const_dict):
         if self.fz is not None:
@@ -79,8 +82,12 @@ class FitFunction:
 
 
 def combine_ffns(list_of_ffn, force_zero=None,
-                 name_pref='[', name_sep=', ', name_suff=']',
-                 code_pref='', code_sep='-', code_suff='',
+                 name_pref=FF_NAME_PREF,
+                 name_sep=FF_NAME_SEP,
+                 name_suff=FF_NAME_SUFF,
+                 code_pref=FF_CODE_PREF,
+                 code_sep=FF_CODE_SEP,
+                 code_suff=FF_CODE_SUFF,
                  **kwargs):
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
