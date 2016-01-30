@@ -10,7 +10,7 @@ from os import mkdir, path
 from constants import *
 
 from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMap
+from ImsrgDataMap import ImsrgDataMap, Exp
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
 from metafitters_mp import multi_particle_firstp_metafit
@@ -117,6 +117,12 @@ def generate_int_file_from_fit_results(
     info_sp = results_sp[4]
     info_mp = results_mp[4]
 
+    exp_list = [Exp(*pair) for pair in e_hw_pairs]
+    if reduce(lambda x, y: x and y,
+              map(lambda i: i['exp'] == exp_list,
+                  [info_zbt, info_sp, info_mp])) is not True:
+        raise InconsistentDatasetsGivenToIntFileGeneratorException
+
     e_hw_pairs_strings = [str(pair) for pair in e_hw_pairs]
 
     fname_args = {'ehw': '[' + ', '.join(e_hw_pairs_strings) + ']',
@@ -154,6 +160,10 @@ def generate_int_file_from_fit_results(
             for line in file_lines:
                 f.write(line)
                 f.write(b'\n')
+
+
+class InconsistentDatasetsGivenToIntFileGeneratorException(Exception):
+    pass
 
 
 def _get_file_lines(x, results_zbt, results_sp, results_mp, io_map,
