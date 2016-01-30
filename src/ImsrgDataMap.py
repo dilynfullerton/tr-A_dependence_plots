@@ -8,7 +8,9 @@ from __future__ import unicode_literals
 
 from collections import namedtuple
 
-import parse
+from parse import sub_directories
+from parse import files_with_ext_in_directory
+from parse import exp_from_filename
 from ImsrgDatum import ImsrgDatum
 
 
@@ -34,15 +36,15 @@ class ImsrgDataMap:
         self._set_maps()
 
     def _set_maps(self):
-        sub_directories = parse.files_with_ext_in_directory(self.parent_dir,
-                                                            extension='')
-        for sd in sub_directories:
-            files = parse.files_with_ext_in_directory(sd)
+        sub_dirs = sub_directories(self.parent_dir)
+
+        for sd in sub_dirs:
+            files = files_with_ext_in_directory(sd)
             if len(files) == 0:
                 continue
 
             for f in files:
-                key = Exp(*parse.exp_from_filename(f))
+                key = Exp(*exp_from_filename(f))
 
                 if self.exp_list is not None and key not in self.exp_list:
                     continue
