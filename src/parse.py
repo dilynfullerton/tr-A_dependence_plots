@@ -31,6 +31,11 @@ RP_REGEX = '[a-z]+\d\.\d+Rp\d'
 # ======================================================================
 # Functions
 # ======================================================================
+def sub_directories(parent_dir):
+    w = next(os.walk(parent_dir))
+    return [os.path.join(w[0], sd) for sd in w[1]]
+
+
 def files_with_ext_in_directory(directory, extension=FILE_EXT):
     """Returns a list of the filenames of all the files in the given
     directory with the given extension
