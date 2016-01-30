@@ -212,7 +212,7 @@ rsp = single_particle_first_np_metafit(1)(
 rmp = multi_particle_first_np_metafit(1)(
         fitfn=combine_ffns([linear(),
                             #scalar_dependence(['y0'])
-                           ],
+                            ],
                            force_k_func=fk_to_y0
                            ),
         e_hw_pairs=[
@@ -230,7 +230,7 @@ rmp = multi_particle_first_np_metafit(1)(
 generate_int_file_from_fit_results(
         results_zbt=rz, results_sp=rsp, results_mp=rmp,
         e_hw_pairs=[(12, 20), (12, 24, 22), (12, 24, 24)],
-        mass_range=range(16, 32))
+        mass_range=range(17, 29))
 
 
 # multi_particle_relative_pzbt_metafit(
