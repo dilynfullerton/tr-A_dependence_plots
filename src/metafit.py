@@ -398,7 +398,8 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         'mf_code': code,
         'mf_name': mf_name,
         'ffn_name': fitfn.__name__,
-        'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else ''}
+        'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else '',
+        'exp_list': exp_list}
 
     return mf_results, lr_results, plots, fitfn, info
 
