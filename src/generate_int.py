@@ -120,7 +120,7 @@ def generate_int_file_from_fit_results(
 
     exp_list = [Exp(*pair) for pair in e_hw_pairs]
     if reduce(lambda x, y: x and y,
-              map(lambda i: i['exp'] == exp_list,
+              map(lambda i: i['exp_list'] == exp_list,
                   [info_zbt, info_sp, info_mp])) is not True:
         raise InconsistentDatasetsGivenToIntFileGeneratorException
 

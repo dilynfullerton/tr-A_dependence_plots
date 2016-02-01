@@ -5,8 +5,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from os import mkdir, path
-from shutil import copyfile
+from os import mkdir, path, link
 
 import parse
 from Interaction import Interaction
@@ -162,7 +161,7 @@ class ImsrgDatum:
                               file_fmt.format(*(arg_list + [mass_num])))
             next_files.append(new_f)
             if not path.exists(new_f):
-                copyfile(f, new_f)
+                link(f, new_f)
         self._unorg_files, self.files = self.files, next_files
 
     def _standardize_indexing(self):
