@@ -5,65 +5,29 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from collections import namedtuple
+from os import mkdir, path
+from shutil import copyfile
 
 import parse
-
-
-# noinspection PyClassHasNoInit
-class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
-    __slots__ = ()
-
-    def __str__(self):
-        n = str(int(self.n))
-        l = str(int(self.l))
-        j = str(int(2*self.j)) + '/2'
-        tz = str(int(2*self.tz)) + '/2'
-        tz = '+' + tz if self.tz > 0 else tz
-        return '(n={n}, l={l}, j={j}, tz={tz})'.format(n=n, l=l, j=j, tz=tz)
-
-
-# noinspection PyClassHasNoInit
-class InteractionTuple(namedtuple('InteractionTuple',
-                                  ['a', 'b', 'c', 'd', 'j', 'zzz'])):
-    __slots__ = ()
-
-    def __str__(self):
-        a = str(self.a)
-        b = str(self.b)
-        c = str(self.c)
-        d = str(self.d)
-        j = str(self.j)
-        sep = unichr(9474).strip()
-        left = unichr(12296).strip()
-        right = unichr(12297).strip()
-        # sep = '|'
-        # left = '<'
-        # right = '>'
-        return ('({left}{a},{b}{s}'
-                'V'
-                '{s}{c},{d}{right}, j={j})'
-                '').format(a=a, b=b, c=c, d=d, j=j,
-                           left=left, right=right,
-                           s=sep)
-
-    def __eq__(self, other):
-        return self[0:5] == other[0:5]
-InteractionTuple.__new__.__defaults__ = (None,)
+from Interaction import Interaction
+from QuantumNumbers import QuantumNumbers
+from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE
 
 
 class ImsrgDatum:
-    def __init__(self, directory, e, hw, b=None, rp=None, std_io_map=None,
-                 standardize=True):
-        self.e = e
-        self.hw = hw
-        self.b = b
-        self.rp = rp
+    def __init__(self, directory, exp, std_io_map=None,
+                 standardize_io_map=True, organize_files=True,
+                 org_file_dir=DIR_FILES_ORG,
+                 directory_format=ORG_FMT_DIR,
+                 file_format=ORG_FMT_FILE):
+        self.exp = exp
+        self.e, self.hw, self.base, self.rp = self.exp
 
         self.name = None
         self.dir = directory
         self._fname_filter = None
-        self.standardized = False
+        self.standardized_indexing = False
+        self.files_organized = False
 
         # Create maps initially empty
         self.standard_index_orbital_map = std_io_map
@@ -73,15 +37,20 @@ class ImsrgDatum:
         self.mass_interaction_index_energy_map = dict()
         self.mass_zero_body_term_map = dict()
         self.other_constants = None
+        self.files = None
+        self._unorg_files = None
 
         # Perform setup methods
         self._set_fname_filter()
         self._set_maps()
         self._set_name()
         self._set_other_constants()
-        if self.standard_index_orbital_map is not None and standardize is True:
+        self._set_files()
+        if self.standard_index_orbital_map is not None and standardize_io_map is True:
             self._standardize_indexing()
-            self.standardized = True
+            self.standardized_indexing = True
+        if organize_files:
+            self._organize_files(org_file_dir, directory_format, file_format)
 
     def _set_maps(self):
         self._set_index_orbital_map()
@@ -133,7 +102,7 @@ class ImsrgDatum:
                 nextk = list()
                 for stritem in k:
                     nextk.append(int(stritem))
-                nextk = InteractionTuple(*nextk)
+                nextk = Interaction(*nextk)
                 next_tuple_energy_map[nextk] = v
             miiem[A] = next_tuple_energy_map
 
@@ -158,7 +127,7 @@ class ImsrgDatum:
             return (parse.e_level_from_filename(fname) == self.e and
                     parse.hw_from_filename(fname) == self.hw and
                     parse.rp_from_filename(fname) == self.rp and
-                    parse.base_from_filename(fname) == self.b)
+                    parse.base_from_filename(fname) == self.base)
         self._fname_filter = f
 
     def _set_other_constants(self):
@@ -168,6 +137,33 @@ class ImsrgDatum:
         files = parse.files_with_ext_in_directory(self.dir)
         f0 = list(filter(self._fname_filter, files))[0]
         self.other_constants = parse.other_constants_from_filename(f0)
+
+    def _set_files(self):
+        self.files = parse.get_all_files(self.dir, filterfn=self._fname_filter)
+
+    def _organize_files(self, directory, dir_fmt, file_fmt):
+        """Give the files standardized names and put them in a similarly-named
+        directory
+        :param dir_fmt: the string template for the directory name, should
+        allow for the same number of arguments as the length of self.exp
+        :param file_fmt: the string template for the file name. This should
+        allow for the same number of arguments as the length of self.exp +1 for
+        the mass number
+        """
+        next_files = list()
+        arg_list = ([self.name] +
+                    [str(i) if i is not None else '' for i in self.exp])
+        d = path.join(directory, dir_fmt.format(*arg_list))
+        if not path.exists(d):
+            mkdir(d)
+        for f in self.files:
+            mass_num = parse.mass_number_from_filename(f)
+            new_f = path.join(d,
+                              file_fmt.format(*(arg_list + [mass_num])))
+            next_files.append(new_f)
+            if not path.exists(new_f):
+                copyfile(f, new_f)
+        self._unorg_files, self.files = self.files, next_files
 
     def _standardize_indexing(self):
         self._standardize_mass_index_energy_map_indexing()
@@ -206,7 +202,7 @@ class ImsrgDatum:
     def _standardize_interaction_index_tuple(self, ii_tuple):
         next_tuple = [self._standard_index(i) for i in ii_tuple[0:4]]
         next_tuple += tuple(ii_tuple[4:])
-        return InteractionTuple(*next_tuple)
+        return Interaction(*next_tuple)
 
     def _standard_index(self, i):
         io_map = self.index_orbital_map
@@ -264,7 +260,7 @@ class ImsrgDatum:
             qnums = self.index_orbital_map[index]
             next_tup += qnums
         next_tup += ii.j
-        return InteractionTuple(*next_tup)
+        return Interaction(*next_tup)
 
 
 def qnums_to_list(qnums):
