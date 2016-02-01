@@ -8,24 +8,40 @@ import glob
 import os
 import re
 
+from constants import FN_PARSE_ELT_SPLIT as ELT_SPLIT
+from constants import FN_PARSE_EXT as EXT
+from constants import FN_PARSE_REGEX_NAME as REGEX_NAME
+from constants import FN_PARSE_REGEX_MASS as REGEX_MASS
+from constants import FN_PARSE_REGEX_E as REGEX_E
+from constants import FN_PARSE_REGEX_HW as REGEX_HW
+from constants import FN_PARSE_REGEX_BASE as REGEX_BASE
+from constants import FN_PARSE_REGEX_RP as REGEX_RP
+from constants import F_PARSE_CMNT_CHAR as CMNT_CHAR
+from constants import F_PARSE_CMNT_ZBT as CMNT_ZBT
+from constants import F_PARSE_CMNT_INDEX as CMNT_INDEX
+from constants import F_PARSE_ROW_HEAD as ROW_HEAD
+from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
+from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
+
+
 # ======================================================================
 # Constants
 # ======================================================================
-FILES_DIR = '../files/'
-FILE_EXT = '.int'
-FILENAME_SPLIT = '_'
-HEADER_POS = 0
-ORBITAL_ENERGY_START_INDEX = 1
-MAX_NUM_ORBITALS = 6
-COMMENT_CHAR = '!'
-INDEX_COMMENT = 'Index'
-ZERO_BODY_TERM_COMMENT = 'Zero body term'
-NAME_REGEX = '[a-z]+'
-MASS_REGEX = 'A\d+'
-E_REGEX = 'e\d+'
-HW_REGEX = 'hw\d+'
-BASE_REGEX = 'O\d+'
-RP_REGEX = '[a-z]+\d\.\d+Rp\d'
+# DIR_FILES = '../files/'
+# EXT = '.int'
+# ELT_SPLIT = '_'
+# ROW_HEAD = 0
+# COL_START_ORBITAL = 1
+# NCOLS_ORBITALS = 6
+# CMNT_CHAR = '!'
+# CMNT_INDEX = 'Index'
+# CMNT_ZBT = 'Zero body term'
+# REGEX_NAME = '[a-z]+'
+# REGEX_MASS = 'A\d+'
+# REGEX_E = 'e\d+'
+# REGEX_HW = 'hw\d+'
+# REGEX_BASE = 'O\d+'
+# REGEX_RP = '[a-z]+\d\.\d+Rp\d'
 
 
 # ======================================================================
@@ -36,7 +52,7 @@ def sub_directories(parent_dir):
     return [os.path.join(w[0], sd) for sd in w[1]]
 
 
-def files_with_ext_in_directory(directory, extension=FILE_EXT):
+def files_with_ext_in_directory(directory, extension=EXT):
     """Returns a list of the filenames of all the files in the given
     directory with the given extension
     :param extension:
@@ -45,11 +61,25 @@ def files_with_ext_in_directory(directory, extension=FILE_EXT):
     return filenames
 
 
+def get_all_files(directory, extension=EXT, filterfn=lambda x: True):
+    """Gets a list of all the files in the given directory that match the
+    filter function filterfn
+    :param directory: The directory in which to search
+    :param extension: The file extension. (Use '' to include all files)
+    :param filterfn: The function which takes filename and determines whether
+    to include the file
+    :return: A list containing all of the filenames in directory that match
+    the filter function
+    """
+    files = files_with_ext_in_directory(directory, extension)
+    return list(filter(filterfn, files))
+
+
 # ............................................................
 # File name parsing
 # ............................................................
-def e_level_from_filename(filename, split_char=FILENAME_SPLIT,
-                          e_regex=E_REGEX):
+def e_level_from_filename(filename, split_char=ELT_SPLIT,
+                          e_regex=REGEX_E):
     """Gets the e-level number from the file name. 
     Assumes files are named accoding to the convention:
         ..._[...]_e[e-level]_[...]_...
@@ -70,8 +100,8 @@ def _e_from_felts(felts, e_regex):
     return int(e[1:]) if e is not None else None
 
 
-def hw_from_filename(filename, split_char=FILENAME_SPLIT,
-                     hw_regex=HW_REGEX):
+def hw_from_filename(filename, split_char=ELT_SPLIT,
+                     hw_regex=REGEX_HW):
     """Gets the hw frequency number from the file name. Returns None if not
     found.
     + Assumes files are named according to the convention:
@@ -92,8 +122,8 @@ def _hw_from_felts(felts, hw_regex):
     return int(hw[2:]) if hw is not None else None
 
 
-def base_from_filename(filename, split_char=FILENAME_SPLIT,
-                       base_regex=BASE_REGEX):
+def base_from_filename(filename, split_char=ELT_SPLIT,
+                       base_regex=REGEX_BASE):
     """Gets the base A-number from the filename
 
     Assumes that the base number is the first element (from left to right) that
@@ -114,8 +144,8 @@ def _base_from_felts(felts, base_regex):
     return int(b[1:]) if b is not None else None
 
 
-def rp_from_filename(filename, split_char=FILENAME_SPLIT,
-                     rp_regex=RP_REGEX):
+def rp_from_filename(filename, split_char=ELT_SPLIT,
+                     rp_regex=REGEX_RP):
     """Gets the Rp (proton radius) label from the file name, returns None if
     not found.
 
@@ -133,8 +163,8 @@ def _rp_from_felts(felts, rp_regex):
     return int(rp[rp.find('Rp')+2]) if rp is not None else None
 
 
-def mass_number_from_filename(filename, split_char=FILENAME_SPLIT,
-                              mass_regex=MASS_REGEX):
+def mass_number_from_filename(filename, split_char=ELT_SPLIT,
+                              mass_regex=REGEX_MASS):
     """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
 
@@ -147,8 +177,8 @@ def mass_number_from_filename(filename, split_char=FILENAME_SPLIT,
     return int(mass[1:]) if mass is not None else None
 
 
-def name_from_filename(filename, split_char=FILENAME_SPLIT,
-                       name_regex=NAME_REGEX):
+def name_from_filename(filename, split_char=ELT_SPLIT,
+                       name_regex=REGEX_NAME):
     """Gets the analysis method name from the filename
 
     Assumes that the name is the first element (from left to right) that will
@@ -164,11 +194,11 @@ def name_from_filename(filename, split_char=FILENAME_SPLIT,
     return _elt_from_felts(felts_list, name_regex)
 
 
-def exp_from_filename(filename, split_char=FILENAME_SPLIT,
-                      e_regex=E_REGEX,
-                      hw_regex=HW_REGEX,
-                      b_regex=BASE_REGEX,
-                      rp_regex=RP_REGEX):
+def exp_from_filename(filename, split_char=ELT_SPLIT,
+                      e_regex=REGEX_E,
+                      hw_regex=REGEX_HW,
+                      b_regex=REGEX_BASE,
+                      rp_regex=REGEX_RP):
     felts = _filename_elts_list(filename, split_char)
     return (_e_from_felts(felts, e_regex),
             _hw_from_felts(felts, hw_regex),
@@ -214,7 +244,7 @@ def _get_lines(filename):
     return lines
 
 
-def content_lines(filename, comment_char=COMMENT_CHAR):
+def content_lines(filename, comment_char=CMNT_CHAR):
     """Returns a list of all of the lines that are not comments
     :param comment_char:
     :param filename:
@@ -223,7 +253,7 @@ def content_lines(filename, comment_char=COMMENT_CHAR):
     return list(filter(lambda x: x[0] is not comment_char, lines))
 
 
-def comment_lines(filename, comment_char=COMMENT_CHAR):
+def comment_lines(filename, comment_char=CMNT_CHAR):
     """Returns all of the lines read from the given filename that are
     descriptive comments
     :param comment_char:
@@ -236,7 +266,7 @@ def comment_lines(filename, comment_char=COMMENT_CHAR):
     return lines
 
 
-def index_lines(commnt_lines, index_comment=INDEX_COMMENT):
+def index_lines(commnt_lines, index_comment=CMNT_INDEX):
     """From the set of comment lines taken from a data file, returns the
     lines that relate the orbital indices to their quantum numbers. Assumes
     these lines always occur at the end of the commented section and are
@@ -252,7 +282,7 @@ def index_lines(commnt_lines, index_comment=INDEX_COMMENT):
     return commnt_lines[start_index:]
 
 
-def zero_body_term_line(cmnt_lines, zbt_comment=ZERO_BODY_TERM_COMMENT):
+def zero_body_term_line(cmnt_lines, zbt_comment=CMNT_ZBT):
     """From the set of comment lines taken from a data file, returns the line
     that tells the zero body term.
 
@@ -272,7 +302,7 @@ def zero_body_term(zbt_line):
     return float(zbt_line.split(':')[1].strip())
 
 
-def header_list(lines, header_pos=HEADER_POS):
+def header_list(lines, header_pos=ROW_HEAD):
     """Returns the line containing the header in the form of an list
     :param header_pos:
     :param lines:
@@ -281,7 +311,7 @@ def header_list(lines, header_pos=HEADER_POS):
     return header_line.split()
 
 
-def interaction_data_array(lines, interaction_start=HEADER_POS + 1):
+def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     """Returns the lines containing the interaction data in the form of an 
     array (list of lists)
     :param interaction_start:
@@ -294,8 +324,8 @@ def interaction_data_array(lines, interaction_start=HEADER_POS + 1):
 
 
 def orbital_energies(header_items_list,
-                     start_index=ORBITAL_ENERGY_START_INDEX,
-                     num_orbitals=MAX_NUM_ORBITALS):
+                     start_index=COL_START_ORBITAL,
+                     num_orbitals=NCOLS_ORBITALS):
     """Returns the orbital energies from the given header list
     :param num_orbitals:
     :param start_index:
@@ -305,8 +335,8 @@ def orbital_energies(header_items_list,
 
 
 def other_constants(header_items_list,
-                    start_index=ORBITAL_ENERGY_START_INDEX,
-                    num_orbitals=MAX_NUM_ORBITALS):
+                    start_index=COL_START_ORBITAL,
+                    num_orbitals=NCOLS_ORBITALS):
     """Return the other values in the header items list, following the
     orbital energies
 
