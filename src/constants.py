@@ -2,12 +2,35 @@
 """
 
 from __future__ import unicode_literals
-from ImsrgDatum import QuantumNumbers
+from QuantumNumbers import QuantumNumbers
 
 # Directories
 DIR_FILES = '../files'
+DIR_FILES_ORG = '../files_org'
 DIR_PLOTS = '../plots'
 DIR_GEN_INT = '../gen_files'
+
+# File organization
+ORG_FMT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
+ORG_FMT_FILE = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}_A{}.int'
+
+# Filename parsing
+FN_PARSE_REGEX_NAME = b'[a-z]+'
+FN_PARSE_REGEX_MASS = b'A\d+'
+FN_PARSE_REGEX_E = b'e\d+'
+FN_PARSE_REGEX_HW = b'hw\d+'
+FN_PARSE_REGEX_BASE = b'O\d+'
+FN_PARSE_REGEX_RP = b'[a-z]+\d\.\d+Rp\d'
+FN_PARSE_EXT = b'.int'
+FN_PARSE_ELT_SPLIT = b'_'
+
+# File content parsing
+F_PARSE_ROW_HEAD = 0
+F_PARSE_COL_START_ORBITAL = 1
+F_PARSE_NCOLS_ORBITALS = 6
+F_PARSE_CMNT_CHAR = b'!'
+F_PARSE_CMNT_INDEX = b'Index'
+F_PARSE_CMNT_ZBT = b'Zero body term'
 
 # Printing
 P_TITLE = '\033[91m'
