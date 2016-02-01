@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from matplotlib import pyplot as plt
 import numpy as np
 
-from ImsrgDataMap import Exp
+from Exp import Exp
 from ImsrgDataMap import ImsrgDataMap
 from fit_transforms import identity
 

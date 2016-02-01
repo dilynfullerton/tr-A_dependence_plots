@@ -7,7 +7,8 @@ from __future__ import unicode_literals
 
 from openpyxl import load_workbook, Workbook
 
-from ImsrgDataMap import ImsrgDataMap, Exp
+from ImsrgDataMap import ImsrgDataMap
+from Exp import Exp
 
 
 def print_single_particle_energy_data_to_excel(e, hw, datadir, savepath,

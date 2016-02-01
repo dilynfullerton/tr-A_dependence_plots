@@ -6,21 +6,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from collections import namedtuple
-
-from parse import sub_directories
-from parse import files_with_ext_in_directory
-from parse import exp_from_filename
 from ImsrgDatum import ImsrgDatum
-
-
-# noinspection PyClassHasNoInit
-class Exp(namedtuple('Exp', ['e', 'hw', 'base', 'rp'])):
-    __slots__ = ()
-
-    def __str__(self):
-        return str(tuple(self._asdict().values())).replace(', None', '')
-Exp.__new__.__defaults__ = (None, None)
+from Exp import Exp
+from parse import exp_from_filename
+from parse import files_with_ext_in_directory
+from parse import sub_directories
 
 
 class ImsrgDataMap:
@@ -50,7 +40,7 @@ class ImsrgDataMap:
                     continue
 
                 if key not in self.map:
-                    value = ImsrgDatum(sd, *tuple(key),
+                    value = ImsrgDatum(sd, key,
                                        std_io_map=self.std_io_map)
                     self.map[key] = value
 

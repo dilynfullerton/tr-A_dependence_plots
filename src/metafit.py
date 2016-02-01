@@ -16,7 +16,8 @@ from scipy.optimize import leastsq
 from scipy.stats import linregress
 
 from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMap, Exp
+from ImsrgDataMap import ImsrgDataMap
+from Exp import Exp
 from constants import *
 from fit_transforms import *
 from spfitting import map_to_arrays
