@@ -4,8 +4,10 @@ their file names
 
 from __future__ import print_function
 
-import glob
+from glob import glob
 import os
+from os import walk
+from os import path
 import re
 
 from constants import FN_PARSE_ELT_SPLIT as ELT_SPLIT
@@ -24,17 +26,12 @@ from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
 
 
-def sub_directories(parent_dir):
-    w = next(os.walk(parent_dir))
-    return [os.path.join(w[0], sd) for sd in w[1]]
-
-
 def files_with_ext_in_directory(directory, extension=EXT):
     """Returns a list of the filenames of all the files in the given
     directory with the given extension
     :param extension:
     :param directory: """
-    filenames = list(glob.glob(os.path.join(directory, '*' + extension)))
+    filenames = list(glob(os.path.join(directory, '*' + extension)))
     return filenames
 
 
@@ -50,6 +47,49 @@ def get_all_files(directory, extension=EXT, filterfn=lambda x: True):
     """
     files = files_with_ext_in_directory(directory, extension)
     return list(filter(filterfn, files))
+
+
+def sub_directories(parent_dir):
+    root, dirs, files = next(os.walk(parent_dir))
+    return [os.path.join(root, sd) for sd in dirs]
+
+
+def get_files(directory, filterfn=lambda x: True):
+    """Get all the files that are direct children to the given directory and
+    match the given filter function
+
+    :param directory: the directory whose immediate children are to be returned
+    :param filterfn: the function with which to filter files
+    :return: a list of all of the file paths of the files that are direct
+    children to the given directory and match the filter function
+    """
+    root, dirs, files = next(walk(directory))
+    filepaths_list = [path.join(root, f) for f in files]
+    return list(filter(filterfn, filepaths_list))
+
+
+def get_files_r(directory, filterfn=lambda x: True):
+    """Recursively get all of the files that children (direct or indirect) to
+    the given directory and match the given filter function
+
+    :param directory: the directory whose children are to be returned
+    :param filterfn: the filter function with which to filter the children
+    :return: a list of all of the file paths of the files that are children
+    to the given directory and match the filter function
+    """
+    w = walk(directory)
+    filepaths_list = list()
+    for root, dirs, files in w:
+        filepaths_list.extend([path.join(root, f) for f in files])
+    return list(filter(filterfn, filepaths_list))
+
+
+def has_extension(fname, ext):
+    return ext == _get_extension(fname)
+
+
+def _get_extension(fname):
+    return fname[fname.rfind('.'):]
 
 
 # ............................................................
@@ -366,15 +406,17 @@ def index_tuple_map(filename):
     return index_map(index_lines(comment_lines(filename)))
 
 
-def mass_energy_array_map(directory, filterfn=lambda x: True):
+def mass_energy_array_map(directory, filterfn=lambda x: True,
+                          filtered_files=None):
     """Returns a map from atomic mass to orbital energy arrays
     :param directory: the directory which is a direct parent to the files to use
     :param filterfn: the function to use to filter the file names in the
     directory
     """
+    if filtered_files is None:
+        files = files_with_ext_in_directory(directory)
+        filtered_files = list(filter(filterfn, files))
     d = dict()
-    files = files_with_ext_in_directory(directory)
-    filtered_files = list(filter(filterfn, files))
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         orbital_energies_list = orbital_energies_from_filename(f)
@@ -382,7 +424,8 @@ def mass_energy_array_map(directory, filterfn=lambda x: True):
     return d
 
 
-def mass_index_energy_map_map(directory, filterfn=lambda x: True):
+def mass_index_energy_map_map(directory, filterfn=lambda x: True,
+                              filtered_files=None):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
@@ -391,7 +434,7 @@ def mass_index_energy_map_map(directory, filterfn=lambda x: True):
     :param filterfn: the filter to apply to the files prior to constructing the
     map
     """
-    mea_map = mass_energy_array_map(directory, filterfn)
+    mea_map = mass_energy_array_map(directory, filterfn, filtered_files)
     for k in mea_map.keys():
         v = mea_map[k]
         nextv = dict()
@@ -401,13 +444,15 @@ def mass_index_energy_map_map(directory, filterfn=lambda x: True):
     return mea_map
 
 
-def _mass_interaction_data_array_map(directory, filterfn=lambda x: True):
+def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
+                                     filtered_files=None):
     """Creates a mapping from mass number to an array of interaction data
     for each file in the directory
     """
+    if filtered_files is None:
+        files = files_with_ext_in_directory(directory)
+        filtered_files = list(filter(filterfn, files))
     mida_map = dict()
-    files = files_with_ext_in_directory(directory)
-    filtered_files = list(filter(filterfn, files))
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         ida = interaction_data_array(content_lines(f))
@@ -415,7 +460,8 @@ def _mass_interaction_data_array_map(directory, filterfn=lambda x: True):
     return mida_map
 
 
-def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True):
+def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True,
+                                          filtered_files=None):
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
@@ -424,7 +470,8 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True):
     :param filterfn: the filter function to apply to the files before
     constructing the map
     """
-    mida_map = _mass_interaction_data_array_map(directory, filterfn)
+    mida_map = _mass_interaction_data_array_map(directory, filterfn,
+                                                filtered_files)
     for k in mida_map.keys():
         v = mida_map[k]
         nextv = dict()
@@ -436,7 +483,8 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True):
     return mida_map
 
 
-def mass_zero_body_term_map(directory, filterfn=lambda x: True):
+def mass_zero_body_term_map(directory, filterfn=lambda x: True,
+                            filtered_files=None):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
@@ -445,9 +493,10 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True):
     :param filterfn: the filter to apply to the files before constructing the
     map
     """
+    if filtered_files is None:
+        files = files_with_ext_in_directory(directory)
+        filtered_files = list(filter(filterfn, files))
     mzbt_map = dict()
-    files = files_with_ext_in_directory(directory)
-    filtered_files = list(filter(filterfn, files))
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         zbt = zero_body_term(zero_body_term_line(comment_lines(f)))
@@ -455,7 +504,8 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True):
     return mzbt_map
 
 
-def mass_other_constants_map(directory, filterfn=lambda x: True):
+def mass_other_constants_map(directory, filterfn=lambda x: True,
+                             filtered_files=None):
     """Given a directory, creates a mapping from mass number to the other
     constants following the orbital energies in the first line of data
 
@@ -463,9 +513,10 @@ def mass_other_constants_map(directory, filterfn=lambda x: True):
     :param filterfn:
     :return:
     """
+    if filtered_files is None:
+        files = files_with_ext_in_directory(directory)
+        filtered_files = list(filter(filterfn, files))
     moc_map = dict()
-    files = files_with_ext_in_directory(directory)
-    filtered_files = list(filter(filterfn, files))
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         oc = other_constants_from_filename(f)

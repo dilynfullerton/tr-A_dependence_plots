@@ -9,8 +9,7 @@ from __future__ import unicode_literals
 from ImsrgDatum import ImsrgDatum
 from Exp import Exp
 from parse import exp_from_filename
-from parse import files_with_ext_in_directory
-from parse import sub_directories
+from parse import get_files_r
 
 
 class ImsrgDataMap:
@@ -26,23 +25,17 @@ class ImsrgDataMap:
         self._set_maps()
 
     def _set_maps(self):
-        sub_dirs = sub_directories(self.parent_dir)
+        files = get_files_r(self.parent_dir)
+        for f in files:
+            key = Exp(*exp_from_filename(f))
 
-        for sd in sub_dirs:
-            files = files_with_ext_in_directory(sd)
-            if len(files) == 0:
+            if self.exp_list is not None and key not in self.exp_list:
                 continue
 
-            for f in files:
-                key = Exp(*exp_from_filename(f))
-
-                if self.exp_list is not None and key not in self.exp_list:
-                    continue
-
-                if key not in self.map:
-                    value = ImsrgDatum(sd, key,
-                                       std_io_map=self.std_io_map)
-                    self.map[key] = value
+            if key not in self.map:
+                value = ImsrgDatum(self.parent_dir, key,
+                                   std_io_map=self.std_io_map)
+                self.map[key] = value
 
     def all_e_hw_pairs(self):
         return set(self.map.keys())

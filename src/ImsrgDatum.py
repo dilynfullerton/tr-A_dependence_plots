@@ -10,7 +10,7 @@ from os import mkdir, path, link
 import parse
 from Interaction import Interaction
 from QuantumNumbers import QuantumNumbers
-from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE
+from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE, FN_PARSE_EXT
 
 
 class ImsrgDatum:
@@ -18,7 +18,8 @@ class ImsrgDatum:
                  standardize_io_map=True, organize_files=True,
                  org_file_dir=DIR_FILES_ORG,
                  directory_format=ORG_FMT_DIR,
-                 file_format=ORG_FMT_FILE):
+                 file_format=ORG_FMT_FILE,
+                 file_extension=FN_PARSE_EXT):
         self.exp = exp
         self.e, self.hw, self.base, self.rp = self.exp
 
@@ -40,11 +41,11 @@ class ImsrgDatum:
         self._unorg_files = None
 
         # Perform setup methods
-        self._set_fname_filter()
+        self._set_fname_filter(file_extension)
+        self._set_files()
         self._set_maps()
         self._set_name()
         self._set_other_constants()
-        self._set_files()
         if self.standard_index_orbital_map is not None and standardize_io_map:
             self._standardize_indexing()
             self.standardized_indexing = True
@@ -61,10 +62,8 @@ class ImsrgDatum:
         """Retrieves the index -> orbital map from a file in the directory
         and stores it in an instance variable
         """
-        files = parse.files_with_ext_in_directory(directory=self.dir)
-
-        # Assuming all files in a given directory have the same indexing...
-        f0 = list(filter(self._fname_filter, files))[0]
+        # Assuming all files characteristic have the same indexing...
+        f0 = next(iter(filter(self._fname_filter, self.files)))
         index_orbital_map = parse.index_tuple_map(f0)
 
         # Turn each tuple in the map into a named tuple
@@ -81,7 +80,8 @@ class ImsrgDatum:
         mapping for the directory
         """
         self.mass_index_energy_map = (
-            parse.mass_index_energy_map_map(self.dir, self._fname_filter))
+            parse.mass_index_energy_map_map(self.dir, self._fname_filter,
+                                            filtered_files=self.files))
 
     def _set_mass_interaction_index_energy_map(self):
         """Retrieves the
@@ -89,8 +89,8 @@ class ImsrgDatum:
         mapping for the directory
         """
         miiem = (
-            parse.mass_interaction_tuple_energy_map_map(self.dir,
-                                                        self._fname_filter))
+            parse.mass_interaction_tuple_energy_map_map(
+                self.dir, self._fname_filter, filtered_files=self.files))
 
         # Turn each tuple into a named tuple
         for A in miiem.keys():
@@ -109,16 +109,16 @@ class ImsrgDatum:
 
     def _set_zero_body_term_map(self):
         self.mass_zero_body_term_map = (
-            parse.mass_zero_body_term_map(self.dir, self._fname_filter))
+            parse.mass_zero_body_term_map(self.dir, self._fname_filter,
+                                          filtered_files=self.files))
 
     def _set_name(self):
         """Sets the incidence name variable
         """
-        files = parse.files_with_ext_in_directory(self.dir)
-        f0 = list(filter(self._fname_filter, files))[0]
+        f0 = next(iter(filter(self._fname_filter, self.files)))
         self.name = parse.name_from_filename(f0)
 
-    def _set_fname_filter(self):
+    def _set_fname_filter(self, extension):
         """Returns a filter function that filters a set of filenames such that
         only those that have the same signature (e, hw, rp) values as self
         """
@@ -127,7 +127,8 @@ class ImsrgDatum:
             return (parse.e_level_from_filename(fname) == self.e and
                     parse.hw_from_filename(fname) == self.hw and
                     parse.rp_from_filename(fname) == self.rp and
-                    parse.base_from_filename(fname) == self.base)
+                    parse.base_from_filename(fname) == self.base and
+                    parse.has_extension(fname, ext=extension))
 
         self._fname_filter = f
 
@@ -135,12 +136,11 @@ class ImsrgDatum:
         """Sets other heading constants. Assumes all files in a given directory
         have the same constants
         """
-        files = parse.files_with_ext_in_directory(self.dir)
-        f0 = list(filter(self._fname_filter, files))[0]
+        f0 = next(iter(filter(self._fname_filter, self.files)))
         self.other_constants = parse.other_constants_from_filename(f0)
 
     def _set_files(self):
-        self.files = parse.get_all_files(self.dir, filterfn=self._fname_filter)
+        self.files = parse.get_files_r(self.dir, filterfn=self._fname_filter)
 
     def _organize_files(self, directory, dir_fmt, file_fmt):
         """Give the files standardized names and put them in a similarly-named
