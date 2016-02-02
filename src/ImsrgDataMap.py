@@ -1,7 +1,3 @@
-
-from parse_int import get_files_r
-
-
 class ImsrgDataMap(object):
     def __init__(self, parent_directory, exp_type, datum_type,
                  exp_list=None, **kwargs):
