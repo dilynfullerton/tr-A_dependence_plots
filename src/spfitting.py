@@ -10,8 +10,8 @@ from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit as cf
 from scipy.stats import linregress as lg
 
-from ImsrgIntDataMap import ImsrgIntDataMap
-from Exp import Exp
+from ImsrgDataMapInt import ImsrgDataMapInt
+from ExpInt import ExpInt
 from constants import *
 from fit_transforms import *
 
@@ -136,8 +136,8 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
     :return: a map from (quantum numbers) --> (fit parameters, covariance array,
     slope, intercept, rvalue, pvalue, stderr)
     """
-    all_data_map = ImsrgIntDataMap(parent_directory=sourcedir)
-    data_maps = all_data_map.map[Exp(e, hw)]
+    all_data_map = ImsrgDataMapInt(parent_directory=sourcedir)
+    data_maps = all_data_map.map[ExpInt(e, hw)]
     io_map = data_maps.index_orbital_map
     ime_map = data_maps.index_mass_energy_map()
 

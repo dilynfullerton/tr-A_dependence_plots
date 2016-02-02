@@ -7,14 +7,14 @@ from __future__ import unicode_literals
 
 from openpyxl import load_workbook, Workbook
 
-from ImsrgIntDataMap import ImsrgIntDataMap
-from Exp import Exp
+from ImsrgDataMapInt import ImsrgDataMapInt
+from ExpInt import ExpInt
 
 
 def print_single_particle_energy_data_to_excel(e, hw, datadir, savepath,
                                                startrow=2):
-    all_data_map = ImsrgIntDataMap(parent_directory=datadir)
-    data_maps = all_data_map.map[Exp(e, hw)]
+    all_data_map = ImsrgDataMapInt(parent_directory=datadir)
+    data_maps = all_data_map.map[ExpInt(e, hw)]
     index_orbital_map = data_maps.index_orbital_map
     ime_map = data_maps.index_mass_energy_map()
 

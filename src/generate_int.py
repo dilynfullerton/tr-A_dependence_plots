@@ -10,8 +10,8 @@ from os import mkdir, path
 from constants import *
 
 from FitFunction import FitFunction
-from ImsrgIntDataMap import ImsrgIntDataMap
-from Exp import Exp
+from ImsrgDataMapInt import ImsrgDataMapInt
+from ExpInt import ExpInt
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
 from metafitters_mp import multi_particle_firstp_metafit
@@ -43,7 +43,7 @@ def generate_int_file_from_fit(
     :param kwargs: (Optional) Additional keyword arguments to pass to the helper
     function
     """
-    imsrg_data_map = ImsrgIntDataMap(sourcedir,
+    imsrg_data_map = ImsrgDataMapInt(sourcedir,
                                      exp_list=e_hw_pairs,
                                      standard_indices=std_io_map)
     results_zbt = metafitter_zbt(fitfn_zbt, e_hw_pairs,
@@ -118,7 +118,7 @@ def generate_int_file_from_fit_results(
     info_sp = results_sp[4]
     info_mp = results_mp[4]
 
-    exp_list = [Exp(*pair) for pair in e_hw_pairs]
+    exp_list = [ExpInt(*pair) for pair in e_hw_pairs]
     if reduce(lambda a, b: a and b,
               map(lambda i: i['exp_list'] == exp_list,
                   [info_zbt, info_sp, info_mp])) is not True:
@@ -311,7 +311,7 @@ class OverlapOfInteractionDataException(Exception):
 
 def _get_e1(params, const_list, const_dict, fitfn, mass_num):
     args = [params, const_list, const_dict]
-    return fitfn.eval(mass_num, *args)
+    return fitfn(mass_num, *args)
 
 
 def _get_e2(params, const_list, const_dict, fitfn, mass_num):
