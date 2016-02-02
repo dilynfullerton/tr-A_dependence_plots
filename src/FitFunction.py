@@ -31,31 +31,7 @@ class FitFunction:
         self._set_code()
         self.__name__ = self.name
 
-    def _set_name(self):
-        if self.name is None:
-            self.name = self.fn.__name__
-        if self.fz is not None:
-            self.name += b' force zero {}'.format(self.fz)
-        elif self.fzfn is not None:
-            self.name += b' force zero with {}'.format(self.fzfn.__name__)
-        elif self.fk is not None:
-            self.name += b' force point {}'.format(self.fk)
-        elif self.fkfn is not None:
-            self.name += b' force point with {}'.format(self.fkfn.__name__)
-
-    def _set_code(self):
-        if self.code is '':
-            self.code = self.name if self.name is not None else self.fn.__name__
-        if self.fz is not None:
-            self.code += b'fz{}'.format(self.fz)
-        elif self.fzfn is not None:
-            self.code += b'fz:' + str(self.fzfn.__name__[6:])
-        elif self.fk is not None:
-            self.code += b'fk{}'.format(self.fk)
-        elif self.fkfn is not None:
-            self.code += b'fk:' + str(self.fkfn.__name__[6:])
-
-    def eval(self, x, params, const_list, const_dict):
+    def __call__(self, x, params, const_list, const_dict):
         if self.fz is not None:
             f = self.fn
             return (f(x, params, const_list, const_dict) -
@@ -79,6 +55,30 @@ class FitFunction:
                     k)
         else:
             return self.fn(x, params, const_list, const_dict)
+
+    def _set_name(self):
+        if self.name is None:
+            self.name = self.fn.__name__
+        if self.fz is not None:
+            self.name += b' force zero {}'.format(self.fz)
+        elif self.fzfn is not None:
+            self.name += b' force zero with {}'.format(self.fzfn.__name__)
+        elif self.fk is not None:
+            self.name += b' force point {}'.format(self.fk)
+        elif self.fkfn is not None:
+            self.name += b' force point with {}'.format(self.fkfn.__name__)
+
+    def _set_code(self):
+        if self.code is '':
+            self.code = self.name if self.name is not None else self.fn.__name__
+        if self.fz is not None:
+            self.code += b'fz{}'.format(self.fz)
+        elif self.fzfn is not None:
+            self.code += b'fz:' + str(self.fzfn.__name__[6:])
+        elif self.fk is not None:
+            self.code += b'fk{}'.format(self.fk)
+        elif self.fkfn is not None:
+            self.code += b'fk:' + str(self.fkfn.__name__[6:])
 
 
 def combine_ffns(list_of_ffn, force_zero=None,
@@ -121,7 +121,7 @@ def combine_ffns(list_of_ffn, force_zero=None,
     def combined_ffns(x, params, const_list, const_dict):
         result = 0
         for fitfn, ii, jj in zip(list_of_ffn, params_breaks, params_breaks[1:]):
-            result += fitfn.eval(x, params[ii:jj], const_list, const_dict)
+            result += fitfn(x, params[ii:jj], const_list, const_dict)
         return result
 
     return FitFunction(combined_ffns, total_params_length,
