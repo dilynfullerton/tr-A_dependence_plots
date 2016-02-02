@@ -144,7 +144,6 @@ mixed = [
 asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
           multi_dep_asymps + mixed)
 
-
 # max_r2(multi_particle_firstp_metafit,
 #        asymps,
 #        [(12, 20),
@@ -177,60 +176,60 @@ asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
 #               print_results=False)
 
 rz = single_particle_first_np_zbt_metafit(1)(
-        fitfn=combine_ffns([linear()],
-                           force_k_func=fk_to_zbt0),
-        e_hw_pairs=[
-            (12, 20),
-            (12, 24, 22),
-            (12, 24, 24)
-        ],
-        show_plot=True,
-        show_fit=True,
-        print_key=False,
-        print_results=True,
-        print_lr_results=False
+    fitfn=combine_ffns([linear()],
+                       force_k_func=fk_to_zbt0),
+    e_hw_pairs=[
+        (12, 20),
+        (12, 24, 22),
+        (12, 24, 24)
+    ],
+    show_plot=True,
+    show_fit=True,
+    print_key=False,
+    print_results=True,
+    print_lr_results=False
 )
 
 rsp = single_particle_first_np_metafit(1)(
-        fitfn=combine_ffns([linear(),
-                            #scalar_dependence(['y0'])
-                            ],
-                           force_k_func=fk_to_y0
-                           ),
-        e_hw_pairs=[
-            (12, 20),
-            (12, 24, 22),
-            (12, 24, 24)
-        ],
-        show_plot=True,
-        show_fit=True,
-        print_key=False,
-        print_results=True,
-        print_lr_results=False
+    fitfn=combine_ffns([linear(),
+                        # scalar_dependence(['y0'])
+                        ],
+                       force_k_func=fk_to_y0
+                       ),
+    e_hw_pairs=[
+        (12, 20),
+        (12, 24, 22),
+        (12, 24, 24)
+    ],
+    show_plot=True,
+    show_fit=True,
+    print_key=False,
+    print_results=True,
+    print_lr_results=False
 )
 
 rmp = multi_particle_first_np_metafit(1)(
-        fitfn=combine_ffns([linear(),
-                            #scalar_dependence(['y0'])
-                            ],
-                           force_k_func=fk_to_y0
-                           ),
-        e_hw_pairs=[
-            (12, 20),
-            (12, 24, 22),
-            (12, 24, 24)
-        ],
-        show_plot=True,
-        show_fit=True,
-        show_legend=True,
-        print_key=False,
-        print_results=True,
-        print_lr_results=False)
+    fitfn=combine_ffns([linear(),
+                        # scalar_dependence(['y0'])
+                        ],
+                       force_k_func=fk_to_y0
+                       ),
+    e_hw_pairs=[
+        (12, 20),
+        (12, 24, 22),
+        (12, 24, 24)
+    ],
+    show_plot=True,
+    show_fit=True,
+    show_legend=True,
+    print_key=False,
+    print_results=True,
+    print_lr_results=False)
 
 generate_int_file_from_fit_results(
-        results_zbt=rz, results_sp=rsp, results_mp=rmp,
-        e_hw_pairs=[(12, 20), (12, 24, 22), (12, 24, 24)],
-        mass_range=range(17, 29))
+    results_zbt=rz, results_sp=rsp, results_mp=rmp,
+    e_hw_pairs=[(12, 20), (12, 24, 22), (12, 24, 24)],
+    mass_range=range(17, 29))
 
 
 # multi_particle_relative_pzbt_metafit(

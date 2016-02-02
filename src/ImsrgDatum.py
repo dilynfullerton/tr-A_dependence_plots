@@ -45,7 +45,7 @@ class ImsrgDatum:
         self._set_name()
         self._set_other_constants()
         self._set_files()
-        if self.standard_index_orbital_map is not None and standardize_io_map is True:
+        if self.standard_index_orbital_map is not None and standardize_io_map:
             self._standardize_indexing()
             self.standardized_indexing = True
         if organize_files:
@@ -122,11 +122,13 @@ class ImsrgDatum:
         """Returns a filter function that filters a set of filenames such that
         only those that have the same signature (e, hw, rp) values as self
         """
+
         def f(fname):
             return (parse.e_level_from_filename(fname) == self.e and
                     parse.hw_from_filename(fname) == self.hw and
                     parse.rp_from_filename(fname) == self.rp and
                     parse.base_from_filename(fname) == self.base)
+
         self._fname_filter = f
 
     def _set_other_constants(self):
@@ -249,7 +251,7 @@ class ImsrgDatum:
         iime_map = self.interaction_index_mass_energy_map()
         for interaction_tuple in sorted(iime_map.keys()):
             inter_qnums = self.interaction_indices_to_interaction_qnums(
-                    interaction_tuple)
+                interaction_tuple)
             iqme_map[inter_qnums] = iime_map[interaction_tuple]
         return iqme_map
 
