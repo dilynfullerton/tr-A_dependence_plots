@@ -1,18 +1,18 @@
-"""Holds all of the data for different data sets (specified by their Exp) in
-a map
+"""Holds all of the *.int data for different data sets (specified by their Exp)
+in a map
 """
 
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from ImsrgDatum import ImsrgDatum
+from ImsrgIntDatum import ImsrgIntDatum
 from Exp import Exp
 from parse import exp_from_filename
 from parse import get_files_r
 
 
-class ImsrgDataMap:
+class ImsrgIntDataMap:
     """A data structure to hold a mapping from
     (e-level, hw) -> ImsrgDatum, which will consist of all available data
     """
@@ -33,8 +33,8 @@ class ImsrgDataMap:
                 continue
 
             if key not in self.map:
-                value = ImsrgDatum(self.parent_dir, key,
-                                   std_io_map=self.std_io_map)
+                value = ImsrgIntDatum(self.parent_dir, key,
+                                      std_io_map=self.std_io_map)
                 self.map[key] = value
 
     def all_e_hw_pairs(self):

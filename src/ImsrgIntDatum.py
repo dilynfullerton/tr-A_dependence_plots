@@ -13,7 +13,7 @@ from QuantumNumbers import QuantumNumbers
 from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE, FN_PARSE_EXT
 
 
-class ImsrgDatum:
+class ImsrgIntDatum:
     def __init__(self, directory, exp, std_io_map=None,
                  standardize_io_map=True, organize_files=True,
                  org_file_dir=DIR_FILES_ORG,

@@ -10,7 +10,7 @@ from os import mkdir, path
 from constants import *
 
 from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMap
+from ImsrgIntDataMap import ImsrgIntDataMap
 from Exp import Exp
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
@@ -43,9 +43,9 @@ def generate_int_file_from_fit(
     :param kwargs: (Optional) Additional keyword arguments to pass to the helper
     function
     """
-    imsrg_data_map = ImsrgDataMap(sourcedir,
-                                  exp_list=e_hw_pairs,
-                                  standard_indices=std_io_map)
+    imsrg_data_map = ImsrgIntDataMap(sourcedir,
+                                     exp_list=e_hw_pairs,
+                                     standard_indices=std_io_map)
     results_zbt = metafitter_zbt(fitfn_zbt, e_hw_pairs,
                                  imsrg_data_map=imsrg_data_map)
     results_sp = metafitter_sp(fitfn_sp, e_hw_pairs,

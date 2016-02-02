@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from Exp import Exp
-from ImsrgDataMap import ImsrgDataMap
+from ImsrgIntDataMap import ImsrgIntDataMap
 from fit_transforms import identity
 
 
@@ -33,7 +33,7 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
            :param hw:
            :param e:
     """
-    idm = ImsrgDataMap(filesdir)
+    idm = ImsrgIntDataMap(filesdir)
     idat = idm.map[Exp(e=e, hw=hw)]
     iime_map = idat.interaction_index_mass_energy_map()
 
@@ -98,7 +98,7 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
            :param hw:
            :param e:
     """
-    idm = ImsrgDataMap(filesdir)
+    idm = ImsrgIntDataMap(filesdir)
     idat = idm.map[Exp(e=e, hw=hw)]
     ime_map = idat.index_mass_energy_map()
     io_map = idat.index_orbital_map
