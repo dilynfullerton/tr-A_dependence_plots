@@ -9,7 +9,8 @@ from __future__ import unicode_literals
 from ImsrgDataMap import ImsrgDataMap
 from ImsrgDatumInt import ImsrgDatumInt
 from ExpInt import ExpInt
-from parse_int import exp_from_filename, get_files_r, has_extension
+from parse_int import exp_from_filename, has_extension
+from parse import get_files_r, has_extension
 from constants import FN_PARSE_INT_EXT as EXT
 
 

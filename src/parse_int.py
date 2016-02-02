@@ -4,10 +4,6 @@ their file names
 
 from __future__ import print_function
 
-import re
-from os import path
-from os import walk
-
 from constants import FN_PARSE_INT_ELT_SPLIT as ELT_SPLIT
 from constants import FN_PARSE_INT_REGEX_BASE as REGEX_BASE
 from constants import FN_PARSE_INT_REGEX_E as REGEX_E
@@ -15,55 +11,14 @@ from constants import FN_PARSE_INT_REGEX_HW as REGEX_HW
 from constants import FN_PARSE_INT_REGEX_MASS as REGEX_MASS
 from constants import FN_PARSE_INT_REGEX_NAME as REGEX_NAME
 from constants import FN_PARSE_INT_REGEX_RP as REGEX_RP
-from constants import F_PARSE_CMNT_CHAR as CMNT_CHAR
 from constants import F_PARSE_CMNT_INDEX as CMNT_INDEX
 from constants import F_PARSE_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
 from constants import F_PARSE_ROW_HEAD as ROW_HEAD
-
-
-def sub_directories(parent_dir):
-    root, dirs, files = next(walk(parent_dir))
-    return [path.join(root, sd) for sd in dirs]
-
-
-def get_files(directory, filterfn=lambda x: True):
-    """Get all the files that are direct children to the given directory and
-    match the given filter function
-
-    :param directory: the directory whose immediate children are to be returned
-    :param filterfn: the function with which to filter files
-    :return: a list of all of the file paths of the files that are direct
-    children to the given directory and match the filter function
-    """
-    root, dirs, files = next(walk(directory))
-    filepaths_list = [path.join(root, f) for f in files]
-    return list(filter(filterfn, filepaths_list))
-
-
-def get_files_r(directory, filterfn=lambda x: True):
-    """Recursively get all of the files that children (direct or indirect) to
-    the given directory and match the given filter function
-
-    :param directory: the directory whose children are to be returned
-    :param filterfn: the filter function with which to filter the children
-    :return: a list of all of the file paths of the files that are children
-    to the given directory and match the filter function
-    """
-    w = walk(directory)
-    filepaths_list = list()
-    for root, dirs, files in w:
-        filepaths_list.extend([path.join(root, f) for f in files])
-    return list(filter(filterfn, filepaths_list))
-
-
-def has_extension(fname, ext):
-    return ext == _get_extension(fname)
-
-
-def _get_extension(fname):
-    return fname[fname.rfind('.'):]
+from constants import F_PARSE_CMNT_CHAR as CMNT_CHAR
+from parse import get_files_r, filename_elts_list, elt_from_felts
+from parse import content_lines, comment_lines
 
 
 # ............................................................
@@ -82,12 +37,12 @@ def e_level_from_filename(filename, split_char=ELT_SPLIT,
     :param split_char: the character with which filename elements are separated
     :param e_regex: the regex that fully matches the element with e
     """
-    return _e_from_felts(_filename_elts_list(filename, split_char),
+    return _e_from_felts(filename_elts_list(filename, split_char),
                          e_regex)
 
 
 def _e_from_felts(felts, e_regex):
-    e = _elt_from_felts(felts, e_regex)
+    e = elt_from_felts(felts, e_regex)
     return int(e[1:]) if e is not None else None
 
 
@@ -104,12 +59,12 @@ def hw_from_filename(filename, split_char=ELT_SPLIT,
     :param split_char: the character with which filename elements are separated
     :param hw_regex: the regex that fully matches the element with hw
     """
-    return _hw_from_felts(_filename_elts_list(filename, split_char),
+    return _hw_from_felts(filename_elts_list(filename, split_char),
                           hw_regex)
 
 
 def _hw_from_felts(felts, hw_regex):
-    hw = _elt_from_felts(felts, hw_regex)
+    hw = elt_from_felts(felts, hw_regex)
     return int(hw[2:]) if hw is not None else None
 
 
@@ -126,12 +81,12 @@ def base_from_filename(filename, split_char=ELT_SPLIT,
     element
     :return: the integer value of the base or None, if not found
     """
-    return _base_from_felts(_filename_elts_list(filename, split_char),
+    return _base_from_felts(filename_elts_list(filename, split_char),
                             base_regex)
 
 
 def _base_from_felts(felts, base_regex):
-    b = _elt_from_felts(felts, base_regex)
+    b = elt_from_felts(felts, base_regex)
     return int(b[1:]) if b is not None else None
 
 
@@ -145,12 +100,12 @@ def rp_from_filename(filename, split_char=ELT_SPLIT,
     :param rp_regex: the regex that fully matches the rp element
     :return: the Rp (integer) label, if found, otherwise returns None
     """
-    return _rp_from_felts(reversed(_filename_elts_list(filename, split_char)),
+    return _rp_from_felts(reversed(filename_elts_list(filename, split_char)),
                           rp_regex)
 
 
 def _rp_from_felts(felts, rp_regex):
-    rp = _elt_from_felts(felts, rp_regex)
+    rp = elt_from_felts(felts, rp_regex)
     return int(rp[rp.find('Rp')+2]) if rp is not None else None
 
 
@@ -163,8 +118,8 @@ def mass_number_from_filename(filename, split_char=ELT_SPLIT,
     :param split_char: the character that separates name elements
     :param mass_regex: the regex that fully matches the mass element
     """
-    filename_elts = reversed(_filename_elts_list(filename, split_char))
-    mass = _elt_from_felts(filename_elts, mass_regex)
+    filename_elts = reversed(filename_elts_list(filename, split_char))
+    mass = elt_from_felts(filename_elts, mass_regex)
     return int(mass[1:]) if mass is not None else None
 
 
@@ -181,8 +136,8 @@ def name_from_filename(filename, split_char=ELT_SPLIT,
     by the name
     :return: name
     """
-    felts_list = _filename_elts_list(filename, split_char)
-    return _elt_from_felts(felts_list, name_regex)
+    felts_list = filename_elts_list(filename, split_char)
+    return elt_from_felts(felts_list, name_regex)
 
 
 def exp_from_filename(filename, split_char=ELT_SPLIT,
@@ -190,71 +145,16 @@ def exp_from_filename(filename, split_char=ELT_SPLIT,
                       hw_regex=REGEX_HW,
                       b_regex=REGEX_BASE,
                       rp_regex=REGEX_RP):
-    felts = _filename_elts_list(filename, split_char)
+    felts = filename_elts_list(filename, split_char)
     return (_e_from_felts(felts, e_regex),
             _hw_from_felts(felts, hw_regex),
             _base_from_felts(felts, b_regex),
             _rp_from_felts(felts, rp_regex))
 
 
-def _filename_elts_list(filename, split_char):
-    """Get a list of the elements in the filename where name elements are
-    separated by split_char
-    """
-    ext_index = filename.rfind('.')
-    dir_index = filename.rfind('/')
-    if dir_index != -1:
-        filename_woext = filename[dir_index:ext_index]
-    else:
-        filename_woext = filename[:ext_index]
-    return filename_woext.split(split_char)
-
-
-def _elt_from_felts(felts, elt_regex):
-    for elt in felts:
-        m = re.match(elt_regex, elt)
-        if m is not None and m.group(0) == elt:
-            return elt
-    else:
-        return None
-
-
 # ............................................................
 # File content parsing
 # ............................................................
-def _get_lines(filename):
-    """Returns all of the lines read from the given file in a list (with
-    line separators and blank lines removed
-    """
-    with open(filename) as f:
-        lines = f.readlines()
-    # Remove line separators
-    lines = list(map(lambda x: x.strip(), lines))
-    # Remove blank lines
-    lines = list(filter(lambda x: x[0] is not '', lines))
-    return lines
-
-
-def content_lines(filename, comment_char=CMNT_CHAR):
-    """Returns a list of all of the lines that are not comments
-    :param comment_char:
-    :param filename:
-    """
-    lines = _get_lines(filename)
-    return list(filter(lambda x: x[0] is not comment_char, lines))
-
-
-def comment_lines(filename, comment_char=CMNT_CHAR):
-    """Returns all of the lines read from the given filename that are
-    descriptive comments
-    :param comment_char:
-    :param filename:
-    """
-    lines = _get_lines(filename)
-    lines = filter(lambda x: x[0] is comment_char, lines)
-    lines = map(lambda x: x.strip('!').strip(), lines)
-    lines = list(filter(lambda x: x is not '', lines))
-    return lines
 
 
 def index_lines(commnt_lines, index_comment=CMNT_INDEX):
@@ -339,21 +239,21 @@ def other_constants(header_items_list,
     return header_items_list[start_index + num_orbitals:]
 
 
-def orbital_energies_from_filename(filename):
+def orbital_energies_from_filename(filename, comment_char=CMNT_CHAR):
     """Returns the orbital energies from the given filename through
     functional composition
     :param filename: """
-    return orbital_energies(header_list(content_lines(filename)))
+    return orbital_energies(header_list(content_lines(filename, comment_char)))
 
 
-def other_constants_from_filename(filename):
+def other_constants_from_filename(filename, comment_char=CMNT_CHAR):
     """Given a filename, returns all of the items in the header items list
     following the orbital energies
 
     :param filename:
     :return:
     """
-    return other_constants(header_list(content_lines(filename)))
+    return other_constants(header_list(content_lines(filename, comment_char)))
 
 
 # ............................................................
@@ -372,12 +272,12 @@ def index_map(idx_lines):
     return idx_map
 
 
-def index_tuple_map(filename):
+def index_tuple_map(filename, comment_char=CMNT_CHAR):
     """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
     :param filename:
     """
-    return index_map(index_lines(comment_lines(filename)))
+    return index_map(index_lines(comment_lines(filename, comment_char)))
 
 
 def mass_energy_array_map(directory, filterfn=lambda x: True,
@@ -420,7 +320,8 @@ def mass_index_energy_map_map(directory, filterfn=lambda x: True,
 
 
 def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
-                                     filtered_files=None):
+                                     filtered_files=None,
+                                     comment_char=CMNT_CHAR):
     """Creates a mapping from mass number to an array of interaction data
     for each file in the directory
     """
@@ -429,7 +330,7 @@ def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
     mida_map = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
-        ida = interaction_data_array(content_lines(f))
+        ida = interaction_data_array(content_lines(f, comment_char))
         mida_map[mass_number] = ida
     return mida_map
 
@@ -459,7 +360,7 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True,
 
 
 def mass_zero_body_term_map(directory, filterfn=lambda x: True,
-                            filtered_files=None):
+                            filtered_files=None, comment_char=CMNT_CHAR):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
@@ -474,7 +375,8 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True,
     mzbt_map = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
-        zbt = zero_body_term(zero_body_term_line(comment_lines(f)))
+        zbt = zero_body_term(
+            zero_body_term_line(comment_lines(f, comment_char)))
         mzbt_map[mass_number] = zbt
     return mzbt_map
 
