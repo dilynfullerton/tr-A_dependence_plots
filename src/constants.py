@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 from QuantumNumbers import QuantumNumbers
+from LegendSize import LegendSize
 
 # Directories
 DIR_FILES = '../files'
@@ -42,12 +43,21 @@ P_BREAK = '-' * 80
 
 # Plotting
 PLOT_CMAP = 'gnuplot'
+
+# Legend
 LEGEND_MAX_COLS = 6
 LEGEND_MAX_SPACE = .5
 LEGEND_ROWS_PER_COL = 75
 LEGEND_MAX_FONTSIZE = 14
 LEGEND_TOTAL_FONTSIZE = 480  # is divided by number of rows
 LEGEND_SPACE_SCALE = 2
+LEGEND_SIZE = LegendSize(
+    max_cols=LEGEND_MAX_COLS,
+    max_h_space=LEGEND_MAX_SPACE,
+    max_fontsize=LEGEND_MAX_FONTSIZE,
+    total_fontsize=LEGEND_TOTAL_FONTSIZE,
+    rows_per_col=LEGEND_ROWS_PER_COL,
+    space_scale=LEGEND_SPACE_SCALE)
 
 STANDARD_IO_MAP = {
     1: QuantumNumbers(0.0, 2.0, 2.5, -0.5),
