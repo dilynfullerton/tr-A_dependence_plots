@@ -15,15 +15,16 @@ DIR_GEN_INT = '../gen_files'
 ORG_FMT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
 ORG_FMT_FILE = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}_A{}.int'
 
-# Filename parsing
-FN_PARSE_REGEX_NAME = b'[a-z]+'
-FN_PARSE_REGEX_MASS = b'A\d+'
-FN_PARSE_REGEX_E = b'e\d+'
-FN_PARSE_REGEX_HW = b'hw\d+'
-FN_PARSE_REGEX_BASE = b'O\d+'
-FN_PARSE_REGEX_RP = b'[a-z]+\d\.\d+Rp\d'
-FN_PARSE_EXT = b'.int'
-FN_PARSE_ELT_SPLIT = b'_'
+# *.int filename parsing
+FN_PARSE_INT_REGEX_NAME = b'[a-z]+'
+FN_PARSE_INT_REGEX_MASS = b'A\d+'
+FN_PARSE_INT_REGEX_E = b'e\d+'
+FN_PARSE_INT_REGEX_HW = b'hw\d+'
+FN_PARSE_INT_REGEX_BASE = b'O\d+'
+FN_PARSE_INT_REGEX_RP = b'[a-z]+\d\.\d+Rp\d'
+FN_PARSE_INT_REGEX_EXT = b'.*\.int'
+FN_PARSE_INT_EXT = b'.int'
+FN_PARSE_INT_ELT_SPLIT = b'_'
 
 # File content parsing
 F_PARSE_ROW_HEAD = 0
