@@ -247,6 +247,10 @@ def _get_label_kwargs(plot, idx_key=None):
     return l
 
 
+def _exp_list_to_string(exp_list):
+    return '[' + ', '.join([str(ei) for ei in exp_list]) + ']'
+
+
 def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             transform=relative_y,
                             super_transform_pre=None,
@@ -433,7 +437,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                  full_output,
                  header=title.format(tr=transform.__name__,
                                      fn=fitfn.__name__,
-                                     ehw=exp_list))
+                                     ehw=_exp_list_to_string(exp_list)))
 
     # Plot results
     if show_plot is True:
@@ -441,7 +445,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
             plots,
             label=label, get_label_kwargs=_get_label_kwargs, idx_key=idx,
             title=title.format(tr=transform.__name__, fn=fitfn.__name__,
-                               ehw=exp_list),
+                               ehw=_exp_list_to_string(exp_list)),
             xlabel=xlabel, ylabel=ylabel,
             data_line_style=data_line_style, fit_line_style=fit_line_style,
             sort_key=_plot_sort_key,
