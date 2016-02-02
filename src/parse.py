@@ -26,29 +26,6 @@ from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
 
 
-def files_with_ext_in_directory(directory, extension=EXT):
-    """Returns a list of the filenames of all the files in the given
-    directory with the given extension
-    :param extension:
-    :param directory: """
-    filenames = list(glob(os.path.join(directory, '*' + extension)))
-    return filenames
-
-
-def get_all_files(directory, extension=EXT, filterfn=lambda x: True):
-    """Gets a list of all the files in the given directory that match the
-    filter function filterfn
-    :param directory: The directory in which to search
-    :param extension: The file extension. (Use '' to include all files)
-    :param filterfn: The function which takes filename and determines whether
-    to include the file
-    :return: A list containing all of the filenames in directory that match
-    the filter function
-    """
-    files = files_with_ext_in_directory(directory, extension)
-    return list(filter(filterfn, files))
-
-
 def sub_directories(parent_dir):
     root, dirs, files = next(os.walk(parent_dir))
     return [os.path.join(root, sd) for sd in dirs]
@@ -414,8 +391,7 @@ def mass_energy_array_map(directory, filterfn=lambda x: True,
     directory
     """
     if filtered_files is None:
-        files = files_with_ext_in_directory(directory)
-        filtered_files = list(filter(filterfn, files))
+        filtered_files = get_files_r(directory, filterfn)
     d = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
@@ -450,8 +426,7 @@ def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
     for each file in the directory
     """
     if filtered_files is None:
-        files = files_with_ext_in_directory(directory)
-        filtered_files = list(filter(filterfn, files))
+        filtered_files = get_files_r(directory, filterfn)
     mida_map = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
@@ -494,8 +469,7 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True,
     map
     """
     if filtered_files is None:
-        files = files_with_ext_in_directory(directory)
-        filtered_files = list(filter(filterfn, files))
+        filtered_files = get_files_r(directory, filterfn)
     mzbt_map = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
@@ -514,8 +488,7 @@ def mass_other_constants_map(directory, filterfn=lambda x: True,
     :return:
     """
     if filtered_files is None:
-        files = files_with_ext_in_directory(directory)
-        filtered_files = list(filter(filterfn, files))
+        filtered_files = get_files_r(directory, filterfn)
     moc_map = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
