@@ -8,13 +8,13 @@ import re
 from os import path
 from os import walk
 
-from constants import FN_PARSE_ELT_SPLIT as ELT_SPLIT
-from constants import FN_PARSE_REGEX_BASE as REGEX_BASE
-from constants import FN_PARSE_REGEX_E as REGEX_E
-from constants import FN_PARSE_REGEX_HW as REGEX_HW
-from constants import FN_PARSE_REGEX_MASS as REGEX_MASS
-from constants import FN_PARSE_REGEX_NAME as REGEX_NAME
-from constants import FN_PARSE_REGEX_RP as REGEX_RP
+from constants import FN_PARSE_INT_ELT_SPLIT as ELT_SPLIT
+from constants import FN_PARSE_INT_REGEX_BASE as REGEX_BASE
+from constants import FN_PARSE_INT_REGEX_E as REGEX_E
+from constants import FN_PARSE_INT_REGEX_HW as REGEX_HW
+from constants import FN_PARSE_INT_REGEX_MASS as REGEX_MASS
+from constants import FN_PARSE_INT_REGEX_NAME as REGEX_NAME
+from constants import FN_PARSE_INT_REGEX_RP as REGEX_RP
 from constants import F_PARSE_CMNT_CHAR as CMNT_CHAR
 from constants import F_PARSE_CMNT_INDEX as CMNT_INDEX
 from constants import F_PARSE_CMNT_ZBT as CMNT_ZBT
