@@ -7,7 +7,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from math import ceil
+from os import path
 
 from matplotlib import cm
 from matplotlib import colors
@@ -15,11 +15,11 @@ from matplotlib import pyplot as plt
 from scipy.optimize import leastsq
 from scipy.stats import linregress
 
-from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMap
-from Exp import Exp
 from constants import *
 from fit_transforms import *
+from Exp import Exp
+from FitFunction import FitFunction
+from ImsrgIntDataMap import ImsrgIntDataMap
 from spfitting import map_to_arrays
 from spfitting import print_io_key
 
@@ -132,6 +132,121 @@ def _printer_for_multiparticle_metafit(metafit_results, linregress_results,
                                                 header)
 
 
+def plot_the_plots(plots, label, title, xlabel, ylabel,
+                   data_line_style='-', fit_line_style='--',
+                   sort_key=lambda x: x,
+                   get_label_kwargs=None, idx_key=None, title_kwargs=None,
+                   fig=None, ax=None, cmap_name=PLOT_CMAP, cmap=None,
+                   dark=False,
+                   show_fit=False, fit_params=None, fitfn=None, num_fit_pts=50,
+                   include_legend=False, legend_size=LEGEND_SIZE,
+                   savedir=None, savename=None, code=None):
+    """A function for plotting plots. The given plots are plotted (against
+    their fits of fit parameters and a fit function are provided)
+
+    :param plots: A sequence of plots. These should be tuples where the first
+    2 items are x and y and the remaining are constants (etc.) to be passed to
+    the fit function as args (if, that is, a fit function and parameters are
+    provided).
+    :param label: The string (template) to label each plot in plots
+    :param title: The title string (template)
+    :param xlabel: The x axis label
+    :param ylabel: The y axis label
+    :param cmap_name: The name of the color map to use
+    :param data_line_style: The style of the data lines (a string)
+    :param fit_line_style: The style of the fit lines (a string)
+    :param sort_key: The key by which to order the plots
+    :param get_label_kwargs: A function for retrieving a set of keyword
+    arguments for formatting the label string
+    :param idx_key: An extra key to be provided to the get_label_kwargs
+    function as an argument
+    :param title_kwargs: The keyword arguments dictionary to use to format
+    the plot title
+    :param fig: A figure on which to do the plot. (One is created here if None)
+    :param ax: A subplot on which to do the plot. (One is created here if None)
+    :param dark: Use the dark theme?
+    :param fit_params: Parameters to use to generate a fit. (Required in order
+    to plot fits)
+    :param fitfn: A fit function to use to generate fits. (Required in order
+    to plot fits)
+    :param num_fit_pts: The number of points to plot in the fit (linspace arg)
+    :param include_legend: Whether a legend is to be included in the plot
+    :param legend_size: The LegendSize object, which provides information on
+    how to size the legend. If None, the default formatting is used.
+    :return: the figure, subplot, and cmap objects
+    """
+    if dark:
+        plt.style.use(b'dark_background')
+    if fig is None:
+        fig = plt.figure()
+    if ax is None:
+        ax = fig.add_subplot(111)
+    # Make color map
+    if cmap is None:
+        cmap = plt.get_cmap(cmap_name)
+    c_norm = colors.Normalize(vmin=0, vmax=len(plots) - 1)
+    scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
+    # Do plots
+    for p, i in zip(sorted(plots, key=sort_key),
+                    range(len(plots))):
+        x, y = p[0:2]
+        if get_label_kwargs is not None:
+            label = label.format(**get_label_kwargs(p, idx_key))
+        cval = scalar_map.to_rgba(i)
+        ax.plot(x, y, data_line_style, label=label, color=cval)
+        # Do fits if parameters and function provided
+        if show_fit:
+            xfit = np.linspace(x[0], x[-1], num=num_fit_pts)
+            if isinstance(fitfn, FitFunction):
+                args = list([fit_params])
+                args.extend(p[2:])
+                yfit = np.array(list(map(lambda xi: fitfn.eval(xi, *args),
+                                         xfit)))
+            else:
+                args = list(fit_params)
+                args.extend(p[2:])
+                yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
+            ax.plot(xfit, yfit, fit_line_style, color=cval)
+    # Label plot
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if title_kwargs is not None:
+        title = title.format(**title_kwargs)
+    plt.title(title)
+    # Add legend
+    if include_legend:
+        if legend_size is not None:
+            l = len(plots)
+            ncol = legend_size.num_cols(l)
+            fontsize = legend_size.fontsize(l, ncol)
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0,
+                             box.width * legend_size.width_scale(l, ncol,
+                                                                 fontsize),
+                             box.height])
+            plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
+                       fontsize=fontsize)
+        else:
+            plt.legend()
+    # Save
+    if savedir is not None and savename is not None:
+        savename_kwargs = {'t': title, 'c': code if code is not None else ''}
+        plt.savefig(
+            path.join(savedir, savename + '.png').format(**savename_kwargs))
+    return fig, ax, cmap
+
+
+def _get_label_kwargs(plot, idx_key=None):
+    x, y, const_list, const_dict = plot
+    l = dict()
+    for kw, key in zip(['e', 'hw', 'rp', 'b', 'i'],
+                       ['e', 'hw', 'rp', 'base', idx_key]):
+        if key in const_dict:
+            v = const_dict[key]
+            l[kw] = v if v is not None else ''
+    return l
+
+
 def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             transform=relative_y,
                             super_transform_pre=None,
@@ -157,12 +272,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             data_line_style='-',
                             fit_line_style='--',
                             cmap=PLOT_CMAP,
-                            max_legend_cols=LEGEND_MAX_COLS,
-                            max_legend_space=LEGEND_MAX_SPACE,
-                            max_legend_fontsize=LEGEND_MAX_FONTSIZE,
-                            legend_total_fontsize=LEGEND_TOTAL_FONTSIZE,
-                            legend_rows_per_col=LEGEND_ROWS_PER_COL,
-                            legend_space_scale=LEGEND_SPACE_SCALE,
+                            legend_size=LEGEND_SIZE,
                             savename='meta_{c}-{t}',
                             _plot_sort_key=lambda p: p[3]['qnums'],
                             _get_data=lambda dm: dm.index_mass_energy_map(),
@@ -257,9 +367,9 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     if imsrg_data_map is not None:
         all_data_map = imsrg_data_map
     else:
-        all_data_map = ImsrgDataMap(parent_directory=sourcedir,
-                                    exp_list=exp_list,
-                                    standard_indices=std_io_map)
+        all_data_map = ImsrgIntDataMap(parent_directory=sourcedir,
+                                       exp_list=exp_list,
+                                       standard_indices=std_io_map)
 
     plots = list()
     for exp in sorted(exp_list):
@@ -323,75 +433,22 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                  full_output,
                  header=title.format(tr=transform.__name__,
                                      fn=fitfn.__name__,
-                                     ehw=exp))
+                                     ehw=exp_list))
 
     # Plot results
     if show_plot is True:
-        # plt.style.use('dark_background')
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        # Make color map
-        cmap = plt.get_cmap(cmap)
-        c_norm = colors.Normalize(vmin=0, vmax=len(plots) - 1)
-        scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
-        # Do plots
-        for p, i in zip(sorted(plots, key=_plot_sort_key),
-                        range(len(plots))):
-            x, y, const_list, const_dict = p
-
-            qnums, e, hw, index = const_list[0:4]
-
-            rp = const_dict['rp']
-            b = const_dict['base']
-
-            e_str = '' if e is None else e
-            hw_str = '' if hw is None else hw
-            rp_str = '' if rp is None else rp
-            b_str = '' if b is None else b
-            idxv = const_dict[idx]
-            idxv_str = '' if idxv is None else idxv
-
-            labelstr = label.format(e=e_str, hw=hw_str, b=b_str, rp=rp_str,
-                                    i=idxv_str)
-
-            cval = scalar_map.to_rgba(i)
-            ax.plot(x, y, data_line_style, label=labelstr, color=cval)
-
-            if show_fit is not False:
-                xfit = np.linspace(x[0], x[-1])
-                if isinstance(fitfn, FitFunction):
-                    args = list([params, const_list, const_dict])
-                    yfit = np.array(list(map(lambda xi: fitfn.eval(xi, *args),
-                                         xfit)))
-                else:
-                    args = list(params)
-                    args.append(const_list)
-                    args.append(const_dict)
-                    yfit = np.array(list(map(lambda xi: fitfn(xi, *args),
-                                             xfit)))
-                ax.plot(xfit, yfit, fit_line_style, color=cval)
-                # label=labelstr + ' fit',
-
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        title = title.format(tr=transform.__name__,
-                             fn=fitfn.__name__,
-                             ehw=e_hw_pairs)
-        plt.title(title)
-        if show_legend is not False:
-            l = len(plots)
-            ncol = int(min(ceil(l/legend_rows_per_col), max_legend_cols))
-            box = ax.get_position()
-            fontsize = min(ncol*legend_total_fontsize/l, max_legend_fontsize)
-            ax.set_position([box.x0, box.y0,
-                             (box.width *
-                              (1 - (max_legend_space*ncol/max_legend_cols) *
-                               (fontsize / max_legend_fontsize) *
-                               legend_space_scale)),
-                             box.height])
-            plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
-                       fontsize=fontsize)
-        plt.savefig((savedir + '/' + savename + '.png').format(c=code, t=title))
+        plot_the_plots(
+            plots,
+            label=label, get_label_kwargs=_get_label_kwargs, idx_key=idx,
+            title=title.format(tr=transform.__name__, fn=fitfn.__name__,
+                               ehw=exp_list),
+            xlabel=xlabel, ylabel=ylabel,
+            data_line_style=data_line_style, fit_line_style=fit_line_style,
+            sort_key=_plot_sort_key,
+            cmap_name=cmap,
+            show_fit=show_fit, fit_params=params, fitfn=fitfn,
+            include_legend=show_legend, legend_size=legend_size,
+            savedir=savedir, savename=savename, code=code)
     plt.show()
 
     # Make an info dict
