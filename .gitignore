@@ -6,4 +6,6 @@
 .DS_Store
 *.coverfiles
 /old
+/t0/results
+/t0/sources
 /plots
