@@ -24,29 +24,6 @@ from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
 
 
-# ======================================================================
-# Constants
-# ======================================================================
-# DIR_FILES = '../files/'
-# EXT = '.int'
-# ELT_SPLIT = '_'
-# ROW_HEAD = 0
-# COL_START_ORBITAL = 1
-# NCOLS_ORBITALS = 6
-# CMNT_CHAR = '!'
-# CMNT_INDEX = 'Index'
-# CMNT_ZBT = 'Zero body term'
-# REGEX_NAME = '[a-z]+'
-# REGEX_MASS = 'A\d+'
-# REGEX_E = 'e\d+'
-# REGEX_HW = 'hw\d+'
-# REGEX_BASE = 'O\d+'
-# REGEX_RP = '[a-z]+\d\.\d+Rp\d'
-
-
-# ======================================================================
-# Functions
-# ======================================================================
 def sub_directories(parent_dir):
     w = next(os.walk(parent_dir))
     return [os.path.join(w[0], sd) for sd in w[1]]
