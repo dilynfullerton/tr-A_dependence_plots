@@ -17,9 +17,9 @@ from scipy.stats import linregress
 
 from constants import *
 from fit_transforms import *
-from Exp import Exp
+from ExpInt import ExpInt
 from FitFunction import FitFunction
-from ImsrgIntDataMap import ImsrgIntDataMap
+from ImsrgDataMapInt import ImsrgDataMapInt
 from spfitting import map_to_arrays
 from spfitting import print_io_key
 
@@ -204,13 +204,10 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
             xfit = np.linspace(x[0], x[-1], num=num_fit_pts)
             if isinstance(fitfn, FitFunction):
                 args = list([fit_params])
-                args.extend(p[2:])
-                yfit = np.array(list(map(lambda xi: fitfn.eval(xi, *args),
-                                         xfit)))
             else:
                 args = list(fit_params)
-                args.extend(p[2:])
-                yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
+            args.extend(p[2:])
+            yfit = np.array(list(map(lambda xi: fitfn(xi, *args), xfit)))
             ax.plot(xfit, yfit, fit_line_style, color=cval)
     # Label plot
     plt.xlabel(xlabel)
@@ -362,11 +359,11 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     and the regressional results for the fit.
     """
     # Get index->orbital and index->mass->energy maps
-    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
+    exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
     if imsrg_data_map is not None:
         all_data_map = imsrg_data_map
     else:
-        all_data_map = ImsrgIntDataMap(parent_directory=sourcedir,
+        all_data_map = ImsrgDataMapInt(parent_directory=sourcedir,
                                        exp_list=exp_list,
                                        standard_indices=std_io_map)
 
@@ -416,13 +413,11 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     for p in plots:
         x, y, const_list, const_dict = p
         if isinstance(fitfn, FitFunction):
-            args = list([params, const_list, const_dict])
-            ypred = np.array(list(map(lambda xi: fitfn.eval(xi, *args), x)))
+            args = list([params])
         else:
             args = list(params)
-            args.append(const_list)
-            args.append(const_dict)
-            ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
+        args.extend([const_list, const_dict])
+        ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
         yarr = np.array(y)
         lr_results[(exp, const_dict[idx])] = linregress(yarr, ypred)
 
@@ -541,13 +536,11 @@ def _mls(params, fitfn, lox, loy, const_lists, const_dicts):
     yfit = list()
     for x, cl, cd in zip(lox, const_lists, const_dicts):
         if isinstance(fitfn, FitFunction):
-            args = list([params, cl, cd])
-            yfit.extend(list(map(lambda xi: fitfn.eval(xi, *args), x)))
+            args = list([params])
         else:
             args = list(params)
-            args.append(cl)
-            args.append(cd)
-            yfit.extend(list(map(lambda xi: fitfn(xi, *args), x)))
+        args.extend([cl, cd])
+        yfit.extend(list(map(lambda xi: fitfn(xi, *args), x)))
     yflat = [item for y in loy for item in y]
     return np.array(yflat) - np.array(yfit)
 
