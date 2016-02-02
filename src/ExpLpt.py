@@ -4,9 +4,10 @@ from collections import namedtuple
 
 # noinspection PyClassHasNoInit
 class ExpLpt(namedtuple('ExpLpt', ['Z', 'A', 'int'])):
-    """Z: proton number
-       A: nucleon number
-       int: interaction type (e.g. 'usdb')
+    """Exp definition for *.lpt files
+           Z: proton number
+           A: nucleon number
+           int: interaction type (e.g. 'usdb')
     """
     __slots__ = ()
 
