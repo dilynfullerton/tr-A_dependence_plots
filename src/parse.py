@@ -4,31 +4,28 @@ their file names
 
 from __future__ import print_function
 
-from glob import glob
-import os
-from os import walk
-from os import path
 import re
+from os import path
+from os import walk
 
 from constants import FN_PARSE_ELT_SPLIT as ELT_SPLIT
-from constants import FN_PARSE_EXT as EXT
-from constants import FN_PARSE_REGEX_NAME as REGEX_NAME
-from constants import FN_PARSE_REGEX_MASS as REGEX_MASS
+from constants import FN_PARSE_REGEX_BASE as REGEX_BASE
 from constants import FN_PARSE_REGEX_E as REGEX_E
 from constants import FN_PARSE_REGEX_HW as REGEX_HW
-from constants import FN_PARSE_REGEX_BASE as REGEX_BASE
+from constants import FN_PARSE_REGEX_MASS as REGEX_MASS
+from constants import FN_PARSE_REGEX_NAME as REGEX_NAME
 from constants import FN_PARSE_REGEX_RP as REGEX_RP
 from constants import F_PARSE_CMNT_CHAR as CMNT_CHAR
-from constants import F_PARSE_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_CMNT_INDEX as CMNT_INDEX
-from constants import F_PARSE_ROW_HEAD as ROW_HEAD
+from constants import F_PARSE_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
+from constants import F_PARSE_ROW_HEAD as ROW_HEAD
 
 
 def sub_directories(parent_dir):
-    root, dirs, files = next(os.walk(parent_dir))
-    return [os.path.join(root, sd) for sd in dirs]
+    root, dirs, files = next(walk(parent_dir))
+    return [path.join(root, sd) for sd in dirs]
 
 
 def get_files(directory, filterfn=lambda x: True):
@@ -386,6 +383,7 @@ def index_tuple_map(filename):
 def mass_energy_array_map(directory, filterfn=lambda x: True,
                           filtered_files=None):
     """Returns a map from atomic mass to orbital energy arrays
+    :param filtered_files:
     :param directory: the directory which is a direct parent to the files to use
     :param filterfn: the function to use to filter the file names in the
     directory
@@ -405,6 +403,7 @@ def mass_index_energy_map_map(directory, filterfn=lambda x: True,
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
+    :param filtered_files:
     :param directory: the directory that is a direct parent to the files from
     which the map is to be constructed
     :param filterfn: the filter to apply to the files prior to constructing the
@@ -440,6 +439,7 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True,
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
+    :param filtered_files:
     :param directory: the directory which is a direct parent to the files from
     which to generate the map
     :param filterfn: the filter function to apply to the files before
@@ -463,6 +463,7 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True,
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
+    :param filtered_files:
     :param directory: the directory that is a direct parent to the files from
     which to construct the map
     :param filterfn: the filter to apply to the files before constructing the
@@ -483,6 +484,7 @@ def mass_other_constants_map(directory, filterfn=lambda x: True,
     """Given a directory, creates a mapping from mass number to the other
     constants following the orbital energies in the first line of data
 
+    :param filtered_files:
     :param directory:
     :param filterfn:
     :return:

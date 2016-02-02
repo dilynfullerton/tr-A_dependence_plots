@@ -144,6 +144,11 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
 
+    :param code:
+    :param savename:
+    :param savedir:
+    :param show_fit:
+    :param cmap:
     :param plots: A sequence of plots. These should be tuples where the first
     2 items are x and y and the remaining are constants (etc.) to be passed to
     the fit function as args (if, that is, a fit function and parameters are
@@ -285,6 +290,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
     given fit function
 
+    :param legend_size:
     :param print_lr_results:
     :param print_mf_results:
     :param fitfn: The FitFunction object to use for fitting. Alternatively,
@@ -343,17 +349,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         {c}: code
         {t}: title
     :param cmap: (Optional) colormap string to use for plotting
-    :param max_legend_cols: (Optional) The maximum number of columns to allow
-    the legend to have
-    :param max_legend_space: (Optional) The maximum proportion of horizonal
-    space to allow for the legend
-    :param max_legend_fontsize: (Optional) The maximum legend fontsize to allow
-    :param legend_total_fontsize: (Optional) The "total fontsize" which
-    represents the fontsize * the number of rows
-    :param legend_rows_per_col: (Optional) The number of rows to warrant an
-    additional column.
-    :param legend_space_scale: (Optional) A scale-factor to append to
-    calculation of legend space proportion
     :param mf_name: The name of the metafitter
     :param _plot_sort_key: (Optional) key for ordering plots, default is by
     Quantum numbers.

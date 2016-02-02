@@ -1,4 +1,3 @@
-
 from __future__ import division
 from collections import deque
 from os import getcwd, path, walk, mkdir, link, chdir
@@ -9,17 +8,17 @@ import glob
 # CONSTANTS
 # .ans file
 SEP = '--------------------------------------------------'
-LINES =  ['%s',
-          '%s,   %d',
-          '%s',
-          '%s',
-          '%s',
-          ' %d',
-          ' %d',
-          ' %.1f, %.1f, %.1f',
-          ' %d',
-          '%s',
-          '%s']
+LINES = ['%s',
+         '%s,   %d',
+         '%s',
+         '%s',
+         '%s',
+         ' %d',
+         ' %d',
+         ' %.1f, %.1f, %.1f',
+         ' %d',
+         '%s',
+         '%s']
 NUM_PROTONS = 8
 
 # directories
@@ -55,7 +54,7 @@ def do_calculations(d=D, results_dir=RESULTS,
         ans = _get_file(files, ans_regex)
         bat = _get_file(files, bat_regex)
         if ans is not None:  # There is a *.ans file
-            if bat is None or force: 
+            if bat is None or force:
                 chdir(root)
                 call(['shell', '%s' % ans])
     chdir(d)
@@ -70,10 +69,10 @@ def do_calculations(d=D, results_dir=RESULTS,
                     call(['source %s' % bat], shell=True)
     chdir(d)
     return 1
-    
-            
-def _calc_has_been_done(path):
-    return len(files_with_ext_in_directory(path, '.lpt')) > 1
+
+
+def _calc_has_been_done(dirpath):
+    return len(files_with_ext_in_directory(dirpath, '.lpt')) > 1
 
 
 def files_with_ext_in_directory(directory, extension):
@@ -82,8 +81,8 @@ def files_with_ext_in_directory(directory, extension):
     :param extension:
     :param directory: """
     return list(glob.glob(path.join(directory, '*' + extension)))
-    
-    
+
+
 def _get_file(list_of_file, regex=ANS_REGEX):
     for f in list_of_file:
         if re.match(regex, f) is not None:
@@ -127,7 +126,7 @@ def make_usdb_dir(mass_range=MASS_RANGE, d=D, results_dir=RESULTS,
                               interaction_name='usdb',
                               num_protons=num_protons,
                               j_min=0.5, j_max=3.5, j_del=1.0)
-        
+
 
 def make_results_dir(d=D, sources_dir=SOURCES, results_dir=RESULTS,
                      model_space=MODEL_SPACE,
@@ -139,16 +138,23 @@ def make_results_dir(d=D, sources_dir=SOURCES, results_dir=RESULTS,
     file (according to its name) and copy the file into the directory with a
     short name. Also, for each directory to which a *.int file is copied the
     given model space is linked and a *.ans file is generated.
+    :param force:
+    :param num_protons:
+    :param file_ext_regex:
+    :param model_space:
+    :param results_dir:
+    :param sources_dir:
+    :param d:
     """
     results_subdir = path.join(results_dir, 'Z%d' % num_protons)
     if not path.exists(sources_dir):
         raise SourcesDirDoesNotExistException()
     if not path.exists(results_subdir):
         mkdir(results_subdir)
-        
+
     todo_sources = deque([sources_dir])
     todo_results = deque([results_subdir])
-        
+
     while len(todo_sources) > 0:
         cwd_sources = todo_sources.popleft()
         cwd_results = todo_results.popleft()
@@ -201,9 +207,6 @@ def make_results_dir(d=D, sources_dir=SOURCES, results_dir=RESULTS,
                                   num_nucleons=mass_num,
                                   j_min=0.5, j_max=3.5, j_del=1.0,
                                   parity=0)
-                          
-                          
-            
 
 
 def mass_number_from_filename(filename, split_char=FILENAME_SPLIT,
@@ -258,6 +261,22 @@ def make_ans_file(file_path,
                   sep=SEP,
                   nl='\n'):
     """Create a .ans file with the given specifications
+    :param nl:
+    :param sep:
+    :param lines:
+    :param end_option:
+    :param parity:
+    :param j_del:
+    :param j_max:
+    :param j_min:
+    :param num_protons:
+    :param restriction:
+    :param neig:
+    :param option:
+    :param interaction_name:
+    :param num_nucleons:
+    :param sp_file:
+    :param file_path:
     """
     ans_str = nl.join(lines) % (sep,
                                 option, neig,
@@ -280,6 +299,7 @@ def main():
         arange=MASS_RANGE,
         zrange=[8, 9, 10],
         force=False
-        )
+    )
+
 
 main()
