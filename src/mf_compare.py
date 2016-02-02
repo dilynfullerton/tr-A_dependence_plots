@@ -6,8 +6,8 @@ from itertools import combinations
 
 import numpy as np
 
-from ImsrgIntDataMap import ImsrgIntDataMap
-from Exp import Exp
+from ImsrgDataMapInt import ImsrgDataMapInt
+from ExpInt import ExpInt
 from constants import DIR_FILES, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
 
@@ -29,8 +29,8 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
     :param kwargs: keyword arguments to pass to the metafitter
     :return: best fit function, results
     """
-    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
-    imsrg_data_map = ImsrgIntDataMap(parent_directory=sourcedir,
+    exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
+    imsrg_data_map = ImsrgDataMapInt(parent_directory=sourcedir,
                                      exp_list=exp_list,
                                      standard_indices=std_io_map)
     fn_res_r2_map = dict()
@@ -104,8 +104,8 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
     :param kwargs: keyword arguments to be passed to the metafitter
     :return: a list of (param, result, relative result) 3-tuples
     """
-    exp_list = [Exp(*e_hw_pair) for e_hw_pair in e_hw_pairs]
-    imsrg_data_map = ImsrgIntDataMap(sourcedir,
+    exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
+    imsrg_data_map = ImsrgDataMapInt(sourcedir,
                                      exp_list=exp_list,
                                      standard_indices=std_io_map)
     if depth > len(e_hw_pairs) - 1:
