@@ -16,9 +16,6 @@ def _a_z_line(filepath, comment_char, row_az):
 def _a_z(filepath, comment_char=CMNT_CHAR, row_az=ROW_AZ):
     """Return A and Z from a list of lines, whose a_z_line has the format
             a = [A] z = [Z]
-
-    :param content_lines: file lines without comments or blanks
-    :param a_z_line: index of the line containing A and Z
     :return: A, Z
     """
     elts = _a_z_line(filepath, comment_char, row_az).split()

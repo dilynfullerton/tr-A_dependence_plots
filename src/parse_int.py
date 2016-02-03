@@ -242,6 +242,7 @@ def other_constants(header_items_list,
 def orbital_energies_from_filename(filename, comment_char=CMNT_CHAR):
     """Returns the orbital energies from the given filename through
     functional composition
+    :param comment_char:
     :param filename: """
     return orbital_energies(header_list(content_lines(filename, comment_char)))
 
@@ -250,6 +251,7 @@ def other_constants_from_filename(filename, comment_char=CMNT_CHAR):
     """Given a filename, returns all of the items in the header items list
     following the orbital energies
 
+    :param comment_char:
     :param filename:
     :return:
     """
@@ -275,6 +277,7 @@ def index_map(idx_lines):
 def index_tuple_map(filename, comment_char=CMNT_CHAR):
     """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
+    :param comment_char:
     :param filename:
     """
     return index_map(index_lines(comment_lines(filename, comment_char)))
@@ -364,6 +367,7 @@ def mass_zero_body_term_map(directory, filterfn=lambda x: True,
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
+    :param comment_char:
     :param filtered_files:
     :param directory: the directory that is a direct parent to the files from
     which to construct the map

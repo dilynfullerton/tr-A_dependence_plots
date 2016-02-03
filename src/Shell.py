@@ -4,6 +4,7 @@ from collections import namedtuple
 from parse import half_int_float_to_str as to_str
 
 
+# noinspection PyClassHasNoInit
 class Shell(namedtuple('Shell',
                        ['NJ', 'E', 'Ex', 'J', 'T', 'p', 'lowest_Ex', 'name'])):
     __slots__ = ()
