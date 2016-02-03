@@ -1,26 +1,40 @@
-"""Holds all of the data for a single Exp
-"""
-
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from os import mkdir, path, link
+from os import path, mkdir, link
 
-from ImsrgDatum import ImsrgDatum
+from types import QuantumNumbers, TwoBodyInteraction, Shell
+
 from parse_int import index_tuple_map
 from parse_int import mass_index_energy_map_map
 from parse_int import mass_interaction_tuple_energy_map_map
 from parse_int import mass_zero_body_term_map
 from parse_int import name_from_filename
-from parse_int import mass_number_from_filename
 from parse_int import other_constants_from_filename
-from TwoBodyInteraction import TwoBodyInteraction
-from QuantumNumbers import QuantumNumbers
+from parse_int import mass_number_from_filename
+from parse_lpt import mass_to_header_data_map, mass_to_n_to_body_data_map
+
 from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE
+from constants import F_PARSE_LPT_CMNT_CHAR as _CMNT_CHAR
+from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
+from constants import F_PARSE_LPT_ROW_HEAD as _ROW_HEAD
+from constants import F_PARSE_LPT_COL_HEAD_DATA_START as _COL_START
+from constants import F_PARSE_LPT_ROW_START_DATA as _ROW_BODY_START
+from constants import F_PARSE_LPT_NCOLS_BODY as _NCOLS_BODY
 
 
-class ImsrgDatumInt(ImsrgDatum):
+class _ImsrgDatum(object):
+    def __init__(self, directory, exp, files):
+        self.exp = exp
+        self.dir = directory
+        self.files = files
+
+    def _set_maps(self):
+        raise NotImplemented
+
+
+class ImsrgDatumInt(_ImsrgDatum):
     def __init__(self, directory, exp, files, std_io_map=None,
                  standardize_io_map=True, organize_files=True,
                  org_file_dir=DIR_FILES_ORG,
@@ -68,7 +82,7 @@ class ImsrgDatumInt(ImsrgDatum):
         # Turn each tuple in the map into a named tuple
         for k in index_orbital_map.keys():
             v = index_orbital_map[k]
-            nextv = QuantumNumbers(*qnums_to_list(v))
+            nextv = QuantumNumbers(*_qnums_to_list(v))
             index_orbital_map[k] = nextv
 
         self.index_orbital_map = index_orbital_map
@@ -242,7 +256,7 @@ class ImsrgDatumInt(ImsrgDatum):
         return TwoBodyInteraction(*next_tup)
 
 
-def qnums_to_list(qnums):
+def _qnums_to_list(qnums):
     qn_list = list()
     for n in qnums:
         if '/' in n:
@@ -251,3 +265,89 @@ def qnums_to_list(qnums):
         else:
             qn_list.append(float(n))
     return qn_list
+
+
+class ImsrgDatumLpt(_ImsrgDatum):
+    def __init__(self, directory, exp, files,
+                 _comment_char=_CMNT_CHAR,
+                 _row_az=_ROW_AZ,
+                 _row_head=_ROW_HEAD,
+                 _col_start=_COL_START,
+                 _row_body_start=_ROW_BODY_START,
+                 _ncols_body=_NCOLS_BODY):
+        super(ImsrgDatumLpt, self).__init__(directory=directory, exp=exp,
+                                            files=files)
+        self._comment_char = _comment_char
+        self._row_az = _row_az
+        self._row_head = _row_head
+        self._col_start = _col_start
+        self._row_body_start = _row_body_start
+        self._ncols_body = _ncols_body
+
+        self._mass_header_map = None
+        self._mass_n_body_map = None
+
+        self._set_maps()
+
+    def _set_maps(self):
+        self._set_mass_header_map()
+        self._set_mass_n_body_map()
+
+    def _set_mass_header_map(self):
+        self._mass_header_map = mass_to_header_data_map(
+            self.files, comment_char=self._comment_char,
+            row_az=self._row_az,
+            row_head=self._row_head,
+            col_start=self._col_start)
+
+    def _set_mass_n_body_map(self):
+        mass_n_body_map = mass_to_n_to_body_data_map(
+            self.files, comment_char=self._comment_char,
+            row_az=self._row_az,
+            row_body_start=self._row_body_start,
+            ncols_body=self._ncols_body)
+        d = dict()
+        for m, nb_map in mass_n_body_map.iteritems():
+            if m not in d:
+                d[m] = dict()
+            for n, b in nb_map.iteritems():
+                d[m][n] = Shell(*b)
+        self._mass_n_body_map = d
+
+    def mass_header_map(self):
+        return dict(self._mass_header_map)
+
+    def mass_n_body_map(self):
+        return dict(self._mass_n_body_map)
+
+    def mass_n_energy_map(self):
+        d = dict()
+        for m, nb_map in self._mass_n_body_map.iteritems():
+            d[m] = {n: b.E for n, b in nb_map.iteritems()}
+        return d
+
+    def mass_n_excitation_map(self):
+        d = dict()
+        for m, nb_map in self._mass_n_body_map.iteritems():
+            d[m] = {n: b.Ext for n, b in nb_map.iteritems()}
+        return d
+
+    def n_mass_energy_map(self):
+        d = dict()
+        mne_map = self.mass_n_energy_map()
+        for m, ne_map in mne_map.iteritems():
+            for n, e in ne_map.iteritems():
+                if n not in d:
+                    d[n] = dict()
+                d[n][m] = e
+        return d
+
+    def n_mass_excitation_map(self):
+        d = dict()
+        mnext_map = self.mass_n_excitation_map()
+        for m, n_ext_map in mnext_map.iteritems():
+            for n, ext in n_ext_map.iteritems():
+                if n not in d:
+                    d[n] = dict()
+                d[n][m] = ext
+        return d
