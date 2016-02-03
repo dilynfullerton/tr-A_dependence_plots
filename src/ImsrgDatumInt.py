@@ -7,33 +7,28 @@ from __future__ import unicode_literals
 
 from os import mkdir, path, link
 
+from ImsrgDatum import ImsrgDatum
 from parse_int import index_tuple_map
 from parse_int import mass_index_energy_map_map
 from parse_int import mass_interaction_tuple_energy_map_map
 from parse_int import mass_zero_body_term_map
 from parse_int import name_from_filename
 from parse_int import mass_number_from_filename
-from parse_int import exp_from_filename
 from parse_int import other_constants_from_filename
-from parse import has_extension, get_files_r
 from TwoBodyInteraction import TwoBodyInteraction
 from QuantumNumbers import QuantumNumbers
-from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE, FN_PARSE_INT_EXT
+from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE
 
 
-class ImsrgDatumInt:
-    def __init__(self, directory, exp, std_io_map=None,
+class ImsrgDatumInt(ImsrgDatum):
+    def __init__(self, directory, exp, files, std_io_map=None,
                  standardize_io_map=True, organize_files=True,
                  org_file_dir=DIR_FILES_ORG,
                  directory_format=ORG_FMT_DIR,
-                 file_format=ORG_FMT_FILE,
-                 file_extension=FN_PARSE_INT_EXT):
-        self.exp = exp
-        self.e, self.hw, self.base, self.rp = self.exp
-
+                 file_format=ORG_FMT_FILE):
+        super(ImsrgDatumInt, self).__init__(directory=directory, exp=exp,
+                                            files=files)
         self.name = None
-        self.dir = directory
-        self._fname_filter = None
         self.standardized_indexing = False
         self.files_organized = False
 
@@ -45,12 +40,9 @@ class ImsrgDatumInt:
         self.mass_interaction_index_energy_map = dict()
         self.mass_zero_body_term_map = dict()
         self.other_constants = None
-        self.files = None
         self._unorg_files = None
 
         # Perform setup methods
-        self._set_fname_filter(file_extension)
-        self._set_files()
         self._set_maps()
         self._set_name()
         self._set_other_constants()
@@ -71,8 +63,7 @@ class ImsrgDatumInt:
         and stores it in an instance variable
         """
         # Assuming all files characteristic have the same indexing...
-        f0 = next(iter(filter(self._fname_filter, self.files)))
-        index_orbital_map = index_tuple_map(f0)
+        index_orbital_map = index_tuple_map(self.files[0])
 
         # Turn each tuple in the map into a named tuple
         for k in index_orbital_map.keys():
@@ -88,8 +79,7 @@ class ImsrgDatumInt:
         mapping for the directory
         """
         self.mass_index_energy_map = (
-            mass_index_energy_map_map(self.dir, self._fname_filter,
-                                      filtered_files=self.files))
+            mass_index_energy_map_map(self.dir, filtered_files=self.files))
 
     def _set_mass_interaction_index_energy_map(self):
         """Retrieves the
@@ -97,8 +87,8 @@ class ImsrgDatumInt:
         mapping for the directory
         """
         miiem = (
-            mass_interaction_tuple_energy_map_map(
-                self.dir, self._fname_filter, filtered_files=self.files))
+            mass_interaction_tuple_energy_map_map(self.dir,
+                                                  filtered_files=self.files))
 
         # Turn each tuple into a named tuple
         for A in miiem.keys():
@@ -117,35 +107,18 @@ class ImsrgDatumInt:
 
     def _set_zero_body_term_map(self):
         self.mass_zero_body_term_map = (
-            mass_zero_body_term_map(self.dir, self._fname_filter,
-                                    filtered_files=self.files))
+            mass_zero_body_term_map(self.dir, filtered_files=self.files))
 
     def _set_name(self):
         """Sets the incidence name variable
         """
-        f0 = next(iter(filter(self._fname_filter, self.files)))
-        self.name = name_from_filename(f0)
-
-    def _set_fname_filter(self, extension):
-        """Returns a filter function that filters a set of filenames such that
-        only those that have the same signature (e, hw, rp) values as self
-        """
-
-        def f(fname):
-            return (exp_from_filename(fname) == self.exp and
-                    has_extension(fname, ext=extension))
-
-        self._fname_filter = f
+        self.name = name_from_filename(self.files[0])
 
     def _set_other_constants(self):
         """Sets other heading constants. Assumes all files in a given directory
         have the same constants
         """
-        f0 = next(iter(filter(self._fname_filter, self.files)))
-        self.other_constants = other_constants_from_filename(f0)
-
-    def _set_files(self):
-        self.files = get_files_r(self.dir, filterfn=self._fname_filter)
+        self.other_constants = other_constants_from_filename(self.files[0])
 
     def _organize_files(self, directory, dir_fmt, file_fmt):
         """Give the files standardized names and put them in a similarly-named
