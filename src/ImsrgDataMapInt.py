@@ -15,7 +15,9 @@ from constants import FN_PARSE_INT_EXT as EXT
 
 
 class ImsrgDataMapInt(ImsrgDataMap):
-    def __init__(self, parent_directory, exp_list=None, standard_indices=None):
+    def __init__(self, parent_directory, exp_list=None, standard_indices=None,
+                 extension=EXT):
+        self.extension = extension
         super(ImsrgDataMapInt, self).__init__(
             parent_directory=parent_directory,
             exp_type=ExpInt, datum_type=ImsrgDatumInt,
@@ -25,6 +27,6 @@ class ImsrgDataMapInt(ImsrgDataMap):
     def _exp_from_file_path(self, f):
         return exp_from_filename(f)
 
-    def _get_files(self, ext=EXT):
+    def _get_files(self):
         return get_files_r(self.parent_dir,
-                           filterfn=lambda f: has_extension(f, ext))
+                           filterfn=lambda f: has_extension(f, self.extension))
