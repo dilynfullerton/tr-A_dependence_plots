@@ -10,8 +10,8 @@ from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit as cf
 from scipy.stats import linregress as lg
 
-from ImsrgDataMapInt import ImsrgDataMapInt
-from ExpInt import ExpInt
+from _ImsrgDataMap import ImsrgDataMapInt
+from Exp import ExpInt
 from constants import *
 from fit_transforms import *
 

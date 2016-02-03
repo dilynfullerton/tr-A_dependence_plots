@@ -2,8 +2,8 @@
 """
 
 from __future__ import unicode_literals
-from QuantumNumbers import QuantumNumbers
-from LegendSize import LegendSize
+from types import QuantumNumbers
+from plotting import LegendSize
 
 # Directories
 DIR_FILES = '../files'

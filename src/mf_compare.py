@@ -6,8 +6,8 @@ from itertools import combinations
 
 import numpy as np
 
-from ImsrgDataMapInt import ImsrgDataMapInt
-from ExpInt import ExpInt
+from _ImsrgDataMap import ImsrgDataMapInt
+from Exp import ExpInt
 from constants import DIR_FILES, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
 
