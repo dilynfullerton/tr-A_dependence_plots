@@ -11,12 +11,12 @@ from constants import FN_PARSE_INT_REGEX_HW as REGEX_HW
 from constants import FN_PARSE_INT_REGEX_MASS as REGEX_MASS
 from constants import FN_PARSE_INT_REGEX_NAME as REGEX_NAME
 from constants import FN_PARSE_INT_REGEX_RP as REGEX_RP
-from constants import F_PARSE_CMNT_INDEX as CMNT_INDEX
-from constants import F_PARSE_CMNT_ZBT as CMNT_ZBT
-from constants import F_PARSE_COL_START_ORBITAL as COL_START_ORBITAL
-from constants import F_PARSE_NCOLS_ORBITALS as NCOLS_ORBITALS
-from constants import F_PARSE_ROW_HEAD as ROW_HEAD
-from constants import F_PARSE_CMNT_CHAR as CMNT_CHAR
+from constants import F_PARSE_INT_CMNT_INDEX as CMNT_INDEX
+from constants import F_PARSE_INT_CMNT_ZBT as CMNT_ZBT
+from constants import F_PARSE_INT_COL_START_ORBITAL as COL_START_ORBITAL
+from constants import F_PARSE_INT_NCOLS_ORBITALS as NCOLS_ORBITALS
+from constants import F_PARSE_INT_ROW_HEAD as ROW_HEAD
+from constants import F_PARSE_INT_CMNT_CHAR as CMNT_CHAR
 from parse import get_files_r, filename_elts_list, elt_from_felts
 from parse import content_lines, comment_lines
 

@@ -3,8 +3,8 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class Interaction(namedtuple('InteractionTuple',
-                             ['a', 'b', 'c', 'd', 'j', 'zzz'])):
+class TwoBodyInteraction(namedtuple('TwoBodyInteraction',
+                                    ['a', 'b', 'c', 'd', 'j', 'zzz'])):
     __slots__ = ()
 
     def __str__(self):
@@ -29,4 +29,4 @@ class Interaction(namedtuple('InteractionTuple',
     def __eq__(self, other):
         return self[0:5] == other[0:5]
 
-Interaction.__new__.__defaults__ = (None,)
+TwoBodyInteraction.__new__.__defaults__ = (None,)

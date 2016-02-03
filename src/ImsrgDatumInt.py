@@ -16,7 +16,7 @@ from parse_int import mass_number_from_filename
 from parse_int import exp_from_filename
 from parse_int import other_constants_from_filename
 from parse import has_extension, get_files_r
-from Interaction import Interaction
+from TwoBodyInteraction import TwoBodyInteraction
 from QuantumNumbers import QuantumNumbers
 from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE, FN_PARSE_INT_EXT
 
@@ -109,7 +109,7 @@ class ImsrgDatumInt:
                 nextk = list()
                 for stritem in k:
                     nextk.append(int(stritem))
-                nextk = Interaction(*nextk)
+                nextk = TwoBodyInteraction(*nextk)
                 next_tuple_energy_map[nextk] = v
             miiem[A] = next_tuple_energy_map
 
@@ -208,7 +208,7 @@ class ImsrgDatumInt:
     def _standardize_interaction_index_tuple(self, ii_tuple):
         next_tuple = [self._standard_index(i) for i in ii_tuple[0:4]]
         next_tuple += tuple(ii_tuple[4:])
-        return Interaction(*next_tuple)
+        return TwoBodyInteraction(*next_tuple)
 
     def _standard_index(self, i):
         io_map = self.index_orbital_map
@@ -266,7 +266,7 @@ class ImsrgDatumInt:
             qnums = self.index_orbital_map[index]
             next_tup += qnums
         next_tup += ii.j
-        return Interaction(*next_tup)
+        return TwoBodyInteraction(*next_tup)
 
 
 def qnums_to_list(qnums):
