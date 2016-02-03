@@ -1,3 +1,7 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+
+
 class ImsrgDataMap(object):
     def __init__(self, parent_directory, exp_type, datum_type,
                  exp_list=None, **kwargs):
@@ -19,7 +23,11 @@ class ImsrgDataMap(object):
             if self.exp_list is not None and key not in self.exp_list:
                 continue
             elif key not in self.map:
-                value = self.datum_type(self.parent_dir, key,
+                key_files = list(
+                    filter(lambda ff: key == self._exp_from_file_path(ff),
+                           files))
+                value = self.datum_type(directory=self.parent_dir, exp=key,
+                                        files=key_files,
                                         **self.kwargs)
                 self.map[key] = value
 
