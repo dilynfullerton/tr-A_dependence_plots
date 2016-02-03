@@ -1,4 +1,5 @@
 from __future__ import division
+from __future__ import print_function
 
 from os import sep
 
@@ -62,21 +63,27 @@ def _cured_header_data(header_data):
 
 
 def _body_lines(filepath, comment_char, row_body_start):
-    return content_lines(filepath, comment_char)[row_body_start]
+    cl = content_lines(filepath, comment_char)
+    if len(cl) < row_body_start + 1:
+        return list([])
+    else:
+        return cl[row_body_start:]
 
 
 def _body_lists(body_lines):
-    return list(map(lambda line: line.split(), body_lines))
+    return [line.split() for line in body_lines]
 
 
 def _cured_body_list(body_list, ncols_body):
     cbl = list()
-    cbl[0:2] = [int(bl) for bl in body_list[0:2]]
-    cbl[2:4] = [float(bl)for bl in body_list[2:4]]
-    cbl[4:6] = [half_int_str_to_float(bl) for bl in body_list[4:6]]
-    cbl[7] = int(body_list[7])
-    cbl[8] = float(body_list(8)) if len(body_list) == ncols_body else None
-    cbl[9] = body_list[9]
+    cbl.extend([int(bl) for bl in body_list[0:2]])
+    cbl.extend([float(bl)for bl in body_list[2:4]])
+    cbl.extend([half_int_str_to_float(bl) for bl in body_list[4:6]])
+    cbl.append(int(body_list[6]))
+    if len(body_list) == ncols_body:
+        cbl.extend([float(body_list[7]), body_list[8]])
+    else:
+        cbl.extend([None, body_list[7]])
     return cbl
 
 
