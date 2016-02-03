@@ -35,7 +35,7 @@ F_PARSE_INT_CMNT_INDEX = b'Index'
 F_PARSE_INT_CMNT_ZBT = b'Zero body term'
 
 # *.lpt filename parsing
-FN_PARSE_LPT_REGEX_FILENAME = b'[a-z_]\d\d[a-z].lpt'
+FN_PARSE_LPT_REGEX_FILENAME = b'[a-z_][a-z_]\d\d[a-z].lpt'
 
 # *.lpt file content parsing
 F_PARSE_LPT_ROW_AZ = 1
