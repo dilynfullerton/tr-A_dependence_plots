@@ -74,10 +74,10 @@ def _get_lines(filename):
     with open(filename) as f:
         lines = f.readlines()
     # Remove line separators
-    lines = list(map(lambda x: x.strip(), lines))
+    lines = map(lambda x: x.strip(), lines)
     # Remove blank lines
-    lines = list(filter(lambda x: x[0] is not '', lines))
-    return lines
+    lines = filter(lambda x: len(x) > 0, lines)
+    return list(lines)
 
 
 def content_lines(filename, comment_char):
@@ -98,5 +98,19 @@ def comment_lines(filename, comment_char):
     lines = _get_lines(filename)
     lines = filter(lambda x: x[0] is comment_char, lines)
     lines = map(lambda x: x.strip(comment_char).strip(), lines)
-    lines = list(filter(lambda x: x is not '', lines))
-    return lines
+    lines = filter(lambda x: x is not '', lines)
+    return list(lines)
+
+
+def half_int_str_to_float(string):
+    if '/' in string:
+        return reduce(lambda a, b: int(a)/int(b), string.split('/'))
+    else:
+        return int(string)
+
+
+def half_int_float_to_str(f):
+    if int(f) - f == 0:
+        return str(int(f))
+    else:
+        return str(int(2 * f)) + '/2'
