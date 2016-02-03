@@ -10,6 +10,7 @@ DIR_FILES = '../files'
 DIR_FILES_ORG = '../files_org'
 DIR_PLOTS = '../plots'
 DIR_GEN_INT = '../gen_files'
+DIR_SHELL_RESULTS = '../t0/results'
 
 # File organization
 ORG_FMT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
