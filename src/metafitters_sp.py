@@ -164,8 +164,8 @@ def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
             mf_name='single_particle_firstp_metafit',
             xlabel='A',
             ylabel='Energy (MeV)',
-            data_line_style='-',
-            fit_line_style='--',
+            _data_line_style='-',
+            _fit_line_style='--',
             **kwargs)
 
 

@@ -2,16 +2,15 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-# from FitFunction import *
-# from metafitters_mp import *
-# from metafitters_sp import *
+from FitFunction import *
+from metafitters_mp import *
+from metafitters_sp import *
 #
 # from generate_int import generate_int_file_from_fit_results
 from plotting import lpt_plot_energy_vs_mass_for_n
 from fit_transforms import *
 
 
-# lpt_plot_energy_vs_n_for_mass(22, proton_num=8)
 lpt_plot_energy_vs_mass_for_n(1, proton_num=8, transform=pzbt)
 
 # max_r2(multi_particle_firstp_metafit,
