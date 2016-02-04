@@ -57,6 +57,7 @@ def _get_single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
     return x, y, const_list, const_dict
 
 
+# noinspection PyUnusedLocal
 def _get_single_particle_plots(exp_list, all_data_map, get_data,
                                print_key=False, std_io_map=None,
                                get_plot=_get_single_particle_plot,
@@ -177,12 +178,17 @@ def single_particle_metafit_int(
     """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
     given fit function
 
+    :param _get_plots:
+    :param _data_map:
+    :param _get_label_fmt_kwargs:
+    :param _code_pref:
+    :param exp_filter_fn:
+    :param exp_list:
     :param _legend_size:
     :param print_lr_results:
     :param print_mf_results:
     :param fitfn: The FitFunction object to use for fitting. Alternatively,
     may be of the form in fitfns.py, although this is deprecated.
-    :param e_hw_pairs: A list of tuples of (e, hw [, rp]), which fully specify
     the data set(s) to use. If rp is not included, it is assumed to be None.
     :param sourcedir: The main files directory to use for initializing the
     ImsrgDataMaps
@@ -274,7 +280,7 @@ def single_particle_metafit_int(
                          super_transform_pre=super_transform_pre,
                          super_transform_post=super_transform_post,
                          fitfn=fitfn,
-                         full_output=full_output, idx=_idx,)
+                         full_output=full_output, idx=_idx, )
 
     mf_results, lr_results, plots, fitfn = rr
     params = mf_results[0]
@@ -377,6 +383,7 @@ def _get_plot_lpt(n, exp, me_map, mzbt_map):
     return x, y, const_list, const_dict
 
 
+# noinspection PyUnusedLocal
 def _get_plots_lpt(exp_list, all_data_map, get_data, get_plot=_get_plot_lpt,
                    **kwargs):
     plots = list()
@@ -394,6 +401,7 @@ def _get_plots_lpt(exp_list, all_data_map, get_data, get_plot=_get_plot_lpt,
     return plots
 
 
+# noinspection PyUnusedLocal
 def _get_label_kwargs_lpt(plot, idx_key=None):
     return {'exp': plot[3]['exp'], 'N': plot[3]['N']}
 
@@ -442,7 +450,7 @@ def _imsrg_meta_fit(plots,
                     transform, super_transform_pre, super_transform_post,
                     fitfn,
                     full_output,
-                    idx,):
+                    idx, ):
     # Transform plots
     if super_transform_pre is not None:
         plots = super_transform_pre(plots)

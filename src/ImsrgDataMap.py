@@ -67,6 +67,8 @@ class _ImsrgDataMap(object):
 class ImsrgDataMapInt(_ImsrgDataMap):
     """A mapping from ExpInt to ImsrgDatumInt
     """
+
+    # noinspection PyUnusedLocal
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  standard_indices=None, extension=EXT, **kwargs):
         self.extension = extension
@@ -88,6 +90,8 @@ class ImsrgDataMapInt(_ImsrgDataMap):
 class ImsrgDataMapLpt(_ImsrgDataMap):
     """A mapping from ExpLpt to ImsrgDatumLpt
     """
+
+    # noinspection PyUnusedLocal
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  _comment_char=CMNT_CHAR,
                  _row_az=ROW_AZ,
