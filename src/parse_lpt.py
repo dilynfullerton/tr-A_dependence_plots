@@ -1,11 +1,13 @@
 from __future__ import division
 from __future__ import print_function
 
-from os import sep
+from re import match
+from os import sep, path, walk
 
 from constants import F_PARSE_LPT_CMNT_CHAR as CMNT_CHAR
 from constants import F_PARSE_LPT_ROW_AZ as ROW_AZ
-from parse import content_lines, half_int_str_to_float
+from parse import content_lines, comment_lines, half_int_str_to_float
+from parse_int import zero_body_term, zero_body_term_line
 
 
 # EXP
@@ -43,7 +45,23 @@ def exp(filepath, comment_char, row_az):
     :return: the tuple representation of the ExpLpt, that is
             (Z, interaction)
     """
-    return _a_z(filepath, comment_char, row_az)[1], _interaction(filepath)
+    return _a_z(filepath, comment_char, row_az)[1], str(_interaction(filepath))
+
+
+# OTHER
+def _zbt_from_lpt(filepath_lpt, filename_int_regex,
+                  comment_char_int, zbt_comment):
+    dirpath = path.split(filepath_lpt)[0]
+    root, dirs, files = next(walk(dirpath))
+    for fname in files:
+        m = match(filename_int_regex, fname)
+        if m is not None and m.group(0) == fname:
+            filepath_int = path.join(root, fname)
+            return zero_body_term(
+                zero_body_term_line(
+                    comment_lines(filepath_int, comment_char_int), zbt_comment))
+    else:
+        return None
 
 
 # DATA
@@ -117,3 +135,16 @@ def mass_to_n_to_body_data_map(filtered_filepaths, comment_char, row_az,
                 ncols_body))
         mnb_map[mass] = nb_map
     return mnb_map
+
+
+def mass_to_zbt_map(filtered_filepaths_lpt, filename_int_regex, row_az,
+                    comment_char_lpt, comment_char_int, zbt_comment):
+    d = dict()
+    for fp_lpt in filtered_filepaths_lpt:
+        mass = _a(fp_lpt, comment_char_lpt, row_az)
+        zbt = _zbt_from_lpt(filepath_lpt=fp_lpt,
+                            filename_int_regex=filename_int_regex,
+                            comment_char_int=comment_char_int,
+                            zbt_comment=zbt_comment)
+        d[mass] = zbt
+    return d

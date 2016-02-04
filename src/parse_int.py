@@ -190,7 +190,10 @@ def zero_body_term_line(cmnt_lines, zbt_comment=CMNT_ZBT):
 
 
 def zero_body_term(zbt_line):
-    return float(zbt_line.split(':')[1].strip())
+    if zbt_line is not None:
+        return float(zbt_line.split(':')[1].strip())
+    else:
+        return None
 
 
 def header_list(lines, header_pos=ROW_HEAD):

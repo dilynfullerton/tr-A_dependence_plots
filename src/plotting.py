@@ -5,67 +5,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from math import ceil
 from os import path
 
-from matplotlib import pyplot as plt, colors, cm
 import numpy as np
+from matplotlib import pyplot as plt, colors, cm
 
 from Exp import ExpInt
 from FitFunction import FitFunction
-from _ImsrgDataMap import ImsrgDataMapInt, ImsrgDataMapLpt
+from ImsrgDataMap import ImsrgDataMapInt, ImsrgDataMapLpt
+from constants import DIR_SHELL_RESULTS
 from constants import PLOT_CMAP, LEGEND_SIZE
 from fit_transforms import identity
-from metafit import map_to_arrays
-
-from constants import DIR_SHELL_RESULTS
-
-
-class LegendSize:
-    def __init__(self, max_cols, max_h_space, max_fontsize, total_fontsize,
-                 rows_per_col, space_scale):
-        self.max_cols = max_cols
-        self.max_h_space = max_h_space
-        self.max_fontsize = max_fontsize
-        self.total_fontsize = total_fontsize
-        self.rows_per_col = rows_per_col
-        self.space_scale = space_scale
-
-        self.num_cols_map = dict()
-        self.fontsize_map = dict()
-        self.width_map = dict()
-
-    def num_cols(self, num_plots):
-        if num_plots in self.num_cols_map:
-            return self.num_cols_map[num_plots]
-        else:
-            ans = int(min(ceil(num_plots / self.rows_per_col), self.max_cols))
-            self.num_cols_map[num_plots] = ans
-            return ans
-
-    def fontsize(self, num_plots, num_cols=None):
-        if num_plots in self.fontsize_map:
-            return self.fontsize_map[num_plots]
-        else:
-            if num_cols is None:
-                num_cols = self.num_cols(num_plots)
-            ans = min(num_cols * self.total_fontsize / num_plots,
-                      self.max_fontsize)
-            self.fontsize_map[num_plots] = ans
-            return ans
-
-    def width_scale(self, num_plots, num_cols=None, fontsize=None):
-        if num_plots in self.width_map:
-            return self.width_map[num_plots]
-        else:
-            if num_cols is None:
-                num_cols = self.num_cols(num_plots)
-            if fontsize is None:
-                fontsize = self.fontsize(num_plots, num_cols)
-            ans = (1 - (self.max_h_space * num_cols / self.max_cols) *
-                   (fontsize / self.max_fontsize) * self.space_scale)
-            self.width_map[num_plots] = ans
-            return ans
 
 
 def plot_the_plots(plots, label, title, xlabel, ylabel,
@@ -132,9 +82,9 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
                     range(len(plots))):
         x, y = p[0:2]
         if get_label_kwargs is not None:
-            label = label.format(**get_label_kwargs(p, idx_key))
+            label_i = label.format(**get_label_kwargs(p, idx_key))
         cval = scalar_map.to_rgba(i)
-        ax.plot(x, y, data_line_style, label=label, color=cval)
+        ax.plot(x, y, data_line_style, label=label_i, color=cval)
         # Do fits if parameters and function provided
         if show_fit:
             xfit = np.linspace(x[0], x[-1], num=num_fit_pts)
@@ -306,16 +256,29 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
 
 
 def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
-                                  exp_list=None):
+                                  exp_list=None, proton_num=None,
+                                  transform=None):
     imsrg_data_map = ImsrgDataMapLpt(parent_directory=directory,
                                      exp_list=exp_list).map
     plots = list()
-    for k, v in imsrg_data_map:
-        n_e_map = v.mass_n_energy_map()[mass_num]
+    if proton_num is not None:
+        items = filter(lambda item: item[0].Z == proton_num,
+                       imsrg_data_map.iteritems())
+    else:
+        items = imsrg_data_map.iteritems()
+    for k, v in items:
+        mne_map = v.mass_n_energy_map()
+        if mass_num in mne_map:
+            n_e_map = mne_map[mass_num]
+        else:
+            continue
         x, y = map_to_arrays(n_e_map)
         const_list = list()
         const_dict = {'exp': k, 'A': mass_num}
         plots.append((x, y, const_list, const_dict))
+
+    if transform is not None:
+        plots = [transform(*plot) for plot in plots]
 
     plot_the_plots(plots,
                    label='{exp}',
@@ -323,7 +286,60 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
                    xlabel='N',
                    ylabel='Energy (MeV)',
                    sort_key=lambda plot: plot[3]['exp'],
-                   get_label_kwargs=lambda plot: {'exp': plot[3]['exp']},
+                   get_label_kwargs=lambda plot, idx: {'exp': plot[3]['exp']},
                    include_legend=True)
+    plt.show()
 
-lpt_plot_energy_vs_n_for_mass(22)
+
+def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
+                                  exp_list=None, proton_num=None,
+                                  transform=None):
+    imsrg_data_map = ImsrgDataMapLpt(parent_directory=directory,
+                                     exp_list=exp_list).map
+    plots = list()
+    if proton_num is not None:
+        items = filter(lambda item: item[0].Z == proton_num,
+                       imsrg_data_map.iteritems())
+    else:
+        items = imsrg_data_map.iteritems()
+    for k, v in items:
+        nme_map = v.n_mass_energy_map()
+        if n in nme_map:
+            me_map = nme_map[n]
+        else:
+            continue
+        x, y = map_to_arrays(me_map)
+        const_list = list()
+        zbt = np.empty_like(y)
+        x_arr, zbt_arr = map_to_arrays(v.mass_zbt_map())
+        for xa, zbta, i in zip(x_arr, zbt_arr, range(len(x_arr))):
+            if xa in x:
+                zbt[i] = zbta
+        const_dict = {'exp': k, 'N': n, 'zbt_arr': zbt}
+        plots.append((x, y, const_list, const_dict))
+
+    if transform is not None:
+        plots = [transform(*plot) for plot in plots]
+
+    plot_the_plots(plots,
+                   label='{exp}',
+                   title='Energy vs A for N={}'.format(n),
+                   xlabel='A',
+                   ylabel='Energy (MeV)',
+                   sort_key=lambda plot: plot[3]['exp'],
+                   get_label_kwargs=lambda plot, idx: {'exp': plot[3]['exp']},
+                   include_legend=True)
+    plt.show()
+
+
+def map_to_arrays(m):
+    """Convert a map of dimensionality 2 into an x and y array
+    :param m: The map to refactor
+    """
+    length = len(m)
+    x = np.empty(length)
+    y = np.empty(length)
+    for k, i in zip(sorted(m.keys()), range(length)):
+        x[i] = k
+        y[i] = m[k]
+    return x, y
