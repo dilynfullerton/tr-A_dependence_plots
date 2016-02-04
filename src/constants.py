@@ -64,16 +64,18 @@ P_BREAK = '-' * 80
 PLOT_CMAP = 'gnuplot'
 
 # Legend
-LEGEND_MAX_COLS = 6
+LEGEND_MAX_COLS = 10
 LEGEND_MAX_SPACE = .5
 LEGEND_ROWS_PER_COL = 75
 LEGEND_MAX_FONTSIZE = 14
+LEGEND_MIN_FONTSIZE = 6
 LEGEND_TOTAL_FONTSIZE = 480  # is divided by number of rows
 LEGEND_SPACE_SCALE = 2
 LEGEND_SIZE = LegendSize(
     max_cols=LEGEND_MAX_COLS,
     max_h_space=LEGEND_MAX_SPACE,
     max_fontsize=LEGEND_MAX_FONTSIZE,
+    min_fontsize=LEGEND_MIN_FONTSIZE,
     total_fontsize=LEGEND_TOTAL_FONTSIZE,
     rows_per_col=LEGEND_ROWS_PER_COL,
     space_scale=LEGEND_SPACE_SCALE)
