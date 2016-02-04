@@ -276,7 +276,7 @@ def single_particle_first_np_zbt_metafit(n):
 def single_particle_first_np_metafit(n):
     name = b'single_particle_first_{}p_metafit'.format(n)
 
-    def spfnpz(fitfn, e_hw_pairs, **kwargs):
+    def spfnp(fitfn, e_hw_pairs, **kwargs):
         return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
@@ -288,5 +288,5 @@ def single_particle_first_np_metafit(n):
             ylabel='Energy (MeV)',
             **kwargs)
 
-    spfnpz.__name__ = name
-    return spfnpz
+    spfnp.__name__ = name
+    return spfnp

@@ -74,8 +74,9 @@ def _get_plots_single_particle(exp_list, all_data_map, get_data,
 
         # Get list of plots
         for k in sorted(ime_map.keys()):
-            plots.append(get_plot(k, exp, io_map, ime_map[k], mzbt_map,
-                                  other_constants))
+            plots.append(get_plot(k=k, exp=exp, io_map=io_map,
+                                  me_map=ime_map[k], mzbt_map=mzbt_map,
+                                  others=other_constants))
     return plots
 
 
@@ -323,9 +324,9 @@ def single_particle_metafit_int(
 
 
 # noinspection PyUnusedLocal
-def _get_multi_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
+def _get_multi_particle_plot(k, exp, io_map, me_map, mzbt_map, others,
                              *args):
-    x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
+    x, y, const_list, const_dict = _set_const(k, exp, io_map, me_map,
                                               mzbt_map, others)
     const_dict['interaction'] = k
     # noinspection PyProtectedMember
