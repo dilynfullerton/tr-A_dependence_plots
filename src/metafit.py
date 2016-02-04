@@ -13,7 +13,7 @@ from scipy.stats import linregress
 
 from Exp import ExpInt
 from FitFunction import FitFunction
-from _ImsrgDataMap import ImsrgDataMapInt
+from ImsrgDataMap import ImsrgDataMapInt
 from constants import *
 from fit_transforms import *
 from plotting import plot_the_plots

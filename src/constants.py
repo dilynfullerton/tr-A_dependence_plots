@@ -2,8 +2,8 @@
 """
 
 from __future__ import unicode_literals
-from types import QuantumNumbers
-from plotting import LegendSize
+from QuantumNumbers import QuantumNumbers
+from LegendSize import LegendSize
 
 # Directories
 DIR_FILES = '../files'
@@ -37,6 +37,7 @@ F_PARSE_INT_CMNT_ZBT = b'Zero body term'
 
 # *.lpt filename parsing
 FN_PARSE_LPT_REGEX_FILENAME = b'[a-z_][a-z_]\d\d[a-z].lpt'
+FN_PARSE_LPT_REGEX_FILENAME_INT = b'A\d\d\.int|usdb\.int'
 
 # *.lpt file content parsing
 F_PARSE_LPT_ROW_AZ = 1

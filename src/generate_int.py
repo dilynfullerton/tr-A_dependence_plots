@@ -10,7 +10,7 @@ from os import mkdir, path
 from constants import *
 
 from FitFunction import FitFunction
-from _ImsrgDataMap import ImsrgDataMapInt
+from ImsrgDataMap import ImsrgDataMapInt
 from Exp import ExpInt
 from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit

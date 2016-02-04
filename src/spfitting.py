@@ -10,10 +10,11 @@ from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit as cf
 from scipy.stats import linregress as lg
 
-from _ImsrgDataMap import ImsrgDataMapInt
 from Exp import ExpInt
+from ImsrgDataMap import ImsrgDataMapInt
 from constants import *
 from fit_transforms import *
+from plotting import map_to_arrays
 
 E = 12
 HW = 20
@@ -274,19 +275,6 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
     plt.show()
 
     return orbital_fit_map
-
-
-def map_to_arrays(m):
-    """Convert a map of dimensionality 2 into an x and y array
-    :param m: The map to refactor
-    """
-    length = len(m)
-    x = np.empty(length)
-    y = np.empty(length)
-    for k, i in zip(sorted(m.keys()), range(length)):
-        x[i] = k
-        y[i] = m[k]
-    return x, y
 
 
 def print_io_key(iomap, sortkey=lambda k: k, heading='Index key:'):

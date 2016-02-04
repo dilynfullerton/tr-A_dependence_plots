@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from openpyxl import load_workbook, Workbook
 
-from _ImsrgDataMap import ImsrgDataMapInt
+from ImsrgDataMap import ImsrgDataMapInt
 from Exp import ExpInt
 
 

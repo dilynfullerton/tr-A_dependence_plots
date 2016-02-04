@@ -6,7 +6,7 @@ from os.path import sep
 from re import match
 
 from Exp import ExpInt, ExpLpt
-from _ImsrgDatum import ImsrgDatumInt, ImsrgDatumLpt
+from ImsrgDatum import ImsrgDatumInt, ImsrgDatumLpt
 from constants import FN_PARSE_INT_EXT as EXT
 from constants import F_PARSE_LPT_CMNT_CHAR as CMNT_CHAR
 from constants import F_PARSE_LPT_ROW_AZ as ROW_AZ
@@ -82,7 +82,7 @@ class ImsrgDataMapLpt(_ImsrgDataMap):
             parent_directory=parent_directory,
             exp_type=ExpLpt, datum_type=ImsrgDatumLpt,
             exp_list=exp_list,
-            _comment_char=_comment_char,
+            _comment_char_lpt=_comment_char,
             _row_az=_row_az)
 
     def _exp_from_file_path(self, f):

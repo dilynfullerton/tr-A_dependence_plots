@@ -285,8 +285,8 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
                    title='Energy vs N for A={}'.format(mass_num),
                    xlabel='N',
                    ylabel='Energy (MeV)',
-                   sort_key=lambda plot: plot[3]['exp'],
-                   get_label_kwargs=lambda plot, idx: {'exp': plot[3]['exp']},
+                   sort_key=lambda p: p[3]['exp'],
+                   get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
                    include_legend=True)
     plt.show()
 
@@ -326,8 +326,8 @@ def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
                    title='Energy vs A for N={}'.format(n),
                    xlabel='A',
                    ylabel='Energy (MeV)',
-                   sort_key=lambda plot: plot[3]['exp'],
-                   get_label_kwargs=lambda plot, idx: {'exp': plot[3]['exp']},
+                   sort_key=lambda p: p[3]['exp'],
+                   get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
                    include_legend=True)
     plt.show()
 

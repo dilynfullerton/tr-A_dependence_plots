@@ -2,147 +2,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from FitFunction import *
+# from FitFunction import *
 # from metafitters_mp import *
 # from metafitters_sp import *
 #
 # from generate_int import generate_int_file_from_fit_results
+from plotting import lpt_plot_energy_vs_mass_for_n
+from fit_transforms import *
 
-fz = None
-fzfn = None
-fk = None
-fkfn = fk_to_y0
 
-simple_asymps = [
-    asymptote(1, force_zero=fz, force_zero_func=fzfn,
-              force_k=fk, force_k_func=fkfn),
-    asymptote(2, force_zero=fz, force_zero_func=fzfn,
-              force_k=fk, force_k_func=fkfn),
-    asymptote(3, force_zero=fz, force_zero_func=fzfn,
-              force_k=fk, force_k_func=fkfn),
-    asymptote_n(force_zero=fz, force_zero_func=fzfn,
-                force_k=fk, force_k_func=fkfn),
-]
-
-dep1_asymps = [
-    asymptote_with_linear_dependence(2, ['y0'],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, ['j'],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, [], [y0pzbt0],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, [], [joff2],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_asymptotic_dependence(2, ['y0'],
-                                         force_zero=fz, force_zero_func=fzfn,
-                                         force_k=fk, force_k_func=fkfn),
-    asymptote_with_asymptotic_dependence(2, ['j'],
-                                         force_zero=fz, force_zero_func=fzfn,
-                                         force_k=fk, force_k_func=fkfn),
-    asymptote_with_asymptotic_dependence(2, [], [y0pzbt0],
-                                         force_zero=fz, force_zero_func=fzfn,
-                                         force_k=fk, force_k_func=fkfn),
-    asymptote_with_asymptotic_dependence(2, [], [joff2],
-                                         force_zero=fz, force_zero_func=fzfn,
-                                         force_k=fk, force_k_func=fkfn),
-]
-
-dep2_asymps = [
-    asymptote_with_linear_dependence(2, ['y0', 'zbt0'],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, ['j', 'tz'],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, ['tz'], [jjoff],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(1, ['tz'], [joff2],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, ['j', 'y0'],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-    asymptote_with_linear_dependence(2, ['y0'], [joff2],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-]
-
-dep3_asymps = [
-    asymptote_with_linear_dependence(2, ['j', 'tz', 'y0'],
-                                     force_zero=fz, force_zero_func=fzfn,
-                                     force_k=fk, force_k_func=fkfn),
-]
-
-multi_dep_asymps = [
-    combine_ffns([asymptote(2),
-                  asymptotic_dependence(2, ['y0']),
-                  x1_dependence(['y0'])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  asymptotic_dependence(2, [], [y0pzbt0]),
-                  x1_dependence([], [y0pzbt0])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  x2_dependence(['j']),
-                  x1_dependence(['j', 'tz'])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-]
-
-mixed = [
-    combine_ffns([asymptote(2),
-                  asymptote(1),
-                  x1_dependence(['tz'], [joff2])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  x1(),
-                  x1_dependence(['tz'], [joff2])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  x1(),
-                  x1_dependence(['y0', 'zbt0'],
-                                force_zero=fz, force_zero_func=fzfn,
-                                force_k=fk, force_k_func=fkfn)],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  quadratic(),
-                  x1_dependence(['y0'], [])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  quadratic(),
-                  x1_dependence([], [y0pzbt0])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  quadratic(),
-                  x1_dependence(['j', 'tz'])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  quadratic(),
-                  x1_dependence(['tz'], [joff2])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-    combine_ffns([asymptote(2),
-                  quadratic(),
-                  x1_dependence(['y0', 'zbt0'])],
-                 force_zero=fz, force_zero_func=fzfn,
-                 force_k=fk, force_k_func=fkfn),
-]
-
-asymps = (simple_asymps + dep1_asymps + dep2_asymps + dep3_asymps +
-          multi_dep_asymps + mixed)
+# lpt_plot_energy_vs_n_for_mass(22, proton_num=8)
+lpt_plot_energy_vs_mass_for_n(1, proton_num=8, transform=pzbt)
 
 # max_r2(multi_particle_firstp_metafit,
 #        asymps,
