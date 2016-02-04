@@ -52,12 +52,25 @@ F_PARSE_LPT_COLS_FLOAT_NONE = [7]
 F_PARSE_LPT_COLS_STR = [8]
 F_PARSE_LPT_CMNT_CHAR = b'!'
 
+
 # Printing
-P_TITLE = '\033[91m'
-P_HEAD = '\033[95m'
-P_SUB = '\033[36m'
-P_BOLD = '\033[1m'
-P_END = '\033[0m'
+class Color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+P_TITLE = Color.YELLOW
+P_HEAD = Color.PURPLE
+P_SUB = Color.DARKCYAN
+P_BOLD = Color.BOLD
+P_END = Color.END
 P_BREAK = '-' * 80
 
 # Plotting
