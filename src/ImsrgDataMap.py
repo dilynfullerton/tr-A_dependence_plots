@@ -1,3 +1,9 @@
+"""These definitions hold key-value maps to store data of different types.
+
+For example, ImsrgDataMapInt stores a mapping from ExpInt to ImsrgDatumInt,
+the data-type that stores data retrieved from *.int files.
+"""
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -53,6 +59,8 @@ class _ImsrgDataMap(object):
 
 
 class ImsrgDataMapInt(_ImsrgDataMap):
+    """A mapping from ExpInt to ImsrgDatumInt
+    """
     def __init__(self, parent_directory, exp_list=None, standard_indices=None,
                  extension=EXT):
         self.extension = extension
@@ -71,6 +79,8 @@ class ImsrgDataMapInt(_ImsrgDataMap):
 
 
 class ImsrgDataMapLpt(_ImsrgDataMap):
+    """A mapping from ExpLpt to ImsrgDatumLpt
+    """
     def __init__(self, parent_directory, exp_list=None,
                  _comment_char=CMNT_CHAR,
                  _row_az=ROW_AZ,

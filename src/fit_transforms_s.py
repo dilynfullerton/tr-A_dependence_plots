@@ -1,4 +1,8 @@
 """SUPER-transforms to apply to lists of plots before fitting
+
+These are transforms that operate on a list of multiple plots as a whole.
+For example, combine_like will combine multiple plots that share a common set
+of properties into a single plot
 """
 
 from __future__ import division

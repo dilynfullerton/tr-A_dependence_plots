@@ -1,4 +1,13 @@
 """Transforms to apply to plots before fitting
+
+Each transformation takes an 2+ arguments:
+    xarr: ndarray
+    yarr: ndarray
+    *args: more arguments to be potentially involved in the transformations
+Each transformation returns a tuple of the same length as the input containing:
+    + transformed x array
+    + transformed y array
+    + *args unchanged, and in same order
 """
 
 from __future__ import division

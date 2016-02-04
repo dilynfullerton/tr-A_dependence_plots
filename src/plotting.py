@@ -1,4 +1,4 @@
-"""Simple plots
+"""Various functions for plotting in matplotlib
 """
 
 from __future__ import division

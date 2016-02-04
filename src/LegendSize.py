@@ -3,6 +3,9 @@ from math import ceil
 
 
 class LegendSize:
+    """A class to store the constants and methods for generating a nice legend
+    outside the subplot area (matplotlib)
+    """
     def __init__(self, max_cols, max_h_space, max_fontsize, total_fontsize,
                  rows_per_col, space_scale):
         self.max_cols = max_cols

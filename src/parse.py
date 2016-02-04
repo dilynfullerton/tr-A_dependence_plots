@@ -1,3 +1,6 @@
+"""Abstracted file parsing functions
+"""
+
 from re import match
 from os import walk, path
 

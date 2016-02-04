@@ -1,3 +1,9 @@
+"""These definitions store data from particular file types of IMSRG data
+
+For example, ImsrgDatumInt stores a bunch of maps generated based on *.int
+files.
+"""
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -43,6 +49,9 @@ class _ImsrgDatum(object):
 
 
 class ImsrgDatumInt(_ImsrgDatum):
+    """Stores maps generated from *.int files and methods for generating new
+    maps from this data
+    """
     def __init__(self, directory, exp, files, std_io_map=None,
                  standardize_io_map=True, organize_files=True,
                  org_file_dir=DIR_FILES_ORG,
@@ -58,10 +67,10 @@ class ImsrgDatumInt(_ImsrgDatum):
         self.standard_index_orbital_map = std_io_map
         self._particular_index_orbital_map = None
         self.index_orbital_map = dict()
-        self.mass_index_energy_map = dict()
-        self.mass_interaction_index_energy_map = dict()
-        self.mass_zero_body_term_map = dict()
-        self.other_constants = None
+        self._mass_index_energy_map = dict()
+        self._mass_interaction_index_energy_map = dict()
+        self._mass_zero_body_term_map = dict()
+        self._other_constants = None
         self._unorg_files = None
 
         # Perform setup methods
@@ -100,7 +109,7 @@ class ImsrgDatumInt(_ImsrgDatum):
             mass number -> orbital index -> energy
         mapping for the directory
         """
-        self.mass_index_energy_map = (
+        self._mass_index_energy_map = (
             mass_index_energy_map_map(self.dir, filtered_files=self.files))
 
     def _set_mass_interaction_index_energy_map(self):
@@ -125,10 +134,10 @@ class ImsrgDatumInt(_ImsrgDatum):
                 next_tuple_energy_map[nextk] = v
             miiem[A] = next_tuple_energy_map
 
-        self.mass_interaction_index_energy_map = miiem
+        self._mass_interaction_index_energy_map = miiem
 
     def _set_zero_body_term_map(self):
-        self.mass_zero_body_term_map = (
+        self._mass_zero_body_term_map = (
             mass_zero_body_term_map(self.dir, filtered_files=self.files))
 
     def _set_name(self):
@@ -140,7 +149,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         """Sets other heading constants. Assumes all files in a given directory
         have the same constants
         """
-        self.other_constants = other_constants_from_filename(self.files[0])
+        self._other_constants = other_constants_from_filename(self.files[0])
 
     def _organize_files(self, directory, dir_fmt, file_fmt):
         """Give the files standardized names and put them in a similarly-named
@@ -176,7 +185,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         """Reformat the mass -> index -> energy map indices to be with respect
         to the standard io_map
         """
-        mie_map = self.mass_index_energy_map
+        mie_map = self._mass_index_energy_map
         std_mie_map = dict()
         for m, ie_map in mie_map.iteritems():
             std_ie_map = dict()
@@ -184,10 +193,10 @@ class ImsrgDatumInt(_ImsrgDatum):
                 next_idx = self._standard_index(idx)
                 std_ie_map[next_idx] = energy
             std_mie_map[m] = std_ie_map
-        self.mass_index_energy_map = std_mie_map
+        self._mass_index_energy_map = std_mie_map
 
     def _standardize_mass_interaction_index_energy_map_indexing(self):
-        miie_map = self.mass_interaction_index_energy_map
+        miie_map = self._mass_interaction_index_energy_map
         std_miie_map = dict()
         for m, iie_map in miie_map.iteritems():
             std_iie_map = dict()
@@ -195,7 +204,7 @@ class ImsrgDatumInt(_ImsrgDatum):
                 next_ii = self._standardize_interaction_index_tuple(ii)
                 std_iie_map[next_ii] = energy
             std_miie_map[m] = std_iie_map
-        self.mass_interaction_index_energy_map = std_miie_map
+        self._mass_interaction_index_energy_map = std_miie_map
 
     def _standard_orbital_index_map(self):
         return {v: k for k, v in self.standard_index_orbital_map.iteritems()}
@@ -210,9 +219,21 @@ class ImsrgDatumInt(_ImsrgDatum):
         soi_map = self._standard_orbital_index_map()
         return soi_map[io_map[i]]
 
+    def mass_index_energy_map(self):
+        return dict(self._mass_index_energy_map)
+
+    def mass_interaction_index_energy_map(self):
+        return dict(self._mass_interaction_index_energy_map)
+
+    def mass_zero_body_term_map(self):
+        return dict(self._mass_zero_body_term_map)
+
+    def other_constants(self):
+        return list(self._other_constants)
+
     def folded_mass_interaction_index_energy_map(self):
         """Return a flat version of the map"""
-        miie_map = self.mass_interaction_index_energy_map
+        miie_map = self._mass_interaction_index_energy_map
         folded_map = list()
         for mass_num in miie_map.keys():
             for tup in miie_map[mass_num]:
@@ -224,7 +245,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         """From the mass -> interaction index -> energy map, creates a
         mapping from interaction index -> mass -> energy
         """
-        miie_map = self.mass_interaction_index_energy_map
+        miie_map = self._mass_interaction_index_energy_map
         iime_map = dict()
         for mass_num in miie_map.keys():
             for tup in miie_map[mass_num]:
@@ -237,7 +258,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         """From the (mass -> orbital index -> energy) map produce an
         (orbital index -> mass -> energy) map
         """
-        mie_map = self.mass_index_energy_map
+        mie_map = self._mass_index_energy_map
         ime_map = dict()
         for mass in mie_map.keys():
             for index in mie_map[mass].keys():
@@ -276,6 +297,9 @@ def _qnums_to_list(qnums):
 
 
 class ImsrgDatumLpt(_ImsrgDatum):
+    """Stores data maps from *.lpt files and methods for generating new maps
+    from these.
+    """
     def __init__(self, directory, exp, files,
                  _comment_char_lpt=_CMNT_CHAR,
                  _row_az=_ROW_AZ,

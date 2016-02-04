@@ -12,6 +12,9 @@ from constants import FF_CODE_PREF, FF_CODE_SEP, FF_CODE_SUFF
 
 
 class FitFunction:
+    """A 'function' that is designed for use in fitting, particularly with
+    the meta-fit algorithm
+    """
     def __init__(self, function, num_fit_params, force_zero=None,
                  name=None,
                  code='',
