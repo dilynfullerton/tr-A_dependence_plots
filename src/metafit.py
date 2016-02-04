@@ -173,8 +173,8 @@ def single_particle_metafit_int(
         _get_plots=_get_plots_single_particle,
         _get_plot=_get_plot_single_particle,
         _printer=_printer_for_single_particle_metafit):
-    """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
-    given fit function
+    """A meta-fit for all the orbitals with a given e, hw, and rp,
+     based on the given fit function
 
     :type _get_plots: (exp_list:list, all_data_map:_ImsrgDataMap,
     get_data:_ImsrgDatum -> dict, get_plot:Any->Tuple[Any, Any, list, dict])
@@ -235,8 +235,8 @@ def single_particle_metafit_int(
     constants dictionary for each plot
     :param xlabel: x label for plot
     :param ylabel: y label for plot
-    :param _data_line_style: (Optional) The style of line to use for plotting the
-    data. Default is '-'
+    :param _data_line_style: (Optional) The style of line to use for plotting
+    the data. Default is '-'
     :param _fit_line_style: (Optional) The style of line to use for plotting the
     fit. Default is '--'
     :param _savename: (Optional) The save name for the plot figure. Use the
@@ -372,6 +372,7 @@ def multi_particle_metafit_int(
                                        **kwargs)
 
 
+# noinspection PyUnusedLocal
 def _get_plot_lpt(n, exp, me_map, mzbt_map, *args):
     x, y = map_to_arrays(me_map)
     zbt_list = list()
