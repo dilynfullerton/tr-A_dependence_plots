@@ -14,11 +14,12 @@ from scipy.stats import linregress
 from Exp import ExpInt
 from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMapInt
+from fitting_sp import print_io_key
+from plotting import plot_the_plots
+from plotting import map_to_arrays
+
 from constants import *
 from fit_transforms import *
-from plotting import plot_the_plots
-from spfitting import map_to_arrays
-from spfitting import print_io_key
 
 
 def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
@@ -55,6 +56,28 @@ def _single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(qnums._asdict()).items())
     return x, y, const_list, const_dict
+
+
+def _single_particle_plots(exp_list, all_data_map, get_data,
+                           print_key, std_io_map=None,
+                           get_plot=_single_particle_plot):
+    plots = list()
+    for exp in sorted(exp_list):
+        data_maps = all_data_map.map[exp]
+        io_map = data_maps.index_orbital_map
+        ime_map = get_data(data_maps)
+        mzbt_map = data_maps.mass_zero_body_term_map
+        other_constants = data_maps.other_constants
+
+        # Print index orbital map for dataset, if not standard
+        if print_key is True and std_io_map is None:
+            print_io_key(io_map, heading='Index key for {}:'.format(exp))
+
+        # Get list of plots
+        for k in sorted(ime_map.keys()):
+            plots.append(get_plot(k, exp, io_map, ime_map[k], mzbt_map,
+                                  other_constants))
+    return plots
 
 
 # noinspection PyUnusedLocal
@@ -149,7 +172,6 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             super_transform_pre=None,
                             super_transform_post=None,
                             imsrg_data_map=None,
-                            std_io_map=STANDARD_IO_MAP,
                             print_key=False,
                             print_results=False,
                             print_mf_results=True,
@@ -160,25 +182,28 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
                             full_output=False,
                             mf_name='single_particle_metafit',
                             code='',
-                            title=('Metafit for single particle energy'
-                                   ' {tr} data using {fn} for {ehw}'),
-                            label='{e}, {hw}, {b}, {i}',
-                            idx='qnums',
                             xlabel='A',
                             ylabel='Relative Energy (MeV)',
-                            data_line_style='-',
-                            fit_line_style='--',
-                            cmap=PLOT_CMAP,
-                            legend_size=LEGEND_SIZE,
-                            savename='meta_{c}-{t}',
+                            _std_io_map=STANDARD_IO_MAP,
+                            _title=('Metafit for single particle energy'
+                                   ' {tr} data using {fn} for {ehw}'),
+                            _label='{e}, {hw}, {b}, {i}',
+                            _idx='qnums',
+                            _data_line_style='-',
+                            _fit_line_style='--',
+                            _cmap=PLOT_CMAP,
+                            _legend_size=LEGEND_SIZE,
+                            _savename='meta_{c}-{t}',
                             _plot_sort_key=lambda p: p[3]['qnums'],
                             _get_data=lambda dm: dm.index_mass_energy_map(),
+                            _data_map=ImsrgDataMapInt,
+                            _get_plots=_single_particle_plots,
                             _get_plot=_single_particle_plot,
                             _printer=_printer_for_single_particle_metafit):
     """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
     given fit function
 
-    :param legend_size:
+    :param _legend_size:
     :param print_lr_results:
     :param print_mf_results:
     :param fitfn: The FitFunction object to use for fitting. Alternatively,
@@ -198,7 +223,7 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     plots together after the individual transform. Default is None.
     :param imsrg_data_map: (Optional) If included, will not retrieve data map
     from sourcedir and will instead take the given data map
-    :param std_io_map: A standard index -> orbital mapping scheme to use for
+    :param _std_io_map: A standard index -> orbital mapping scheme to use for
     generating the data representations
     :param print_key: (Optional) Whether to print the index -> orbital key.
     Default is False.
@@ -213,30 +238,30 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     full output given by the leastsq function. Default False.
     :param code: (Optional) An identifier for the specific implementation of
     this function, to distinguish saved files.
-    :param title: (Optional) The title by which to name the plot. Use the
+    :param _title: (Optional) The title by which to name the plot. Use the
     following keys to include information:
         {tr}: name of the transformation performed
         {fn}: name of the fit function applied
         {ehw}: (e, hw, rp) identifier of the data
-    :param label: (Optional) The labeling scheme for the plot legend. Use the
+    :param _label: (Optional) The labeling scheme for the plot legend. Use the
     following keys to include information:
         {e}: emax
         {hw}: h-bar omega frequency
         {rp}: proton radius
         {i}: index
-    :param idx: the key to use to get the index (for the label) from the
+    :param _idx: the key to use to get the index (for the label) from the
     constants dictionary for each plot
     :param xlabel: x label for plot
     :param ylabel: y label for plot
-    :param data_line_style: (Optional) The style of line to use for plotting the
+    :param _data_line_style: (Optional) The style of line to use for plotting the
     data. Default is '-'
-    :param fit_line_style: (Optional) The style of line to use for plotting the
+    :param _fit_line_style: (Optional) The style of line to use for plotting the
     fit. Default is '--'
-    :param savename: (Optional) The save name for the plot figure. Use the
+    :param _savename: (Optional) The save name for the plot figure. Use the
     following keys to include information:
         {c}: code
         {t}: title
-    :param cmap: (Optional) colormap string to use for plotting
+    :param _cmap: (Optional) colormap string to use for plotting
     :param mf_name: The name of the metafitter
     :param _plot_sort_key: (Optional) key for ordering plots, default is by
     Quantum numbers.
@@ -254,31 +279,94 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
     if imsrg_data_map is not None:
         all_data_map = imsrg_data_map
     else:
-        all_data_map = ImsrgDataMapInt(parent_directory=sourcedir,
-                                       exp_list=exp_list,
-                                       standard_indices=std_io_map)
+        all_data_map = _data_map(parent_directory=sourcedir,
+                                 exp_list=exp_list,
+                                 standard_indices=_std_io_map)
 
-    plots = list()
-    for exp in sorted(exp_list):
-        data_maps = all_data_map.map[exp]
-        io_map = data_maps.index_orbital_map
-        ime_map = _get_data(data_maps)
-        mzbt_map = data_maps.mass_zero_body_term_map
-        other_constants = data_maps.other_constants
-
-        # Print index orbital map for dataset, if not standard
-        if print_key is True and std_io_map is None:
-            print_io_key(io_map, heading='Index key for {}:'.format(exp))
-
-        # Get list of plots
-        for k in sorted(ime_map.keys()):
-            plots.append(_get_plot(k, exp, io_map, ime_map[k], mzbt_map,
-                                   other_constants))
+    plts = _get_plots(exp_list=exp_list, all_data_map=all_data_map,
+                      get_data=_get_data, print_key=print_key,
+                      std_io_map=_std_io_map, get_plot=_get_plot)
 
     # Print index orbital map, if standard
-    if print_key is True and std_io_map is not None:
-        print_io_key(std_io_map, heading='Index key')
+    if print_key is True and _std_io_map is not None:
+        print_io_key(_std_io_map, heading='Index key')
 
+    rr = _imsrg_meta_fit(plots=plts,
+                         transform=transform,
+                         super_transform_pre=super_transform_pre,
+                         super_transform_post=super_transform_post,
+                         fitfn=fitfn,
+                         full_output=full_output, idx=_idx,)
+
+    mf_results, lr_results, plots, fitfn = rr
+    params = mf_results[0]
+
+    # Print results
+    if print_results is True:
+        _printer(mf_results, lr_results, print_mf_results, print_lr_results,
+                 full_output,
+                 header=_title.format(tr=transform.__name__,
+                                      fn=fitfn.__name__,
+                                      ehw=_exp_list_to_string(exp_list)))
+
+    # Plot results
+    if show_plot is True:
+        plot_the_plots(
+            plots,
+            label=_label, get_label_kwargs=_get_label_kwargs, idx_key=_idx,
+            title=_title.format(tr=transform.__name__, fn=fitfn.__name__,
+                                ehw=_exp_list_to_string(exp_list)),
+            xlabel=xlabel, ylabel=ylabel,
+            data_line_style=_data_line_style, fit_line_style=_fit_line_style,
+            sort_key=_plot_sort_key,
+            cmap_name=_cmap,
+            show_fit=show_fit, fit_params=params, fitfn=fitfn,
+            include_legend=show_legend, legend_size=_legend_size,
+            savedir=savedir, savename=_savename, code=code)
+    plt.show()
+
+    # Make an info dict
+    info = {
+        'mf_code': code,
+        'mf_name': mf_name,
+        'ffn_name': fitfn.__name__,
+        'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else '',
+        'exp_list': exp_list}
+
+    return rr + (info,)
+
+
+def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
+                           transform=identity,
+                           get_data=lambda dm:
+                           dm.interaction_index_mass_energy_map(),
+                           get_plot=_multi_particle_plot,
+                           printer=_printer_for_multiparticle_metafit,
+                           show_legend=False,
+                           plot_sort_key=lambda p: p[3]['interaction'],
+                           title=('Metafit for multiparticle matrix elements '
+                                  '{tr} data using {fn} for {ehw}'),
+                           idx='interaction',
+                           ylabel='Energy (MeV)',
+                           **kwargs):
+    return single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
+                                   transform=transform,
+                                   _get_data=get_data,
+                                   _get_plot=get_plot,
+                                   _printer=printer,
+                                   show_legend=show_legend,
+                                   _plot_sort_key=plot_sort_key,
+                                   _title=title,
+                                   _idx=idx,
+                                   ylabel=ylabel,
+                                   **kwargs)
+
+
+def _imsrg_meta_fit(plots,
+                    transform, super_transform_pre, super_transform_post,
+                    fitfn,
+                    full_output,
+                    idx,):
     # Transform plots
     if super_transform_pre is not None:
         plots = super_transform_pre(plots)
@@ -310,67 +398,10 @@ def single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
         args.extend([const_list, const_dict])
         ypred = np.array(list(map(lambda xi: fitfn(xi, *args), x)))
         yarr = np.array(y)
+        exp = const_dict['exp']
         lr_results[(exp, const_dict[idx])] = linregress(yarr, ypred)
 
-    # Print results
-    if print_results is True:
-        _printer(mf_results, lr_results, print_mf_results, print_lr_results,
-                 full_output,
-                 header=title.format(tr=transform.__name__,
-                                     fn=fitfn.__name__,
-                                     ehw=_exp_list_to_string(exp_list)))
-
-    # Plot results
-    if show_plot is True:
-        plot_the_plots(
-            plots,
-            label=label, get_label_kwargs=_get_label_kwargs, idx_key=idx,
-            title=title.format(tr=transform.__name__, fn=fitfn.__name__,
-                               ehw=_exp_list_to_string(exp_list)),
-            xlabel=xlabel, ylabel=ylabel,
-            data_line_style=data_line_style, fit_line_style=fit_line_style,
-            sort_key=_plot_sort_key,
-            cmap_name=cmap,
-            show_fit=show_fit, fit_params=params, fitfn=fitfn,
-            include_legend=show_legend, legend_size=legend_size,
-            savedir=savedir, savename=savename, code=code)
-    plt.show()
-
-    # Make an info dict
-    info = {
-        'mf_code': code,
-        'mf_name': mf_name,
-        'ffn_name': fitfn.__name__,
-        'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else '',
-        'exp_list': exp_list}
-
-    return mf_results, lr_results, plots, fitfn, info
-
-
-def multi_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
-                           transform=identity,
-                           get_data=lambda dm:
-                           dm.interaction_index_mass_energy_map(),
-                           get_plot=_multi_particle_plot,
-                           printer=_printer_for_multiparticle_metafit,
-                           show_legend=False,
-                           plot_sort_key=lambda p: p[3]['interaction'],
-                           title=('Metafit for multiparticle matrix elements '
-                                  '{tr} data using {fn} for {ehw}'),
-                           idx='interaction',
-                           ylabel='Energy (MeV)',
-                           **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs, sourcedir, savedir,
-                                   transform=transform,
-                                   _get_data=get_data,
-                                   _get_plot=get_plot,
-                                   _printer=printer,
-                                   show_legend=show_legend,
-                                   _plot_sort_key=plot_sort_key,
-                                   title=title,
-                                   idx=idx,
-                                   ylabel=ylabel,
-                                   **kwargs)
+    return mf_results, lr_results, plots, fitfn
 
 
 def _meta_fit(plots, fitfn, params_guess, full_output=False, **lsqkwargs):
