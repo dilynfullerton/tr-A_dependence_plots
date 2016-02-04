@@ -16,19 +16,15 @@ def s_identity(plots):
     return plots
 
 
-# FUNCTIONS FOR s_combine_like
-def qnums(plot):
-    return plot[3]['qnums']
-
-
-def _keys(list_of_key):
-    def const_vals(plot):
-        const_dict = plot[3]
-        vals = tuple(map(lambda k: const_dict[k] if k in const_dict else None,
-                         list_of_key))
-        return vals
-    const_vals.__name__ = str(list_of_key)
-    return const_vals
+def s_n_values(n_values_list):
+    """(For *.lpt) Returns a function that filters the given list of plots to
+    only include those with N values in the n_values_list
+    :param n_values_list: a list of N values
+    """
+    def snv(plots):
+        return list(filter(lambda p: p[3]['N'] in n_values_list, plots))
+    snv.__name__ = b's_n_values {}'.format(n_values_list)
+    return snv
 
 
 # COMBINE RULES FOR s_combine_like
@@ -120,3 +116,18 @@ def _const_equals(c1, c2):
         return c1.all() == c2.all()
     else:
         return c1 == c2
+
+
+# FUNCTIONS FOR s_combine_like
+def qnums(plot):
+    return plot[3]['qnums']
+
+
+def _keys(list_of_key):
+    def const_vals(plot):
+        const_dict = plot[3]
+        vals = tuple(map(lambda k: const_dict[k] if k in const_dict else None,
+                         list_of_key))
+        return vals
+    const_vals.__name__ = str(list_of_key)
+    return const_vals
