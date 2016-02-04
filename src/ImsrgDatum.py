@@ -66,7 +66,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         # Create maps initially empty
         self.standard_index_orbital_map = std_io_map
         self._particular_index_orbital_map = None
-        self.index_orbital_map = dict()
+        self._index_orbital_map = dict()
         self._mass_index_energy_map = dict()
         self._mass_interaction_index_energy_map = dict()
         self._mass_zero_body_term_map = dict()
@@ -102,7 +102,7 @@ class ImsrgDatumInt(_ImsrgDatum):
             nextv = QuantumNumbers(*_qnums_to_list(v))
             index_orbital_map[k] = nextv
 
-        self.index_orbital_map = index_orbital_map
+        self._index_orbital_map = index_orbital_map
 
     def _set_mass_index_energy_map(self):
         """Retrieves the
@@ -178,8 +178,8 @@ class ImsrgDatumInt(_ImsrgDatum):
     def _standardize_indexing(self):
         self._standardize_mass_index_energy_map_indexing()
         self._standardize_mass_interaction_index_energy_map_indexing()
-        self._particular_index_orbital_map = self.index_orbital_map
-        self.index_orbital_map = self.standard_index_orbital_map
+        self._particular_index_orbital_map = self._index_orbital_map
+        self._index_orbital_map = self.standard_index_orbital_map
 
     def _standardize_mass_index_energy_map_indexing(self):
         """Reformat the mass -> index -> energy map indices to be with respect
@@ -215,9 +215,12 @@ class ImsrgDatumInt(_ImsrgDatum):
         return TwoBodyInteraction(*next_tuple)
 
     def _standard_index(self, i):
-        io_map = self.index_orbital_map
+        io_map = self._index_orbital_map
         soi_map = self._standard_orbital_index_map()
         return soi_map[io_map[i]]
+
+    def index_orbital_map(self):
+        return dict(self._index_orbital_map)
 
     def mass_index_energy_map(self):
         return dict(self._mass_index_energy_map)
@@ -279,7 +282,7 @@ class ImsrgDatumInt(_ImsrgDatum):
     def interaction_indices_to_interaction_qnums(self, ii):
         next_tup = tuple()
         for index in ii[0:4]:
-            qnums = self.index_orbital_map[index]
+            qnums = self._index_orbital_map[index]
             next_tup += qnums
         next_tup += ii.j
         return TwoBodyInteraction(*next_tup)

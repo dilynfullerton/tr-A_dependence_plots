@@ -12,9 +12,9 @@ from constants import *
 from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMapInt
 from Exp import ExpInt
-from metafitters_sp import single_particle_firstp_metafit
-from metafitters_sp import single_particle_firstp_zbt_metafit
-from metafitters_mp import multi_particle_firstp_metafit
+from metafitters_int_sp import single_particle_firstp_metafit
+from metafitters_int_sp import single_particle_firstp_zbt_metafit
+from metafitters_int_mp import multi_particle_firstp_metafit
 
 
 def generate_int_file_from_fit(

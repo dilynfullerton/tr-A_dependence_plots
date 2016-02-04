@@ -8,20 +8,20 @@ from __future__ import unicode_literals
 from constants import DIR_FILES, DIR_PLOTS
 from fit_transforms import *
 from fit_transforms_s import *
-from metafit import single_particle_metafit
+from metafit import single_particle_metafit_int
 
 
 # META-FITTERS
 def single_particle_relative_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs,
-                                   sourcedir=DIR_FILES, savedir=DIR_PLOTS,
-                                   code='spr',
-                                   mf_name='single_particle_relative_metafit',
-                                   **kwargs)
+    return single_particle_metafit_int(fitfn, e_hw_pairs,
+                                       sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                                       code='spr',
+                                       mf_name='single_particle_relative_metafit',
+                                       **kwargs)
 
 
 def single_particle_relative_per_nucleon_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_per_nucleon,
@@ -33,7 +33,7 @@ def single_particle_relative_per_nucleon_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def single_particle_relative_log_log_per_nucleon_metafit(fitfn, e_hw_pairs,
                                                          **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_log_log_per_nucleon,
@@ -45,7 +45,7 @@ def single_particle_relative_log_log_per_nucleon_metafit(fitfn, e_hw_pairs,
 
 
 def single_particle_relative_flip_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_flip,
@@ -58,7 +58,7 @@ def single_particle_relative_flip_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def single_particle_relative_flip_per_nucleon_metafit(fitfn, e_hw_pairs,
                                                       **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_flip_per_nucleon,
@@ -71,7 +71,7 @@ def single_particle_relative_flip_per_nucleon_metafit(fitfn, e_hw_pairs,
 
 def single_particle_flip_relative_per_nucleon_metafit(fitfn, e_hw_pairs,
                                                       **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=flip_relative_per_nucleon,
@@ -84,7 +84,7 @@ def single_particle_flip_relative_per_nucleon_metafit(fitfn, e_hw_pairs,
 
 def single_particle_relative_flip_relative_per_nuceon_metafit(fitfn, e_hw_pairs,
                                                               **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_flip_relative_per_nucleon,
@@ -95,7 +95,7 @@ def single_particle_relative_flip_relative_per_nuceon_metafit(fitfn, e_hw_pairs,
 
 
 def single_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_zbt,
@@ -108,19 +108,19 @@ def single_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs,
-                                   sourcedir=DIR_FILES, savedir=DIR_PLOTS,
-                                   transform=pzbt,
-                                   code='sppz',
-                                   mf_name='single_particle_pzbt_metafit',
-                                   xlabel='A',
-                                   ylabel='Single Particle Energy + '
+    return single_particle_metafit_int(fitfn, e_hw_pairs,
+                                       sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                                       transform=pzbt,
+                                       code='sppz',
+                                       mf_name='single_particle_pzbt_metafit',
+                                       xlabel='A',
+                                       ylabel='Single Particle Energy + '
                                           'Zero Body Term (MeV)',
-                                   **kwargs)
+                                       **kwargs)
 
 
 def single_particle_relative_xy_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=relative_xy_zbt,
@@ -133,29 +133,29 @@ def single_particle_relative_xy_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs,
-                                   sourcedir=DIR_FILES, savedir=DIR_PLOTS,
-                                   transform=identity,
-                                   code='spi',
-                                   mf_name='single_particle_identity_metafit',
-                                   xlabel='A',
-                                   ylabel='Single Particle Energy (MeV)',
-                                   **kwargs)
+    return single_particle_metafit_int(fitfn, e_hw_pairs,
+                                       sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                                       transform=identity,
+                                       code='spi',
+                                       mf_name='single_particle_identity_metafit',
+                                       xlabel='A',
+                                       ylabel='Single Particle Energy (MeV)',
+                                       **kwargs)
 
 
 def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(fitfn, e_hw_pairs,
-                                   sourcedir=DIR_FILES, savedir=DIR_PLOTS,
-                                   transform=zbt,
-                                   mf_name='single_particle_zbt_metafit',
-                                   code='spz',
-                                   xlabel='A',
-                                   ylabel='Zero Body Term (MeV)',
-                                   **kwargs)
+    return single_particle_metafit_int(fitfn, e_hw_pairs,
+                                       sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                                       transform=zbt,
+                                       mf_name='single_particle_zbt_metafit',
+                                       code='spz',
+                                       xlabel='A',
+                                       ylabel='Zero Body Term (MeV)',
+                                       **kwargs)
 
 
 def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=firstp,
@@ -170,7 +170,7 @@ def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DIR_FILES, savedir=DIR_PLOTS,
             transform=first2p,
@@ -183,7 +183,7 @@ def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DIR_FILES, savedir=DIR_PLOTS,
         transform=compose_transforms([firstp, zbt]),
@@ -197,7 +197,7 @@ def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_first2p_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit(
+    return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DIR_FILES, savedir=DIR_PLOTS,
         transform=compose_transforms([first2p, zbt]),
@@ -215,7 +215,7 @@ def single_particle_relative_to_y_pzbt_metafit(x):
     name = b'single_particle_relative_to_y({})_pzbt_metafit'.format(x)
 
     def spryz(fitfn, e_hw_pairs, **kwargs):
-        return single_particle_metafit(
+        return single_particle_metafit_int(
                 fitfn, e_hw_pairs,
                 sourcedir=DIR_FILES, savedir=DIR_PLOTS,
                 transform=compose_transforms([relative_to_y(x), pzbt]),
@@ -236,17 +236,17 @@ def single_particle_ltrim_relative_pzbt_metafit(n):
             b'').format(n)
 
     def spltrz(fitfn, e_hw_pairs, **kwargs):
-        return single_particle_metafit(fitfn, e_hw_pairs,
-                                       sourcedir=DIR_FILES, savedir=DIR_PLOTS,
-                                       transform=compose_transforms([
+        return single_particle_metafit_int(fitfn, e_hw_pairs,
+                                           sourcedir=DIR_FILES, savedir=DIR_PLOTS,
+                                           transform=compose_transforms([
                                            ltrim(n), relative_zbt
                                        ]),
-                                       code='spltrz',
-                                       mf_name=name,
-                                       xlabel='A',
-                                       ylabel='Relative Single Particle Energy'
+                                           code='spltrz',
+                                           mf_name=name,
+                                           xlabel='A',
+                                           ylabel='Relative Single Particle Energy'
                                               ' + Zero Body Term',
-                                       **kwargs)
+                                           **kwargs)
 
     spltrz.__name__ = name
     return spltrz
@@ -256,7 +256,7 @@ def single_particle_first_np_zbt_metafit(n):
     name = b'single_particle_first_{}p_zbt_metafit'.format(n)
 
     def spfnpz(fitfn, e_hw_pairs, **kwargs):
-        return single_particle_metafit(
+        return single_particle_metafit_int(
                 fitfn, e_hw_pairs,
                 sourcedir=DIR_FILES, savedir=DIR_PLOTS,
                 transform=compose_transforms([first_np(n), zbt]),
@@ -274,7 +274,7 @@ def single_particle_first_np_metafit(n):
     name = b'single_particle_first_{}p_metafit'.format(n)
 
     def spfnpz(fitfn, e_hw_pairs, **kwargs):
-        return single_particle_metafit(
+        return single_particle_metafit_int(
                 fitfn, e_hw_pairs,
                 sourcedir=DIR_FILES, savedir=DIR_PLOTS,
                 transform=first_np(n),

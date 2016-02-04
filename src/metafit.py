@@ -11,7 +11,6 @@ from matplotlib import pyplot as plt
 from scipy.optimize import leastsq
 from scipy.stats import linregress
 
-from Exp import ExpInt
 from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMapInt, ImsrgDataMapLpt
 from fitting_sp import print_io_key
@@ -302,7 +301,7 @@ def single_particle_metafit_int(
             show_fit=show_fit, fit_params=params, fitfn=fitfn,
             include_legend=show_legend, legend_size=_legend_size,
             savedir=savedir, savename=_savename, code=code)
-    plt.show()
+        plt.show()
 
     # Make an info dict
     info = {
@@ -405,6 +404,7 @@ def metafit_lpt(
         exp_filter_fn=None,
         xlabel='A',
         ylabel='Energy + Zero Body Term (MeV)',
+        show_fit=False,
         _sourcedir=DIR_SHELL_RESULTS, _savedir=DIR_PLOTS,
         _data_map=ImsrgDataMapLpt,
         _get_data=lambda dm: dm.n_mass_energy_map(),
@@ -424,6 +424,7 @@ def metafit_lpt(
         transform=transform,
         xlabel=xlabel,
         ylabel=ylabel,
+        show_fit=show_fit,
         _data_map=_data_map,
         _get_data=_get_data,
         _get_plots=_get_plots,
