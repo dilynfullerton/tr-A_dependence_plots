@@ -44,9 +44,8 @@ def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
 
 
 # noinspection PyUnusedLocal
-def _get_single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
-                              *args):
-    x, y, const_list, const_dict = _set_const(k, identifier, io_map, me_map,
+def _get_plot_single_particle(k, exp, me_map, mzbt_map, io_map, others, *args):
+    x, y, const_list, const_dict = _set_const(k, exp, io_map, me_map,
                                               mzbt_map, others)
     qnums = io_map[k]
     const_list[0] = qnums
@@ -58,13 +57,12 @@ def _get_single_particle_plot(k, identifier, io_map, me_map, mzbt_map, others,
 
 
 # noinspection PyUnusedLocal
-def _get_single_particle_plots(exp_list, all_data_map, get_data,
-                               print_key=False, std_io_map=None,
-                               get_plot=_get_single_particle_plot,
-                               **kwargs):
+def _get_plots_single_particle(exp_list, all_data_map, get_data,
+                               get_plot=_get_plot_single_particle,
+                               print_key=False, std_io_map=None, **kwargs):
     plots = list()
     for exp in sorted(exp_list):
-        data_maps = all_data_map.map[exp]
+        data_maps = all_data_map[exp]
         io_map = data_maps.index_orbital_map()
         ime_map = get_data(data_maps)
         mzbt_map = data_maps.mass_zero_body_term_map()
@@ -172,12 +170,16 @@ def single_particle_metafit_int(
         _plot_sort_key=lambda p: p[3]['qnums'],
         _get_data=lambda dm: dm.index_mass_energy_map(),
         _data_map=ImsrgDataMapInt,
-        _get_plots=_get_single_particle_plots,
-        _get_plot=_get_single_particle_plot,
+        _get_plots=_get_plots_single_particle,
+        _get_plot=_get_plot_single_particle,
         _printer=_printer_for_single_particle_metafit):
     """A meta-fit for all the orbitals with a given e, hw, and rp, based on the
     given fit function
 
+    :type _get_plots: (exp_list:list, all_data_map:_ImsrgDataMap,
+    get_data:_ImsrgDatum -> dict, get_plot:Any->Tuple[Any, Any, list, dict])
+    -> list
+    :type _data_map: _ImsrgDataMap
     :param _get_plots:
     :param _data_map:
     :param _get_label_fmt_kwargs:
@@ -370,7 +372,7 @@ def multi_particle_metafit_int(
                                        **kwargs)
 
 
-def _get_plot_lpt(n, exp, me_map, mzbt_map):
+def _get_plot_lpt(n, exp, me_map, mzbt_map, *args):
     x, y = map_to_arrays(me_map)
     zbt_list = list()
     x_arr, zbt_arr = map_to_arrays(mzbt_map)
