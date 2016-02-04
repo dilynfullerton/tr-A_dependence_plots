@@ -24,23 +24,29 @@ from parse_lpt import exp
 
 class _ImsrgDataMap(object):
     def __init__(self, parent_directory, exp_type, datum_type,
-                 exp_list=None, **kwargs):
+                 exp_list=None, exp_filter_fn=None, **kwargs):
         self.parent_dir = parent_directory
         self.map = dict()
         if exp_list is not None:
             self.exp_list = [exp_type(*exp_item) for exp_item in exp_list]
         else:
             self.exp_list = None
+        self.exp_filter_fn = exp_filter_fn
         self.exp_type = exp_type
         self.datum_type = datum_type
         self.kwargs = kwargs
         self._set_maps()
+
+    def __getitem__(self, item):
+        return self.map[item]
 
     def _set_maps(self):
         files = self._get_files()
         for f in files:
             key = self.exp_type(*self._exp_from_file_path(f))
             if self.exp_list is not None and key not in self.exp_list:
+                continue
+            elif self.exp_filter_fn is not None and not self.exp_filter_fn(key):
                 continue
             elif key not in self.map:
                 key_files = list(
@@ -61,13 +67,14 @@ class _ImsrgDataMap(object):
 class ImsrgDataMapInt(_ImsrgDataMap):
     """A mapping from ExpInt to ImsrgDatumInt
     """
-    def __init__(self, parent_directory, exp_list=None, standard_indices=None,
-                 extension=EXT):
+    def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
+                 standard_indices=None, extension=EXT, **kwargs):
         self.extension = extension
         super(ImsrgDataMapInt, self).__init__(
             parent_directory=parent_directory,
             exp_type=ExpInt, datum_type=ImsrgDatumInt,
             exp_list=exp_list,
+            exp_filter_fn=exp_filter_fn,
             std_io_map=standard_indices)
 
     def _exp_from_file_path(self, f):
@@ -81,10 +88,10 @@ class ImsrgDataMapInt(_ImsrgDataMap):
 class ImsrgDataMapLpt(_ImsrgDataMap):
     """A mapping from ExpLpt to ImsrgDatumLpt
     """
-    def __init__(self, parent_directory, exp_list=None,
+    def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  _comment_char=CMNT_CHAR,
                  _row_az=ROW_AZ,
-                 _regex_filename=REGEX_FILENAME):
+                 _regex_filename=REGEX_FILENAME, **kwargs):
         self._comment_char = _comment_char
         self._row_az = _row_az
         self._regex_filename = _regex_filename
@@ -92,6 +99,7 @@ class ImsrgDataMapLpt(_ImsrgDataMap):
             parent_directory=parent_directory,
             exp_type=ExpLpt, datum_type=ImsrgDatumLpt,
             exp_list=exp_list,
+            exp_filter_fn=exp_filter_fn,
             _comment_char_lpt=_comment_char,
             _row_az=_row_az)
 
