@@ -288,23 +288,21 @@ def single_particle_metafit_int(
     mf_results, lr_results, plots, fitfn = rr
     params = mf_results[0]
 
+    formatted_title = _title.format(mfn=mf_name,
+                                    tr=transform.__name__,
+                                    fn=fitfn.__name__,
+                                    ehw=_exp_list_to_string(exp_list))
     # Print results
     if print_results is True:
         _printer(mf_results, lr_results, print_mf_results, print_lr_results,
-                 full_output,
-                 header=_title.format(tr=transform.__name__,
-                                      fn=fitfn.__name__,
-                                      ehw=_exp_list_to_string(exp_list)))
+                 full_output, header=formatted_title)
 
     # Plot results
     if show_plot is True:
         plot_the_plots(
             plots,
             label=_label, get_label_kwargs=_get_label_fmt_kwargs, idx_key=_idx,
-            title=_title.format(mfn=mf_name,
-                                tr=transform.__name__,
-                                fn=fitfn.__name__,
-                                ehw=_exp_list_to_string(exp_list)),
+            title=formatted_title,
             xlabel=xlabel, ylabel=ylabel,
             data_line_style=_data_line_style, fit_line_style=_fit_line_style,
             sort_key=_plot_sort_key,
