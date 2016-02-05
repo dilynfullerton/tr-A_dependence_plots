@@ -160,7 +160,7 @@ def single_particle_metafit_int(
         xlabel='A', ylabel='Relative Energy (MeV)',
         _code_pref='INT',
         _std_io_map=STANDARD_IO_MAP,
-        _title=('Metafit for single particle energy'
+        _title=('Metafit {mfn} for single particle energy'
                 '{tr} data using {fn} for {ehw}'),
         _label='{e}, {hw}, {b}, {i}', _idx='qnums',
         _get_label_fmt_kwargs=_get_label_kwargs,
@@ -301,7 +301,9 @@ def single_particle_metafit_int(
         plot_the_plots(
             plots,
             label=_label, get_label_kwargs=_get_label_fmt_kwargs, idx_key=_idx,
-            title=_title.format(tr=transform.__name__, fn=fitfn.__name__,
+            title=_title.format(mfn=mf_name,
+                                tr=transform.__name__,
+                                fn=fitfn.__name__,
                                 ehw=_exp_list_to_string(exp_list)),
             xlabel=xlabel, ylabel=ylabel,
             data_line_style=_data_line_style, fit_line_style=_fit_line_style,
@@ -355,7 +357,7 @@ def multi_particle_metafit_int(
         _printer=_printer_for_multiparticle_metafit,
         show_legend=False,
         _plot_sort_key=lambda p: p[3]['interaction'],
-        _title=('Metafit for multiparticle matrix elements '
+        _title=('Metafit {mfn} for multiparticle matrix elements '
                 '{tr} data using {fn} for {ehw}'),
         _idx='interaction',
         ylabel='Energy (MeV)',
@@ -424,7 +426,7 @@ def metafit_lpt(
         _get_plot=_get_plot_lpt,
         _plot_sort_key=lambda p: p[3]['exp'],
         _code_pref='LPT',
-        _title='Metafit for shell calculation {tr} data using {fn}',
+        _title='Metafit {mfn} for shell calculation {tr} data using {fn}',
         _label='{N}, {exp}',
         _get_label_fmt_kwargs=_get_label_kwargs_lpt,
         _print_results=False,
