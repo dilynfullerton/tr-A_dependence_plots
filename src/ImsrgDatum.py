@@ -45,7 +45,7 @@ class _ImsrgDatum(object):
         self.files = files
 
     def _set_maps(self):
-        raise NotImplemented
+        raise NotImplemented()
 
 
 class ImsrgDatumInt(_ImsrgDatum):

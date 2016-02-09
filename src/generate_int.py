@@ -118,11 +118,10 @@ def generate_int_file_from_fit_results(
     info_sp = results_sp[4]
     info_mp = results_mp[4]
 
-    exp_list = [ExpInt(*pair) for pair in e_hw_pairs]
-    if reduce(lambda a, b: a and b,
-              map(lambda i: i['exp_list'] == exp_list,
-                  [info_zbt, info_sp, info_mp])) is not True:
-        raise InconsistentDatasetsGivenToIntFileGeneratorException
+    exp_list = sorted([ExpInt(*pair) for pair in e_hw_pairs])
+    for ii in [info_zbt, info_sp, info_mp]:
+        if sorted(ii['exp_list']) != exp_list:
+            raise InconsistentDatasetsGivenToIntFileGeneratorException()
 
     e_hw_pairs_strings = [str(pair) for pair in e_hw_pairs]
 
@@ -240,7 +239,7 @@ def _subtitle_lines(row_lines_subtitle, params_zbt, params_sp, params_mp):
 def _zbt_line(row_zbt, mass_num, params_zbt, plots_zbt, fitfn_zbt):
     get_energy = _get_e1 if isinstance(fitfn_zbt, FitFunction) else _get_e2
     if len(plots_zbt) != 1:
-        raise OverlapOfZbtDataException
+        raise OverlapOfZbtDataException()
     else:
         plot = plots_zbt[0]
     x, y, const_list, const_dict = plot
@@ -272,7 +271,7 @@ def _single_particle_line(row_sp, mass_num, params_sp, plots_sp, fitfn_sp):
         x, y, const_list, const_dict = plot[0:4]
         index = const_dict['index']
         if index in indices:
-            raise OverlapOfSingleParticleDataException
+            raise OverlapOfSingleParticleDataException()
         else:
             indices.append(index)
             fmt_args.append(get_energy(params_sp, const_list, const_dict,
@@ -295,7 +294,7 @@ def _interactions_lines(row_mp, mass_num, params_mp, plots_mp, fitfn_mp):
         x, y, const_list, const_dict = plot[0:4]
         interaction = const_dict['interaction']
         if interaction in interactions:
-            raise OverlapOfInteractionDataException
+            raise OverlapOfInteractionDataException()
         else:
             interactions.append(interaction)
             fmt_args.extend([i for i in interaction])

@@ -58,10 +58,10 @@ class _ImsrgDataMap(object):
                 self.map[key] = value
 
     def _exp_from_file_path(self, f):
-        raise NotImplemented
+        raise NotImplemented()
 
     def _get_files(self):
-        raise NotImplemented
+        raise NotImplemented()
 
 
 class ImsrgDataMapInt(_ImsrgDataMap):

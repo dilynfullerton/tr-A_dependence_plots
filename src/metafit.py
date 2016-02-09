@@ -161,7 +161,7 @@ def single_particle_metafit_int(
         _code_pref='INT',
         _std_io_map=STANDARD_IO_MAP,
         _title=('Metafit {mfn} for single particle energy'
-                '{tr} data using {fn} for {ehw}'),
+                ' {tr} data using {fn} for {ehw}'),
         _label='{e}, {hw}, {b}, {i}', _idx='qnums',
         _get_label_fmt_kwargs=_get_label_kwargs,
         _data_line_style='-', _fit_line_style='--',
@@ -511,7 +511,7 @@ def _meta_fit(plots, fitfn, params_guess, full_output=False, **lsqkwargs):
     else:
         num_fit_params = fitfn.__code__.co_argcount - 1
     if len(params_guess) != num_fit_params:
-        raise FunctionDoesNotMatchParameterGuessException
+        raise FunctionDoesNotMatchParameterGuessException()
     combined_x = list()
     combined_y = list()
     constants_lists = list()
