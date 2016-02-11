@@ -13,7 +13,7 @@ from scipy.stats import linregress as lg
 from Exp import ExpInt
 from ImsrgDataMap import ImsrgDataMapInt
 from constants import *
-from fit_transforms import *
+from transforms import *
 from plotting import map_to_arrays
 
 E = 12

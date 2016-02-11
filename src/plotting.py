@@ -15,7 +15,7 @@ from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMapInt, ImsrgDataMapLpt
 from constants import DIR_SHELL_RESULTS
 from constants import PLOT_CMAP, LEGEND_SIZE
-from fit_transforms import identity
+from transforms import identity
 
 
 def plot_the_plots(plots, label, title, xlabel, ylabel,

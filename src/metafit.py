@@ -18,7 +18,7 @@ from plotting import plot_the_plots
 from plotting import map_to_arrays
 
 from constants import *
-from fit_transforms import *
+from transforms import *
 
 
 def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):

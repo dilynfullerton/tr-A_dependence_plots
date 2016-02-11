@@ -6,8 +6,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from constants import DIR_FILES, DIR_PLOTS
-from fit_transforms import *
-from fit_transforms_s import *
+from transforms import *
+from transforms_s import *
 from metafit import single_particle_metafit_int
 
 
