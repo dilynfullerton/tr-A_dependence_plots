@@ -8,8 +8,9 @@
 *.pyc
 *#*
 .DS_Store
-*.coverfiles
+*.cover
 /old
 /t0/results
 /t0/sources
 /plots
+*.sp
