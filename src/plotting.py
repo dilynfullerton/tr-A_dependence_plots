@@ -21,6 +21,7 @@ from transforms import identity
 def plot_the_plots(plots, label, title, xlabel, ylabel,
                    data_line_style='-', fit_line_style='--',
                    sort_key=lambda plot: plot,
+                   sort_reverse=False,
                    get_label_kwargs=None, idx_key=None, title_kwargs=None,
                    fig=None, ax=None, cmap_name=PLOT_CMAP, cmap=None,
                    dark=False,
@@ -78,7 +79,7 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
     c_norm = colors.Normalize(vmin=0, vmax=len(plots) - 1)
     scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
     # Do plots
-    for p, i in zip(sorted(plots, key=sort_key),
+    for p, i in zip(sorted(plots, key=sort_key, reverse=sort_reverse),
                     range(len(plots))):
         x, y = p[0:2]
         if get_label_kwargs is not None:
