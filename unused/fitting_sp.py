@@ -13,8 +13,9 @@ from scipy.stats import linregress as lg
 from Exp import ExpInt
 from ImsrgDataMap import ImsrgDataMapInt
 from constants import *
-from transforms import *
+from metafit import print_io_key
 from plotting import map_to_arrays
+from transforms import *
 
 E = 12
 HW = 20
@@ -275,13 +276,6 @@ def _single_particle_curvefit(fitfn, e=E, hw=HW,
     plt.show()
 
     return orbital_fit_map
-
-
-def print_io_key(iomap, sortkey=lambda k: k, heading='Index key:'):
-    print('\n' + P_TITLE + heading + '\n' + '-' * 80 + P_END)
-    for index in sorted(iomap.keys(), key=sortkey):
-        print(str(index) + ': ' + str(iomap[index]))
-    print()
 
 
 def _do_plot(title, xlabel, ylabel, saveloc, showlegend):

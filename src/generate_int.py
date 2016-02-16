@@ -7,7 +7,13 @@ from __future__ import unicode_literals
 
 from os import mkdir, path
 
-from constants import *
+from constants import STANDARD_IO_MAP
+from constants import DIR_FILES, DIR_GEN_INT
+from constants import GEN_INT_SUBDIR, GEN_INT_FILE_NAME
+from constants import GEN_INT_ROW_LINES_TITLE, GEN_INT_ROW_LINES_FIT_PARAMS
+from constants import GEN_INT_ROW_ZERO_BODY_TERM, GEN_INT_ROW_INDEX_KEY_HEAD
+from constants import GEN_INT_ROW_INDEX_KEY, GEN_INT_ROW_BLANK
+from constants import GEN_INT_ROW_SINGLE_PARTICLE, GEN_INT_ROW_INTERACTION
 
 from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMapInt

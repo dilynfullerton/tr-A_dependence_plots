@@ -13,12 +13,15 @@ from scipy.stats import linregress
 
 from FitFunction import FitFunction
 from ImsrgDataMap import ImsrgDataMapInt, ImsrgDataMapLpt
-from fitting_sp import print_io_key
 from plotting import plot_the_plots
 from plotting import map_to_arrays
 
-from constants import *
-from transforms import *
+from constants import P_TITLE, P_HEAD, P_SUB, P_END
+from constants import DIR_PLOTS, DIR_SHELL_RESULTS
+from constants import STANDARD_IO_MAP, PLOT_CMAP, LEGEND_SIZE
+from transforms import relative_y, identity, pzbt
+
+import numpy as np
 
 
 def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
@@ -78,6 +81,13 @@ def _get_plots_single_particle(exp_list, all_data_map, get_data,
                                   me_map=ime_map[k], mzbt_map=mzbt_map,
                                   others=other_constants))
     return plots
+
+
+def print_io_key(iomap, sortkey=lambda k: k, heading='Index key:'):
+    print('\n' + P_TITLE + heading + '\n' + '-' * 80 + P_END)
+    for index in sorted(iomap.keys(), key=sortkey):
+        print(str(index) + ': ' + str(iomap[index]))
+    print()
 
 
 def _printer_for_single_particle_metafit(metafit_results, linregress_results,
