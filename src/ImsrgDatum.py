@@ -4,9 +4,7 @@ For example, ImsrgDatumInt stores a bunch of maps generated based on *.int
 files.
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import division, print_function, unicode_literals
 
 from os import path, mkdir, link
 
@@ -406,3 +404,7 @@ class ImsrgDatumLpt(_ImsrgDatum):
                     d[n] = dict()
                 d[n][m] = ext
         return d
+
+
+class ImsrgDatumOp(_ImsrgDatum):
+    pass  # todo implement me!

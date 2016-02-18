@@ -77,3 +77,6 @@ def _ordered_lists_cured(ordered_lists):
     for lox in lists_2bt:
         lists_2bt_cured.append([int(x) for x in lox[:10]] + [float(lox[10])])
     return h_lists_cured, zbt_cured, lists_2bt_cured, lists_2bt_cured
+
+
+# todo finish me!

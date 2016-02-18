@@ -120,3 +120,7 @@ class ImsrgDataMapLpt(_ImsrgDataMap):
                 return False
 
         return get_files_r(self.parent_dir, lpt_file_filter)
+
+
+class ImsrgDataMapOp(_ImsrgDataMap):
+    pass  # todo implement me!
