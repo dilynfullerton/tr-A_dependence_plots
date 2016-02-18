@@ -3,7 +3,7 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class QuantumNumbers(namedtuple('QuantumNumbers', ['n', 'l', 'j', 'tz'])):
+class QuantumNumbersInt(namedtuple('QuantumNumbersInt', ['n', 'l', 'j', 'tz'])):
     """Stores descriptive quantum numbers for interaction (*.int) orbital
     """
     __slots__ = ()

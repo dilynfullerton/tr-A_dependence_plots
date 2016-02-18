@@ -140,11 +140,11 @@ def name_from_filename(filename, split_char=ELT_SPLIT,
     return elt_from_felts(felts_list, name_regex)
 
 
-def exp_from_filename(filename, split_char=ELT_SPLIT,
-                      e_regex=REGEX_E,
-                      hw_regex=REGEX_HW,
-                      b_regex=REGEX_BASE,
-                      rp_regex=REGEX_RP):
+def exp(filename, split_char=ELT_SPLIT,
+        e_regex=REGEX_E,
+        hw_regex=REGEX_HW,
+        b_regex=REGEX_BASE,
+        rp_regex=REGEX_RP):
     felts = filename_elts_list(filename, split_char)
     return (_e_from_felts(felts, e_regex),
             _hw_from_felts(felts, hw_regex),
@@ -277,7 +277,7 @@ def index_map(idx_lines):
     return idx_map
 
 
-def index_tuple_map(filename, comment_char=CMNT_CHAR):
+def index_to_tuple_map(filename, comment_char=CMNT_CHAR):
     """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
     :param comment_char:
@@ -304,8 +304,8 @@ def mass_energy_array_map(directory, filterfn=lambda x: True,
     return d
 
 
-def mass_index_energy_map_map(directory, filterfn=lambda x: True,
-                              filtered_files=None):
+def mass_to_index_to_energy_map(directory, filterfn=lambda x: True,
+                                filtered_files=None):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
@@ -341,8 +341,8 @@ def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
     return mida_map
 
 
-def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True,
-                                          filtered_files=None):
+def mass_to_interaction_to_energy_map(directory, filterfn=lambda x: True,
+                                      filtered_files=None):
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
@@ -365,8 +365,8 @@ def mass_interaction_tuple_energy_map_map(directory, filterfn=lambda x: True,
     return mida_map
 
 
-def mass_zero_body_term_map(directory, filterfn=lambda x: True,
-                            filtered_files=None, comment_char=CMNT_CHAR):
+def mass_to_zbt_map(directory, filterfn=lambda x: True,
+                    filtered_files=None, comment_char=CMNT_CHAR):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
