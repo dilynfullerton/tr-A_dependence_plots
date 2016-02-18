@@ -1,8 +1,6 @@
 """Functions for parsing *.op data files and generating maps from the data
 """
 from __future__ import print_function, division
-
-
 from parse import elt_from_felts, filename_elts_list, index_of_line
 from parse import content_lines
 
@@ -24,11 +22,11 @@ def exp(filepath, split_char, regex_hw):
 
 
 # DATA
-def _ordered_lines(content_lines, regex_h, regex_0bt, regex_1bt, regex_2bt):
+def _ordered_lines(content, regex_h, regex_0bt, regex_1bt, regex_2bt):
     """Returns the string representations of the header lines (list of str),
     zero body line (str), one body lines (list of str), two body lines
     (list of str)
-    :param content_lines: op file lines not including comments
+    :param content: op file lines not including comments
     :param regex_h: regular expression to fully match the first header line
     :param regex_0bt: regular expression to fully match the zero body line
     :param regex_1bt: regular expression to fully match the header beginning the
@@ -38,13 +36,13 @@ def _ordered_lines(content_lines, regex_h, regex_0bt, regex_1bt, regex_2bt):
     :return: a 4-tuple containing the header lines, the zero body line, the
     one body lines, and the two body lines
     """
-    idx_h, h_line_nm = index_of_line(content_lines, line_regex=regex_h)
-    idx_0bt, line_0bt = index_of_line(content_lines, line_regex=regex_0bt)
-    idx_1bt = index_of_line(content_lines, line_regex=regex_1bt)[0]
-    idx_2bt = index_of_line(content_lines, line_regex=regex_2bt)[0]
-    h_line = content_lines[idx_h + 1]
-    lines_1bt = content_lines[idx_1bt + 1:idx_2bt]
-    lines_2bt = content_lines[idx_2bt + 1:]
+    idx_h, h_line_nm = index_of_line(content, line_regex=regex_h)
+    idx_0bt, line_0bt = index_of_line(content, line_regex=regex_0bt)
+    idx_1bt = index_of_line(content, line_regex=regex_1bt)[0]
+    idx_2bt = index_of_line(content, line_regex=regex_2bt)[0]
+    h_line = content[idx_h + 1]
+    lines_1bt = content[idx_1bt + 1:idx_2bt]
+    lines_2bt = content[idx_2bt + 1:]
     return [h_line_nm, h_line], line_0bt, lines_1bt, lines_2bt
 
 
@@ -111,8 +109,8 @@ def get_data(filepath, comment_char, regex_h, regex_0bt, regex_1bt, regex_2bt):
     :return:
     """
     data = _ordered_lists_cured(_ordered_lists(_ordered_lines(
-        content_lines=content_lines(filename=filepath,
-                                    comment_char=comment_char),
+        content=content_lines(filename=filepath,
+                              comment_char=comment_char),
         regex_h=regex_h,
         regex_0bt=regex_0bt,
         regex_1bt=regex_1bt,

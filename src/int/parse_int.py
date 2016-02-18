@@ -4,6 +4,8 @@ their file names
 
 from __future__ import print_function
 
+from parse import get_files_r, filename_elts_list, elt_from_felts
+from parse import content_lines, comment_lines
 from constants import FN_PARSE_INT_ELT_SPLIT as ELT_SPLIT
 from constants import FN_PARSE_INT_REGEX_BASE as REGEX_BASE
 from constants import FN_PARSE_INT_REGEX_E as REGEX_E
@@ -17,8 +19,6 @@ from constants import F_PARSE_INT_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_INT_NCOLS_ORBITALS as NCOLS_ORBITALS
 from constants import F_PARSE_INT_ROW_HEAD as ROW_HEAD
 from constants import F_PARSE_INT_CMNT_CHAR as CMNT_CHAR
-from parse import get_files_r, filename_elts_list, elt_from_felts
-from parse import content_lines, comment_lines
 
 
 # ............................................................

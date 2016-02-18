@@ -2,8 +2,9 @@
 """
 
 from __future__ import unicode_literals
-from QuantumNumbersInt import QuantumNumbersInt
+
 from LegendSize import LegendSize
+from int.QuantumNumbers import QuantumNumbers
 
 # Directories
 DIR_FILES_INT = '../files_INT'
@@ -109,12 +110,12 @@ LEGEND_SIZE = LegendSize(
     space_scale=LEGEND_SPACE_SCALE)
 
 STANDARD_IO_MAP = {
-    1: QuantumNumbersInt(0.0, 2.0, 2.5, -0.5),
-    2: QuantumNumbersInt(0.0, 2.0, 1.5, -0.5),
-    3: QuantumNumbersInt(1.0, 0.0, 0.5, -0.5),
-    4: QuantumNumbersInt(0.0, 2.0, 2.5, 0.5),
-    5: QuantumNumbersInt(0.0, 2.0, 1.5, 0.5),
-    6: QuantumNumbersInt(1.0, 0.0, 0.5, 0.5)
+    1: QuantumNumbers(0.0, 2.0, 2.5, -0.5),
+    2: QuantumNumbers(0.0, 2.0, 1.5, -0.5),
+    3: QuantumNumbers(1.0, 0.0, 0.5, -0.5),
+    4: QuantumNumbers(0.0, 2.0, 2.5, 0.5),
+    5: QuantumNumbers(0.0, 2.0, 1.5, 0.5),
+    6: QuantumNumbers(1.0, 0.0, 0.5, 0.5)
 }
 
 # Combining fit functions:

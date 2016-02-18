@@ -6,10 +6,11 @@ from itertools import combinations
 
 import numpy as np
 
-from ImsrgDataMap import ImsrgDataMapInt
-from Exp import ExpInt
 from constants import DIR_FILES_INT, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
+
+from int.ExpInt import ExpInt
+from int.ImsrgDataMapInt import ImsrgDataMapInt
 
 
 def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,

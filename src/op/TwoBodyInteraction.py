@@ -3,8 +3,8 @@ from __future__ import print_function, division, unicode_literals
 from collections import namedtuple
 
 
-class TwoBodyInteractionOp(namedtuple('TwoBodyInteractionOp',
-                                      ['a', 'b', 'c', 'd'])):
+class TwoBodyInteraction(namedtuple('TwoBodyInteraction',
+                                    ['a', 'b', 'c', 'd'])):
     __slots__ = ()
 
     def __str__(self):

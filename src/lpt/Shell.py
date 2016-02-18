@@ -5,8 +5,8 @@ from parse import half_int_float_to_str as to_str
 
 
 # noinspection PyClassHasNoInit
-class ShellLpt(namedtuple('ShellLpt',
-                          ['NJ', 'E', 'Ex', 'J', 'T', 'p', 'lowest_Ex', 'name'])):
+class Shell(namedtuple('ShellLpt',
+                       ['NJ', 'E', 'Ex', 'J', 'T', 'p', 'lowest_Ex', 'name'])):
     """Holds the body data for *.lpt files
     """
     __slots__ = ()

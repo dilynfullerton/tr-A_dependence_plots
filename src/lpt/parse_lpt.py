@@ -1,16 +1,15 @@
 """Functions for parsing *.lpt files and generating maps from the data
 """
-
 from __future__ import division
 from __future__ import print_function
 
-from re import match
 from os import sep, path, walk
+from re import match
 
+from parse import content_lines, comment_lines, half_int_str_to_float
 from constants import F_PARSE_LPT_CMNT_CHAR as CMNT_CHAR
 from constants import F_PARSE_LPT_ROW_AZ as ROW_AZ
-from parse import content_lines, comment_lines, half_int_str_to_float
-from parse_int import zero_body_term, zero_body_term_line
+from int.parse_int import zero_body_term, zero_body_term_line
 
 
 # EXP

@@ -5,10 +5,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from constants import DIR_FILES_INT, DIR_PLOTS
 from transforms import *
 from transforms_s import *
-from metafit import multi_particle_metafit_int
+from int.metafit_int import multi_particle_metafit_int
+from constants import DIR_FILES_INT, DIR_PLOTS
 
 
 def multi_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
@@ -26,7 +26,8 @@ def multi_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def multi_particle_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return multi_particle_metafit_int(fitfn, e_hw_pairs,
-                                      sourcedir=DIR_FILES_INT, savedir=DIR_PLOTS,
+                                      sourcedir=DIR_FILES_INT,
+                                      savedir=DIR_PLOTS,
                                       transform=pzbt,
                                       code='mppz',
                                       mf_name='multi_particle_pzbt_metafit',
@@ -37,7 +38,8 @@ def multi_particle_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def multi_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
     return multi_particle_metafit_int(fitfn, e_hw_pairs,
-                                      sourcedir=DIR_FILES_INT, savedir=DIR_PLOTS,
+                                      sourcedir=DIR_FILES_INT,
+                                      savedir=DIR_PLOTS,
                                       transform=identity,
                                       code='mpi',
                                       mf_name='multi_particle_identity_metafit',
@@ -48,7 +50,8 @@ def multi_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def multi_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return multi_particle_metafit_int(fitfn, e_hw_pairs,
-                                      sourcedir=DIR_FILES_INT, savedir=DIR_PLOTS,
+                                      sourcedir=DIR_FILES_INT,
+                                      savedir=DIR_PLOTS,
                                       transform=zbt,
                                       code='mpz',
                                       mf_name='multi_particle_zbt_metafit',
@@ -59,7 +62,8 @@ def multi_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def multi_particle_relative_metafit(fitfn, e_hw_pairs, **kwargs):
     return multi_particle_metafit_int(fitfn, e_hw_pairs,
-                                      sourcedir=DIR_FILES_INT, savedir=DIR_PLOTS,
+                                      sourcedir=DIR_FILES_INT,
+                                      savedir=DIR_PLOTS,
                                       transform=relative_y,
                                       code='mpr',
                                       mf_name='multi_particle_relative_metafit',

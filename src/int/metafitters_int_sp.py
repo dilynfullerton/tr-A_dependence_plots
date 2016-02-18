@@ -5,10 +5,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from constants import DIR_FILES_INT, DIR_PLOTS
 from transforms import *
 from transforms_s import *
-from metafit import single_particle_metafit_int
+from int.metafit_int import single_particle_metafit_int
+from constants import DIR_FILES_INT, DIR_PLOTS
 
 
 # META-FITTERS
@@ -147,7 +147,8 @@ def single_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
 
 def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(fitfn, e_hw_pairs,
-                                       sourcedir=DIR_FILES_INT, savedir=DIR_PLOTS,
+                                       sourcedir=DIR_FILES_INT,
+                                       savedir=DIR_PLOTS,
                                        transform=zbt,
                                        mf_name='single_particle_zbt_metafit',
                                        code='spz',

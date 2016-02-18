@@ -1,6 +1,5 @@
 """Various functions for plotting in matplotlib
 """
-
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -10,12 +9,14 @@ from os import path
 import numpy as np
 from matplotlib import pyplot as plt, colors, cm
 
-from Exp import ExpInt
 from FitFunction import FitFunction
-from ImsrgDataMap import ImsrgDataMapInt, ImsrgDataMapLpt
+from transforms import identity
 from constants import DIR_SHELL_RESULTS
 from constants import PLOT_CMAP, LEGEND_SIZE
-from transforms import identity
+
+from int.ExpInt import ExpInt
+from int.ImsrgDataMapInt import ImsrgDataMapInt
+from lpt.ImsrgDataMapLpt import ImsrgDataMapLpt
 
 
 def plot_the_plots(plots, label, title, xlabel, ylabel,
