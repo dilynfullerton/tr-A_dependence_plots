@@ -8,32 +8,46 @@ from __future__ import division, print_function, unicode_literals
 
 from os import path, mkdir, link
 
-from Shell import Shell
-from TwoBodyInteraction import TwoBodyInteraction
-from QuantumNumbers import QuantumNumbers
+from ShellLpt import ShellLpt
+from TwoBodyInteractionInt import TwoBodyInteractionInt
+from QuantumNumbersInt import QuantumNumbersInt
+from QuantumNumbersOp import QuantumNumbersOp as ParticleOp
+from TwoBodyInteractionOp import TwoBodyInteractionOp as InteractionOp
+from TrelOneBodyOp import TrelOneBodyOp
+from TrelTwoBodyOp import TrelTwoBodyOp
 
-from parse_int import index_tuple_map
-from parse_int import mass_index_energy_map_map
-from parse_int import mass_interaction_tuple_energy_map_map
-from parse_int import mass_zero_body_term_map
-from parse_int import name_from_filename
-from parse_int import other_constants_from_filename
-from parse_int import mass_number_from_filename
+from parse_int import index_to_tuple_map as int_index_tuple_map
+from parse_int import mass_to_index_to_energy_map as int_mie_map
+from parse_int import mass_to_interaction_to_energy_map as int_miie_map
+from parse_int import mass_to_zbt_map as int_mass_zbt_map
+from parse_int import name_from_filename as int_name_from_filename
+from parse_int import other_constants_from_filename as int_oc_from_filename
+from parse_int import mass_number_from_filename as int_mass_from_filename
 
-from parse_lpt import mass_to_header_data_map
-from parse_lpt import mass_to_n_to_body_data_map
-from parse_lpt import mass_to_zbt_map
+from parse_lpt import mass_to_header_data_map as lpt_mass_hd_map
+from parse_lpt import mass_to_n_to_body_data_map as lpt_mass_nbd_map
+from parse_lpt import mass_to_zbt_map as lpt_mass_zbt_map
+
+from parse_op import get_data as op_data
 
 from constants import DIR_FILES_INT_ORG, ORG_FMT_INT_DIR, ORG_FMT_INT_FILE
-from constants import F_PARSE_INT_CMNT_CHAR as CMNT_CHAR_INT
-from constants import F_PARSE_INT_CMNT_ZBT as CMNT_ZBT
-from constants import F_PARSE_LPT_CMNT_CHAR as _CMNT_CHAR
-from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
-from constants import F_PARSE_LPT_ROW_HEAD as _ROW_HEAD
-from constants import F_PARSE_LPT_COL_HEAD_DATA_START as _COL_START
-from constants import F_PARSE_LPT_ROW_START_DATA as _ROW_BODY_START
-from constants import F_PARSE_LPT_NCOLS_BODY as _NCOLS_BODY
-from constants import FN_PARSE_LPT_REGEX_FILENAME_INT as REGEX_FILENAME_INT
+
+from constants import F_PARSE_INT_CMNT_CHAR as _INT_CMNT_CHAR
+from constants import F_PARSE_INT_CMNT_ZBT as _INT_CMNT_ZBT
+
+from constants import F_PARSE_LPT_CMNT_CHAR as _LPT_CMNT_CHAR
+from constants import F_PARSE_LPT_ROW_AZ as _LPT_ROW_AZ
+from constants import F_PARSE_LPT_ROW_HEAD as _LPT_ROW_HEAD
+from constants import F_PARSE_LPT_COL_HEAD_DATA_START as _LPT_COL_START
+from constants import F_PARSE_LPT_ROW_START_DATA as _LPT_ROW_BODY_START
+from constants import F_PARSE_LPT_NCOLS_BODY as _LPT_NCOLS_BODY
+from constants import FN_PARSE_LPT_REGEX_FILENAME_INT as _LPT_REGEX_FILENAME_INT
+
+from constants import F_PARSE_OP_CMNT_CHAR as _OP_CMNT_CHAR
+from constants import F_PARSE_OP_REGEX_HERM as _OP_REGEX_H
+from constants import F_PARSE_OP_REGEX_0B as _OP_REGEX_0BT
+from constants import F_PARSE_OP_REGEX_1B as _OP_REGEX_1BT
+from constants import F_PARSE_OP_REGEX_2B as _OP_REGEX_2BT
 
 
 class _ImsrgDatum(object):
@@ -92,12 +106,12 @@ class ImsrgDatumInt(_ImsrgDatum):
         and stores it in an instance variable
         """
         # Assuming all files characteristic have the same indexing...
-        index_orbital_map = index_tuple_map(self.files[0])
+        index_orbital_map = int_index_tuple_map(self.files[0])
 
         # Turn each tuple in the map into a named tuple
         for k in index_orbital_map.keys():
             v = index_orbital_map[k]
-            nextv = QuantumNumbers(*_qnums_to_list(v))
+            nextv = QuantumNumbersInt(*_qnums_to_list(v))
             index_orbital_map[k] = nextv
 
         self._index_orbital_map = index_orbital_map
@@ -108,7 +122,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         mapping for the directory
         """
         self._mass_index_energy_map = (
-            mass_index_energy_map_map(self.dir, filtered_files=self.files))
+            int_mie_map(self.dir, filtered_files=self.files))
 
     def _set_mass_interaction_index_energy_map(self):
         """Retrieves the
@@ -116,8 +130,8 @@ class ImsrgDatumInt(_ImsrgDatum):
         mapping for the directory
         """
         miiem = (
-            mass_interaction_tuple_energy_map_map(self.dir,
-                                                  filtered_files=self.files))
+            int_miie_map(self.dir,
+                         filtered_files=self.files))
 
         # Turn each tuple into a named tuple
         for A in miiem.keys():
@@ -128,7 +142,7 @@ class ImsrgDatumInt(_ImsrgDatum):
                 nextk = list()
                 for stritem in k:
                     nextk.append(int(stritem))
-                nextk = TwoBodyInteraction(*nextk)
+                nextk = TwoBodyInteractionInt(*nextk)
                 next_tuple_energy_map[nextk] = v
             miiem[A] = next_tuple_energy_map
 
@@ -136,18 +150,18 @@ class ImsrgDatumInt(_ImsrgDatum):
 
     def _set_zero_body_term_map(self):
         self._mass_zero_body_term_map = (
-            mass_zero_body_term_map(self.dir, filtered_files=self.files))
+            int_mass_zbt_map(self.dir, filtered_files=self.files))
 
     def _set_name(self):
         """Sets the incidence name variable
         """
-        self.name = name_from_filename(self.files[0])
+        self.name = int_name_from_filename(self.files[0])
 
     def _set_other_constants(self):
         """Sets other heading constants. Assumes all files in a given directory
         have the same constants
         """
-        self._other_constants = other_constants_from_filename(self.files[0])
+        self._other_constants = int_oc_from_filename(self.files[0])
 
     def _organize_files(self, directory, dir_fmt, file_fmt):
         """Give the files standardized names and put them in a similarly-named
@@ -165,7 +179,7 @@ class ImsrgDatumInt(_ImsrgDatum):
         if not path.exists(d):
             mkdir(d)
         for f in self.files:
-            mass_num = mass_number_from_filename(f)
+            mass_num = int_mass_from_filename(f)
             new_f = path.join(d,
                               file_fmt.format(*(arg_list + [mass_num])))
             next_files.append(new_f)
@@ -210,7 +224,7 @@ class ImsrgDatumInt(_ImsrgDatum):
     def _standardize_interaction_index_tuple(self, ii_tuple):
         next_tuple = [self._standard_index(i) for i in ii_tuple[0:4]]
         next_tuple += tuple(ii_tuple[4:])
-        return TwoBodyInteraction(*next_tuple)
+        return TwoBodyInteractionInt(*next_tuple)
 
     def _standard_index(self, i):
         io_map = self._index_orbital_map
@@ -283,7 +297,7 @@ class ImsrgDatumInt(_ImsrgDatum):
             qnums = self._index_orbital_map[index]
             next_tup += qnums
         next_tup += ii.j
-        return TwoBodyInteraction(*next_tup)
+        return TwoBodyInteractionInt(*next_tup)
 
 
 def _qnums_to_list(qnums):
@@ -302,15 +316,15 @@ class ImsrgDatumLpt(_ImsrgDatum):
     from these.
     """
     def __init__(self, directory, exp, files,
-                 _comment_char_lpt=_CMNT_CHAR,
-                 _row_az=_ROW_AZ,
-                 _row_head=_ROW_HEAD,
-                 _col_start=_COL_START,
-                 _row_body_start=_ROW_BODY_START,
-                 _ncols_body=_NCOLS_BODY,
-                 _regex_filename_int=REGEX_FILENAME_INT,
-                 _comment_char_int=CMNT_CHAR_INT,
-                 _comment_zbt=CMNT_ZBT):
+                 _comment_char_lpt=_LPT_CMNT_CHAR,
+                 _row_az=_LPT_ROW_AZ,
+                 _row_head=_LPT_ROW_HEAD,
+                 _col_start=_LPT_COL_START,
+                 _row_body_start=_LPT_ROW_BODY_START,
+                 _ncols_body=_LPT_NCOLS_BODY,
+                 _regex_filename_int=_LPT_REGEX_FILENAME_INT,
+                 _comment_char_int=_INT_CMNT_CHAR,
+                 _comment_zbt=_INT_CMNT_ZBT):
         super(ImsrgDatumLpt, self).__init__(directory=directory, exp=exp,
                                             files=files)
         self._comment_char_lpt = _comment_char_lpt
@@ -335,14 +349,14 @@ class ImsrgDatumLpt(_ImsrgDatum):
         self._set_mass_zbt_map()
 
     def _set_mass_header_map(self):
-        self._mass_header_map = mass_to_header_data_map(
+        self._mass_header_map = lpt_mass_hd_map(
             self.files, comment_char=self._comment_char_lpt,
             row_az=self._row_az,
             row_head=self._row_head,
             col_start=self._col_start)
 
     def _set_mass_n_body_map(self):
-        mass_n_body_map = mass_to_n_to_body_data_map(
+        mass_n_body_map = lpt_mass_nbd_map(
             self.files, comment_char=self._comment_char_lpt,
             row_az=self._row_az,
             row_body_start=self._row_body_start,
@@ -352,11 +366,11 @@ class ImsrgDatumLpt(_ImsrgDatum):
             if m not in d:
                 d[m] = dict()
             for n, b in nb_map.iteritems():
-                d[m][n] = Shell(*b)
+                d[m][n] = ShellLpt(*b)
         self._mass_n_body_map = d
 
     def _set_mass_zbt_map(self):
-        self._mass_zbt_map = mass_to_zbt_map(
+        self._mass_zbt_map = lpt_mass_zbt_map(
             filtered_filepaths_lpt=self.files,
             filename_int_regex=self._regex_filename_int,
             row_az=self._row_az,
@@ -407,4 +421,44 @@ class ImsrgDatumLpt(_ImsrgDatum):
 
 
 class ImsrgDatumOp(_ImsrgDatum):
-    pass  # todo implement me!
+    def __init__(self, directory, exp, files,
+                 _comment_char=_OP_CMNT_CHAR,
+                 _regex_h=_OP_REGEX_H,
+                 _regex_0bt=_OP_REGEX_0BT,
+                 _regex_1bt=_OP_REGEX_1BT,
+                 _regex_2bt=_OP_REGEX_2BT):
+        super(ImsrgDatumOp, self).__init__(directory=directory,
+                                           exp=exp,
+                                           files=files)
+        self._comment_char = _comment_char
+        self._regex_h = _regex_h
+        self._regex_0bt = _regex_0bt
+        self._regex_1bt = _regex_1bt
+        self._regex_2bt = _regex_2bt
+
+        self._h_head = None
+        self._h_line = None
+        self._zbt = None
+        self._particles_to_1bt_trel_map = None
+        self._particles_interaction_to_2bt_trel_map = None
+
+    def _set_maps(self):
+        h_head, h_line, zbt, trel_1bt_map, trel_2bt_map = op_data(
+            filepath=self.files[0],
+            comment_char=self._comment_char,
+            regex_h=self._regex_h,
+            regex_0bt=self._regex_0bt,
+            regex_1bt=self._regex_1bt,
+            regex_2bt=self._regex_2bt
+        )
+        self._h_head = h_head
+        self._h_line = h_line
+        self._zbt = zbt
+        self._particles_to_1bt_trel_map = dict()
+        for k, v, in trel_1bt_map:
+            self._particles_to_1bt_trel_map[TrelOneBodyOp(*k)] = v
+        self._particles_interaction_to_2bt_trel_map = dict()
+        for k, v in trel_2bt_map:
+            next_k = TrelTwoBodyOp(ParticleOp(*k[0]), ParticleOp(*k[1]),
+                                   InteractionOp(*k[2]))
+            self._particles_interaction_to_2bt_trel_map[next_k] = v

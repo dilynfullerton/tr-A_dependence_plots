@@ -34,3 +34,13 @@ class ExpLpt(namedtuple('ExpLpt', ['Z', 'int'])):
 
     def __str__(self):
         return str(tuple(self._asdict().values())).replace(', None', '')
+
+
+class ExpOp(namedtuple('ExpOp', ['hw'])):
+    """Exp definition for *.op files
+            hw: hw frequency number
+    """
+    __slots__ = ()
+
+    def __str__(self):
+        return str(tuple(self._asdict().values())).replace(', None', '')
