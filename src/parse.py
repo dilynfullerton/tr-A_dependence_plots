@@ -65,8 +65,7 @@ def filename_elts_list(filename, split_char):
 
 def elt_from_felts(felts, elt_regex):
     for elt in felts:
-        m = match(elt_regex, elt)
-        if m is not None and m.group(0) == elt:
+        if matches_completely(regex=elt_regex, string=elt):
             return elt
     else:
         return None
@@ -109,11 +108,21 @@ def comment_lines(filename, comment_char):
 
 def index_of_line(lines, line_regex):
     for line, index in zip(lines, range(len(lines))):
-        m = match(line_regex, line)
-        if m is not None and m.group(0) == line:
+        if matches_completely(regex=line_regex, string=line):
             return index, line
     else:
         return None
+
+
+def matches_completely(regex, string):
+    """Returns true if the regex matches the string completely,
+    false otherwise
+    """
+    m = match(pattern=regex, string=string)
+    if m is not None and m.group(0) == string:
+        return True
+    else:
+        return False
 
 
 def half_int_str_to_float(string):

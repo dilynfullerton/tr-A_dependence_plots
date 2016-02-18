@@ -4,15 +4,23 @@ from __future__ import print_function, division
 
 
 from parse import elt_from_felts, filename_elts_list, index_of_line
+from parse import content_lines
 
 
 # EXP
-def exp_from_filepath(filepath, split_char,
-                      regex_name, regex_hw):
+def exp(filepath, split_char, regex_hw):
+    """From the file path of the data file, generates the tuple necessary
+    to form its unique identifier in the space of *.op files
+    :param filepath: string representation of the path to the file
+    :param split_char: character that splits elements of the file name
+    :param regex_hw: regular expression that fully matches the hw file element
+    :return: a tuple containing all of the elements required to form the unique
+    identifier (i.e. exp) for the file given by file path, in the correct order
+    """
     felts = filename_elts_list(filename=filepath, split_char=split_char)
-    name = elt_from_felts(felts=felts, elt_regex=regex_name)
+    # name = elt_from_felts(felts=felts, elt_regex=regex_name)
     hw = int(elt_from_felts(felts=felts, elt_regex=regex_hw)[2:])
-    return name, hw
+    return hw,
 
 
 # DATA
@@ -76,7 +84,41 @@ def _ordered_lists_cured(ordered_lists):
     lists_2bt_cured = list()
     for lox in lists_2bt:
         lists_2bt_cured.append([int(x) for x in lox[:10]] + [float(lox[10])])
-    return h_lists_cured, zbt_cured, lists_2bt_cured, lists_2bt_cured
+    return h_lists_cured, zbt_cured, lists_1bt_cured, lists_2bt_cured
 
 
-# todo finish me!
+def _particles_to_trel_1b_map(cured_1bt_lists):
+    return {(p0, p1): trel for p0, p1, trel in cured_1bt_lists}
+
+
+def _interaction_to_trel_2b_map(cured_2bt_lists):
+    return {(l[0:3], l[3:6], l[6:10]): l[10] for l in cured_2bt_lists}
+
+
+def get_data(filepath, comment_char, regex_h, regex_0bt, regex_1bt, regex_2bt):
+    """Given a file path and other constants, retrieve the file data and
+    return it in an ordered tuple
+    :param filepath: string representation of the location of the file
+    :param comment_char: character representing a commented line
+    :param regex_h: the regular expression which matches the h header line
+    completely
+    :param regex_0bt: regular expression that matches the zero body line
+    completely
+    :param regex_1bt: regular expression that matches the one body header
+    completely
+    :param regex_2bt: regular expression that matches the two body header
+    completely
+    :return:
+    """
+    data = _ordered_lists_cured(_ordered_lists(_ordered_lines(
+        content_lines=content_lines(filename=filepath,
+                                    comment_char=comment_char),
+        regex_h=regex_h,
+        regex_0bt=regex_0bt,
+        regex_1bt=regex_1bt,
+        regex_2bt=regex_2bt)))
+    h_head, h_line = data[0]
+    zbt = data[1]
+    map_1bt = _particles_to_trel_1b_map(data[2])
+    map_2bt = _interaction_to_trel_2b_map(data[3])
+    return h_head, h_line, zbt, map_1bt, map_2bt
