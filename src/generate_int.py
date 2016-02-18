@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from os import mkdir, path
 
 from constants import STANDARD_IO_MAP
-from constants import DIR_FILES, DIR_GEN_INT
+from constants import DIR_FILES_INT, DIR_GEN_INT
 from constants import GEN_INT_SUBDIR, GEN_INT_FILE_NAME
 from constants import GEN_INT_ROW_LINES_TITLE, GEN_INT_ROW_LINES_FIT_PARAMS
 from constants import GEN_INT_ROW_ZERO_BODY_TERM, GEN_INT_ROW_INDEX_KEY_HEAD
@@ -30,18 +30,18 @@ def generate_int_file_from_fit(
         metafitter_zbt=single_particle_firstp_zbt_metafit,
         metafitter_sp=single_particle_firstp_metafit,
         metafitter_mp=multi_particle_firstp_metafit,
-        sourcedir=DIR_FILES,
+        sourcedir=DIR_FILES_INT,
         **kwargs):
     """Given fit functions for zbt, sp, and mp, as well as a set of e_hw_pairs,
     a range of mass numbers, and specific metafitter algorithms, generates
-    fake interaction files based on the fit functions
+    fake interaction files_INT based on the fit functions
 
     :param sourcedir:
     :param fitfn_zbt: fit function for zero body term
     :param fitfn_sp: fit function for single particle
     :param fitfn_mp: fit function for interaction
     :param e_hw_pairs: the e, hw, ... pairs used for the metafitters
-    :param mass_range: the range of masses for which to produces files
+    :param mass_range: the range of masses for which to produces files_INT
     :param std_io_map: the io_map for generating index-orbital keys
     :param metafitter_zbt: (Optional) The zero body term fitter
     :param metafitter_sp: (Optional) The single particle fitter

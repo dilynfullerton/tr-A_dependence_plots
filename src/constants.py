@@ -6,15 +6,17 @@ from QuantumNumbers import QuantumNumbers
 from LegendSize import LegendSize
 
 # Directories
-DIR_FILES = '../files'
-DIR_FILES_ORG = '../files_org'
+DIR_FILES_INT = '../files_INT'
+DIR_FILES_INT_ORG = '../files_INT_org'
+DIR_FILES_OP = '../files_OP'
+DIR_FILES_OP_ORG = '../files_OP_org'
 DIR_PLOTS = '../plots'
-DIR_GEN_INT = '../gen_files'
+DIR_GEN_INT = '../gen_files_INT'
 DIR_SHELL_RESULTS = '../t0/results'
 
 # File organization
-ORG_FMT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
-ORG_FMT_FILE = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}_A{}.int'
+ORG_FMT_INT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
+ORG_FMT_INT_FILE = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}_A{}.int'
 
 # *.int filename parsing
 FN_PARSE_INT_REGEX_NAME = b'[a-z]+'
@@ -51,6 +53,19 @@ F_PARSE_LPT_COLS_HALF_INT = [4, 5]
 F_PARSE_LPT_COLS_FLOAT_NONE = [7]
 F_PARSE_LPT_COLS_STR = [8]
 F_PARSE_LPT_CMNT_CHAR = b'!'
+
+# *.op filename parsing
+FN_PARSE_OP_REGEX_NAME = b'[A-Za-z]+'
+FN_PARSE_OP_REGEX_HW = FN_PARSE_INT_REGEX_HW
+FN_PARSE_OP_REGEX_EXT = b'.*\.op'
+
+# *.op file content parsing
+F_PARSE_OP_REGEX_HERM = b'[A-Za-z]+'
+F_PARSE_OP_REGEX_0B = b'\$ZeroBody:.*'
+F_PARSE_OP_REGEX_1B = b'\$OneBody:\s*'
+F_PARSE_OP_REGEX_2B = b'\$TwoBody:\s*'
+F_PARSE_OP_ELT_SPLIT = FN_PARSE_INT_ELT_SPLIT
+F_PARSE_OP_CMNT_CHAR = F_PARSE_INT_CMNT_CHAR
 
 
 # Printing

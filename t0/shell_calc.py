@@ -76,7 +76,7 @@ def _calc_has_been_done(dirpath):
 
 
 def files_with_ext_in_directory(directory, extension):
-    """Returns a list of the filenames of all the files in the given
+    """Returns a list of the filenames of all the files_INT in the given
     directory with the given extension
     :param extension:
     :param directory: """

@@ -8,12 +8,12 @@ import numpy as np
 
 from ImsrgDataMap import ImsrgDataMapInt
 from Exp import ExpInt
-from constants import DIR_FILES, STANDARD_IO_MAP
+from constants import DIR_FILES_INT, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
 
 
 def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-                 sourcedir=DIR_FILES,
+                 sourcedir=DIR_FILES_INT,
                  std_io_map=STANDARD_IO_MAP,
                  **kwargs):
     """Returns the fit function (and its optimized results) that produces the
@@ -78,7 +78,7 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
 def compare_params(metafitter, fitfn, e_hw_pairs,
                    depth, statfn=np.std,
                    print_compare_results=False,
-                   sourcedir=DIR_FILES,
+                   sourcedir=DIR_FILES_INT,
                    std_io_map=STANDARD_IO_MAP,
                    **kwargs):
     """Compare parameter results for a given metafitter on a given fitfn using

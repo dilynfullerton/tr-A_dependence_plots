@@ -26,7 +26,7 @@ from parse_lpt import mass_to_header_data_map
 from parse_lpt import mass_to_n_to_body_data_map
 from parse_lpt import mass_to_zbt_map
 
-from constants import DIR_FILES_ORG, ORG_FMT_DIR, ORG_FMT_FILE
+from constants import DIR_FILES_INT_ORG, ORG_FMT_INT_DIR, ORG_FMT_INT_FILE
 from constants import F_PARSE_INT_CMNT_CHAR as CMNT_CHAR_INT
 from constants import F_PARSE_INT_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_LPT_CMNT_CHAR as _CMNT_CHAR
@@ -54,9 +54,9 @@ class ImsrgDatumInt(_ImsrgDatum):
     """
     def __init__(self, directory, exp, files, std_io_map=None,
                  standardize_io_map=True, organize_files=True,
-                 org_file_dir=DIR_FILES_ORG,
-                 directory_format=ORG_FMT_DIR,
-                 file_format=ORG_FMT_FILE):
+                 org_file_dir=DIR_FILES_INT_ORG,
+                 directory_format=ORG_FMT_INT_DIR,
+                 file_format=ORG_FMT_INT_FILE):
         super(ImsrgDatumInt, self).__init__(directory=directory, exp=exp,
                                             files=files)
         self.name = None

@@ -107,6 +107,15 @@ def comment_lines(filename, comment_char):
     return list(lines)
 
 
+def index_of_line(lines, line_regex):
+    for line, index in zip(lines, range(len(lines))):
+        m = match(line_regex, line)
+        if m is not None and m.group(0) == line:
+            return index, line
+    else:
+        return None
+
+
 def half_int_str_to_float(string):
     if '/' in string:
         return reduce(lambda a, b: int(a)/int(b), string.split('/'))
