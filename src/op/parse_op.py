@@ -90,7 +90,8 @@ def _particles_to_trel_1b_map(cured_1bt_lists):
 
 
 def _interaction_to_trel_2b_map(cured_2bt_lists):
-    return {(l[0:3], l[3:6], l[6:10]): l[10] for l in cured_2bt_lists}
+    return {(tuple(l[0:3]), tuple(l[3:6]), tuple(l[6:10])): l[10]
+            for l in cured_2bt_lists}
 
 
 def get_data(filepath, comment_char, regex_h, regex_0bt, regex_1bt, regex_2bt):

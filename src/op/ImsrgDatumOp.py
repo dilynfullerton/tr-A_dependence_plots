@@ -35,6 +35,8 @@ class ImsrgDatumOp(ImsrgDatum):
         self._particles_to_1bt_trel_map = None
         self._particles_interaction_to_2bt_trel_map = None
 
+        self._set_maps()
+
     def _set_maps(self):
         h_head, h_line, zbt, trel_1bt_map, trel_2bt_map = data(
             filepath=self.files[0],
@@ -48,10 +50,10 @@ class ImsrgDatumOp(ImsrgDatum):
         self._h_line = h_line
         self._zbt = zbt
         self._particles_to_1bt_trel_map = dict()
-        for k, v, in trel_1bt_map:
+        for k, v, in trel_1bt_map.iteritems():
             self._particles_to_1bt_trel_map[TrelOneBody(*k)] = v
         self._particles_interaction_to_2bt_trel_map = dict()
-        for k, v in trel_2bt_map:
+        for k, v in trel_2bt_map.iteritems():
             next_k = TrelTwoBody(Particle(*k[0]), Particle(*k[1]),
                                  Interaction(*k[2]))
             self._particles_interaction_to_2bt_trel_map[next_k] = v
