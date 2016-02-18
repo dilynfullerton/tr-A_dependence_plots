@@ -8,9 +8,9 @@ from os import mkdir, path
 
 from FitFunction import FitFunction
 from ExpInt import ExpInt
-from metafitters_int_sp import single_particle_firstp_metafit
-from metafitters_int_sp import single_particle_firstp_zbt_metafit
-from metafitters_int_mp import multi_particle_firstp_metafit
+from metafitters_sp import single_particle_firstp_metafit
+from metafitters_sp import single_particle_firstp_zbt_metafit
+from metafitters_mp import multi_particle_firstp_metafit
 from constants import STANDARD_IO_MAP
 from constants import DIR_FILES_INT, DIR_GEN_INT
 from constants import GEN_INT_SUBDIR, GEN_INT_FILE_NAME

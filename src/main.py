@@ -3,9 +3,9 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from FitFunction import *
-from int.metafitters_int_mp import *
-from int.metafitters_int_sp import *
-from lpt.metafitters_lpt import *
+from int.metafitters_mp import *
+from int.metafitters_sp import *
+from lpt.metafitters import *
 
 
 rz = single_particle_first_np_zbt_metafit(1)(
