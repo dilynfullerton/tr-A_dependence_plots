@@ -14,7 +14,7 @@ from op.parse_op import exp
 
 
 class ImsrgDataMapOp(ImsrgDataMap):
-    def __init__(self, parent_directory, exp_list, exp_filter_fn,
+    def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  _split_char=_SPLIT_CHAR,
                  _regex_hw=_REGEX_HW,
                  _regex_filename=_REGEX_FILENAME,
