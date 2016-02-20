@@ -91,6 +91,7 @@ P_BREAK = '-' * 80
 
 # Plotting
 PLOT_CMAP = 'gnuplot'
+PLOT_FIGSIZE = (16, 12)
 
 # Legend
 LEGEND_MAX_COLS = 10

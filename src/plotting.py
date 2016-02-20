@@ -10,7 +10,7 @@ import numpy as np
 from matplotlib import pyplot as plt, colors, cm
 
 from FitFunction import FitFunction
-from constants import PLOT_CMAP, LEGEND_SIZE
+from constants import PLOT_CMAP, LEGEND_SIZE, PLOT_FIGSIZE
 
 
 def plot_the_plots(plots, label, title, xlabel, ylabel,
@@ -22,7 +22,9 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
                    dark=False,
                    show_fit=False, fit_params=None, fitfn=None, num_fit_pts=50,
                    include_legend=False, legend_size=LEGEND_SIZE,
-                   savedir=None, savename=None, code=None):
+                   savedir=None, savename=None, code=None,
+                   extension='.png',
+                   figsize=PLOT_FIGSIZE):
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
 
@@ -65,7 +67,7 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
     if dark:
         plt.style.use(b'dark_background')
     if fig is None:
-        fig = plt.figure()
+        fig = plt.figure(figsize=figsize)
     if ax is None:
         ax = fig.add_subplot(111)
     # Make color map
@@ -116,7 +118,7 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
     if savedir is not None and savename is not None:
         savename_kwargs = {'t': title, 'c': code if code is not None else ''}
         plt.savefig(
-            path.join(savedir, savename + '.png').format(**savename_kwargs))
+            path.join(savedir, savename + extension).format(**savename_kwargs))
     return fig, ax, cmap
 
 
