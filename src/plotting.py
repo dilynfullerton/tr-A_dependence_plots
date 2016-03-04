@@ -23,8 +23,13 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
                    show_fit=False, fit_params=None, fitfn=None, num_fit_pts=50,
                    include_legend=False, legend_size=LEGEND_SIZE,
                    savedir=None, savename=None, code=None,
+                   use_savename_kwargs=True,
                    extension='.png',
-                   figsize=PLOT_FIGSIZE):
+                   figsize=PLOT_FIGSIZE,
+                   data_file_savedir=None,
+                   data_file_extension='.dat',
+                   data_file_comment=b''
+                   ):
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
 
@@ -115,11 +120,58 @@ def plot_the_plots(plots, label, title, xlabel, ylabel,
         else:
             plt.legend()
     # Save
-    if savedir is not None and savename is not None:
-        savename_kwargs = {'t': title, 'c': code if code is not None else ''}
-        plt.savefig(
-            path.join(savedir, savename + extension).format(**savename_kwargs))
+    if savename is not None:
+        if use_savename_kwargs:
+            savename_kwargs = {'t': title, 'c': code if code is not None else ''}
+            savename = savename.format(**savename_kwargs)
+        if savedir is not None:
+            plt.savefig(path.join(savedir, savename + extension))
+        if data_file_savedir is not None:
+            _make_plot_data_file(plots=plots, title=title,
+                                 xlabel=xlabel, ylabel=ylabel,
+                                 savedir=data_file_savedir, savename=savename,
+                                 label=label, get_label_kwargs=get_label_kwargs,
+                                 idx_key=idx_key, extension=data_file_extension,
+                                 comment=data_file_comment)
     return fig, ax, cmap
+
+
+def _make_plot_data_file(plots, title, xlabel, ylabel,
+                         savedir, savename,
+                         label, get_label_kwargs=None, idx_key=None,
+                         extension='.dat',
+                         comment=b''):
+    writelines = list()
+    writelines.append(comment + title)
+    for p in plots:
+        if get_label_kwargs is not None:
+            writelines.append(
+                comment + label.format(**get_label_kwargs(p, idx_key)))
+        else:
+            writelines.append(comment + label)
+        writelines.append(comment +
+                          b'{xl:>16}{yl:>16}'.format(xl=xlabel, yl=ylabel))
+        x, y, = p[:2]
+        for xi, yi in zip(x, y):
+            writelines.append(b'{x:16.8f}{y:16.8f}'.format(x=xi, y=yi))
+        writelines.append(b'')
+    with open(path.join(savedir, savename+extension), 'w') as fw:
+        fw.write(b'{0}\n'.format(b'\n'.join(writelines)))
+
+
+# x = np.arange(11)
+# y1 = x**2
+# y2 = x**3
+# plots = list()
+# plots.append((x, y1, ['x^2']))
+# plots.append((x, y2, ['x^3']))
+# make_plot_data_file(plots=plots, title='powpow',
+#                     xlabel='x', ylabel='f(x)',
+#                     label_template='f(x) = {t}',
+#                     get_label_kwargs=lambda p, i: {'t': p[2][0]},
+#                     idx_key=1,
+#                     savedir='../plots',
+#                     savename='DATATATATATATATATATAT')
 
 
 def map_to_arrays(m):
