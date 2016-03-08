@@ -14,6 +14,7 @@ from op.parse_op import exp
 
 
 class ImsrgDataMapOp(ImsrgDataMap):
+    # noinspection PyUnusedLocal
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  _split_char=_SPLIT_CHAR,
                  _regex_hw=_REGEX_HW,

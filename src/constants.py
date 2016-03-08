@@ -13,7 +13,7 @@ DIR_FILES_OP = '../files_OP'
 DIR_FILES_OP_ORG = '../files_OP_org'
 DIR_PLOTS = '../plots'
 DIR_GEN_INT = '../gen_files_INT'
-DIR_SHELL_RESULTS = '../t0/results'
+DIR_SHELL_RESULTS = '../../cougar-nushellx/t0/results'
 
 # File organization
 ORG_FMT_INT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
@@ -70,6 +70,7 @@ F_PARSE_OP_CMNT_CHAR = F_PARSE_INT_CMNT_CHAR
 
 
 # Printing
+# noinspection PyClassHasNoInit
 class Color:
     PURPLE = '\033[95m'
     CYAN = '\033[96m'

@@ -8,6 +8,7 @@ from constants import STANDARD_IO_MAP, PLOT_CMAP, LEGEND_SIZE
 from int.ImsrgDataMapInt import ImsrgDataMapInt
 
 
+# noinspection PyUnusedLocal
 def _get_plot_single_particle(k, exp, me_map, mzbt_map, io_map, others, *args):
     x, y, const_list, const_dict = _set_const(k, exp, io_map, me_map,
                                               mzbt_map, others)
@@ -20,6 +21,7 @@ def _get_plot_single_particle(k, exp, me_map, mzbt_map, io_map, others, *args):
     return x, y, const_list, const_dict
 
 
+# noinspection PyUnusedLocal
 def _get_plots_single_particle(exp_list, all_data_map, get_data,
                                get_plot=_get_plot_single_particle,
                                print_key=False, std_io_map=None, **kwargs):
@@ -243,8 +245,8 @@ def single_particle_metafit_int(
                             _printer=_printer)
 
 
-def _get_multi_particle_plot(k, exp, io_map, me_map, mzbt_map, others,
-                             *args):
+# noinspection PyUnusedLocal
+def _get_multi_particle_plot(k, exp, io_map, me_map, mzbt_map, others, *args):
     x, y, const_list, const_dict = _set_const(k, exp, io_map, me_map,
                                               mzbt_map, others)
     const_dict['interaction'] = k

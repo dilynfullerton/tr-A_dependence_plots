@@ -9,6 +9,7 @@ from int.metafit_int import single_particle_metafit_int
 from lpt.ImsrgDataMapLpt import ImsrgDataMapLpt
 
 
+# noinspection PyUnusedLocal
 def _get_plot_lpt(n, exp, me_map, mzbt_map, *args):
     x, y = map_to_arrays(me_map)
     zbt_list = list()
@@ -22,6 +23,7 @@ def _get_plot_lpt(n, exp, me_map, mzbt_map, *args):
     return x, y, const_list, const_dict
 
 
+# noinspection PyUnusedLocal
 def _get_plots_lpt(exp_list, all_data_map, get_data, get_plot=_get_plot_lpt,
                    **kwargs):
     plots = list()
@@ -39,6 +41,7 @@ def _get_plots_lpt(exp_list, all_data_map, get_data, get_plot=_get_plot_lpt,
     return plots
 
 
+# noinspection PyUnusedLocal
 def _get_label_kwargs_lpt(plot, idx_key=None):
     return {'exp': plot[3]['exp'], 'N': plot[3]['N']}
 

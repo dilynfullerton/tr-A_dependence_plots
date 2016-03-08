@@ -81,6 +81,7 @@ def _ordered_lists_cured(ordered_lists):
         lists_1bt_cured.append([int(lox[0]), int(lox[1]), float(lox[2])])
     lists_2bt_cured = list()
     for lox in lists_2bt:
+        # noinspection PyTypeChecker
         lists_2bt_cured.append([int(x) for x in lox[:10]] + [float(lox[10])])
     return h_lists_cured, zbt_cured, lists_1bt_cured, lists_2bt_cured
 

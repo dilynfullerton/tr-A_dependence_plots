@@ -3,6 +3,7 @@ from __future__ import print_function, division, unicode_literals
 from collections import namedtuple
 
 
+# noinspection PyClassHasNoInit
 class ExpLpt(namedtuple('ExpLpt', ['Z', 'int'])):
     """Exp definition for *.lpt files
            Z: proton number

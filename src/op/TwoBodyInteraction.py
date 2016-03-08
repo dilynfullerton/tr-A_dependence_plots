@@ -3,6 +3,7 @@ from __future__ import print_function, division, unicode_literals
 from collections import namedtuple
 
 
+# noinspection PyClassHasNoInit
 class TwoBodyInteraction(namedtuple('TwoBodyInteraction',
                                     ['a', 'b', 'c', 'd'])):
     __slots__ = ()

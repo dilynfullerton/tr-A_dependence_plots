@@ -117,6 +117,8 @@ def index_of_line(lines, line_regex):
 def matches_completely(regex, string):
     """Returns true if the regex matches the string completely,
     false otherwise
+    :param regex: Regular expression pattern to match
+    :param string: String to test
     """
     m = match(pattern=regex, string=string)
     if m is not None and m.group(0) == string:
