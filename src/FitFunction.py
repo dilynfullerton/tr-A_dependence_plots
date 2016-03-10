@@ -85,25 +85,25 @@ class FitFunction:
 
 
 def combine_ffns(list_of_ffn, force_zero=None,
-                 name_pref=FF_NAME_PREF,
-                 name_sep=FF_NAME_SEP,
-                 name_suff=FF_NAME_SUFF,
-                 code_pref=FF_CODE_PREF,
-                 code_sep=FF_CODE_SEP,
-                 code_suff=FF_CODE_SUFF,
+                 _name_pref=FF_NAME_PREF,
+                 _name_sep=FF_NAME_SEP,
+                 _name_suff=FF_NAME_SUFF,
+                 _code_pref=FF_CODE_PREF,
+                 _code_sep=FF_CODE_SEP,
+                 _code_suff=FF_CODE_SUFF,
                  **kwargs):
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
 
-    :param code_suff:
-    :param name_suff:
-    :param code_sep:
-    :param code_pref:
+    :param _code_suff:
+    :param _name_suff:
+    :param _code_sep:
+    :param _code_pref:
     :param list_of_ffn: A list of FitFunctions to combine into one
     :param force_zero: (optional) force the zero of the overall result to a
     specified point
-    :param name_pref: prefix for the name of the combined fit function
-    :param name_sep: separator to go between fit functions
+    :param _name_pref: prefix for the name of the combined fit function
+    :param _name_sep: separator to go between fit functions
     :return: A combined fit function object, which may be used to optimize with
     respect to all of the degrees of freedom of its sub-functions
     """
@@ -113,13 +113,13 @@ def combine_ffns(list_of_ffn, force_zero=None,
         params_breaks.append(pl + params_breaks[i])
     total_params_length = params_breaks[-1]
 
-    combined_name = name_pref
-    combined_code = code_pref
+    combined_name = _name_pref
+    combined_code = _code_pref
     for ffn in list_of_ffn:
-        combined_name += ffn.name + name_sep
-        combined_code += ffn.code + code_sep
-    combined_name = combined_name[:combined_name.rfind(name_sep)] + name_suff
-    combined_code = combined_code[:combined_code.rfind(code_sep)] + code_suff
+        combined_name += ffn.name + _name_sep
+        combined_code += ffn.code + _code_sep
+    combined_name = combined_name[:combined_name.rfind(_name_sep)] + _name_suff
+    combined_code = combined_code[:combined_code.rfind(_code_sep)] + _code_suff
 
     def combined_ffns(x, params, const_list, const_dict):
         result = 0

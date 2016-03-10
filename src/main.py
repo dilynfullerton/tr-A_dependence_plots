@@ -6,9 +6,9 @@ from FitFunction import *
 from int.metafitters_mp import *
 from int.metafitters_sp import *
 from lpt.metafitters import *
-from op.ImsrgDataMapOp import ImsrgDataMapOp
+from op.DataMapOp import DataMapOp
 
-dm = ImsrgDataMapOp(parent_directory='../files_OP')
+dm = DataMapOp(parent_directory='../files_OP')
 datum = dm.map.values()[0]
 m = datum.interaction_monopole_map()
 for k, v in m.iteritems():

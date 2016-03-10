@@ -4,15 +4,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from constants import DIR_SHELL_RESULTS
-from lpt.ImsrgDataMapLpt import ImsrgDataMapLpt
+from lpt.DataMapLpt import DataMapLpt
 from plotting import map_to_arrays, plot_the_plots
 
 
 def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
                                   exp_list=None, proton_num=None,
                                   transform=None):
-    imsrg_data_map = ImsrgDataMapLpt(parent_directory=directory,
-                                     exp_list=exp_list).map
+    imsrg_data_map = DataMapLpt(parent_directory=directory,
+                                exp_list=exp_list).map
     plots = list()
     if proton_num is not None:
         items = filter(lambda item: item[0].Z == proton_num,
@@ -47,8 +47,8 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
 def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
                                   exp_list=None, proton_num=None,
                                   transform=None):
-    imsrg_data_map = ImsrgDataMapLpt(parent_directory=directory,
-                                     exp_list=exp_list).map
+    imsrg_data_map = DataMapLpt(parent_directory=directory,
+                                exp_list=exp_list).map
     plots = list()
     if proton_num is not None:
         items = filter(lambda item: item[0].Z == proton_num,
@@ -75,10 +75,8 @@ def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
         plots = [transform(*plot) for plot in plots]
 
     plot_the_plots(plots,
-                   label='{exp}',
-                   title='Energy vs A for N={}'.format(n),
-                   xlabel='A',
-                   ylabel='Energy (MeV)',
+                   label='{exp}', title='Energy vs A for N={}'.format(n),
+                   xlabel='A', ylabel='Energy (MeV)',
                    sort_key=lambda p: p[3]['exp'],
                    get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
                    include_legend=True)

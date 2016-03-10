@@ -18,7 +18,7 @@ from constants import GEN_INT_ROW_LINES_TITLE, GEN_INT_ROW_LINES_FIT_PARAMS
 from constants import GEN_INT_ROW_ZERO_BODY_TERM, GEN_INT_ROW_INDEX_KEY_HEAD
 from constants import GEN_INT_ROW_INDEX_KEY, GEN_INT_ROW_BLANK
 from constants import GEN_INT_ROW_SINGLE_PARTICLE, GEN_INT_ROW_INTERACTION
-from int.ImsrgDataMapInt import ImsrgDataMapInt
+from int.DataMapInt import DataMapInt
 
 
 def generate_int_file_from_fit(
@@ -34,35 +34,31 @@ def generate_int_file_from_fit(
     a range of mass numbers, and specific metafitter algorithms, generates
     fake interaction files_INT based on the fit functions
 
-    :param sourcedir:
     :param fitfn_zbt: fit function for zero body term
     :param fitfn_sp: fit function for single particle
     :param fitfn_mp: fit function for interaction
-    :param e_hw_pairs: the e, hw, ... pairs used for the metafitters
-    :param mass_range: the range of masses for which to produces files_INT
-    :param std_io_map: the io_map for generating index-orbital keys
-    :param metafitter_zbt: (Optional) The zero body term fitter
-    :param metafitter_sp: (Optional) The single particle fitter
-    :param metafitter_mp: (Optional) The interactions fitter
+    :param e_hw_pairs: e, hw, ... pairs used for the metafitters
+    :param mass_range: range of masses for which to produces files_INT
+    :param std_io_map: io_map for generating index-orbital keys
+    :param metafitter_zbt: (Optional) zero body term fitter
+    :param metafitter_sp: (Optional) single particle fitter
+    :param metafitter_mp: (Optional) interactions fitter
+    :param sourcedir: directory housing data files
     :param kwargs: (Optional) Additional keyword arguments to pass to the helper
     function
     """
-    imsrg_data_map = ImsrgDataMapInt(sourcedir,
-                                     exp_list=e_hw_pairs,
-                                     standard_indices=std_io_map)
+    imsrg_data_map = DataMapInt(
+        sourcedir, exp_list=e_hw_pairs, standard_indices=std_io_map)
     results_zbt = metafitter_zbt(fitfn_zbt, e_hw_pairs,
                                  imsrg_data_map=imsrg_data_map)
     results_sp = metafitter_sp(fitfn_sp, e_hw_pairs,
                                imsrg_data_map=imsrg_data_map)
     results_mp = metafitter_mp(fitfn_mp, e_hw_pairs,
                                imsrg_data_map=imsrg_data_map)
-    generate_int_file_from_fit_results(results_zbt=results_zbt,
-                                       results_sp=results_sp,
-                                       results_mp=results_mp,
-                                       e_hw_pairs=e_hw_pairs,
-                                       io_map=std_io_map,
-                                       mass_range=mass_range,
-                                       **kwargs)
+    generate_int_file_from_fit_results(
+        results_zbt=results_zbt, results_sp=results_sp, results_mp=results_mp,
+        e_hw_pairs=e_hw_pairs, io_map=std_io_map, mass_range=mass_range,
+        **kwargs)
 
 
 def generate_int_file_from_fit_results(
@@ -83,40 +79,40 @@ def generate_int_file_from_fit_results(
     """Generate a set of .int interaction files from a set of sp results, mp
     results, and zbt results for a given mass range.
 
-    :param e_hw_pairs:
+    :param results_zbt: Results of a zbt metafit. This should be an identity
+    zbt fit with a standard io_map also passed to this function.
     :param results_sp: Results of a single particle metafit. This should be an
     identity fit, with a standard io_map, also passed to this function.
     :param results_mp: Results of a multi-particle metafit. This should be an
     identity fit with a standard io_map, also passed to this function.
-    :param results_zbt: Results of a zbt metafit. This should be an identity
-    zbt fit with a standard io_map also passed to this function.
-    :param io_map: The standard io_map used in the above three metafits.
-    :param mass_range: The range of mass numbers for which to generate files.
-    :param file_save_dir: (Optional) The main directory in which generated files
+    :param mass_range: range of mass numbers for which to generate files.
+    :param e_hw_pairs: exp list for which to generate files
+    :param io_map: standard io_map used in the above three metafits.
+    :param file_save_dir: (Optional) main directory in which generated files
     are to be saved
-    :param _file_save_subdir: (Optional) The subdirectory template string to use
+    :param _file_save_subdir: (Optional) subdirectory template string to use
     for a particular evaluation of this function. This can accept the
     following keyword arguments:
-            mf1:  the code for the zbt metafit
-            ffn1: the code for the zbt metafit fit function
+            mf1:  code for the zbt metafit
+            ffn1: code for the zbt metafit fit function
             mf2:  sp metafit
             ffn2: sp fit function
             mf3:  mp metafit
             ffn3: mp fit function
-    :param _file_save_name: (Optional) The filename template string to use for
+    :param _file_save_name: (Optional) filename template string to use for
     each file. This can accept the following keyword arguments:
             [same as above]
             mass: the mass number
-    :param _row_lines_title: (Optional) The title lines for the beginning of the
+    :param _row_lines_title: (Optional) title lines for the beginning of the
     file.
-    :param _row_lines_subtitle: (Optional) The subtitle lines to directly follow
+    :param _row_lines_subtitle: (Optional) subtitle lines to directly follow
     the title.
-    :param _row_zbt: (Optional) The zbt line
-    :param _row_idx_key_head: (Optional) The index key header
-    :param _row_idx_key: (Optional) The index key template string (5 args)
-    :param _row_blank: (Optinal) The blank line
-    :param _row_sp: (Optional) The single particle row template (9 args)
-    :param _row_mp: (Optional) The interaction row template (7 args)
+    :param _row_zbt: (Optional) zbt line
+    :param _row_idx_key_head: (Optional) index key header
+    :param _row_idx_key: (Optional) index key template string (5 args)
+    :param _row_blank: (Optinal) blank line
+    :param _row_sp: (Optional) single particle row template (9 args)
+    :param _row_mp: (Optional) interaction row template (7 args)
     """
     info_zbt = results_zbt[4]
     info_sp = results_sp[4]
@@ -142,17 +138,13 @@ def generate_int_file_from_fit_results(
     # MAKE FILES
     for x in mass_range:
         # GET LINES
-        file_lines = _get_file_lines(x, results_zbt, results_sp, results_mp,
-                                     io_map=io_map,
-                                     e_hw_pairs=e_hw_pairs,
-                                     row_lines_title=_row_lines_title,
-                                     row_lines_subtitle=_row_lines_subtitle,
-                                     row_zbt=_row_zbt,
-                                     row_idx_key_head=_row_idx_key_head,
-                                     row_idx_key=_row_idx_key,
-                                     row_blank=_row_blank,
-                                     row_sp=_row_sp,
-                                     row_mp=_row_mp)
+        file_lines = _get_file_lines(
+            x, results_zbt, results_sp, results_mp,
+            io_map=io_map, e_hw_pairs=e_hw_pairs,
+            row_lines_title=_row_lines_title,
+            row_lines_subtitle=_row_lines_subtitle, row_zbt=_row_zbt,
+            row_idx_key_head=_row_idx_key_head, row_idx_key=_row_idx_key,
+            row_blank=_row_blank, row_sp=_row_sp, row_mp=_row_mp)
 
         # NAME FILE
         fname_args['mass'] = x
@@ -170,16 +162,10 @@ class InconsistentDatasetsGivenToIntFileGeneratorException(Exception):
     pass
 
 
-def _get_file_lines(x, results_zbt, results_sp, results_mp, io_map,
-                    e_hw_pairs,
-                    row_lines_title,
-                    row_lines_subtitle,
-                    row_zbt,
-                    row_idx_key_head,
-                    row_idx_key,
-                    row_blank,
-                    row_sp,
-                    row_mp):
+def _get_file_lines(
+        x, results_zbt, results_sp, results_mp, io_map, e_hw_pairs,
+        row_lines_title, row_lines_subtitle, row_zbt, row_idx_key_head,
+        row_idx_key, row_blank, row_sp, row_mp):
     info_zbt = results_zbt[4]
     info_sp = results_sp[4]
     info_mp = results_mp[4]
@@ -259,11 +245,9 @@ def _index_lines(row_index_key, io_map):
     lines = list()
     for k, v in sorted(io_map.items()):
         n, l, j, tz = v
-        lines.append(row_index_key.format(k,
-                                          int(n),
-                                          int(l),
-                                          str(int(2 * j)) + '/2',
-                                          str(int(2 * tz)) + '/2'))
+        lines.append(row_index_key.format(
+            k, int(n), int(l), str(int(2 * j)) + '/2',
+            str(int(2 * tz)) + '/2'))
     return lines
 
 

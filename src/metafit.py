@@ -24,70 +24,116 @@ def exp_list_to_string(exp_list):
 
 
 def imsrg_metafitter(
-        fitfn, exp_list, sourcedir, savedir,
-        transform,
-        super_transform_pre, super_transform_post,
-        imsrg_data_map,
+        fitfn,
+        exp_list,
         exp_filter_fn,
+        transform, super_transform_pre, super_transform_post,
+        # todo: combine transforms into one?
+        sourcedir,
+        data_map,
         mf_name, code,
-        xlabel, ylabel,
-        _title,
-        _get_data,
-        _data_map,
-        print_key=False, print_results=False,
-        print_mf_results=True, print_lr_results=True,
-        show_plot=False, show_fit=True, show_legend=True,
-        full_output=False,
-        _code_pref='',
-        _std_io_map=None,
-        _label=None, _idx=None,
+        _get_data_from_map,
+        _data_map_type,
+        _get_plots,
+        savedir_plots,
+        title, xlabel, ylabel, label=None,
+        _idx=None,  # todo: get rid of this parameter
         _get_label_fmt_kwargs=None,
         _data_line_style='-', _fit_line_style='--',
         _cmap=None,
         _legend_size=None,
         _savename=None,
         _plot_sort_key=lambda p: p,
-        _get_plots=None,
         _get_plot=None,
-        _printer=None):
-    """A meta-fit for all the orbitals with a given e, hw, and rp,
-     based on the given fit function
+        print_key=False, print_results=False,
+        print_mf_results=True, print_lr_results=True,
+        _printer=None,
+        show_plot=False, show_fit=True, show_legend=True,
+        full_output=False,
+        _code_pref='',  # todo: get rid of this parameter
+        _std_io_map=None,
+        ):
+    """An (abstract) function to be used by specific metafitters.
+    Retrieves data from a given data map, transforms it, and fits to it
+    based on both global and plot-specific parameters
 
-    :type _get_plots: (exp_list:list, all_data_map:_ImsrgDataMap,
-    get_data:_ImsrgDatum -> dict, get_plot:Any->Tuple[Any, Any, list, dict])
-    -> list
-    :type _data_map: _ImsrgDataMap
-    :param _get_plots:
-    :param _data_map:
-    :param _get_label_fmt_kwargs:
-    :param _code_pref:
-    :param exp_filter_fn:
-    :param exp_list:
-    :param _legend_size:
-    :param print_lr_results:
-    :param print_mf_results:
     :param fitfn: The FitFunction object to use for fitting. Alternatively,
     may be of the form in fitfns.py, although this is deprecated.
-    the data set(s) to use. If rp is not included, it is assumed to be None.
-    :param sourcedir: The main files directory to use for initializing the
-    ImsrgDataMaps
-    :param savedir: The directory in which to save plots
-    :param transform: (Optional) A transformation to apply to the data before
+    :param exp_list: List of exp values for which to gather data. An exp
+    is simply a tuple that uniquely identifies a data file. I do not
+    remember why I chose to call it an exp.
+    :param exp_filter_fn: Function from exp to {True, False}. Used as an
+    alternative to explicitly listing out exp tuples such that the set of
+    data gathered are only those that satisfy the filter
+    :param transform: (Optional) Transformation to apply to the data before
     fitting,
         t(xarr, yarr, *args) -> (newxarr, newyarr, *args),
     where xarr, yarr, newxarr, and newyarr are arrays.
-    :param super_transform_pre: (Optional) A transform to transform all of the
+    :param super_transform_pre: (Optional) Transform to transform all of the
     plots together prior to the individual transform. Default is None.
-    :param super_transform_post: (Optional) A transform to transform all of the
+    :param super_transform_post: (Optional) Transform to transform all of the
     plots together after the individual transform. Default is None.
-    :param imsrg_data_map: (Optional) If included, will not retrieve data map
+    :param sourcedir: Main files directory to use for initializing the
+    DataMaps
+    :param data_map: (Optional) If included, will not retrieve data map
     from sourcedir and will instead take the given data map
-    :param _std_io_map: A standard index -> orbital mapping scheme to use for
-    generating the data representations
+    :param mf_name: Assigned name of the metafitter, for use in plot title,
+    save name, etc
+    :param code: (Optional) An identifier for the specific implementation of
+    this function, to distinguish saved files.
+    :param _get_data_from_map: (Must be specified by wrapper functions)
+    Function to be used to get data from the data map.
+    :param _data_map_type: (Must be specified by wrapper functions)
+    Type of the data map (e.g. DataMapInt)
+    :param _get_plots: (Must be specified by wrapper functions)
+    Function that takes keyword arguments
+        exp_list, all_data_map, get_data, print_key, std_io_map, get_plot
+    and returns a list of plots, where a plot is defined to be a tuple
+    containing (xarray, yarray, constants_list, constants_dict)
+    :param savedir_plots: Directory in which to save plots
+    :param title: (Optional) The title by which to name the plot. Use the
+    following keys to include information:
+        {tr}: name of the transformation performed
+        {fn}: name of the fit function applied
+        {ehw}: (e, hw, rp) identifier of the data
+    :param xlabel: x label for plot
+    :param ylabel: y label for plot
+    :param label: (Optional) The labeling scheme for the plot legend. Use the
+    following keys to include information:
+        {e}: emax
+        {hw}: h-bar omega frequency
+        {rp}: proton radius
+        {i}: index
+    :param _idx: Key to use to get the index (for the label) from the
+    constants dictionary for each plot
+    :param _get_label_fmt_kwargs: Function that when given a plot and
+    a _idx returns a dictionary containing the keywords arguments that
+    the label string accepts and their respective values. If not specified,
+    labels are assumed to not need formatting.
+    :param _data_line_style: (Optional) The style of line to use for plotting
+    the data. Default is '-'
+    :param _fit_line_style: (Optional) The style of line to use for plotting the
+    fit. Default is '--'
+    :param _cmap: (Optional) colormap string to use for plotting
+    :param _legend_size: Object that specifies the sizing of the legend. If
+    not specified, the default matplotlib sizing is used
+    :param _savename: (Optional) The save name for the plot figure. Use the
+    following keys to include information:
+        {c}: code
+        {t}: title
+    :param _plot_sort_key: (Optional) key for ordering plots, default is by
+    Quantum numbers.
+    :param _get_plot: The function to be used to get a tuple that represents
+    a particle plot from the available maps. Default gets the appropriate
+    tuple for a single particle plot.
     :param print_key: (Optional) Whether to print the index -> orbital key.
     Default is False.
     :param print_results: (Optional) Whether to print fit results. Default is
     False.
+    :param print_mf_results: If True, prints out the metafit results
+    :param print_lr_results: If True, prints out the linear regression
+    results
+    :param _printer: The function to use to print results.
     :param show_plot: (Optional) Whether to show the data plot. Default False.
     :param show_fit: (Optional) Whether to show the fit plot when show_plot is
     True. Default True.
@@ -95,79 +141,46 @@ def imsrg_metafitter(
     True. Default True.
     :param full_output: (Optional) Whether the returned results should be the
     full output given by the leastsq function. Default False.
-    :param code: (Optional) An identifier for the specific implementation of
-    this function, to distinguish saved files.
-    :param _title: (Optional) The title by which to name the plot. Use the
-    following keys to include information:
-        {tr}: name of the transformation performed
-        {fn}: name of the fit function applied
-        {ehw}: (e, hw, rp) identifier of the data
-    :param _label: (Optional) The labeling scheme for the plot legend. Use the
-    following keys to include information:
-        {e}: emax
-        {hw}: h-bar omega frequency
-        {rp}: proton radius
-        {i}: index
-    :param _idx: the key to use to get the index (for the label) from the
-    constants dictionary for each plot
-    :param xlabel: x label for plot
-    :param ylabel: y label for plot
-    :param _data_line_style: (Optional) The style of line to use for plotting
-    the data. Default is '-'
-    :param _fit_line_style: (Optional) The style of line to use for plotting the
-    fit. Default is '--'
-    :param _savename: (Optional) The save name for the plot figure. Use the
-    following keys to include information:
-        {c}: code
-        {t}: title
-    :param _cmap: (Optional) colormap string to use for plotting
-    :param mf_name: The name of the metafitter
-    :param _plot_sort_key: (Optional) key for ordering plots, default is by
-    Quantum numbers.
-    :param _get_data: The function to be used to get data from the data map.
-    Defult gets single particle data
-    :param _get_plot: The function to be used to get a tuple that represents
-    a particle plot from the available maps. Default gets the appropriate
-    tuple for a single particle plot.
-    :param _printer: The function to use to print results.
+    :param _code_pref: Prefix to append to the code string.
+    :param _std_io_map: A standard index -> orbital mapping scheme to use for
+    generating the data representations
     :return: (mf_results, lr_results), A 2-tuple containing the meta-fit results
     and the regressional results for the fit.
     """
     code = _code_pref + code
 
     # Get index->orbital and index->mass->energy maps
-    if imsrg_data_map is not None:
-        all_data_map = imsrg_data_map
+    if data_map is not None:
+        all_data_map = data_map
     else:
-        all_data_map = _data_map(parent_directory=sourcedir,
-                                 exp_list=exp_list,
-                                 exp_filter_fn=exp_filter_fn,
-                                 standard_indices=_std_io_map)
+        all_data_map = _data_map_type(
+            parent_directory=sourcedir,
+            exp_list=exp_list, exp_filter_fn=exp_filter_fn,
+            standard_indices=_std_io_map)
 
     exp_list = all_data_map.map.keys()
 
     plts = _get_plots(exp_list=exp_list, all_data_map=all_data_map,
-                      get_data=_get_data, print_key=print_key,
+                      get_data=_get_data_from_map, print_key=print_key,
                       std_io_map=_std_io_map, get_plot=_get_plot)
 
     # Print index orbital map, if standard
     if print_key is True and _std_io_map is not None:
         print_io_key(_std_io_map, heading='Index key')
 
-    rr = _imsrg_meta_fit(plots=plts,
-                         transform=transform,
-                         super_transform_pre=super_transform_pre,
-                         super_transform_post=super_transform_post,
-                         fitfn=fitfn,
-                         full_output=full_output, idx=_idx, )
+    rr = _imsrg_meta_fit(
+        plots=plts, transform=transform,
+        super_transform_pre=super_transform_pre,
+        super_transform_post=super_transform_post,
+        fitfn=fitfn, full_output=full_output, idx=_idx, )
 
     mf_results, lr_results, plots, fitfn = rr
     params = mf_results[0]
 
-    formatted_title = _title.format(mfn=mf_name,
-                                    tr=transform.__name__,
-                                    fn=fitfn.__name__,
-                                    ehw=exp_list_to_string(exp_list))
+    formatted_title = title.format(
+        mfn=mf_name, tr=transform.__name__, fn=fitfn.__name__,
+        ehw=exp_list_to_string(exp_list))
+
     # Print results
     if print_results is True:
         _printer(mf_results, lr_results, print_mf_results, print_lr_results,
@@ -177,7 +190,7 @@ def imsrg_metafitter(
     if show_plot is True:
         plot_the_plots(
             plots,
-            label=_label, get_label_kwargs=_get_label_fmt_kwargs, idx_key=_idx,
+            label=label, get_label_kwargs=_get_label_fmt_kwargs, idx_key=_idx,
             title=formatted_title,
             xlabel=xlabel, ylabel=ylabel,
             data_line_style=_data_line_style, fit_line_style=_fit_line_style,
@@ -185,7 +198,7 @@ def imsrg_metafitter(
             cmap_name=_cmap,
             show_fit=show_fit, fit_params=params, fitfn=fitfn,
             include_legend=show_legend, legend_size=_legend_size,
-            savedir=savedir, savename=_savename, code=code)
+            savedir=savedir_plots, savename=_savename, code=code)
         plt.show()
 
     # Make an info dict
@@ -194,7 +207,8 @@ def imsrg_metafitter(
         'mf_name': mf_name,
         'ffn_name': fitfn.__name__,
         'ffn_code': fitfn.code if isinstance(fitfn, FitFunction) else '',
-        'exp_list': exp_list}
+        'exp_list': exp_list
+    }
 
     return rr + (info,)
 
@@ -272,11 +286,10 @@ def _meta_fit(plots, fitfn, params_guess, full_output=False, **lsqkwargs):
         constants_lists.append(const_list)
         constants_dicts.append(const_dict)
 
-    return leastsq(func=_mls, x0=params_guess,
-                   args=(fitfn, combined_x, combined_y,
-                         constants_lists, constants_dicts),
-                   full_output=full_output,
-                   **lsqkwargs)
+    return leastsq(
+        func=_mls, x0=params_guess,
+        args=(fitfn, combined_x, combined_y, constants_lists, constants_dicts),
+        full_output=full_output, **lsqkwargs)
 
 
 def _mls(params, fitfn, lox, loy, const_lists, const_dicts):

@@ -1,6 +1,6 @@
 from __future__ import print_function, division, unicode_literals
 
-from ImsrgDatum import ImsrgDatum
+from Datum import Datum
 from constants import F_PARSE_OP_CMNT_CHAR as _CMNT_CHAR
 from constants import F_PARSE_OP_REGEX_HERM as _REGEX_H
 from constants import F_PARSE_OP_REGEX_0B as _REGEX_0BT
@@ -13,16 +13,16 @@ from op.TwoBodyInteraction import TwoBodyInteraction as Interaction
 from op.parse_op import get_data as data
 
 
-class ImsrgDatumOp(ImsrgDatum):
+class DatumOp(Datum):
     def __init__(self, directory, exp, files,
                  _comment_char=_CMNT_CHAR,
                  _regex_h=_REGEX_H,
                  _regex_0bt=_REGEX_0BT,
                  _regex_1bt=_REGEX_1BT,
                  _regex_2bt=_REGEX_2BT):
-        super(ImsrgDatumOp, self).__init__(directory=directory,
-                                           exp=exp,
-                                           files=files)
+        super(DatumOp, self).__init__(directory=directory,
+                                      exp=exp,
+                                      files=files)
         self._comment_char = _comment_char
         self._regex_h = _regex_h
         self._regex_0bt = _regex_0bt

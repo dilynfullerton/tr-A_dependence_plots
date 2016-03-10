@@ -4,13 +4,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from int.ExpInt import ExpInt
-from int.ImsrgDataMapInt import ImsrgDataMapInt
+from int.DataMapInt import DataMapInt
 from transforms import identity
 
 
-def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
-                                         transform=identity,
-                                         **kwargs):
+def plot_energy_vs_mass_for_interactions(
+        e, hw, filesdir, savedir, transform=identity, **kwargs):
     """For a single e, hw pair, along with the main parent directory,
     plots are created for the energy of each (a, b, c, d, j) tuple against
     its mass number.
@@ -28,7 +27,7 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
            :param hw:
            :param e:
     """
-    idm = ImsrgDataMapInt(filesdir)
+    idm = DataMapInt(filesdir)
     idat = idm.map[ExpInt(e=e, hw=hw)]
     iime_map = idat.interaction_index_mass_energy_map()
 
@@ -74,9 +73,8 @@ def plot_energy_vs_mass_for_interactions(e, hw, filesdir, savedir,
     return plot_map
 
 
-def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
-                                     transform=identity,
-                                     **kwargs):
+def plot_energy_vs_mass_for_orbitals(
+        e, hw, filesdir, savedir, transform=identity, **kwargs):
     """For a single (e, hw) pair, along with the main parent directory,
     plots are created for the energy of each orbital against its mass.
 
@@ -93,7 +91,7 @@ def plot_energy_vs_mass_for_orbitals(e, hw, filesdir, savedir,
            :param hw:
            :param e:
     """
-    idm = ImsrgDataMapInt(filesdir)
+    idm = DataMapInt(filesdir)
     idat = idm.map[ExpInt(e=e, hw=hw)]
     ime_map = idat.index_mass_energy_map()
     io_map = idat.index_orbital_map

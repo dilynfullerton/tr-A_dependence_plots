@@ -140,16 +140,11 @@ def name_from_filename(filename, split_char=ELT_SPLIT,
     return elt_from_felts(felts_list, name_regex)
 
 
-def exp(filename, split_char=ELT_SPLIT,
-        e_regex=REGEX_E,
-        hw_regex=REGEX_HW,
-        b_regex=REGEX_BASE,
-        rp_regex=REGEX_RP):
+def exp(filename, split_char=ELT_SPLIT, e_regex=REGEX_E, hw_regex=REGEX_HW,
+        b_regex=REGEX_BASE, rp_regex=REGEX_RP):
     felts = filename_elts_list(filename, split_char)
-    return (_e_from_felts(felts, e_regex),
-            _hw_from_felts(felts, hw_regex),
-            _base_from_felts(felts, b_regex),
-            _rp_from_felts(felts, rp_regex))
+    return (_e_from_felts(felts, e_regex), _hw_from_felts(felts, hw_regex),
+            _base_from_felts(felts, b_regex), _rp_from_felts(felts, rp_regex))
 
 
 # ............................................................
@@ -162,8 +157,8 @@ def index_lines(commnt_lines, index_comment=CMNT_INDEX):
     lines that relate the orbital indices to their quantum numbers. Assumes
     these lines always occur at the end of the commented section and are
     directly preceded with a line beginning with the word "Index"
+    :param commnt_lines: lines commented out
     :param index_comment:
-    :param commnt_lines:
     """
     start_index = -1
     for cl, index in zip(commnt_lines, range(len(commnt_lines) + 1)):
@@ -208,8 +203,8 @@ def header_list(lines, header_pos=ROW_HEAD):
 def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     """Returns the lines containing the interaction data in the form of an 
     array (list of lists)
-    :param interaction_start:
     :param lines:
+    :param interaction_start:
     """
     data_lines = lines[interaction_start:]
     for i in range(len(data_lines)):

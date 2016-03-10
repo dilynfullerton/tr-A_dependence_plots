@@ -146,15 +146,10 @@ def single_particle_identity_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 def single_particle_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
-    return single_particle_metafit_int(fitfn, e_hw_pairs,
-                                       sourcedir=DIR_FILES_INT,
-                                       savedir=DIR_PLOTS,
-                                       transform=zbt,
-                                       mf_name='single_particle_zbt_metafit',
-                                       code='spz',
-                                       xlabel='A',
-                                       ylabel='Zero Body Term (MeV)',
-                                       **kwargs)
+    return single_particle_metafit_int(
+        fitfn, e_hw_pairs, sourcedir=DIR_FILES_INT, savedir=DIR_PLOTS,
+        transform=zbt, mf_name='single_particle_zbt_metafit', code='spz',
+        xlabel='A', ylabel='Zero Body Term (MeV)', **kwargs)
 
 
 def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):

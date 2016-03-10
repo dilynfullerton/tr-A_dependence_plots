@@ -8,7 +8,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 
-class ImsrgDataMap(object):
+class DataMap(object):
     def __init__(self, parent_directory, exp_type, datum_type,
                  exp_list=None, exp_filter_fn=None, **kwargs):
         self.parent_dir = parent_directory

@@ -10,13 +10,12 @@ from constants import DIR_FILES_INT, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
 
 from int.ExpInt import ExpInt
-from int.ImsrgDataMapInt import ImsrgDataMapInt
+from int.DataMapInt import DataMapInt
 
 
-def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-                 sourcedir=DIR_FILES_INT,
-                 std_io_map=STANDARD_IO_MAP,
-                 **kwargs):
+def max_r2_value(
+        metafitter, fitfns, e_hw_pairs, print_r2_results=False,
+        sourcedir=DIR_FILES_INT, std_io_map=STANDARD_IO_MAP, **kwargs):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
 
@@ -31,9 +30,9 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
     :return: best fit function, results
     """
     exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
-    imsrg_data_map = ImsrgDataMapInt(parent_directory=sourcedir,
-                                     exp_list=exp_list,
-                                     standard_indices=std_io_map)
+    imsrg_data_map = DataMapInt(
+        parent_directory=sourcedir, exp_list=exp_list,
+        standard_indices=std_io_map)
     fn_res_r2_map = dict()
     for fitfn in fitfns:
         try:
@@ -57,8 +56,7 @@ def max_r2_value(metafitter, fitfns, e_hw_pairs, print_r2_results=False,
         rank_map[i + 1] = (fitfn, r2)
         result_map[fitfn] = res
     if print_r2_results is True:
-        _printer_for_max_r2_value(rank_map, metafitter,
-                                  exp_list)
+        _printer_for_max_r2_value(rank_map, metafitter, exp_list)
     return rank_map[1][0], rank_map[1][1], rank_map, result_map
 
 
@@ -76,39 +74,36 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
         print(body_str)
 
 
-def compare_params(metafitter, fitfn, e_hw_pairs,
-                   depth, statfn=np.std,
-                   print_compare_results=False,
-                   sourcedir=DIR_FILES_INT,
-                   std_io_map=STANDARD_IO_MAP,
-                   **kwargs):
+def compare_params(
+        metafitter, fitfn, e_hw_pairs, depth, statfn=np.std,
+        print_compare_results=False, sourcedir=DIR_FILES_INT,
+        std_io_map=STANDARD_IO_MAP, **kwargs):
     """Compare parameter results for a given metafitter on a given fitfn using
     combinations of the given e_hw_pairs to the depth given by depth. The
     method of comparison is given by the statistical function statfn, whose
     default is the standard deviation.
 
-    :param metafitter: the meta-fitting method to use (e.g.
+    :param metafitter: meta-fitting method to use (e.g.
     single_particle_relative_metafit)
-    :param fitfn: the fit function to use
-    :param e_hw_pairs: the set of (e, hw) pairs to look at
-    :param depth: the depth of sub-combinations of e_hw_pairs to look at.
+    :param fitfn: fit function to use
+    :param e_hw_pairs: set of (e, hw) pairs to look at
+    :param depth: depth of sub-combinations of e_hw_pairs to look at.
     For example, if e_hw_pairs = {(1, 1), (2, 2), (3, 3), (4, 4)} and depth is
     2, all of the length 4, length 3, and length 2 sub-combinations will be
     added to the analysis
-    :param statfn: The comparison function to perform on the distribution of
+    :param statfn: comparison function to perform on the distribution of
     single-parameter results. Must take a single ndarray object as input and
     return a float output.
     :param print_compare_results: whether to print the results in a neat table
-    :param sourcedir: the directory from which to retrieve the files
+    :param sourcedir: directory from which to retrieve the files
     :param std_io_map: a standard index -> orbital mapping scheme to use fo the
     generated imsrg_data_map
     :param kwargs: keyword arguments to be passed to the metafitter
     :return: a list of (param, result, relative result) 3-tuples
     """
     exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
-    imsrg_data_map = ImsrgDataMapInt(sourcedir,
-                                     exp_list=exp_list,
-                                     standard_indices=std_io_map)
+    imsrg_data_map = DataMapInt(
+        sourcedir, exp_list=exp_list, standard_indices=std_io_map)
     if depth > len(e_hw_pairs) - 1:
         depth = len(e_hw_pairs) - 1
     params = metafitter(fitfn, e_hw_pairs,
@@ -127,10 +122,9 @@ def compare_params(metafitter, fitfn, e_hw_pairs,
         rel_result = abs(result / param)
         param_result_list.append((param, result, rel_result))
     if print_compare_results is True:
-        _printer_for_compare_params(param_result_list,
-                                    depth, statfn.__name__,
-                                    e_hw_pairs, metafitter,
-                                    fitfn)
+        _printer_for_compare_params(
+            param_result_list, depth, statfn.__name__,
+            e_hw_pairs, metafitter, fitfn)
     return param_result_list
 
 
@@ -142,23 +136,19 @@ def _distributions_from_lol(lol):
     return distributions_list
 
 
-def _printer_for_compare_params(params_result_list,
-                                depth, statfn,
-                                e_hw_pairs, metafitter,
-                                fitfn):
+def _printer_for_compare_params(
+        params_result_list, depth, statfn, e_hw_pairs, metafitter, fitfn):
     title_str = ('\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
                  '{mf} and fit function {ffn}'
-                 '').format(d=depth,
-                            sfn=statfn,
-                            ehw=e_hw_pairs,
-                            mf=metafitter.__name__,
-                            ffn=fitfn.__name__)
+                 '').format(
+        d=depth, sfn=statfn, ehw=e_hw_pairs,
+        mf=metafitter.__name__, ffn=fitfn.__name__)
     print(P_TITLE + title_str + '\n' + P_BREAK + P_END)
     temp_str = '{p:>20}\t{std:>20}\t{rel:>20}'
     print(P_HEAD +
-          temp_str.format(p='Parameter val',
-                          std='Compare result',
-                          rel='Rel compare result') +
+          temp_str.format(
+              p='Parameter val', std='Compare result',
+              rel='Rel compare result') +
           P_END)
     for p, std, rel in params_result_list:
         print(temp_str.format(p=p, std=std, rel=rel))

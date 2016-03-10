@@ -2,7 +2,7 @@ from __future__ import print_function, division, unicode_literals
 
 from os import path, mkdir, link
 
-from ImsrgDatum import ImsrgDatum
+from Datum import Datum
 from constants import DIR_FILES_INT_ORG, ORG_FMT_INT_DIR, ORG_FMT_INT_FILE
 from int.QuantumNumbers import QuantumNumbers
 from int.TwoBodyInteraction import TwoBodyInteraction
@@ -15,7 +15,7 @@ from int.parse_int import other_constants_from_filename as oc_from_filename
 from int.parse_int import mass_number_from_filename as mass_from_filename
 
 
-class ImsrgDatumInt(ImsrgDatum):
+class DatumInt(Datum):
     """Stores maps generated from *.int files and methods for generating new
     maps from this data
     """
@@ -24,8 +24,8 @@ class ImsrgDatumInt(ImsrgDatum):
                  org_file_dir=DIR_FILES_INT_ORG,
                  directory_format=ORG_FMT_INT_DIR,
                  file_format=ORG_FMT_INT_FILE):
-        super(ImsrgDatumInt, self).__init__(directory=directory, exp=exp,
-                                            files=files)
+        super(DatumInt, self).__init__(directory=directory, exp=exp,
+                                       files=files)
         self.name = None
         self.standardized_indexing = False
         self.files_organized = False

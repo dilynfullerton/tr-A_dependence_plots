@@ -5,7 +5,7 @@ from transforms import relative_y, identity
 from plotting import map_to_arrays
 from constants import P_TITLE, P_END, P_SUB, P_HEAD
 from constants import STANDARD_IO_MAP, PLOT_CMAP, LEGEND_SIZE
-from int.ImsrgDataMapInt import ImsrgDataMapInt
+from int.DataMapInt import DataMapInt
 
 
 # noinspection PyUnusedLocal
@@ -22,9 +22,9 @@ def _get_plot_single_particle(k, exp, me_map, mzbt_map, io_map, others, *args):
 
 
 # noinspection PyUnusedLocal
-def _get_plots_single_particle(exp_list, all_data_map, get_data,
-                               get_plot=_get_plot_single_particle,
-                               print_key=False, std_io_map=None, **kwargs):
+def _get_plots_single_particle(
+        exp_list, all_data_map, get_data, get_plot=_get_plot_single_particle,
+        print_key=False, std_io_map=None, **kwargs):
     plots = list()
     for exp in sorted(exp_list):
         data_maps = all_data_map[exp]
@@ -39,17 +39,15 @@ def _get_plots_single_particle(exp_list, all_data_map, get_data,
 
         # Get list of plots
         for k in sorted(ime_map.keys()):
-            plots.append(get_plot(k=k, exp=exp, io_map=io_map,
-                                  me_map=ime_map[k], mzbt_map=mzbt_map,
-                                  others=other_constants))
+            plots.append(get_plot(
+                k=k, exp=exp, io_map=io_map, me_map=ime_map[k],
+                mzbt_map=mzbt_map, others=other_constants))
     return plots
 
 
-def _printer_for_single_particle_metafit(metafit_results, linregress_results,
-                                         print_mf_results=True,
-                                         print_lr_results=True,
-                                         full_output=False,
-                                         header=''):
+def _printer_for_single_particle_metafit(
+        metafit_results, linregress_results, print_mf_results=True,
+        print_lr_results=True, full_output=False, header=''):
     if print_mf_results or print_lr_results:
         print('\n' + P_TITLE + header + '\n' + '=' * 80 + P_END)
     if print_mf_results:
@@ -128,7 +126,7 @@ def single_particle_metafit_int(
         _savename='meta_{c}-{t}',
         _plot_sort_key=lambda p: p[3]['qnums'],
         _get_data=lambda dm: dm.index_mass_energy_map(),
-        _data_map=ImsrgDataMapInt,
+        _data_map=DataMapInt,
         _get_plots=_get_plots_single_particle,
         _get_plot=_get_plot_single_particle,
         _printer=_printer_for_single_particle_metafit):
@@ -215,34 +213,25 @@ def single_particle_metafit_int(
     :return: (mf_results, lr_results), A 2-tuple containing the meta-fit results
     and the regressional results for the fit.
     """
-    return imsrg_metafitter(fitfn=fitfn, exp_list=exp_list,
-                            sourcedir=sourcedir, savedir=savedir,
-                            transform=transform,
-                            super_transform_pre=super_transform_pre,
-                            super_transform_post=super_transform_post,
-                            imsrg_data_map=imsrg_data_map,
-                            exp_filter_fn=exp_filter_fn,
-                            print_key=print_key, print_results=print_results,
-                            print_mf_results=print_mf_results,
-                            print_lr_results=print_lr_results,
-                            show_plot=show_plot, show_fit=show_fit,
-                            show_legend=show_legend,
-                            full_output=full_output,
-                            mf_name=mf_name, code=code,
-                            xlabel=xlabel, ylabel=ylabel,
-                            _code_pref=_code_pref,
-                            _std_io_map=_std_io_map,
-                            _title=_title, _label=_label, _idx=_idx,
-                            _get_label_fmt_kwargs=_get_label_fmt_kwargs,
-                            _data_line_style=_data_line_style,
-                            _fit_line_style=_fit_line_style,
-                            _cmap=_cmap,
-                            _legend_size=_legend_size,
-                            _savename=_savename,
-                            _plot_sort_key=_plot_sort_key,
-                            _get_data=_get_data, _data_map=_data_map,
-                            _get_plot=_get_plot, _get_plots=_get_plots,
-                            _printer=_printer)
+    return imsrg_metafitter(
+        fitfn=fitfn, exp_list=exp_list, sourcedir=sourcedir,
+        savedir_plots=savedir, transform=transform,
+        super_transform_pre=super_transform_pre,
+        super_transform_post=super_transform_post,
+        data_map=imsrg_data_map, exp_filter_fn=exp_filter_fn,
+        print_key=print_key, print_results=print_results,
+        print_mf_results=print_mf_results, print_lr_results=print_lr_results,
+        show_plot=show_plot, show_fit=show_fit, show_legend=show_legend,
+        full_output=full_output, mf_name=mf_name, code=code,
+        xlabel=xlabel, ylabel=ylabel, _code_pref=_code_pref,
+        _std_io_map=_std_io_map,
+        title=_title, label=_label, _idx=_idx,
+        _get_label_fmt_kwargs=_get_label_fmt_kwargs,
+        _data_line_style=_data_line_style, _fit_line_style=_fit_line_style,
+        _cmap=_cmap, _legend_size=_legend_size, _savename=_savename,
+        _plot_sort_key=_plot_sort_key, _get_data_from_map=_get_data,
+        _data_map_type=_data_map, _get_plot=_get_plot, _get_plots=_get_plots,
+        _printer=_printer)
 
 
 # noinspection PyUnusedLocal
@@ -255,17 +244,13 @@ def _get_multi_particle_plot(k, exp, io_map, me_map, mzbt_map, others, *args):
     return x, y, const_list, const_dict
 
 
-def _printer_for_multiparticle_metafit(metafit_results, linregress_results,
-                                       print_mf_results=True,
-                                       print_lr_results=True,
-                                       full_output=False,
-                                       header=''):
-    return _printer_for_single_particle_metafit(metafit_results,
-                                                linregress_results,
-                                                print_mf_results,
-                                                print_lr_results,
-                                                full_output,
-                                                header)
+def _printer_for_multiparticle_metafit(
+        metafit_results, linregress_results,
+        print_mf_results=True, print_lr_results=True, full_output=False,
+        header=''):
+    return _printer_for_single_particle_metafit(
+        metafit_results, linregress_results,
+        print_mf_results, print_lr_results, full_output, header)
 
 
 def multi_particle_metafit_int(
@@ -281,17 +266,12 @@ def multi_particle_metafit_int(
         _idx='interaction',
         ylabel='Energy (MeV)',
         **kwargs):
-    return single_particle_metafit_int(fitfn, e_hw_pairs, sourcedir, savedir,
-                                       transform=transform,
-                                       _get_data=_get_data,
-                                       _get_plot=_get_plot,
-                                       _printer=_printer,
-                                       show_legend=show_legend,
-                                       _plot_sort_key=_plot_sort_key,
-                                       _title=_title,
-                                       _idx=_idx,
-                                       ylabel=ylabel,
-                                       **kwargs)
+    return single_particle_metafit_int(
+        fitfn, e_hw_pairs, sourcedir, savedir,
+        transform=transform, _get_data=_get_data, _get_plot=_get_plot,
+        _printer=_printer, show_legend=show_legend,
+        _plot_sort_key=_plot_sort_key, _title=_title, _idx=_idx, ylabel=ylabel,
+        **kwargs)
 
 
 def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):

@@ -13,19 +13,20 @@ from FitFunction import FitFunction
 from constants import PLOT_CMAP, LEGEND_SIZE, PLOT_FIGSIZE
 
 
-def plot_the_plots(plots, title, label, xlabel, ylabel,
-                   data_line_style='-', fit_line_style='--',
-                   sort_key=lambda plot: plot, sort_reverse=False,
-                   title_kwargs=None, get_label_kwargs=None, idx_key=None,
-                   fig=None, ax=None, figsize=PLOT_FIGSIZE,
-                   cmap_name=PLOT_CMAP, cmap=None, dark=False,
-                   show_fit=False, fit_params=None, fitfn=None, num_fit_pts=50,
-                   include_legend=False, legend_size=LEGEND_SIZE,
-                   code=None, savedir=None, savename=None, extension='.png',
-                   use_savename_kwargs=True,
-                   data_file_savedir=None, data_file_extension='.dat',
-                   data_file_comment=b''
-                   ):
+def plot_the_plots(
+        plots, title, label, xlabel, ylabel,
+        data_line_style='-', fit_line_style='--',
+        sort_key=lambda plot: plot, sort_reverse=False,
+        title_kwargs=None, get_label_kwargs=None, idx_key=None,
+        fig=None, ax=None, figsize=PLOT_FIGSIZE,
+        cmap_name=PLOT_CMAP, cmap=None, dark=False,
+        show_fit=False, fit_params=None, fitfn=None, num_fit_pts=50,
+        include_legend=False, legend_size=LEGEND_SIZE,
+        code=None, savedir=None, savename=None, extension='.png',
+        use_savename_kwargs=True,
+        data_file_savedir=None, data_file_extension='.dat',
+        data_file_comment=b''
+        ):
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
 
@@ -68,7 +69,7 @@ def plot_the_plots(plots, title, label, xlabel, ylabel,
     (linspace arg)
     :param include_legend: (Optional) Whether a legend is to be included
     in the plot
-    :param legend_size: (Optional) The LegendSize object, which provides
+    :param legend_size: (Optional) LegendSize object, which provides
     information on how to size the legend. If None, the default
     formatting is used.
     :param code: (Optional) Code string to use in formatting the savename.
@@ -131,10 +132,10 @@ def plot_the_plots(plots, title, label, xlabel, ylabel,
             ncol = legend_size.num_cols(l)
             fontsize = legend_size.fontsize(l, ncol)
             box = ax.get_position()
-            ax.set_position([box.x0, box.y0,
-                             box.width * legend_size.width_scale(l, ncol,
-                                                                 fontsize),
-                             box.height])
+            ax.set_position(
+                [box.x0, box.y0,
+                 box.width * legend_size.width_scale(l, ncol, fontsize),
+                 box.height])
             plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
                        fontsize=fontsize)
         else:
@@ -148,12 +149,12 @@ def plot_the_plots(plots, title, label, xlabel, ylabel,
         if savedir is not None:
             plt.savefig(path.join(savedir, savename + extension))
         if data_file_savedir is not None:
-            _make_plot_data_file(plots=plots, title=title,
-                                 xlabel=xlabel, ylabel=ylabel,
-                                 savedir=data_file_savedir, savename=savename,
-                                 label=label, get_label_kwargs=get_label_kwargs,
-                                 idx_key=idx_key, extension=data_file_extension,
-                                 comment=data_file_comment)
+            _make_plot_data_file(
+                plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
+                savedir=data_file_savedir, savename=savename,
+                label=label, get_label_kwargs=get_label_kwargs,
+                idx_key=idx_key, extension=data_file_extension,
+                comment=data_file_comment)
     return fig, ax, cmap
 
 
@@ -197,7 +198,7 @@ def _make_plot_data_file(plots, title, xlabel, ylabel,
 
 def map_to_arrays(m):
     """Convert a map of dimensionality 2 into an x and y array
-    :param m: The map to refactor
+    :param m: map to refactor
     """
     length = len(m)
     x = np.empty(length)

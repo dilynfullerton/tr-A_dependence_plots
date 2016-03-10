@@ -6,7 +6,7 @@ files.
 from __future__ import division, print_function, unicode_literals
 
 
-class ImsrgDatum(object):
+class Datum(object):
     def __init__(self, directory, exp, files):
         self.exp = exp
         self.dir = directory

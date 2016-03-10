@@ -1,14 +1,14 @@
 from __future__ import print_function, division, unicode_literals
 
-from ImsrgDataMap import ImsrgDataMap
+from DataMap import DataMap
 from parse import get_files_r, has_extension
 from constants import FN_PARSE_INT_EXT as _INT_EXT
 from int.ExpInt import ExpInt
-from int.ImsrgDatumInt import ImsrgDatumInt
+from int.DatumInt import DatumInt
 from int.parse_int import exp
 
 
-class ImsrgDataMapInt(ImsrgDataMap):
+class DataMapInt(DataMap):
     """A mapping from ExpInt to ImsrgDatumInt
     """
 
@@ -16,9 +16,9 @@ class ImsrgDataMapInt(ImsrgDataMap):
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  standard_indices=None, _extension=_INT_EXT, **kwargs):
         self.extension = _extension
-        super(ImsrgDataMapInt, self).__init__(
+        super(DataMapInt, self).__init__(
             parent_directory=parent_directory,
-            exp_type=ExpInt, datum_type=ImsrgDatumInt,
+            exp_type=ExpInt, datum_type=DatumInt,
             exp_list=exp_list,
             exp_filter_fn=exp_filter_fn,
             std_io_map=standard_indices)

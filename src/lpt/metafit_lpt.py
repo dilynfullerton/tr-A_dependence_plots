@@ -6,7 +6,7 @@ from transforms import pzbt
 from plotting import map_to_arrays
 from constants import DIR_SHELL_RESULTS, DIR_PLOTS
 from int.metafit_int import single_particle_metafit_int
-from lpt.ImsrgDataMapLpt import ImsrgDataMapLpt
+from lpt.DataMapLpt import DataMapLpt
 
 
 # noinspection PyUnusedLocal
@@ -50,19 +50,15 @@ def metafit_lpt(
         fitfn, exp_list,
         transform=pzbt,
         exp_filter_fn=None,
-        xlabel='A',
-        ylabel='Energy + Zero Body Term (MeV)',
+        xlabel='A', ylabel='Energy + Zero Body Term (MeV)',
         show_fit=False,
         _sourcedir=DIR_SHELL_RESULTS, _savedir=DIR_PLOTS,
-        _data_map=ImsrgDataMapLpt,
-        _get_data=lambda dm: dm.n_mass_energy_map(),
-        _get_plots=_get_plots_lpt,
-        _get_plot=_get_plot_lpt,
+        _data_map=DataMapLpt, _get_data=lambda dm: dm.n_mass_energy_map(),
+        _get_plots=_get_plots_lpt, _get_plot=_get_plot_lpt,
         _plot_sort_key=lambda p: p[3]['exp'],
         _code_pref='LPT',
         _title='Metafit {mfn} for shell calculation {tr} data using {fn}',
-        _label='{N}, {exp}',
-        _get_label_fmt_kwargs=_get_label_kwargs_lpt,
+        _label='{N}, {exp}', _get_label_fmt_kwargs=_get_label_kwargs_lpt,
         _print_results=False,
         _idx='N',
         **kwargs):
@@ -70,16 +66,11 @@ def metafit_lpt(
         fitfn=fitfn, exp_list=exp_list, exp_filter_fn=exp_filter_fn,
         sourcedir=_sourcedir, savedir=_savedir,
         transform=transform,
-        xlabel=xlabel,
-        ylabel=ylabel,
+        xlabel=xlabel, ylabel=ylabel,
         show_fit=show_fit,
-        _data_map=_data_map,
-        _get_data=_get_data,
-        _get_plots=_get_plots,
-        _get_plot=_get_plot,
-        _plot_sort_key=_plot_sort_key,
-        _title=_title,
-        _label=_label, _idx=_idx,
+        _data_map=_data_map, _get_data=_get_data, _get_plots=_get_plots,
+        _get_plot=_get_plot, _plot_sort_key=_plot_sort_key,
+        _title=_title, _label=_label, _idx=_idx,
         print_results=_print_results,
         _get_label_fmt_kwargs=_get_label_fmt_kwargs,
         _code_pref=_code_pref,

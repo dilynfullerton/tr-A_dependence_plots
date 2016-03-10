@@ -1,6 +1,6 @@
 from __future__ import print_function, division, unicode_literals
 
-from ImsrgDatum import ImsrgDatum
+from Datum import Datum
 
 from constants import F_PARSE_LPT_CMNT_CHAR as _CMNT_CHAR
 from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
@@ -18,7 +18,7 @@ from lpt.parse_lpt import mass_to_n_to_body_data_map as mass_nbd_map
 from lpt.parse_lpt import mass_to_zbt_map as mass_zbt_map
 
 
-class ImsrgDatumLpt(ImsrgDatum):
+class DatumLpt(Datum):
     """Stores data maps from *.lpt files and methods for generating new maps
     from these.
     """
@@ -32,8 +32,8 @@ class ImsrgDatumLpt(ImsrgDatum):
                  _regex_filename_int=_REGEX_FILENAME_INT,
                  _comment_char_int=_INT_CMNT_CHAR,
                  _comment_zbt=_INT_CMNT_ZBT):
-        super(ImsrgDatumLpt, self).__init__(directory=directory, exp=exp,
-                                            files=files)
+        super(DatumLpt, self).__init__(directory=directory, exp=exp,
+                                       files=files)
         self._comment_char_lpt = _comment_char_lpt
         self._row_az = _row_az
         self._row_head = _row_head
