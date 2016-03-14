@@ -4,8 +4,8 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class ExpLpt(namedtuple('ExpLpt', ['Z', 'int'])):
-    """Exp definition for *.lpt files
+class ExpNushellxLpt(namedtuple('ExpNushellxLpt', ['Z', 'int'])):
+    """Exp definition for *.nushellx_lpt files
            Z: proton number
            int: interaction type (e.g. 'usdb', 'sd-shell...', 'fit-gen...')
     """

@@ -4,15 +4,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from constants import DIR_SHELL_RESULTS
-from lpt.DataMapLpt import DataMapLpt
+from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 from plotting import map_to_arrays, plot_the_plots
 
 
 def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
                                   exp_list=None, proton_num=None,
                                   transform=None):
-    imsrg_data_map = DataMapLpt(parent_directory=directory,
-                                exp_list=exp_list).map
+    imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
+                                        exp_list=exp_list).map
     plots = list()
     if proton_num is not None:
         items = filter(lambda item: item[0].Z == proton_num,
@@ -47,8 +47,8 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
 def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
                                   exp_list=None, proton_num=None,
                                   transform=None):
-    imsrg_data_map = DataMapLpt(parent_directory=directory,
-                                exp_list=exp_list).map
+    imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
+                                        exp_list=exp_list).map
     plots = list()
     if proton_num is not None:
         items = filter(lambda item: item[0].Z == proton_num,

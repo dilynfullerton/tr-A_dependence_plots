@@ -5,8 +5,8 @@ import numpy as np
 from transforms import pzbt
 from plotting import map_to_arrays
 from constants import DIR_SHELL_RESULTS, DIR_PLOTS
-from int.metafit_int import single_particle_metafit_int
-from lpt.DataMapLpt import DataMapLpt
+from int.metafitter_abs import single_particle_metafit_int
+from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 
 
 # noinspection PyUnusedLocal
@@ -46,14 +46,15 @@ def _get_label_kwargs_lpt(plot, idx_key=None):
     return {'exp': plot[3]['exp'], 'N': plot[3]['N']}
 
 
-def metafit_lpt(
+def metafit_nushellx_lpt(
         fitfn, exp_list,
         transform=pzbt,
         exp_filter_fn=None,
         xlabel='A', ylabel='Energy + Zero Body Term (MeV)',
         show_fit=False,
         _sourcedir=DIR_SHELL_RESULTS, _savedir=DIR_PLOTS,
-        _data_map=DataMapLpt, _get_data=lambda dm: dm.n_mass_energy_map(),
+        _data_map=DataMapNushellxLpt,
+        _get_data=lambda dm: dm.n_mass_energy_map(),
         _get_plots=_get_plots_lpt, _get_plot=_get_plot_lpt,
         _plot_sort_key=lambda p: p[3]['exp'],
         _code_pref='LPT',
