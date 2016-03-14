@@ -51,15 +51,19 @@ def _get_extension(fname):
 def filename_elts_list(filename, split_char):
     """Get a list of the elements in the filename where name elements are
     separated by split_char
-    :param split_char:
-    :param filename:
+    :param filename: Name of the file or directory to split
+    :param split_char: Character by which to split the string
     """
     ext_index = filename.rfind('.')
     dir_index = filename.rfind('/')
-    if dir_index != -1:
+    if dir_index != -1 and ext_index != -1:
         filename_woext = filename[dir_index:ext_index]
-    else:
+    elif ext_index != -1:
         filename_woext = filename[:ext_index]
+    elif dir_index != -1:
+        filename_woext = filename[dir_index:]
+    else:
+        filename_woext = filename
     return filename_woext.split(split_char)
 
 
