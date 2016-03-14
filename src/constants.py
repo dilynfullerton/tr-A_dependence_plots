@@ -38,11 +38,12 @@ F_PARSE_INT_CMNT_CHAR = b'!'
 F_PARSE_INT_CMNT_INDEX = b'Index'
 F_PARSE_INT_CMNT_ZBT = b'Zero body term'
 
-# *.lpt filename parsing
-FN_PARSE_LPT_REGEX_FILENAME = b'[a-z_][a-z_]\d\d[a-z].lpt'
-FN_PARSE_LPT_REGEX_FILENAME_INT = b'A\d\d\.int|usdb\.int'
+# nushellx *.lpt filename parsing
+FN_PARSE_LPT_REGEX_FILENAME = b'[a-z][a-z_]\d\d[a-z]\.lpt'
+FN_PARSE_LPT_REGEX_FILENAME_INT = b'A\d+\.int|usdb\.int'
+FN_PARSE_LPT_REGEX_DNAME = b'files_org|gen_files|usdb'
 
-# *.lpt file content parsing
+# nushellx *.lpt file content parsing
 F_PARSE_LPT_ROW_AZ = 1
 F_PARSE_LPT_ROW_HEAD = 2
 F_PARSE_LPT_ROW_START_DATA = 4
@@ -54,6 +55,11 @@ F_PARSE_LPT_COLS_HALF_INT = [4, 5]
 F_PARSE_LPT_COLS_FLOAT_NONE = [7]
 F_PARSE_LPT_COLS_STR = [8]
 F_PARSE_LPT_CMNT_CHAR = b'!'
+
+# ncsm/vce *.lpt filename parsing
+FN_PARSE_NCSMVCE_LPT_REGEX_DNAME = b'vce'
+FN_PARSE_NCSMVCE_LPT_REGEX_PRESC = b'presc\d+,\d+,\d+'
+FN_PARSE_NCSMVCE_LPT_REGEX_NHW = b'Nhw\d+'
 
 # *.op filename parsing
 FN_PARSE_OP_REGEX_NAME = b'[A-Za-z]+'
