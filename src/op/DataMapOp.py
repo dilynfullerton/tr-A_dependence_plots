@@ -10,7 +10,7 @@ from constants import F_PARSE_OP_ELT_SPLIT as _SPLIT_CHAR
 
 from op.ExpOp import ExpOp
 from op.DatumOp import DatumOp
-from op.parse_op import exp
+from op.parser import exp
 
 
 class DataMapOp(DataMap):

@@ -10,7 +10,7 @@ from op.TrelParticles import TrelParticles
 from op.TrelParticlesInteraction import TrelParticlesInteraction
 from op.QuantumNumbers import QuantumNumbers as Particle
 from op.TwoBodyInteraction import TwoBodyInteraction as Interaction
-from op.parse_op import get_data as data
+from op.parser import get_data as data
 
 
 class DatumOp(Datum):
