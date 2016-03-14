@@ -57,11 +57,11 @@ def filename_elts_list(filename, split_char):
     ext_index = filename.rfind('.')
     dir_index = filename.rfind('/')
     if dir_index != -1 and ext_index != -1:
-        filename_woext = filename[dir_index:ext_index]
+        filename_woext = filename[dir_index+1:ext_index]
     elif ext_index != -1:
         filename_woext = filename[:ext_index]
     elif dir_index != -1:
-        filename_woext = filename[dir_index:]
+        filename_woext = filename[dir_index+1:]
     else:
         filename_woext = filename
     return filename_woext.split(split_char)
@@ -75,39 +75,47 @@ def elt_from_felts(felts, elt_regex):
         return None
 
 
-def _get_lines(filename):
-    """Returns all of the lines read from the given file in a list (with
-    line separators and blank lines removed
+def _get_lines(filepath):
+    """Same as _get_lines, except returns a generator object
+    :param filepath: path to the file
     """
-    with open(filename) as f:
-        lines = f.readlines()
-    # Remove line separators
-    lines = map(lambda x: x.strip(), lines)
-    # Remove blank lines
-    lines = filter(lambda x: len(x) > 0, lines)
-    return list(lines)
+    with open(filepath, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if len(line) > 0:
+                yield line
+            else:
+                continue
 
 
-def content_lines(filename, comment_char):
-    """Returns a list of all of the lines that are not comments
-    :param comment_char:
-    :param filename:
+def content_lines(filepath, comment_str):
+    """Generator that yields lines that are not comments
+    :param filepath: path to the file
+    :param comment_str: string signifying a commented line
     """
-    lines = _get_lines(filename)
-    return list(filter(lambda x: x[0] is not comment_char, lines))
+    lines = _get_lines(filepath)
+    for line in lines:
+        if line.find(comment_str) == 0:
+            continue
+        else:
+            yield line
 
 
-def comment_lines(filename, comment_char):
-    """Returns all of the lines read from the given filename that are
-    descriptive comments
-    :param comment_char:
-    :param filename:
+def comment_lines(filepath, comment_str):
+    """Generator that yields lines that are comments
+    :param filepath: path to the file
+    :param comment_str: string signifying a commentd line
     """
-    lines = _get_lines(filename)
-    lines = filter(lambda x: x[0] is comment_char, lines)
-    lines = map(lambda x: x.strip(comment_char).strip(), lines)
-    lines = filter(lambda x: x is not '', lines)
-    return list(lines)
+    lines = _get_lines(filepath)
+    for line in lines:
+        if line.find(comment_str) != 0:
+            continue
+        else:
+            line = line.strip(comment_str).strip()
+            if line == '':
+                continue
+            else:
+                yield line
 
 
 def index_of_line(lines, line_regex):

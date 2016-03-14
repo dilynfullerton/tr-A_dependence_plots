@@ -95,11 +95,11 @@ def _interaction_to_trel_2b_map(cured_2bt_lists):
             for l in cured_2bt_lists}
 
 
-def get_data(filepath, comment_char, regex_h, regex_0bt, regex_1bt, regex_2bt):
+def get_data(filepath, comment_str, regex_h, regex_0bt, regex_1bt, regex_2bt):
     """Given a file path and other constants, retrieve the file data and
     return it in an ordered tuple
     :param filepath: string representation of the location of the file
-    :param comment_char: character representing a commented line
+    :param comment_str: character representing a commented line
     :param regex_h: the regular expression which matches the h header line
     completely
     :param regex_0bt: regular expression that matches the zero body line
@@ -111,8 +111,8 @@ def get_data(filepath, comment_char, regex_h, regex_0bt, regex_1bt, regex_2bt):
     :return:
     """
     data = _ordered_lists_cured(_ordered_lists(_ordered_lines(
-        content=content_lines(filename=filepath,
-                              comment_char=comment_char),
+        content=list(content_lines(filepath=filepath,
+                                   comment_str=comment_str)),
         regex_h=regex_h,
         regex_0bt=regex_0bt,
         regex_1bt=regex_1bt,

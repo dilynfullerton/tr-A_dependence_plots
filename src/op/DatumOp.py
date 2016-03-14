@@ -1,7 +1,7 @@
 from __future__ import print_function, division, unicode_literals
 
 from Datum import Datum
-from constants import F_PARSE_OP_CMNT_CHAR as _CMNT_CHAR
+from constants import F_PARSE_OP_CMNT_STR as _CMNT_STR
 from constants import F_PARSE_OP_REGEX_HERM as _REGEX_H
 from constants import F_PARSE_OP_REGEX_0B as _REGEX_0BT
 from constants import F_PARSE_OP_REGEX_1B as _REGEX_1BT
@@ -15,7 +15,7 @@ from op.parser import get_data as data
 
 class DatumOp(Datum):
     def __init__(self, directory, exp, files,
-                 _comment_char=_CMNT_CHAR,
+                 _comment_str=_CMNT_STR,
                  _regex_h=_REGEX_H,
                  _regex_0bt=_REGEX_0BT,
                  _regex_1bt=_REGEX_1BT,
@@ -23,7 +23,7 @@ class DatumOp(Datum):
         super(DatumOp, self).__init__(directory=directory,
                                       exp=exp,
                                       files=files)
-        self._comment_char = _comment_char
+        self._comment_str = _comment_str
         self._regex_h = _regex_h
         self._regex_0bt = _regex_0bt
         self._regex_1bt = _regex_1bt
@@ -40,7 +40,7 @@ class DatumOp(Datum):
     def _set_maps(self):
         h_head, h_line, zbt, trel_1bt_map, trel_2bt_map = data(
             filepath=self.files[0],
-            comment_char=self._comment_char,
+            comment_str=self._comment_str,
             regex_h=self._regex_h,
             regex_0bt=self._regex_0bt,
             regex_1bt=self._regex_1bt,

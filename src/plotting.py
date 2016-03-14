@@ -25,7 +25,7 @@ def plot_the_plots(
         code=None, savedir=None, savename=None, extension='.png',
         use_savename_kwargs=True,
         data_file_savedir=None, data_file_extension='.dat',
-        data_file_comment=b''
+        data_file_comment_str=b''
         ):
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
@@ -85,7 +85,7 @@ def plot_the_plots(
     to be saved. If None, no data file will be generated.
     :param data_file_extension: (Optional) Extension for the generated data
     file.
-    :param data_file_comment: (Optional) Character(s) to precede all titles,
+    :param data_file_comment_str: (Optional) Character(s) to precede all titles,
     headings, etc. in the generated data file. If the empty string is given,
     no character will precede these fields.
     :return: the figure, subplot, and cmap objects
@@ -154,7 +154,7 @@ def plot_the_plots(
                 savedir=data_file_savedir, savename=savename,
                 label=label, get_label_kwargs=get_label_kwargs,
                 idx_key=idx_key, extension=data_file_extension,
-                comment=data_file_comment)
+                comment_str=data_file_comment_str)
     return fig, ax, cmap
 
 
@@ -162,16 +162,16 @@ def _make_plot_data_file(plots, title, xlabel, ylabel,
                          savedir, savename,
                          label, get_label_kwargs=None, idx_key=None,
                          extension='.dat',
-                         comment=b''):
+                         comment_str=b''):
     writelines = list()
-    writelines.append(comment + title)
+    writelines.append(comment_str + title)
     for p in plots:
         if get_label_kwargs is not None:
             writelines.append(
-                comment + label.format(**get_label_kwargs(p, idx_key)))
+                comment_str + label.format(**get_label_kwargs(p, idx_key)))
         else:
-            writelines.append(comment + label)
-        writelines.append(comment +
+            writelines.append(comment_str + label)
+        writelines.append(comment_str +
                           b'{xl:>16} {yl:>16}'.format(xl=xlabel, yl=ylabel))
         x, y, = p[:2]
         for xi, yi in zip(x, y):

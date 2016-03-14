@@ -2,7 +2,7 @@ from __future__ import division, print_function
 
 from re import sub
 
-from constants import F_PARSE_LPT_CMNT_CHAR as _CHR_CMNT
+from constants import F_PARSE_LPT_CMNT_STR as _STR_CMNT
 from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
 from constants import FN_PARSE_INT_ELT_SPLIT as _CHR_SPLIT
 from constants import FN_PARSE_NCSMVCE_LPT_REGEX_PRESC as _RGX_PRESC
@@ -19,7 +19,7 @@ def _a_presc_from_delts(delts, regex_presc):
     return tuple([int(x) for x in a_presc_tuple_str.split(',')])
 
 
-def _nhw_n1_n2_from_delts(delts, regex_nhw):
+def nhw_n1_n2_from_delts(delts, regex_nhw):
     nhw_elt = elt_from_felts(felts=delts, elt_regex=regex_nhw)
     if nhw_elt is None:
         return (None,)*3
@@ -31,11 +31,11 @@ def _nhw_n1_n2_from_delts(delts, regex_nhw):
 
 
 def exp(filepath,
-        _comment_char=_CHR_CMNT, _row_az=_ROW_AZ, _split_char=_CHR_SPLIT,
+        _comment_str=_STR_CMNT, _row_az=_ROW_AZ, _split_char=_CHR_SPLIT,
         _regex_presc=_RGX_PRESC, _regex_nhw=_RGX_NHW):
-    z = a_z(filepath=filepath, comment_char=_comment_char, row_az=_row_az)[1]
+    z = a_z(filepath=filepath, comment_str=_comment_str, row_az=_row_az)[1]
     dirname = datum_dirname(filepath=filepath)
     delts = filename_elts_list(filename=dirname, split_char=_split_char)
     a_presc = _a_presc_from_delts(delts=delts, regex_presc=_regex_presc)
-    nhw, n1, n2 = _nhw_n1_n2_from_delts(delts=delts, regex_nhw=_regex_nhw)
+    nhw, n1, n2 = nhw_n1_n2_from_delts(delts=delts, regex_nhw=_regex_nhw)
     return z, a_presc, nhw, n1, n2
