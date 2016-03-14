@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from FitFunction import *
 from int.metafitters_mp import *
 from int.metafitters_sp import *
-from lpt.metafitters import *
+from nushellx_lpt.metafitters import *
 from op.DataMapOp import DataMapOp
 
 dm = DataMapOp(parent_directory='../files_OP')
