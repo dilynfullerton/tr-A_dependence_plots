@@ -5,7 +5,7 @@ from parse import get_files_r, has_extension
 from constants import FN_PARSE_INT_EXT as _INT_EXT
 from int.ExpInt import ExpInt
 from int.DatumInt import DatumInt
-from int.parse_int import exp
+from int.parser import exp
 
 
 class DataMapInt(DataMap):

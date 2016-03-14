@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from transforms import *
 from transforms_s import *
-from int.metafit_int import single_particle_metafit_int
+from int.metafitter_abs import single_particle_metafit_int
 from constants import DIR_FILES_INT, DIR_PLOTS
 
 

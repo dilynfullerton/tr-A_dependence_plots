@@ -6,13 +6,13 @@ from Datum import Datum
 from constants import DIR_FILES_INT_ORG, ORG_FMT_INT_DIR, ORG_FMT_INT_FILE
 from int.QuantumNumbers import QuantumNumbers
 from int.TwoBodyInteraction import TwoBodyInteraction
-from int.parse_int import index_to_tuple_map as get_index_tuple_map
-from int.parse_int import mass_to_index_to_energy_map as get_mie_map
-from int.parse_int import mass_to_interaction_to_energy_map as get_miie_map
-from int.parse_int import mass_to_zbt_map
-from int.parse_int import name_from_filename
-from int.parse_int import other_constants_from_filename as oc_from_filename
-from int.parse_int import mass_number_from_filename as mass_from_filename
+from int.parser import index_to_tuple_map as get_index_tuple_map
+from int.parser import mass_to_index_to_energy_map as get_mie_map
+from int.parser import mass_to_interaction_to_energy_map as get_miie_map
+from int.parser import mass_to_zbt_map
+from int.parser import name_from_filename
+from int.parser import other_constants_from_filename as oc_from_filename
+from int.parser import mass_number_from_filename as mass_from_filename
 
 
 class DatumInt(Datum):
