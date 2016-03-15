@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 from LegendSize import LegendSize
 from int.QuantumNumbers import QuantumNumbers
 
-# Directories
+# Directory locations relative to src/
 DIR_FILES_INT = '../files_INT'
 DIR_FILES_INT_ORG = '../files_INT_org'
 DIR_FILES_OP = '../files_OP'
@@ -14,6 +14,7 @@ DIR_FILES_OP_ORG = '../files_OP_org'
 DIR_PLOTS = '../plots'
 DIR_GEN_INT = '../gen_files_INT'
 DIR_SHELL_RESULTS = '../../cougar-nushellx/results'
+DIR_NCSM_RESULTS= '../../cougar-ncsm/results'
 
 # File organization
 ORG_FMT_INT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'

@@ -33,7 +33,7 @@ class DatumNcsmVceOut(Datum):
     def a_aeff_to_ground_state_map(self):
         return {k: v[0] for k, v in self._a_aeff_to_states_map.iteritems()}
 
-    def a_eff_to_ground_state_energy_map(self):
+    def a_aeff_to_ground_state_energy_map(self):
         return {k: v.E for k, v in self.a_aeff_to_ground_state_map()}
 
     def a_to_aeff_to_states_map(self):
