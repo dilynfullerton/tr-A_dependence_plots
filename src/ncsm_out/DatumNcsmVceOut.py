@@ -1,8 +1,8 @@
 from __future__ import print_function, division, unicode_literals
 
 from Datum import Datum
-from ncsm_vce_out.State import State
-from ncsm_vce_out.parser import a_aeff_to_states_map
+from ncsm_out.State import State
+from ncsm_out.parser import a_aeff_to_states_map
 
 
 class DatumNcsmVceOut(Datum):
@@ -67,4 +67,5 @@ class DatumNcsmVceOut(Datum):
                 self.aeff_exact_to_states_map().iteritems()}
 
     def aeff_exact_to_ground_state_energy_map(self):
-        return {k: v.E for k, v in self.aeff_exact_to_ground_state_map()}
+        return {k: v.E for k, v in
+                self.aeff_exact_to_ground_state_map().iteritems()}

@@ -7,12 +7,15 @@ from int.metafitters_mp import *
 from int.metafitters_sp import *
 from nushellx_lpt.metafitters import *
 from op.DataMapOp import DataMapOp
+from ncsm_out.plots import plot_ground_state_prescription_error_vs_exact as f
 
-dm = DataMapOp(parent_directory='../files_OP')
-datum = dm.map.values()[0]
-m = datum.interaction_monopole_map()
-for k, v in m.iteritems():
-    print('{} {}'.format(k, v))
+f(z=2, a_prescription=(4, 5, 6))
+
+# dm = DataMapOp(parent_directory='../files_OP')
+# datum = dm.map.values()[0]
+# m = datum.interaction_monopole_map()
+# for k, v in m.iteritems():
+#     print('{} {}'.format(k, v))
 
 # rz = single_particle_first_np_zbt_metafit(1)(
 #     fitfn=combine_ffns([asymptote(1),

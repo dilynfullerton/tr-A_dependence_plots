@@ -57,6 +57,9 @@ class DatumLpt(Datum):
             d[m] = {n: b.E for n, b in nb_map.iteritems()}
         return d
 
+    def mass_lowest_energy_map(self):
+        return {k: v[1] for k, v in self.mass_n_energy_map().iteritems()}
+
     def mass_n_excitation_map(self):
         d = dict()
         for m, nb_map in self._mass_n_body_map.iteritems():

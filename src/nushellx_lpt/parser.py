@@ -180,5 +180,4 @@ def mass_to_zbt_map(
             comment_str_int=_comment_str_int, zbt_comment=_zbt_comment
         )
         d[mass] = zbt
-        print('{}: {}'.format(mass, zbt))
     return d

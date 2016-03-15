@@ -18,7 +18,7 @@ from constants import F_PARSE_INT_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_INT_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_INT_NCOLS_ORBITALS as NCOLS_ORBITALS
 from constants import F_PARSE_INT_ROW_HEAD as ROW_HEAD
-from constants import F_PARSE_INT_CMNT_CHAR as CMNT_CHAR
+from constants import F_PARSE_INT_CMNT_STR as CMNT_STR
 
 
 # ............................................................
@@ -162,10 +162,10 @@ def index_lines(commnt_lines, index_comment=CMNT_INDEX):
     """
     start_index = -1
     for cl, index in zip(commnt_lines, range(len(commnt_lines) + 1)):
-        if cl.find(index_comment) is 0:
+        if cl.find(index_comment) == 0:
             start_index = index + 1
             break
-    return commnt_lines[start_index:]
+    return list(commnt_lines)[start_index:]
 
 
 def zero_body_term_line(cmnt_lines, zbt_comment=CMNT_ZBT):
@@ -177,7 +177,7 @@ def zero_body_term_line(cmnt_lines, zbt_comment=CMNT_ZBT):
     is the zero body term line
     :return: The zero body term line, as a string
     """
-    for cl in reversed(cmnt_lines):
+    for cl in reversed(list(cmnt_lines)):
         if cl.find(zbt_comment) == 0:
             return cl
     else:
@@ -237,23 +237,25 @@ def other_constants(header_items_list,
     return header_items_list[start_index + num_orbitals:]
 
 
-def orbital_energies_from_filename(filename, comment_char=CMNT_CHAR):
+def orbital_energies_from_filename(filepath, comment_str=CMNT_STR):
     """Returns the orbital energies from the given filename through
     functional composition
-    :param comment_char:
-    :param filename: """
-    return orbital_energies(header_list(content_lines(filename, comment_char)))
+    :param filepath: path to the file
+    :param comment_str: string signifying a commented line
+    """
+    return orbital_energies(header_list(
+        lines=list(content_lines(filepath, comment_str))))
 
 
-def other_constants_from_filename(filename, comment_char=CMNT_CHAR):
+def other_constants_from_filename(filepath, comment_str=CMNT_STR):
     """Given a filename, returns all of the items in the header items list
     following the orbital energies
-
-    :param comment_char:
-    :param filename:
+    :param filepath: path to the file
+    :param comment_str: string signifying a commented line
     :return:
     """
-    return other_constants(header_list(content_lines(filename, comment_char)))
+    return other_constants(header_list(
+        lines=list(content_lines(filepath, comment_str))))
 
 
 # ............................................................
@@ -272,13 +274,14 @@ def index_map(idx_lines):
     return idx_map
 
 
-def index_to_tuple_map(filename, comment_char=CMNT_CHAR):
+def index_to_tuple_map(filepath, comment_str=CMNT_STR):
     """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
-    :param comment_char:
-    :param filename:
+    :param filepath: path to the file
+    :param comment_str: string signifying a commented line
     """
-    return index_map(index_lines(comment_lines(filename, comment_char)))
+    return index_map(index_lines(
+        commnt_lines=comment_lines(filepath, comment_str)))
 
 
 def mass_energy_array_map(directory, filterfn=lambda x: True,
@@ -320,9 +323,10 @@ def mass_to_index_to_energy_map(directory, filterfn=lambda x: True,
     return mea_map
 
 
-def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
-                                     filtered_files=None,
-                                     comment_char=CMNT_CHAR):
+def _mass_interaction_data_array_map(
+        directory, filterfn=lambda x: True, filtered_files=None,
+        comment_str=CMNT_STR
+):
     """Creates a mapping from mass number to an array of interaction data
     for each file in the directory
     """
@@ -331,7 +335,7 @@ def _mass_interaction_data_array_map(directory, filterfn=lambda x: True,
     mida_map = dict()
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
-        ida = interaction_data_array(content_lines(f, comment_char))
+        ida = interaction_data_array(lines=list(content_lines(f, comment_str)))
         mida_map[mass_number] = ida
     return mida_map
 
@@ -361,16 +365,17 @@ def mass_to_interaction_to_energy_map(directory, filterfn=lambda x: True,
 
 
 def mass_to_zbt_map(directory, filterfn=lambda x: True,
-                    filtered_files=None, comment_char=CMNT_CHAR):
+                    filtered_files=None, comment_str=CMNT_STR):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
-    :param comment_char:
-    :param filtered_files:
     :param directory: the directory that is a direct parent to the files from
     which to construct the map
     :param filterfn: the filter to apply to the files before constructing the
     map
+    :param filtered_files: filepaths from which to gather data. If None, looks
+    in whole directory
+    :param comment_str: String signifying a commented line.
     """
     if filtered_files is None:
         filtered_files = get_files_r(directory, filterfn)
@@ -378,7 +383,8 @@ def mass_to_zbt_map(directory, filterfn=lambda x: True,
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         zbt = zero_body_term(
-            zero_body_term_line(comment_lines(f, comment_char)))
+            zero_body_term_line(
+                cmnt_lines=comment_lines(f, comment_str)))
         mzbt_map[mass_number] = zbt
     return mzbt_map
 

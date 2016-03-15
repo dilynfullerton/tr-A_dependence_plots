@@ -3,9 +3,9 @@ from os import sep
 from DataMap import DataMap
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_FNAME as _RGX_FNAME
 from parse import matches_completely, get_files_r
-from ncsm_vce_out.DatumNcsmVceOut import DatumNcsmVceOut
-from ncsm_vce_out.ExpNcsmVceOut import ExpNcsmVceOut
-from ncsm_vce_out.parser import exp
+from ncsm_out.DatumNcsmVceOut import DatumNcsmVceOut
+from ncsm_out.ExpNcsmVceOut import ExpNcsmVceOut
+from ncsm_out.parser import exp
 
 
 class DataMapNcsmVceOut(DataMap):
