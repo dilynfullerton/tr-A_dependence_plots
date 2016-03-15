@@ -13,34 +13,39 @@ from FitFunction import FitFunction
 from constants import PLOT_CMAP, LEGEND_SIZE, PLOT_FIGSIZE
 
 
+# todo this function is very grody, can we fix it? yes we can!
 def plot_the_plots(
         plots, title, label, xlabel, ylabel,
         data_line_style='-',
         fit_line_style='--',
         sort_key=lambda plot: plot,
         sort_reverse=False,
-        title_kwargs=None,
-        get_label_kwargs=None,
-        idx_key=None,
+        # todo move all string formatting outside of this function
+        # todo use const_dict to hold plot-specific labels instead
+        title_kwargs=None,  # todo get rid of this parameter
+        get_label_kwargs=None,  # todo get rid of this parameter
+        idx_key=None,  # todo get rid of this parameter
         fig=None,
         ax=None,
         figsize=PLOT_FIGSIZE,
         cmap_name=PLOT_CMAP,
         cmap=None,
         dark=False,
-        show_fit=False,
-        fit_params=None,
-        fitfn=None,
-        num_fit_pts=50,
+        # todo remove fit-generation from this method
+        # todo calculation and plotting should be entirely disjoint
+        show_fit=False,  # todo get rid of this parameter
+        fit_params=None,  # todo get rid of this parameter
+        fitfn=None,  # todo get rid of this parameter
+        num_fit_pts=50,  # todo get rid of this parameter
         include_legend=False,
         legend_size=LEGEND_SIZE,
-        code=None,
-        savedir=None,
-        savename=None,
-        extension='.png',
-        use_savename_kwargs=True,
-        data_file_savedir=None,
-        data_file_extension='.dat',
+        code=None,  # todo get rid of this parameter
+        savedir=None,  # todo get rid of this parameter
+        savename=None,  # todo replace with plot_savepath
+        extension='.png',  # todo get rid of this parameter
+        use_savename_kwargs=True,  # todo get rid of this parameter
+        data_file_savedir=None,  # todo replace with data_file_savepath
+        data_file_extension='.dat',  # todo get rid of this parameter
         data_file_comment_str=b''
 ):
     """A function for plotting plots. The given plots are plotted (against
@@ -126,6 +131,8 @@ def plot_the_plots(
         cval = scalar_map.to_rgba(i)
         ax.plot(x, y, data_line_style, label=label_i, color=cval)
         # Do fits if parameters and function provided
+        # todo change this so that fits are NOT done inside this function
+        # todo instead, they should be included as an extra parameter fit_plots
         if show_fit:
             xfit = np.linspace(x[0], x[-1], num=num_fit_pts)
             if isinstance(fitfn, FitFunction):
@@ -144,6 +151,7 @@ def plot_the_plots(
     # Add legend
     if include_legend:
         if legend_size is not None:
+            # todo move this legend stuff to a helper function
             l = len(plots)
             ncol = legend_size.num_cols(l)
             fontsize = legend_size.fontsize(l, ncol)
@@ -159,6 +167,7 @@ def plot_the_plots(
     # Save
     if savename is not None:
         if use_savename_kwargs:
+            # todo no string formatting inside this function
             savename_kwargs = {'t': title,
                                'c': code if code is not None else ''}
             savename = savename.format(**savename_kwargs)
@@ -180,6 +189,23 @@ def _make_plot_data_file(
         idx_key=None,
         extension='.dat',
         comment_str=b''):
+    """Write a data file with the given plot data
+    :param plots: sequence containing plots, where each plot is defined as a
+    four tuple consisting of (x_array, y_array, const_list, const_dict)
+    :param title: title of the plot
+    :param xlabel: x axis label
+    :param ylabel: y axis label
+    :param savedir: directory in which to save the file
+    :param savename: name of the file (without extension)
+    :param label: label string [template] to be used for each plot
+    :param get_label_kwargs: function that when given a plot and a idx_key,
+    returns a dictionary mapping label string kwargs to their values for
+    formatting
+    :param idx_key: something that does something
+    :param extension: extension to be used for the data file
+    :param comment_str: string to be used to 'comment out' headings and labels
+    in the data file
+    """
     writelines = list()
     writelines.append(comment_str + title)
     for p in plots:
@@ -196,21 +222,6 @@ def _make_plot_data_file(
         writelines.append(b'')
     with open(path.join(savedir, savename + extension), 'w') as fw:
         fw.write(b'{0}\n'.format(b'\n'.join(writelines)))
-
-
-# x = np.arange(11)
-# y1 = x**2
-# y2 = x**3
-# plots = list()
-# plots.append((x, y1, ['x^2']))
-# plots.append((x, y2, ['x^3']))
-# make_plot_data_file(plots=plots, title='powpow',
-#                     xlabel='x', ylabel='f(x)',
-#                     label_template='f(x) = {t}',
-#                     get_label_kwargs=lambda p, i: {'t': p[2][0]},
-#                     idx_key=1,
-#                     savedir='../plots',
-#                     savename='DATATATATATATATATATAT')
 
 
 def map_to_arrays(m):

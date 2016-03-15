@@ -10,7 +10,8 @@ from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 def plot_ground_state_prescription_error_vs_exact(
         z, a_prescription,
-        nhw=6, n1=15, n2=6
+        nhw=6, n1=15, n2=6,
+        **kwargs
 ):
     data_maps_exact = DataMapNcsmVceOut(
         parent_directory='../../cougar-ncsm/results',
@@ -37,7 +38,7 @@ def plot_ground_state_prescription_error_vs_exact(
                {'name': 'Aeff = A'})
     plots = [plot_pr, plot_ex]
 
-    plot_the_plots(
+    return plot_the_plots(
         plots=plots,
         title='Ground state energy error due to A-prescription '
               '{}'.format(a_prescription),
@@ -47,5 +48,5 @@ def plot_ground_state_prescription_error_vs_exact(
         get_label_kwargs=lambda p, i: {'p': p[3]['name']},
         sort_key=lambda p: p[3]['name'],
         include_legend=True,
+        **kwargs
     )
-    plt.show()

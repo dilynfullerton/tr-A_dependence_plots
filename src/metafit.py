@@ -24,21 +24,17 @@ def exp_list_to_string(exp_list):
 
 
 def imsrg_metafitter(
-        fitfn,
-        exp_list,
-        exp_filter_fn,
+        fitfn, exp_list, exp_filter_fn,
         transform, super_transform_pre, super_transform_post,
         # todo: combine transforms into one?
-        sourcedir,
-        data_map,
-        mf_name, code,
+        sourcedir, data_map, mf_name, code,
         _get_data_from_map,
         _data_map_type,
         _get_plots,
         savedir_plots,
         title, xlabel, ylabel, label=None,
         _idx=None,  # todo: get rid of this parameter
-        _get_label_fmt_kwargs=None,
+        _get_label_fmt_kwargs=None,  # todo consider getting rid of this
         _data_line_style='-', _fit_line_style='--',
         _cmap=None,
         _legend_size=None,
@@ -52,7 +48,7 @@ def imsrg_metafitter(
         full_output=False,
         _code_pref='',  # todo: get rid of this parameter
         _std_io_map=None,
-        ):
+):
     """An (abstract) function to be used by specific metafitters.
     Retrieves data from a given data map, transforms it, and fits to it
     based on both global and plot-specific parameters
@@ -217,7 +213,7 @@ def _imsrg_meta_fit(plots,
                     transform, super_transform_pre, super_transform_post,
                     fitfn,
                     full_output,
-                    idx, ):
+                    idx,):
     # Transform plots
     if super_transform_pre is not None:
         plots = super_transform_pre(plots)
