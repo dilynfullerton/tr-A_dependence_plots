@@ -6,6 +6,9 @@ from ncsm_out.parser import a_aeff_to_states_map
 
 
 class DatumNcsmVceOut(Datum):
+    """Stores data maps specific to a common set of NCSM out files, as
+    identified by an ExpNcsmVceOut
+    """
     def __init__(self, directory, exp, files):
         super(DatumNcsmVceOut, self).__init__(
             directory=directory, exp=exp, files=files

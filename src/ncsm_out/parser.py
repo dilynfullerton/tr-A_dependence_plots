@@ -1,3 +1,5 @@
+"""Functions to parse data from NCSD *.out files and construct maps from it
+"""
 from __future__ import print_function, division
 
 from re import match

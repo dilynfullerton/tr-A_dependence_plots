@@ -1,6 +1,3 @@
-"""Descriptive tuples to be used as unique keys in the IMSRG data maps
-"""
-
 from __future__ import division
 from __future__ import unicode_literals
 
@@ -10,10 +7,10 @@ from collections import namedtuple
 # noinspection PyClassHasNoInit
 class ExpInt(namedtuple('ExpInt', ['e', 'hw', 'base', 'rp'])):
     """Descriptive key for *.int data.
-        e :    max e-level
-        hw :   hw frequency
-        base : (default None) the base number of nucleons (e.g. in targeted)
-        rp :   (default None) the proton radius
+    e: max e-level
+    hw: hw frequency
+    base: (default None) the base number of nucleons (e.g. in targeted)
+    rp: (default None) the proton radius
     """
     __slots__ = ()
 

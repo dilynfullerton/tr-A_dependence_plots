@@ -1,3 +1,7 @@
+"""Functions for parsing *.lpt file data from a VCE *.int file. This amounts
+simply to retrieving the information necessary to construct the exp, as
+all *.lpt data is parsed by the parser in /nushellx_lpt
+"""
 from __future__ import division, print_function
 
 from re import sub

@@ -14,6 +14,9 @@ from op.parser import get_data as data
 
 
 class DatumOp(Datum):
+    """Stores a specific subset of all acquired *.op data, as identified by
+    the ExpOp
+    """
     def __init__(self, directory, exp, files,
                  _comment_str=_CMNT_STR,
                  _regex_h=_REGEX_H,

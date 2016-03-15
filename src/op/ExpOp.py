@@ -6,7 +6,7 @@ from collections import namedtuple
 # noinspection PyClassHasNoInit
 class ExpOp(namedtuple('ExpOp', ['hw'])):
     """Exp definition for *.op files
-            hw: hw frequency number
+    hw: hw frequency number
     """
     __slots__ = ()
 

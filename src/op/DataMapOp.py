@@ -14,6 +14,8 @@ from op.parser import exp
 
 
 class DataMapOp(DataMap):
+    """Stores a map containing data generated from *.op files
+    """
     # noinspection PyUnusedLocal
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  _split_char=_SPLIT_CHAR,

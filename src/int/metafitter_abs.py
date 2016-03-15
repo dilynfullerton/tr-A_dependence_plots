@@ -1,3 +1,6 @@
+"""
+Abstract metafitter for interaction data
+"""
 from __future__ import print_function, division, unicode_literals
 
 from metafit import imsrg_metafitter, print_io_key

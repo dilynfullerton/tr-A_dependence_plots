@@ -9,6 +9,8 @@ from ncsm_out.parser import exp
 
 
 class DataMapNcsmVceOut(DataMap):
+    """Stores map containing data retrieved from NCSD *.out files
+    """
     # noinspection PyUnusedLocal
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
                  _rgx_fname=_RGX_FNAME, **kwargs):

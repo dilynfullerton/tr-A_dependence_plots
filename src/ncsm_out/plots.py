@@ -1,3 +1,6 @@
+"""
+Functions for making plots from NCSD data
+"""
 from __future__ import print_function, division, unicode_literals
 from matplotlib import pyplot as plt
 from plotting import plot_the_plots, map_to_arrays
@@ -9,7 +12,6 @@ def plot_ground_state_prescription_error_vs_exact(
         z, a_prescription,
         nhw=6, n1=15, n2=6
 ):
-
     data_maps_exact = DataMapNcsmVceOut(
         parent_directory='../../cougar-ncsm/results',
         exp_list=[(z, nhw, n1, n2)])
@@ -47,4 +49,3 @@ def plot_ground_state_prescription_error_vs_exact(
         include_legend=True,
     )
     plt.show()
-

@@ -85,6 +85,7 @@ F_PARSE_NCSMVCE_OUT_RGX_LINE_Z = b'Z\s+=\s+\d+.*'
 F_PARSE_NCSMVCE_OUT_RGX_LINE_STATE = b'State\s#\s?\d+.*'
 F_PARSE_NCSMVCE_OUT_RGX_LINE_SPECTRUM = b'\d+(\s+[\d\.]+){3,3}'
 
+
 # Printing
 # noinspection PyClassHasNoInit
 class Color:
@@ -98,6 +99,7 @@ class Color:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
+
 
 P_TITLE = Color.YELLOW
 P_HEAD = Color.PURPLE

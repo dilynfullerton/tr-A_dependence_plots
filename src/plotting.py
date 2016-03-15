@@ -15,18 +15,34 @@ from constants import PLOT_CMAP, LEGEND_SIZE, PLOT_FIGSIZE
 
 def plot_the_plots(
         plots, title, label, xlabel, ylabel,
-        data_line_style='-', fit_line_style='--',
-        sort_key=lambda plot: plot, sort_reverse=False,
-        title_kwargs=None, get_label_kwargs=None, idx_key=None,
-        fig=None, ax=None, figsize=PLOT_FIGSIZE,
-        cmap_name=PLOT_CMAP, cmap=None, dark=False,
-        show_fit=False, fit_params=None, fitfn=None, num_fit_pts=50,
-        include_legend=False, legend_size=LEGEND_SIZE,
-        code=None, savedir=None, savename=None, extension='.png',
+        data_line_style='-',
+        fit_line_style='--',
+        sort_key=lambda plot: plot,
+        sort_reverse=False,
+        title_kwargs=None,
+        get_label_kwargs=None,
+        idx_key=None,
+        fig=None,
+        ax=None,
+        figsize=PLOT_FIGSIZE,
+        cmap_name=PLOT_CMAP,
+        cmap=None,
+        dark=False,
+        show_fit=False,
+        fit_params=None,
+        fitfn=None,
+        num_fit_pts=50,
+        include_legend=False,
+        legend_size=LEGEND_SIZE,
+        code=None,
+        savedir=None,
+        savename=None,
+        extension='.png',
         use_savename_kwargs=True,
-        data_file_savedir=None, data_file_extension='.dat',
+        data_file_savedir=None,
+        data_file_extension='.dat',
         data_file_comment_str=b''
-        ):
+):
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
 
@@ -158,11 +174,12 @@ def plot_the_plots(
     return fig, ax, cmap
 
 
-def _make_plot_data_file(plots, title, xlabel, ylabel,
-                         savedir, savename,
-                         label, get_label_kwargs=None, idx_key=None,
-                         extension='.dat',
-                         comment_str=b''):
+def _make_plot_data_file(
+        plots, title, xlabel, ylabel, savedir, savename, label,
+        get_label_kwargs=None,
+        idx_key=None,
+        extension='.dat',
+        comment_str=b''):
     writelines = list()
     writelines.append(comment_str + title)
     for p in plots:
