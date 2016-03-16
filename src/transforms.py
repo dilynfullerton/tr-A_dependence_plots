@@ -153,8 +153,61 @@ def first_np(n):
     return t
 
 
+def cubic_spline(num_pts):
+    def cs(xarr, yarr, *args):
+        n = len(xarr)
+        a = np.zeros(shape=(4*n-4, 4*n-4))
+        y = np.zeros(shape=4*n-4)
+        for relrow in range(n - 1):
+            for p in reversed(range(4)):
+                a[relrow][relrow*4+3-p] = (xarr[relrow])**p
+                a[relrow+n-1][relrow*4+3-p] = (xarr[relrow+1])**p
+            y[relrow] = yarr[relrow]
+            y[relrow+n-1] = yarr[relrow+1]
+        for relrow in range(n - 2):
+            for p in reversed(range(3)):
+                xp = (p+1)*(xarr[relrow+1])**p
+                a[relrow+2*n-2][relrow*4+2-p] = xp
+                a[relrow+2*n-2][(relrow+1)*4+2-p] = -xp
+            for p in reversed(range(2)):
+                xp = (p+2)*(p+1)*(xarr[relrow+1])**p
+                a[relrow+3*n-4][relrow*4+1-p] = xp
+                a[relrow+3*n-4][(relrow+1)*4+1-p] = -xp
+        for relrow in range(2):
+            for p in reversed(range(2)):
+                xp = (p+2)*(p+1)*(xarr[p*(n-1)])**p
+                a[relrow+4*n-6][relrow*4*(n-2)+1-p] = xp
+        coeffs = np.linalg.solve(a, y)
+        xnew = np.linspace(xarr[0], xarr[n-1], num=num_pts)
+        ynew = np.empty(shape=num_pts)
+        j = 0  # 1/4 index of coeffs to use
+        cj = coeffs[4*j:4*j+4]
+        for i in range(num_pts):
+            xi = xnew[i]
+            while xi > xarr[j+1]:
+                j += 1
+                cj = coeffs[4*j:4*j+4]
+            ynew[i] = np.polyval(cj, xi)
+        return (xnew, ynew) + args
+    cs.__name__ = b'cubic_spline'
+    return cs
+
+
 # TRANSFORM CHAIN GENERATION
 def compose_transforms(list_of_transform, t_name_sep=b' '):
+    """Returns a transform that applies all of the transforms in the
+    given list_of_transform. These are applied in the reverse order that
+    they are given, so as to be analogous with the standard way of expressing
+    functional composition.
+    Example:
+        Suppose that list_of_transform is [U, T].
+        Then, the composed transform is defined by (UT)(x) = U(T(x))
+    :param list_of_transform: list of transform functions, in the order they
+    are to be chained
+    :param t_name_sep: string separator for the name of the composed transform
+    :return: transform function whose behavior is equivalent to applying
+    all of the transforms in the list_of_transform in the reversed order
+    """
     def m(xarr, yarr, *args):
         a = (xarr, yarr) + args
         for tr in reversed(list_of_transform):

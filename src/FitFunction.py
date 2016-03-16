@@ -84,21 +84,19 @@ class FitFunction:
             self.code += b'fk:' + str(self.fkfn.__name__[6:])
 
 
-def combine_ffns(list_of_ffn, force_zero=None,
-                 _name_pref=FF_NAME_PREF,
-                 _name_sep=FF_NAME_SEP,
-                 _name_suff=FF_NAME_SUFF,
-                 _code_pref=FF_CODE_PREF,
-                 _code_sep=FF_CODE_SEP,
-                 _code_suff=FF_CODE_SUFF,
-                 **kwargs):
+def combine_ffns(
+        list_of_ffn,
+        force_zero=None,
+        _name_pref=FF_NAME_PREF,
+        _name_sep=FF_NAME_SEP,
+        _name_suff=FF_NAME_SUFF,
+        _code_pref=FF_CODE_PREF,
+        _code_sep=FF_CODE_SEP,
+        _code_suff=FF_CODE_SUFF,
+        **kwargs
+):
     """Combines multiple fit functions (and/or dependencies) into one fit
     function.
-
-    :param _code_suff:
-    :param _name_suff:
-    :param _code_sep:
-    :param _code_pref:
     :param list_of_ffn: A list of FitFunctions to combine into one
     :param force_zero: (optional) force the zero of the overall result to a
     specified point
@@ -106,6 +104,11 @@ def combine_ffns(list_of_ffn, force_zero=None,
     :param _name_sep: separator to go between fit functions
     :return: A combined fit function object, which may be used to optimize with
     respect to all of the degrees of freedom of its sub-functions
+    :param _name_suff: suffix for the name of the combined fit function
+    :param _code_pref: prefix for the code associated with the combined fit
+    function
+    :param _code_sep: separator to go between fit function codes
+    :param _code_suff: suffix for the code of the combined fit function
     """
     params_lengths = [ffn.num_fit_params for ffn in list_of_ffn]
     params_breaks = [0]

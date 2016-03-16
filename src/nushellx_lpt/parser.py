@@ -82,7 +82,8 @@ def _zbt_from_lpt(
 # DATA
 def _header_line(filepath, comment_str, row_head):
     return list(content_lines(
-        filepath=filepath, comment_str=comment_str))[row_head]
+        filepath=filepath, comment_str=comment_str
+    ))[row_head].replace('-', ' -')
 
 
 def _header_data(header_line, col_start):
@@ -133,8 +134,11 @@ def mass_to_header_data_map(
     for f in filtered_filepaths:
         mass = a_z(filepath=f, comment_str=_comment_str, row_az=_row_az)[0]
         mh_map[mass] = _cured_header_data(
-            _header_data(header_line=_header_line(f, _comment_str, row_head),
-                         col_start=_col_start))
+            _header_data(
+                header_line=_header_line(f, _comment_str, row_head),
+                col_start=_col_start
+            )
+        )
     return mh_map
 
 
