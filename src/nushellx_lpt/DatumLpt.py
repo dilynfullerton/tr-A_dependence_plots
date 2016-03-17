@@ -27,13 +27,16 @@ class DatumLpt(Datum):
         self._set_mass_zbt_map()
 
     def _set_mass_header_map(self):
-        self._mass_header_map = mhd_map(self.files)
+        try:
+            self._mass_header_map = mhd_map(self.files)
+        except ValueError:
+            self._mass_header_map = None
 
     def _set_mass_n_body_map(self):
         mass_n_body_map = mnbd_map(self.files)
         d = dict()
         for m, nb_map in mass_n_body_map.iteritems():
-            if m not in d:
+            if m not in d and len(nb_map) > 0:
                 d[m] = dict()
             for n, b in nb_map.iteritems():
                 d[m][n] = Shell(*b)
@@ -43,7 +46,10 @@ class DatumLpt(Datum):
         self._mass_zbt_map = mass_zbt_map(filtered_filepaths_lpt=self.files)
 
     def mass_header_map(self):
-        return dict(self._mass_header_map)
+        if self._mass_header_map is not None:
+            return dict(self._mass_header_map)
+        else:
+            return None
 
     def mass_n_body_map(self):
         return dict(self._mass_n_body_map)
@@ -58,7 +64,14 @@ class DatumLpt(Datum):
         return d
 
     def mass_lowest_energy_map(self):
-        return {k: v[1] for k, v in self.mass_n_energy_map().iteritems()}
+        try:
+            return {k: v[1] for k, v in self.mass_n_energy_map().iteritems()}
+        except KeyError:
+            mne_map = self.mass_n_energy_map()
+            for k, v in mne_map.iteritems():
+                print('mass = {}'.format(k))
+                for kk, vv in v.iteritems():
+                    print('n = {:2} : e = {}'.format(kk, vv))
 
     def mass_n_excitation_map(self):
         d = dict()

@@ -31,7 +31,10 @@ def nhw_n1_n2_from_delts(delts, regex_nhw):
         nhw_elt0 = sub('[A-Za-z]', '', nhw_elt)
         i = delts.index(nhw_elt)
         n1_elt, n2_elt = delts[i+1:i+3]
-        return tuple([int(x) for x in [nhw_elt0, n1_elt, n2_elt]])
+        nnn = tuple([int(x) for x in [nhw_elt0, n1_elt, n2_elt]])
+        if nnn[0] % 2 == 1:
+            nnn[0] -= 1
+        return nnn
 
 
 def exp(filepath,

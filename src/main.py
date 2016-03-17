@@ -26,6 +26,7 @@ f(
         # (6, 7, 7),
         # (7, 7, 7),
     ],
+    nhw=8, n1=15, n2=8,
     # transform=cubic_spline(500)
 )
 plt.show()
