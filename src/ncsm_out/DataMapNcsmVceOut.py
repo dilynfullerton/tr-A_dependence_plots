@@ -31,3 +31,16 @@ class DataMapNcsmVceOut(DataMap):
 
         return get_files_r(directory=self.parent_dir,
                            filterfn=ncsmvce_out_file_filter)
+
+    def aeff_exact_to_ground_state_energy_map(self):
+        """Combines the 'aeff_exact_to_ground_state_energy_map' functions
+        from all of the map values by taking those with the largest Nhw values
+        """
+        aeff_energy_map = dict()
+        aeff_nhw_map = dict()
+        for m in self.map.values():
+            for k, v in m.aeff_exact_to_ground_state_energy_map().iteritems():
+                if k not in aeff_energy_map or m.exp.Nhw > aeff_nhw_map[k]:
+                    aeff_energy_map[k] = v
+                    aeff_nhw_map[k] = m.exp.Nhw
+        return aeff_energy_map

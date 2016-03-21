@@ -24,6 +24,8 @@ class DataMap(object):
         self._set_maps()
 
     def __getitem__(self, item):
+        if not isinstance(item, self.exp_type):  # assume item is a tuple
+            item = self.exp_type(*item)
         return self.map[item]
 
     def _set_maps(self):

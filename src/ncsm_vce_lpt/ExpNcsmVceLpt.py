@@ -5,7 +5,8 @@ from collections import namedtuple
 
 # noinspection PyClassHasNoInit
 class ExpNcsmVceLpt(namedtuple('ExpNcsmVceLpt',
-                               ['Z', 'A_presc', 'Nhw', 'n1', 'n2'])):
+                               ['Z', 'A_presc', 'Nhw', 'n1', 'n2',
+                                'nshell', 'ncomponent'])):
     """Identifier for a group of *.lpt results from performing NuShellX
     calculations on *.int files from a VCE
     """
@@ -14,4 +15,4 @@ class ExpNcsmVceLpt(namedtuple('ExpNcsmVceLpt',
     def __str__(self):
         return str(tuple(self._asdict().values())).replace(', None', '')
 
-ExpNcsmVceLpt.__new__.__defaults__ = (None, None, None)
+ExpNcsmVceLpt.__new__.__defaults__ = (None,) * 4

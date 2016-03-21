@@ -45,16 +45,20 @@ def keep_lesser_x0_y0_zbt0_pair_in_dict(p, p1, p2):
 
 
 def s_combine_like(keys=None, f=None,
-                   combine_rules=list([keep_lesser_x0_y0_zbt0_pair_in_dict])):
+                   combine_rules=list([keep_lesser_x0_y0_zbt0_pair_in_dict]),
+                   sort_plot=False, sort_key=lambda x_y: x_y[0]):
     """Returns a super-fit-transform that combines all plots that share the
     same value returned by the given f, which acts on a single plot
 
     :param keys: keys for the const_dict by which to specify the set of values,
-     by ALL of which plots are to be compared
+    by ALL of which plots are to be compared
     :param f: a function which acts on a single plot and returns a comparable
     item
     :param combine_rules: function of the form f(plot, plot, plot) -> plot
-     that define ways that the constants lists and dicts should be merged
+    that define ways that the constants lists and dicts should be merged
+    :param sort_plot: if true, (x, y) pairs are sorted based on sort_key
+    :param sort_key: key by which (x, y) pairs are sorted;
+    (e.g. lambda x_y: x_y[0] sorts by x)
     """
     if keys is not None:
         f = _keys(keys)
@@ -66,7 +70,10 @@ def s_combine_like(keys=None, f=None,
         for plot in plots:
             const = f(plot)
             if const in m:
-                m[const] = _combine_plots(m[const], plot, combine_rules)
+                m[const] = _combine_plots(
+                    p1=m[const], p2=plot, combine_rules=combine_rules,
+                    sort_plot=sort_plot, sort_key=sort_key
+                )
             else:
                 m[const] = plot
         return m.values()
@@ -74,7 +81,8 @@ def s_combine_like(keys=None, f=None,
     return scl
 
 
-def _combine_plots(p1, p2, combine_rules=None):
+def _combine_plots(p1, p2, combine_rules=None,
+                   sort_plot=False, sort_key=lambda x_y: x_y[0]):
     # Combine x arrays with each other and y arrays with each other
     x1, y1 = p1[0:2]
     x2, y2 = list(), list()
@@ -84,6 +92,14 @@ def _combine_plots(p1, p2, combine_rules=None):
             y2.append(y2i)
     x = np.concatenate((x1, np.array(x2)))
     y = np.concatenate((y1, np.array(y2)))
+    # Sort plot
+    if sort_plot:
+        next_x, next_y = list(), list()
+        for xi, yi in sorted(zip(x, y), key=sort_key):
+            next_x.append(xi)
+            next_y.append(yi)
+        x = np.array(next_x)
+        y = np.array(next_y)
     # Combine constant lists
     const_list = list()
     for c1, c2 in zip(p1[2], p2[2]):

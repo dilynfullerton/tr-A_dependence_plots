@@ -25,7 +25,8 @@ class DatumNcsmVceOut(Datum):
     def _set_a_aeff_to_states_map(self):
         a_aeff_to_states = a_aeff_to_states_map(filepaths=self.files)
         for k, v in a_aeff_to_states.iteritems():
-            self._a_aeff_to_states_map[k] = [State(*vi) for vi in v]
+            if len(v) > 0:
+                self._a_aeff_to_states_map[k] = [State(*vi) for vi in v]
 
     def a_aeff_to_states_map(self):
         return dict(self._a_aeff_to_states_map)
