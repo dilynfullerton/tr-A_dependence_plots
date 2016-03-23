@@ -64,14 +64,16 @@ class DatumLpt(Datum):
         return d
 
     def mass_lowest_energy_map(self):
-        try:
-            return {k: v[1] for k, v in self.mass_n_energy_map().iteritems()}
-        except KeyError:
-            mne_map = self.mass_n_energy_map()
-            for k, v in mne_map.iteritems():
-                print('mass = {}'.format(k))
-                for kk, vv in v.iteritems():
-                    print('n = {:2} : e = {}'.format(kk, vv))
+        return {k: v[1] for k, v in self.mass_n_energy_map().iteritems()}
+
+    def mass_ground_energy_map(self):
+        mzbt = self.mass_zbt_map()
+        me0 = self.mass_lowest_energy_map()
+        mg = dict()
+        for k in mzbt:
+            if k in me0:
+                mg[k] = mzbt[k] + me0[k]
+        return mg
 
     def mass_n_excitation_map(self):
         d = dict()
