@@ -51,6 +51,7 @@ class DataMapNcsmVceOut(DataMap):
         :param exp0: exp value
         """
         exp0 = self.exp_type(*exp0)
+        # noinspection PyProtectedMember
         kwargs = exp0._asdict()
         kwargs.update({'Nhw': exp0.Nhw + 1})
         exp1 = self.exp_type(**kwargs)

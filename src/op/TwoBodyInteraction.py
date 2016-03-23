@@ -8,6 +8,7 @@ class TwoBodyInteraction(namedtuple('TwoBodyInteraction',
                                     ['a', 'b', 'c', 'd'])):
     __slots__ = ()
 
+    # noinspection PyCompatibility
     def __str__(self):
         sep = unichr(9474).strip()
         left = unichr(12296).strip()
