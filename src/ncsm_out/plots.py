@@ -24,33 +24,40 @@ def plot_ground_state_prescription_error_vs_exact(
             parent_directory='../../cougar-ncsm/results',
         )
     aeff_exact_vs_ground = dm_exact.aeff_exact_to_ground_state_energy_map()
-    print(aeff_exact_vs_ground)
     x_ex, y_ex = [list(a) for a in map_to_arrays(aeff_exact_vs_ground)]
-    plots = [(np.array(x_ex), np.array([0*yi for yi in y_ex]),
-              list(), {'name': 'Aeff = A'})]
-    # prescriptions
+    exp = dm_exact[(z, nhw, n1, n2)].exp
     if dm_vce is None:
         dm_vce = DataMapNcsmVceLpt(
             parent_directory='../../cougar-nushellx/results',
-            exp_list=[(z, ap, nhw, n1, n2, nshell, ncomponent)
-                      for ap in a_prescriptions]
         )
+    a_eq_eff = dm_exact.aeff_exact_to_ground_state_energy_map_from_exp(exp0=exp)
+    # a_eq_eff = dm_vce.a_eq_aeff_to_ground_state_energy_map(
+    #     z=z, nhw=nhw, n1=n1, n2=n2, nshell=nshell, ncomponent=ncomponent
+    # )
+    x_aaf, y_aaf = [list(a) for a in map_to_arrays(a_eq_eff)]
+    x_del = sorted(list(set(x_ex) & set(x_aaf)))
+    y_del = list()
+    for x in x_del:
+        y_del_i = (y_aaf[x_aaf.index(x)] - y_ex[x_ex.index(x)])
+        if abs_value:
+            y_del.append(abs(y_del_i))
+        else:
+            y_del.append(y_del_i)
+    plots = [(np.array(x_del), np.array(y_del), list(), {'name': 'Aeff = A'})]
+    # prescriptions
+    exp_list = [dm_vce.exp_type(z, ap, nhw, n1, n2, nshell, ncomponent)
+                for ap in a_prescriptions]
     d_vce_list = dm_vce.map.values()
-    for d_vce in filter(lambda d: d.exp.Nhw == nhw, d_vce_list):
-        print(d_vce.mass_lowest_energy_map())
-        print(d_vce.mass_zbt_map())
-        vce_a_vs_zbt = d_vce.mass_zbt_map()
-        vce_a_vs_gnd = d_vce.mass_lowest_energy_map()
+    for d_vce in d_vce_list:
+        if d_vce.exp not in exp_list:
+            continue
+        vce_ground_energy_map = d_vce.mass_ground_energy_map()
+        x_vce, y_vce = [list(a) for a in map_to_arrays(vce_ground_energy_map)]
 
-        x_vce_zbt, y_vce_zbt = [list(a) for a in map_to_arrays(vce_a_vs_zbt)]
-        x_vce_0, y_vce_0 = [list(a) for a in map_to_arrays(vce_a_vs_gnd)]
-
-        x_del = sorted(list(set(x_vce_0) & set(x_vce_zbt) & set(x_ex)))
+        x_del = sorted(list(set(x_vce) & set(x_ex)))
         y_del = list()
         for x in x_del:
-            y_del_i = (y_vce_0[x_vce_0.index(x)] +
-                       y_vce_zbt[x_vce_zbt.index(x)] -
-                       y_ex[x_ex.index(x)])
+            y_del_i = (y_vce[x_vce.index(x)] - y_ex[x_ex.index(x)])
             if abs_value:
                 y_del.append((abs(y_del_i)))
             else:
@@ -72,7 +79,7 @@ def plot_ground_state_prescription_error_vs_exact(
         return plot_the_plots(
             plots=plots,
             title='Ground state energy error due to various A-prescriptions',
-            label='{p}',
+            label='{p},'+' Nhw={}'.format(nhw),
             xlabel='A',
             ylabel='E_presc - E_ex',
             get_label_kwargs=lambda p, i: {'p': p[3]['name']},

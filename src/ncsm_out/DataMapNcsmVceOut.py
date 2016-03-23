@@ -44,3 +44,21 @@ class DataMapNcsmVceOut(DataMap):
                     aeff_energy_map[k] = v
                     aeff_nhw_map[k] = m.exp.Nhw
         return aeff_energy_map
+
+    def aeff_exact_to_ground_state_energy_map_from_exp(self, exp0):
+        """Combines the aeff_exact_to_ground_state_energy_map from the given
+        exp0 and that with Nhw one greater.
+        :param exp0: exp value
+        """
+        exp0 = self.exp_type(*exp0)
+        kwargs = exp0._asdict()
+        kwargs.update({'Nhw': exp0.Nhw + 1})
+        exp1 = self.exp_type(**kwargs)
+        if exp0 not in self.map or exp1 not in self.map:
+            return None
+        else:
+            dat0 = self.map[exp0]
+            dat1 = self.map[exp1]
+            m = dat0.aeff_exact_to_ground_state_energy_map()
+            m.update(dat1.aeff_exact_to_ground_state_energy_map())
+            return m
