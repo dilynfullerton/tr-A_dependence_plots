@@ -27,3 +27,18 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
 
     def _exp_from_file_path(self, f):
         return exp(filepath=f)
+
+    def a_eq_aeff_to_ground_state_energy_map(self, z, nhw, n1, n2, nshell,
+                                             ncomponent):
+        def f(exp0):
+            return (exp0.Z == z and
+                    exp0.A_presc[0] == exp0.A_presc[1] == exp0.A_presc[2] and
+                    exp0.Nhw == nhw and exp0.n1 == n1 and exp0.n2 == n2 and
+                    exp0.nshell == nshell and exp0.ncomponent == ncomponent)
+        a_eq_aeff_map = dict()
+        for e in filter(f, self.map.keys()):
+            m = self[e].mass_ground_energy_map()
+            a = e.A_presc[0]
+            if a in m:
+                a_eq_aeff_map[a] = m[a]
+        return a_eq_aeff_map
