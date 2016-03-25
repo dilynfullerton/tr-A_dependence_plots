@@ -10,7 +10,7 @@ from constants import F_PARSE_LPT_CMNT_STR as _STR_CMNT
 from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
 from constants import FN_PARSE_INT_ELT_SPLIT as _CHR_SPLIT
 from constants import FN_PARSE_NCSMVCE_LPT_REGEX_PRESC as _RGX_PRESC
-from constants import FN_PARSE_NCSMVCE_LPT_REGEX_NHW as _RGX_NHW
+from constants import FN_PARSE_NCSMVCE_LPT_REGEX_NMAX as _RGX_NMAX
 from constants import FN_PARSE_NCSMVCE_LPT_REGEX_NSHELL as _RGX_NSHELL
 from constants import FN_PARSE_NCSMVCE_LPT_REGEX_NCOMP as _RGX_NCOMP
 from parse import elt_from_felts, filename_elts_list
@@ -25,8 +25,8 @@ def _a_presc_from_delts(delts, regex_presc):
     return tuple([int(x) for x in a_presc_tuple_str.split(',')])
 
 
-def nhw_n1_n2_from_delts(delts, regex_nhw):
-    nhw_elt = elt_from_felts(felts=delts, elt_regex=regex_nhw)
+def nmax_n1_n2_from_delts(delts, regex_nmax):
+    nhw_elt = elt_from_felts(felts=delts, elt_regex=regex_nmax)
     if nhw_elt is None:
         return (None,)*3
     else:
@@ -45,7 +45,7 @@ def exp(
         _row_az=_ROW_AZ,
         _split_char=_CHR_SPLIT,
         _rgx_presc=_RGX_PRESC,
-        _rgx_nhw=_RGX_NHW,
+        _rgx_nmax=_RGX_NMAX,
         _rgx_nshell=_RGX_NSHELL,
         _rgx_ncomp=_RGX_NCOMP,
 ):
@@ -53,7 +53,7 @@ def exp(
     dirname = datum_dirname(filepath=filepath)
     delts = filename_elts_list(filename=dirname, split_char=_split_char)
     a_presc = _a_presc_from_delts(delts=delts, regex_presc=_rgx_presc)
-    nhw, n1, n2 = nhw_n1_n2_from_delts(delts=delts, regex_nhw=_rgx_nhw)
+    nmax, n1, n2 = nmax_n1_n2_from_delts(delts=delts, regex_nmax=_rgx_nmax)
     nshell = int(elt_from_felts(felts=delts, elt_regex=_rgx_nshell)[5:])
     ncomponent = int(elt_from_felts(felts=delts, elt_regex=_rgx_ncomp)[3:])
-    return z, a_presc, nhw, n1, n2, nshell, ncomponent
+    return z, a_presc, nmax, n1, n2, nshell, ncomponent

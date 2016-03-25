@@ -1,4 +1,4 @@
-from __future__ import print_function, division, unicode_literals
+from __future__ import print_function, division
 from os import sep
 from DataMap import DataMap
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_FNAME as _RGX_FNAME
@@ -31,35 +31,3 @@ class DataMapNcsmVceOut(DataMap):
 
         return get_files_r(directory=self.parent_dir,
                            filterfn=ncsmvce_out_file_filter)
-
-    def aeff_exact_to_ground_state_energy_map(self):
-        """Combines the 'aeff_exact_to_ground_state_energy_map' functions
-        from all of the map values by taking those with the largest Nhw values
-        """
-        aeff_energy_map = dict()
-        aeff_nhw_map = dict()
-        for m in self.map.values():
-            for k, v in m.aeff_exact_to_ground_state_energy_map().iteritems():
-                if k not in aeff_energy_map or m.exp.Nhw > aeff_nhw_map[k]:
-                    aeff_energy_map[k] = v
-                    aeff_nhw_map[k] = m.exp.Nhw
-        return aeff_energy_map
-
-    def aeff_exact_to_ground_state_energy_map_from_exp(self, exp0):
-        """Combines the aeff_exact_to_ground_state_energy_map from the given
-        exp0 and that with Nhw one greater.
-        :param exp0: exp value
-        """
-        exp0 = self.exp_type(*exp0)
-        # noinspection PyProtectedMember
-        kwargs = exp0._asdict()
-        kwargs.update({'Nhw': exp0.Nhw + 1})
-        exp1 = self.exp_type(**kwargs)
-        if exp0 not in self.map or exp1 not in self.map:
-            return None
-        else:
-            dat0 = self.map[exp0]
-            dat1 = self.map[exp1]
-            m = dat0.aeff_exact_to_ground_state_energy_map()
-            m.update(dat1.aeff_exact_to_ground_state_energy_map())
-            return m

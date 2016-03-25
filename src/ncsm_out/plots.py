@@ -10,7 +10,7 @@ from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 def plot_ground_state_prescription_error_vs_exact(
         a_prescriptions,
-        z=2, nhw=4, n1=15, n2=15, nshell=1, ncomponent=2,
+        z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2,
         abs_value=False,
         do_plot=True,
         transform=None,
@@ -22,18 +22,15 @@ def plot_ground_state_prescription_error_vs_exact(
     if dm_exact is None:
         dm_exact = DataMapNcsmVceOut(
             parent_directory='../../cougar-ncsm/results',
+            exp_list=[(z, n1, n2)]
         )
-    aeff_exact_vs_ground = dm_exact.aeff_exact_to_ground_state_energy_map()
-    x_ex, y_ex = [list(a) for a in map_to_arrays(aeff_exact_vs_ground)]
-    exp = dm_exact[(z, nhw, n1, n2)].exp
-    if dm_vce is None:
-        dm_vce = DataMapNcsmVceLpt(
-            parent_directory='../../cougar-nushellx/results',
-        )
-    a_eq_eff = dm_exact.aeff_exact_to_ground_state_energy_map_from_exp(exp0=exp)
-    # a_eq_eff = dm_vce.a_eq_aeff_to_ground_state_energy_map(
-    #     z=z, nhw=nhw, n1=n1, n2=n2, nshell=nshell, ncomponent=ncomponent
-    # )
+    dat_exact = dm_exact.map.values()[0]
+    # todo maybe define the exact map differently... what IS exact anyway?
+    exact_map = dat_exact.aeff_exact_to_ground_state_energy_map_for_max_nhw()
+    x_ex, y_ex = [list(a) for a in map_to_arrays(exact_map)]
+    a_eq_eff = dat_exact.aeff_exact_to_ground_state_energy_map_for_nmax(
+        nmax=nmax, a0=int((nshell+2) * (nshell+1) * nshell/3 * ncomponent)
+    )
     x_aaf, y_aaf = [list(a) for a in map_to_arrays(a_eq_eff)]
     x_del = sorted(list(set(x_ex) & set(x_aaf)))
     y_del = list()
@@ -45,7 +42,11 @@ def plot_ground_state_prescription_error_vs_exact(
             y_del.append(y_del_i)
     plots = [(np.array(x_del), np.array(y_del), list(), {'name': 'Aeff = A'})]
     # prescriptions
-    exp_list = [dm_vce.exp_type(z, ap, nhw, n1, n2, nshell, ncomponent)
+    if dm_vce is None:
+        dm_vce = DataMapNcsmVceLpt(
+            parent_directory='../../cougar-nushellx/results',
+        )
+    exp_list = [dm_vce.exp_type(z, ap, nmax, n1, n2, nshell, ncomponent)
                 for ap in a_prescriptions]
     d_vce_list = dm_vce.map.values()
     for d_vce in d_vce_list:
@@ -79,7 +80,7 @@ def plot_ground_state_prescription_error_vs_exact(
         return plot_the_plots(
             plots=plots,
             title='Ground state energy error due to various A-prescriptions',
-            label='{p},'+' Nhw={}'.format(nhw),
+            label='{p},'+' Nhw={}'.format(nmax),
             xlabel='A',
             ylabel='E_presc - E_ex',
             get_label_kwargs=lambda p, i: {'p': p[3]['name']},

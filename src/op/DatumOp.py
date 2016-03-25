@@ -53,10 +53,10 @@ class DatumOp(Datum):
         self._h_line = h_line
         self._zbt = zbt
         self._particles_to_1bt_trel_map = dict()
-        for k, v, in trel_1bt_map.iteritems():
+        for k, v, in trel_1bt_map.items():
             self._particles_to_1bt_trel_map[TrelParticles(*k)] = v
         self._particles_interaction_to_2bt_trel_map = dict()
-        for k, v in trel_2bt_map.iteritems():
+        for k, v in trel_2bt_map.items():
             next_k = TrelParticlesInteraction(Particle(*k[0]), Particle(*k[1]),
                                               Interaction(*k[2]))
             self._particles_interaction_to_2bt_trel_map[next_k] = v
@@ -78,7 +78,7 @@ class DatumOp(Datum):
 
     def particles_to_interaction_to_2bt_trel_map(self):
         particles_iteraction_trel_map = dict()
-        for k, v in self._particles_interaction_to_2bt_trel_map.iteritems():
+        for k, v in self._particles_interaction_to_2bt_trel_map.items():
             particles = TrelParticles(*k[0:2])
             interaction = k[2]
             if particles not in particles_iteraction_trel_map:
@@ -89,8 +89,8 @@ class DatumOp(Datum):
     def interaction_to_particles_to_2bt_trel_map(self):
         pit_map = self.particles_to_interaction_to_2bt_trel_map()
         ipt_map = dict()
-        for k, v in pit_map.iteritems():
-            for kk, vv in v.iteritems():
+        for k, v in pit_map.items():
+            for kk, vv in v.items():
                 if kk not in ipt_map:
                     ipt_map[kk] = dict()
                 ipt_map[kk][k] = vv
@@ -107,7 +107,7 @@ class DatumOp(Datum):
                                                'interaction {}'.format(i))
         num = 0
         denom = 0
-        for k, v in pt_map.iteritems():
+        for k, v in pt_map.items():
             j = k[0].j
             num += (2*j + 1) * v
             denom += (2*j + 1)

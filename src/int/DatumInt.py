@@ -154,9 +154,9 @@ class DatumInt(Datum):
         """
         mie_map = self._mass_index_energy_map
         std_mie_map = dict()
-        for m, ie_map in mie_map.iteritems():
+        for m, ie_map in mie_map.items():
             std_ie_map = dict()
-            for idx, energy in ie_map.iteritems():
+            for idx, energy in ie_map.items():
                 next_idx = self._standard_index(idx)
                 std_ie_map[next_idx] = energy
             std_mie_map[m] = std_ie_map
@@ -165,16 +165,16 @@ class DatumInt(Datum):
     def _standardize_mass_interaction_index_energy_map_indexing(self):
         miie_map = self._mass_interaction_index_energy_map
         std_miie_map = dict()
-        for m, iie_map in miie_map.iteritems():
+        for m, iie_map in miie_map.items():
             std_iie_map = dict()
-            for ii, energy in iie_map.iteritems():
+            for ii, energy in iie_map.items():
                 next_ii = self._standardize_interaction_index_tuple(ii)
                 std_iie_map[next_ii] = energy
             std_miie_map[m] = std_iie_map
         self._mass_interaction_index_energy_map = std_miie_map
 
     def _standard_orbital_index_map(self):
-        return {v: k for k, v in self.standard_index_orbital_map.iteritems()}
+        return {v: k for k, v in self.standard_index_orbital_map.items()}
 
     def _standardize_interaction_index_tuple(self, ii_tuple):
         next_tuple = [self._standard_index(i) for i in ii_tuple[0:4]]

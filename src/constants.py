@@ -60,7 +60,7 @@ F_PARSE_LPT_CMNT_STR = b'!'
 # ncsm/vce *.lpt filename parsing
 FN_PARSE_NCSMVCE_LPT_REGEX_DNAME = b'vce'
 FN_PARSE_NCSMVCE_LPT_REGEX_PRESC = b'presc\d+,\d+,\d+'
-FN_PARSE_NCSMVCE_LPT_REGEX_NHW = b'Nhw\d+'
+FN_PARSE_NCSMVCE_LPT_REGEX_NMAX = b'Nmax\d+'
 FN_PARSE_NCSMVCE_LPT_REGEX_NSHELL = b'shell\d+'
 FN_PARSE_NCSMVCE_LPT_REGEX_NCOMP = b'dim\d+'
 
@@ -79,7 +79,7 @@ F_PARSE_OP_CMNT_STR = F_PARSE_INT_CMNT_STR
 
 # NCSM/VCE *.out filename parsing
 FN_PARSE_NCSMVCE_OUT_RGX_FNAME = b'[a-z][a-z_]\d+_\d+_Nhw\d+_\d+_\d+\.out'
-FN_PARSE_NCSMVCE_OUT_RGX_NHW = FN_PARSE_NCSMVCE_LPT_REGEX_NHW
+FN_PARSE_NCSMVCE_OUT_RGX_NHW = b'Nhw\d+'
 FN_PARSE_NCSMVCE_OUT_CHR_ELT_SPLIT = b'_'
 
 # NCSM/VCE *.out file content parsing

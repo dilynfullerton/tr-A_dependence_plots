@@ -18,9 +18,9 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
     plots = list()
     if proton_num is not None:
         items = filter(lambda item: item[0].Z == proton_num,
-                       imsrg_data_map.iteritems())
+                       imsrg_data_map.items())
     else:
-        items = imsrg_data_map.iteritems()
+        items = imsrg_data_map.items()
     for k, v in items:
         mne_map = v.mass_n_energy_map()
         if mass_num in mne_map:
@@ -54,9 +54,9 @@ def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
     plots = list()
     if proton_num is not None:
         items = filter(lambda item: item[0].Z == proton_num,
-                       imsrg_data_map.iteritems())
+                       imsrg_data_map.items())
     else:
-        items = imsrg_data_map.iteritems()
+        items = imsrg_data_map.items()
     for k, v in items:
         nme_map = v.n_mass_energy_map()
         if n in nme_map:

@@ -35,10 +35,10 @@ class DatumLpt(Datum):
     def _set_mass_n_body_map(self):
         mass_n_body_map = mnbd_map(self.files)
         d = dict()
-        for m, nb_map in mass_n_body_map.iteritems():
+        for m, nb_map in mass_n_body_map.items():
             if m not in d and len(nb_map) > 0:
                 d[m] = dict()
-            for n, b in nb_map.iteritems():
+            for n, b in nb_map.items():
                 d[m][n] = Shell(*b)
         self._mass_n_body_map = d
 
@@ -59,12 +59,12 @@ class DatumLpt(Datum):
 
     def mass_n_energy_map(self):
         d = dict()
-        for m, nb_map in self._mass_n_body_map.iteritems():
-            d[m] = {n: b.E for n, b in nb_map.iteritems()}
+        for m, nb_map in self._mass_n_body_map.items():
+            d[m] = {n: b.E for n, b in nb_map.items()}
         return d
 
     def mass_lowest_energy_map(self):
-        return {k: v[1] for k, v in self.mass_n_energy_map().iteritems()}
+        return {k: v[1] for k, v in self.mass_n_energy_map().items()}
 
     def mass_ground_energy_map(self):
         mzbt = self.mass_zbt_map()
@@ -77,15 +77,15 @@ class DatumLpt(Datum):
 
     def mass_n_excitation_map(self):
         d = dict()
-        for m, nb_map in self._mass_n_body_map.iteritems():
-            d[m] = {n: b.Ex for n, b in nb_map.iteritems()}
+        for m, nb_map in self._mass_n_body_map.items():
+            d[m] = {n: b.Ex for n, b in nb_map.items()}
         return d
 
     def n_mass_energy_map(self):
         d = dict()
         mne_map = self.mass_n_energy_map()
-        for m, ne_map in mne_map.iteritems():
-            for n, e in ne_map.iteritems():
+        for m, ne_map in mne_map.items():
+            for n, e in ne_map.items():
                 if n not in d:
                     d[n] = dict()
                 d[n][m] = e
@@ -94,8 +94,8 @@ class DatumLpt(Datum):
     def n_mass_excitation_map(self):
         d = dict()
         mnext_map = self.mass_n_excitation_map()
-        for m, n_ext_map in mnext_map.iteritems():
-            for n, ext in n_ext_map.iteritems():
+        for m, n_ext_map in mnext_map.items():
+            for n, ext in n_ext_map.items():
                 if n not in d:
                     d[n] = dict()
                 d[n][m] = ext

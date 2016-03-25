@@ -8,7 +8,7 @@ f(
         # (2, 3, 4),
         (4, 5, 6),
     ],
-    nhw=5, n1=15, n2=15,
+    nmax=4, n1=15, n2=15,
     nshell=1, ncomponent=2,
     abs_value=False,
     # transform=cubic_spline(500)
