@@ -1,11 +1,11 @@
 from __future__ import print_function, division, unicode_literals
 
 from Datum import Datum
-from constants import F_PARSE_OP_CMNT_STR as _CMNT_STR
-from constants import F_PARSE_OP_REGEX_HERM as _REGEX_H
-from constants import F_PARSE_OP_REGEX_0B as _REGEX_0BT
-from constants import F_PARSE_OP_REGEX_1B as _REGEX_1BT
-from constants import F_PARSE_OP_REGEX_2B as _REGEX_2BT
+from constants import F_PARSE_OP_STR_CMNT as _CMNT_STR
+from constants import F_PARSE_OP_RGX_HERM as _REGEX_H
+from constants import F_PARSE_OP_RGX_0B as _REGEX_0BT
+from constants import F_PARSE_OP_RGX_1B as _REGEX_1BT
+from constants import F_PARSE_OP_RGX_2B as _REGEX_2BT
 from op.TrelParticles import TrelParticles
 from op.TrelParticlesInteraction import TrelParticlesInteraction
 from op.QuantumNumbers import QuantumNumbers as Particle

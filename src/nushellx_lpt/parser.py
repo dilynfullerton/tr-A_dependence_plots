@@ -6,13 +6,13 @@ from __future__ import print_function
 from os import sep, path, walk
 from re import match
 
-from constants import F_PARSE_LPT_CMNT_STR as _CMNT_STR
+from constants import F_PARSE_LPT_STR_CMNT as _CMNT_STR
 from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
 from constants import F_PARSE_LPT_ROW_HEAD as _ROW_HEAD
 from constants import F_PARSE_LPT_COL_HEAD_DATA_START as _COL_START
 from constants import F_PARSE_LPT_ROW_START_DATA as _ROW_BODY_START
 from constants import F_PARSE_LPT_NCOLS_BODY as _NCOLS_BODY
-from constants import FN_PARSE_LPT_REGEX_FILENAME_INT as _REGEX_FILENAME_INT
+from constants import FN_PARSE_LPT_RGX_FNAME_INT as _REGEX_FILENAME_INT
 from constants import F_PARSE_INT_CMNT_STR as _INT_CMNT_STR
 from constants import F_PARSE_INT_CMNT_ZBT as _INT_CMNT_ZBT
 from parse import content_lines, comment_lines, half_int_str_to_float

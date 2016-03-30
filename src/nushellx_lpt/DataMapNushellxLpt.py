@@ -3,8 +3,8 @@ from __future__ import print_function, division, unicode_literals
 from os.path import sep
 
 from DataMap import DataMap
-from constants import FN_PARSE_LPT_REGEX_FILENAME as _RGX_FNAME
-from constants import FN_PARSE_LPT_REGEX_DNAME as _RGX_DNAME_GGP
+from constants import FN_PARSE_LPT_RGX_FNAME as _RGX_FNAME
+from constants import FN_PARSE_LPT_RGX_DNAME as _RGX_DNAME_GGP
 from parse import matches_completely, get_files_r
 from nushellx_lpt.ExpNushellxLpt import ExpNushellxLpt
 from nushellx_lpt.DatumLpt import DatumLpt

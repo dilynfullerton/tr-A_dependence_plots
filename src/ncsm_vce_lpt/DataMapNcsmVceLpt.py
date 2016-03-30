@@ -1,7 +1,7 @@
 from __future__ import print_function, division, unicode_literals
 
-from constants import FN_PARSE_LPT_REGEX_FILENAME as _RGX_FNAME
-from constants import FN_PARSE_NCSMVCE_LPT_REGEX_DNAME as _RGX_DNAME_GGP
+from constants import FN_PARSE_LPT_RGX_FNAME as _RGX_FNAME
+from constants import FN_PARSE_NCSMVCE_LPT_RGX_DNAME as _RGX_DNAME_GGP
 from ncsm_vce_lpt.ExpNcsmVceLpt import ExpNcsmVceLpt
 from ncsm_vce_lpt.parser import exp
 from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
@@ -27,3 +27,26 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
 
     def _exp_from_file_path(self, f):
         return exp(filepath=f)
+
+    def aeff_eq_a_to_ground_energy_map(
+            self, z, nmax, n1, n2, nshell, ncomponent
+    ):
+        aeff_eq_a_to_ground_energy = dict()
+        for exp in self.map.keys():
+            presc = exp.A_presc
+            if presc[0] != presc[1] or presc[0] != presc[2]:
+                continue
+            elif exp.Z != z or exp.Nmax != nmax or exp.n1 != n1 or exp.n2 != n2:
+                continue
+            elif exp.nshell != nshell or exp.ncomponent != ncomponent:
+                continue
+            else:
+                a = presc[0]
+                dat = self[exp]
+                ground_energy_map = dat.mass_ground_energy_map()
+                if a in ground_energy_map:
+                    ground_energy = ground_energy_map[a]
+                    aeff_eq_a_to_ground_energy[a] = ground_energy
+                else:
+                    continue
+        return aeff_eq_a_to_ground_energy

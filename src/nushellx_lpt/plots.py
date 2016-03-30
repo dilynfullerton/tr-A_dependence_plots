@@ -5,12 +5,12 @@ from __future__ import print_function, division, unicode_literals
 import numpy as np
 from matplotlib import pyplot as plt
 
-from constants import DIR_SHELL_RESULTS
+from constants import DPATH_SHELL_RESULTS
 from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 from plotting import map_to_arrays, plot_the_plots
 
 
-def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
+def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DPATH_SHELL_RESULTS,
                                   exp_list=None, proton_num=None,
                                   transform=None):
     imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
@@ -46,7 +46,7 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DIR_SHELL_RESULTS,
     plt.show()
 
 
-def lpt_plot_energy_vs_mass_for_n(n, directory=DIR_SHELL_RESULTS,
+def lpt_plot_energy_vs_mass_for_n(n, directory=DPATH_SHELL_RESULTS,
                                   exp_list=None, proton_num=None,
                                   transform=None):
     imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,

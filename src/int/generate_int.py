@@ -12,8 +12,8 @@ from metafitters_sp import single_particle_firstp_metafit
 from metafitters_sp import single_particle_firstp_zbt_metafit
 from metafitters_mp import multi_particle_firstp_metafit
 from constants import STANDARD_IO_MAP
-from constants import DIR_FILES_INT, DIR_GEN_INT
-from constants import GEN_INT_SUBDIR, GEN_INT_FILE_NAME
+from constants import DPATH_FILES_INT, DPATH_GEN_INT
+from constants import GEN_INT_DNAME_SUBDIR, GEN_INT_FNAME
 from constants import GEN_INT_ROW_LINES_TITLE, GEN_INT_ROW_LINES_FIT_PARAMS
 from constants import GEN_INT_ROW_ZERO_BODY_TERM, GEN_INT_ROW_INDEX_KEY_HEAD
 from constants import GEN_INT_ROW_INDEX_KEY, GEN_INT_ROW_BLANK
@@ -28,7 +28,7 @@ def generate_int_file_from_fit(
         metafitter_zbt=single_particle_firstp_zbt_metafit,
         metafitter_sp=single_particle_firstp_metafit,
         metafitter_mp=multi_particle_firstp_metafit,
-        sourcedir=DIR_FILES_INT,
+        sourcedir=DPATH_FILES_INT,
         **kwargs):
     """Given fit functions for zbt, sp, and mp, as well as a set of e_hw_pairs,
     a range of mass numbers, and specific metafitter algorithms, generates
@@ -65,9 +65,9 @@ def generate_int_file_from_fit_results(
         results_zbt, results_sp, results_mp,
         mass_range, e_hw_pairs,
         io_map=STANDARD_IO_MAP,
-        file_save_dir=DIR_GEN_INT,
-        _file_save_subdir=GEN_INT_SUBDIR,
-        _file_save_name=GEN_INT_FILE_NAME,
+        file_save_dir=DPATH_GEN_INT,
+        _file_save_subdir=GEN_INT_DNAME_SUBDIR,
+        _file_save_name=GEN_INT_FNAME,
         _row_lines_title=GEN_INT_ROW_LINES_TITLE,
         _row_lines_subtitle=GEN_INT_ROW_LINES_FIT_PARAMS,
         _row_zbt=GEN_INT_ROW_ZERO_BODY_TERM,

@@ -15,12 +15,12 @@ class TwoBodyInteraction(namedtuple('TwoBodyInteractionInt',
         c = str(self.c)
         d = str(self.d)
         j = str(self.j)
-        sep = unichr(9474).strip()
-        left = unichr(12296).strip()
-        right = unichr(12297).strip()
-        # sep = '|'
-        # left = '<'
-        # right = '>'
+        # sep = unichr(9474).strip()
+        # left = unichr(12296).strip()
+        # right = unichr(12297).strip()
+        sep = '|'
+        left = '<'
+        right = '>'
         return ('({left}{a},{b}{s}'
                 'V'
                 '{s}{c},{d}{right}, j={j})'

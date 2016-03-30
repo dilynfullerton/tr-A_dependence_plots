@@ -6,7 +6,7 @@ import numpy as np
 
 from transforms import pzbt
 from plotting import map_to_arrays
-from constants import DIR_SHELL_RESULTS, DIR_PLOTS
+from constants import DPATH_SHELL_RESULTS, DPATH_PLOTS
 from int.metafitter_abs import single_particle_metafit_int
 from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 
@@ -54,7 +54,7 @@ def metafit_nushellx_lpt(
         exp_filter_fn=None,
         xlabel='A', ylabel='Energy + Zero Body Term (MeV)',
         show_fit=False,
-        _sourcedir=DIR_SHELL_RESULTS, _savedir=DIR_PLOTS,
+        _sourcedir=DPATH_SHELL_RESULTS, _savedir=DPATH_PLOTS,
         _data_map=DataMapNushellxLpt,
         _get_data=lambda dm: dm.n_mass_energy_map(),
         _get_plots=_get_plots_lpt, _get_plot=_get_plot_lpt,

@@ -7,28 +7,28 @@ from LegendSize import LegendSize
 from int.QuantumNumbers import QuantumNumbers
 
 # Directory locations relative to src/
-DIR_FILES_INT = '../files_INT'
-DIR_FILES_INT_ORG = '../files_INT_org'
-DIR_FILES_OP = '../files_OP'
-DIR_FILES_OP_ORG = '../files_OP_org'
-DIR_PLOTS = '../plots'
-DIR_GEN_INT = '../gen_files_INT'
-DIR_SHELL_RESULTS = '../../cougar-nushellx/results'
-DIR_NCSM_RESULTS = '../../cougar-ncsm/results'
+DPATH_FILES_INT = '../files_INT'
+DPATH_FILES_INT_ORG = '../files_INT_org'
+DPATH_FILES_OP = '../files_OP'
+DPATH_FILES_OP_ORG = '../files_OP_org'
+DPATH_PLOTS = '../plots'
+DPATH_GEN_INT = '../gen_files_INT'
+DPATH_SHELL_RESULTS = '../../cougar-nushellx/results'
+DPATH_NCSM_RESULTS = '../../cougar-ncsm/results'
 
 # File organization
-ORG_FMT_INT_DIR = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
-ORG_FMT_INT_FILE = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}_A{}.int'
+ORG_FMT_INT_DNAME = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
+ORG_FMT_INT_FNAME = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}_A{}.int'
 
 # *.int filename parsing
-FN_PARSE_INT_REGEX_NAME = b'[a-z]+'
-FN_PARSE_INT_REGEX_MASS = b'A\d+'
-FN_PARSE_INT_REGEX_E = b'e\d+'
-FN_PARSE_INT_REGEX_HW = b'hw\d+'
-FN_PARSE_INT_REGEX_BASE = b'O\d+'
-FN_PARSE_INT_REGEX_RP = b'[a-z]+\d\.\d+Rp\d'
-FN_PARSE_INT_REGEX_EXT = b'.*\.int'
-FN_PARSE_INT_EXT = b'.int'
+FN_PARSE_INT_RGX_NAME = b'[a-z]+'
+FN_PARSE_INT_RGX_MASS = b'A\d+'
+FN_PARSE_INT_RGX_E = b'e\d+'
+FN_PARSE_INT_RGX_HW = b'hw\d+'
+FN_PARSE_INT_RGX_BASE = b'O\d+'
+FN_PARSE_INT_RGX_RP = b'[a-z]+\d\.\d+Rp\d'
+FN_PARSE_INT_RGX_EXT = b'.*\.int'
+FN_PARSE_INT_STR_EXT = b'.int'
 FN_PARSE_INT_ELT_SPLIT = b'_'
 
 # *.int file content parsing
@@ -40,9 +40,9 @@ F_PARSE_INT_CMNT_INDEX = b'Index'
 F_PARSE_INT_CMNT_ZBT = b'Zero body term'
 
 # nushellx *.lpt filename parsing
-FN_PARSE_LPT_REGEX_FILENAME = b'[a-z][a-z_]\d\d[a-z]\.lpt'
-FN_PARSE_LPT_REGEX_FILENAME_INT = b'A\d+\.int|usdb\.int'
-FN_PARSE_LPT_REGEX_DNAME = b'files_org|gen_files|usdb'
+FN_PARSE_LPT_RGX_FNAME = b'[a-z][a-z_]\d\d[a-z]\.lpt'
+FN_PARSE_LPT_RGX_FNAME_INT = b'A\d+\.int|usdb\.int'
+FN_PARSE_LPT_RGX_DNAME = b'files_org|gen_files|usdb'
 
 # nushellx *.lpt file content parsing
 F_PARSE_LPT_ROW_AZ = 1
@@ -55,27 +55,27 @@ F_PARSE_LPT_COLS_FLOAT = [2, 3]
 F_PARSE_LPT_COLS_HALF_INT = [4, 5]
 F_PARSE_LPT_COLS_FLOAT_NONE = [7]
 F_PARSE_LPT_COLS_STR = [8]
-F_PARSE_LPT_CMNT_STR = b'!'
+F_PARSE_LPT_STR_CMNT = b'!'
 
 # ncsm/vce *.lpt filename parsing
-FN_PARSE_NCSMVCE_LPT_REGEX_DNAME = b'vce'
-FN_PARSE_NCSMVCE_LPT_REGEX_PRESC = b'presc\d+,\d+,\d+'
-FN_PARSE_NCSMVCE_LPT_REGEX_NMAX = b'Nmax\d+'
-FN_PARSE_NCSMVCE_LPT_REGEX_NSHELL = b'shell\d+'
-FN_PARSE_NCSMVCE_LPT_REGEX_NCOMP = b'dim\d+'
+FN_PARSE_NCSMVCE_LPT_RGX_DNAME = b'vce'
+FN_PARSE_NCSMVCE_LPT_RGX_PRESC = b'presc\d+,\d+,\d+'
+FN_PARSE_NCSMVCE_LPT_RGX_NMAX = b'Nmax\d+'
+FN_PARSE_NCSMVCE_LPT_RGX_NSHELL = b'shell\d+'
+FN_PARSE_NCSMVCE_LPT_RGX_NCOMP = b'dim\d+'
 
 # *.op filename parsing
-FN_PARSE_OP_REGEX_NAME = b'[A-Za-z]+'
-FN_PARSE_OP_REGEX_HW = FN_PARSE_INT_REGEX_HW
-FN_PARSE_OP_REGEX_EXT = b'.*\.op'
+FN_PARSE_OP_RGX_NAME = b'[A-Za-z]+'
+FN_PARSE_OP_RGX_HW = FN_PARSE_INT_RGX_HW
+FN_PARSE_OP_RGX_EXT = b'.*\.op'
 
 # *.op file content parsing
-F_PARSE_OP_REGEX_HERM = b'[A-Za-z]+'
-F_PARSE_OP_REGEX_0B = b'\$ZeroBody:.*'
-F_PARSE_OP_REGEX_1B = b'\$OneBody:\s*'
-F_PARSE_OP_REGEX_2B = b'\$TwoBody:\s*'
+F_PARSE_OP_RGX_HERM = b'[A-Za-z]+'
+F_PARSE_OP_RGX_0B = b'\$ZeroBody:.*'
+F_PARSE_OP_RGX_1B = b'\$OneBody:\s*'
+F_PARSE_OP_RGX_2B = b'\$TwoBody:\s*'
 F_PARSE_OP_ELT_SPLIT = FN_PARSE_INT_ELT_SPLIT
-F_PARSE_OP_CMNT_STR = F_PARSE_INT_CMNT_STR
+F_PARSE_OP_STR_CMNT = F_PARSE_INT_CMNT_STR
 
 # NCSM/VCE *.out filename parsing
 FN_PARSE_NCSMVCE_OUT_RGX_FNAME = b'[a-z][a-z_]\d+_\d+_Nhw\d+_\d+_\d+\.out'
@@ -151,9 +151,9 @@ FF_CODE_SUFF = ']'
 
 # File generating
 # noinspection PyPep8
-GEN_INT_SUBDIR = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}'
+GEN_INT_DNAME_SUBDIR = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}'
 # noinspection PyPep8
-GEN_INT_FILE_NAME = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int'
+GEN_INT_FNAME = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int'
 # noinspection PyPep8
 GEN_INT_ROW_LINES_TITLE = [
     '! Interaction file generated from:',

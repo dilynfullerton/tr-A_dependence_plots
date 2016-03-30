@@ -3,7 +3,7 @@ from __future__ import print_function, division, unicode_literals
 from os import path, mkdir, link
 
 from Datum import Datum
-from constants import DIR_FILES_INT_ORG, ORG_FMT_INT_DIR, ORG_FMT_INT_FILE
+from constants import DPATH_FILES_INT_ORG, ORG_FMT_INT_DNAME, ORG_FMT_INT_FNAME
 from int.QuantumNumbers import QuantumNumbers
 from int.TwoBodyInteraction import TwoBodyInteraction
 from int.parser import index_to_tuple_map as get_index_tuple_map
@@ -21,9 +21,9 @@ class DatumInt(Datum):
     """
     def __init__(self, directory, exp, files, std_io_map=None,
                  standardize_io_map=True, organize_files=True,
-                 org_file_dir=DIR_FILES_INT_ORG,
-                 directory_format=ORG_FMT_INT_DIR,
-                 file_format=ORG_FMT_INT_FILE):
+                 org_file_dir=DPATH_FILES_INT_ORG,
+                 directory_format=ORG_FMT_INT_DNAME,
+                 file_format=ORG_FMT_INT_FNAME):
         super(DatumInt, self).__init__(directory=directory, exp=exp,
                                        files=files)
         self.name = None

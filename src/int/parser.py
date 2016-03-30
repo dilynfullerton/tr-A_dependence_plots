@@ -7,12 +7,12 @@ from __future__ import print_function
 from parse import get_files_r, filename_elts_list, elt_from_felts
 from parse import content_lines, comment_lines
 from constants import FN_PARSE_INT_ELT_SPLIT as ELT_SPLIT
-from constants import FN_PARSE_INT_REGEX_BASE as REGEX_BASE
-from constants import FN_PARSE_INT_REGEX_E as REGEX_E
-from constants import FN_PARSE_INT_REGEX_HW as REGEX_HW
-from constants import FN_PARSE_INT_REGEX_MASS as REGEX_MASS
-from constants import FN_PARSE_INT_REGEX_NAME as REGEX_NAME
-from constants import FN_PARSE_INT_REGEX_RP as REGEX_RP
+from constants import FN_PARSE_INT_RGX_BASE as REGEX_BASE
+from constants import FN_PARSE_INT_RGX_E as REGEX_E
+from constants import FN_PARSE_INT_RGX_HW as REGEX_HW
+from constants import FN_PARSE_INT_RGX_MASS as REGEX_MASS
+from constants import FN_PARSE_INT_RGX_NAME as REGEX_NAME
+from constants import FN_PARSE_INT_RGX_RP as REGEX_RP
 from constants import F_PARSE_INT_CMNT_INDEX as CMNT_INDEX
 from constants import F_PARSE_INT_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_INT_COL_START_ORBITAL as COL_START_ORBITAL

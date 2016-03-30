@@ -4,8 +4,8 @@ from os.path import sep
 
 from DataMap import DataMap
 from parse import matches_completely, get_files_r
-from constants import FN_PARSE_OP_REGEX_EXT as _REGEX_FILENAME
-from constants import FN_PARSE_OP_REGEX_HW as _REGEX_HW
+from constants import FN_PARSE_OP_RGX_EXT as _REGEX_FILENAME
+from constants import FN_PARSE_OP_RGX_HW as _REGEX_HW
 from constants import F_PARSE_OP_ELT_SPLIT as _SPLIT_CHAR
 
 from op.ExpOp import ExpOp
