@@ -3,8 +3,9 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class TwoBodyInteraction(namedtuple('TwoBodyInteractionInt',
-                                    ['a', 'b', 'c', 'd', 'j', 'zzz'])):
+class TwoBodyInteraction(namedtuple(
+    'TwoBodyInteractionInt', ['a', 'b', 'c', 'd', 'j', 'zzz']
+)):
     """Stores label for interaction (*.int) two-body matrix element label
     """
     __slots__ = ()
@@ -21,12 +22,9 @@ class TwoBodyInteraction(namedtuple('TwoBodyInteractionInt',
         sep = '|'
         left = '<'
         right = '>'
-        return ('({left}{a},{b}{s}'
-                'V'
-                '{s}{c},{d}{right}, j={j})'
+        return ('({left}{a},{b}{s}V{s}{c},{d}{right}, j={j})'
                 '').format(a=a, b=b, c=c, d=d, j=j,
-                           left=left, right=right,
-                           s=sep)
+                           left=left, right=right, s=sep)
 
     def __eq__(self, other):
         return self[0:5] == other[0:5]

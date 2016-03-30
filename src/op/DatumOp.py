@@ -17,20 +17,22 @@ class DatumOp(Datum):
     """Stores a specific subset of all acquired *.op data, as identified by
     the ExpOp
     """
-    def __init__(self, directory, exp, files,
-                 _comment_str=_CMNT_STR,
-                 _regex_h=_REGEX_H,
-                 _regex_0bt=_REGEX_0BT,
-                 _regex_1bt=_REGEX_1BT,
-                 _regex_2bt=_REGEX_2BT):
+    def __init__(
+            self, directory, exp, files,
+            _comment_str=_CMNT_STR,
+            _rgx_h=_REGEX_H,
+            _rgx_0bt=_REGEX_0BT,
+            _rgx_1bt=_REGEX_1BT,
+            _rgx_2bt=_REGEX_2BT
+    ):
         super(DatumOp, self).__init__(directory=directory,
                                       exp=exp,
                                       files=files)
         self._comment_str = _comment_str
-        self._regex_h = _regex_h
-        self._regex_0bt = _regex_0bt
-        self._regex_1bt = _regex_1bt
-        self._regex_2bt = _regex_2bt
+        self._rgx_h = _rgx_h
+        self._rgx_0bt = _rgx_0bt
+        self._rgx_1bt = _rgx_1bt
+        self._rgx_2bt = _rgx_2bt
 
         self._h_head = None
         self._h_line = None
@@ -44,10 +46,10 @@ class DatumOp(Datum):
         h_head, h_line, zbt, trel_1bt_map, trel_2bt_map = data(
             filepath=self.files[0],
             comment_str=self._comment_str,
-            regex_h=self._regex_h,
-            regex_0bt=self._regex_0bt,
-            regex_1bt=self._regex_1bt,
-            regex_2bt=self._regex_2bt
+            regex_h=self._rgx_h,
+            regex_0bt=self._rgx_0bt,
+            regex_1bt=self._rgx_1bt,
+            regex_2bt=self._rgx_2bt
         )
         self._h_head = h_head
         self._h_line = h_line

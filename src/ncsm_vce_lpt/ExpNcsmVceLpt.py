@@ -4,9 +4,10 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class ExpNcsmVceLpt(namedtuple('ExpNcsmVceLpt',
-                               ['Z', 'A_presc', 'Nmax', 'n1', 'n2',
-                                'nshell', 'ncomponent'])):
+class ExpNcsmVceLpt(namedtuple(
+    'ExpNcsmVceLpt',
+    ['Z', 'A_presc', 'Nmax', 'n1', 'n2', 'nshell', 'ncomponent']
+)):
     """Identifier for a group of *.lpt results from performing NuShellX
     calculations on *.int files from a VCE
     """

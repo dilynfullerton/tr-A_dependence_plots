@@ -23,7 +23,7 @@ def exp_list_to_string(exp_list):
         return ''
 
 
-def imsrg_metafitter(
+def metafitter_abs(
         fitfn, exp_list, exp_filter_fn,
         transform, super_transform_pre, super_transform_post,
         # todo: combine transforms into one?
@@ -164,7 +164,7 @@ def imsrg_metafitter(
     if print_key is True and _std_io_map is not None:
         print_io_key(_std_io_map, heading='Index key')
 
-    rr = _imsrg_meta_fit(
+    rr = _meta_fit_with_transformation(
         plots=plts, transform=transform,
         super_transform_pre=super_transform_pre,
         super_transform_post=super_transform_post,
@@ -209,11 +209,10 @@ def imsrg_metafitter(
     return rr + (info,)
 
 
-def _imsrg_meta_fit(plots,
-                    transform, super_transform_pre, super_transform_post,
-                    fitfn,
-                    full_output,
-                    idx,):
+def _meta_fit_with_transformation(
+        plots, transform, super_transform_pre, super_transform_post, fitfn,
+        full_output, idx,
+):
     # Transform plots
     if super_transform_pre is not None:
         plots = super_transform_pre(plots)

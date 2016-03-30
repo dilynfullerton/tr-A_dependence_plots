@@ -3,7 +3,7 @@ Abstract metafitter for interaction data
 """
 from __future__ import print_function, division, unicode_literals
 
-from metafit import imsrg_metafitter, print_io_key
+from metafit import metafitter_abs, print_io_key
 from transforms import relative_y, identity
 from plotting import map_to_arrays
 from constants import P_TITLE, P_END, P_SUB, P_HEAD
@@ -27,7 +27,8 @@ def _get_plot_single_particle(k, exp, me_map, mzbt_map, io_map, others, *args):
 # noinspection PyUnusedLocal
 def _get_plots_single_particle(
         exp_list, all_data_map, get_data, get_plot=_get_plot_single_particle,
-        print_key=False, std_io_map=None, **kwargs):
+        print_key=False, std_io_map=None, **kwargs
+):
     plots = list()
     for exp in sorted(exp_list):
         data_maps = all_data_map[exp]
@@ -50,7 +51,8 @@ def _get_plots_single_particle(
 
 def _printer_for_single_particle_metafit(
         metafit_results, linregress_results, print_mf_results=True,
-        print_lr_results=True, full_output=False, header=''):
+        print_lr_results=True, full_output=False, header=''
+):
     if print_mf_results or print_lr_results:
         print('\n' + P_TITLE + header + '\n' + '=' * 80 + P_END)
     if print_mf_results:
@@ -132,7 +134,8 @@ def single_particle_metafit_int(
         _data_map=DataMapInt,
         _get_plots=_get_plots_single_particle,
         _get_plot=_get_plot_single_particle,
-        _printer=_printer_for_single_particle_metafit):
+        _printer=_printer_for_single_particle_metafit
+):
     """A meta-fit for all the orbitals with a given e, hw, and rp,
      based on the given fit function
 
@@ -216,7 +219,7 @@ def single_particle_metafit_int(
     :return: (mf_results, lr_results), A 2-tuple containing the meta-fit results
     and the regressional results for the fit.
     """
-    return imsrg_metafitter(
+    return metafitter_abs(
         fitfn=fitfn, exp_list=exp_list, sourcedir=sourcedir,
         savedir_plots=savedir, transform=transform,
         super_transform_pre=super_transform_pre,
@@ -250,7 +253,8 @@ def _get_multi_particle_plot(k, exp, io_map, me_map, mzbt_map, others, *args):
 def _printer_for_multiparticle_metafit(
         metafit_results, linregress_results,
         print_mf_results=True, print_lr_results=True, full_output=False,
-        header=''):
+        header=''
+):
     return _printer_for_single_particle_metafit(
         metafit_results, linregress_results,
         print_mf_results, print_lr_results, full_output, header)
@@ -268,7 +272,8 @@ def multi_particle_metafit_int(
                 '{tr} data using {fn} for {ehw}'),
         _idx='interaction',
         ylabel='Energy (MeV)',
-        **kwargs):
+        **kwargs
+):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs, sourcedir, savedir,
         transform=transform, _get_data=_get_data, _get_plot=_get_plot,

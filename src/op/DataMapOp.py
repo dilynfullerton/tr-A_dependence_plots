@@ -17,28 +17,27 @@ class DataMapOp(DataMap):
     """Stores a map containing data generated from *.op files
     """
     # noinspection PyUnusedLocal
-    def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
-                 _split_char=_SPLIT_CHAR,
-                 _regex_hw=_REGEX_HW,
-                 _regex_filename=_REGEX_FILENAME,
-                 **kwargs):
+    def __init__(
+            self, parent_directory, exp_list=None, exp_filter_fn=None,
+            _rgx_hw=_REGEX_HW, _rgx_fname=_REGEX_FILENAME,
+            _split_char=_SPLIT_CHAR, **kwargs
+    ):
         self._split_char = _split_char
-        self._regex_hw = _regex_hw
-        self._regex_filename = _regex_filename
+        self._rgx_hw = _rgx_hw
+        self._rgx_fname = _rgx_fname
         super(DataMapOp, self).__init__(
             parent_directory=parent_directory,
             exp_type=ExpOp, datum_type=DatumOp,
-            exp_list=exp_list, exp_filter_fn=exp_filter_fn)
+            exp_list=exp_list, exp_filter_fn=exp_filter_fn
+        )
 
     def _exp_from_file_path(self, f):
-        return exp(filepath=f,
-                   split_char=self._split_char,
-                   regex_hw=self._regex_hw)
+        return exp(
+            filepath=f, split_char=self._split_char, regex_hw=self._rgx_hw
+        )
 
     def _get_files(self):
         def op_file_filter(filepath):
             filename = filepath[filepath.rfind(sep) + 1:]
-            return matches_completely(regex=self._regex_filename,
-                                      string=filename)
-
+            return matches_completely(regex=self._rgx_fname, string=filename)
         return get_files_r(directory=self.parent_dir, filterfn=op_file_filter)

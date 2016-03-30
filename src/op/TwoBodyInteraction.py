@@ -10,14 +10,12 @@ class TwoBodyInteraction(namedtuple('TwoBodyInteraction',
 
     # noinspection PyCompatibility
     def __str__(self):
-        sep = unichr(9474).strip()
-        left = unichr(12296).strip()
-        right = unichr(12297).strip()
-        # sep = b'|'
-        # left = b'('
-        # right = b')'
-        return ('{left}{a:2} {b:2}{s}'
-                ' V '
-                '{s}{c:2} {d:2}{right}'
+        # sep = unichr(9474).strip()
+        # left = unichr(12296).strip()
+        # right = unichr(12297).strip()
+        sep = b'|'
+        left = b'('
+        right = b')'
+        return ('{left}{a:2} {b:2}{s} V {s}{c:2} {d:2}{right}'
                 '').format(a=self.a, b=self.b, c=self.c, d=self.d,
                            left=left, right=right, s=sep)

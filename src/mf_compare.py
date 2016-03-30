@@ -15,7 +15,8 @@ from int.DataMapInt import DataMapInt
 
 def max_r2_value(
         metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-        sourcedir=DPATH_FILES_INT, std_io_map=STANDARD_IO_MAP, **kwargs):
+        sourcedir=DPATH_FILES_INT, std_io_map=STANDARD_IO_MAP, **kwargs
+):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
 
@@ -77,7 +78,8 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
 def compare_params(
         metafitter, fitfn, e_hw_pairs, depth, statfn=np.std,
         print_compare_results=False, sourcedir=DPATH_FILES_INT,
-        std_io_map=STANDARD_IO_MAP, **kwargs):
+        std_io_map=STANDARD_IO_MAP, **kwargs
+):
     """Compare parameter results for a given metafitter on a given fitfn using
     combinations of the given e_hw_pairs to the depth given by depth. The
     method of comparison is given by the statistical function statfn, whose
@@ -137,7 +139,8 @@ def _distributions_from_lol(lol):
 
 
 def _printer_for_compare_params(
-        params_result_list, depth, statfn, e_hw_pairs, metafitter, fitfn):
+        params_result_list, depth, statfn, e_hw_pairs, metafitter, fitfn
+):
     title_str = ('\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
                  '{mf} and fit function {ffn}'
                  '').format(

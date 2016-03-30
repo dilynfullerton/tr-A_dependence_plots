@@ -9,7 +9,8 @@ from transforms import identity
 
 
 def plot_energy_vs_mass_for_interactions(
-        e, hw, filesdir, savedir, transform=identity, **kwargs):
+        e, hw, filesdir, savedir, transform=identity, **kwargs
+):
     """For a single e, hw pair, along with the main parent directory,
     plots are created for the energy of each (a, b, c, d, j) tuple against
     its mass number.
@@ -74,7 +75,8 @@ def plot_energy_vs_mass_for_interactions(
 
 
 def plot_energy_vs_mass_for_orbitals(
-        e, hw, filesdir, savedir, transform=identity, **kwargs):
+        e, hw, filesdir, savedir, transform=identity, **kwargs
+):
     """For a single (e, hw) pair, along with the main parent directory,
     plots are created for the energy of each orbital against its mass.
 

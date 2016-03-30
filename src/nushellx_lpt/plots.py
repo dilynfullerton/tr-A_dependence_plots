@@ -10,9 +10,10 @@ from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 from plotting import map_to_arrays, plot_the_plots
 
 
-def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DPATH_SHELL_RESULTS,
-                                  exp_list=None, proton_num=None,
-                                  transform=None):
+def lpt_plot_energy_vs_n_for_mass(
+        mass_num, directory=DPATH_SHELL_RESULTS,
+        exp_list=None, proton_num=None, transform=None
+):
     imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
                                         exp_list=exp_list).map
     plots = list()
@@ -46,9 +47,10 @@ def lpt_plot_energy_vs_n_for_mass(mass_num, directory=DPATH_SHELL_RESULTS,
     plt.show()
 
 
-def lpt_plot_energy_vs_mass_for_n(n, directory=DPATH_SHELL_RESULTS,
-                                  exp_list=None, proton_num=None,
-                                  transform=None):
+def lpt_plot_energy_vs_mass_for_n(
+        n, directory=DPATH_SHELL_RESULTS,
+        exp_list=None, proton_num=None, transform=None
+):
     imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
                                         exp_list=exp_list).map
     plots = list()

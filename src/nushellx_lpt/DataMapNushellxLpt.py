@@ -19,8 +19,7 @@ class DataMapNushellxLpt(DataMap):
     def __init__(
             self, parent_directory, exp_list=None, exp_filter_fn=None,
             _regex_filename=_RGX_FNAME, _regex_ggparent_dir=_RGX_DNAME_GGP,
-            _exp_type=ExpNushellxLpt, _datum_type=DatumLpt,
-            **kwargs
+            _exp_type=ExpNushellxLpt, _datum_type=DatumLpt, **kwargs
     ):
         self._regex_filename = _regex_filename
         self._regex_ggp_dirname = _regex_ggparent_dir
@@ -44,5 +43,4 @@ class DataMapNushellxLpt(DataMap):
                     regex=self._regex_ggp_dirname, string=ggp_dirname
                 )
             )
-
         return get_files_r(directory=self.parent_dir, filterfn=lpt_file_filter)

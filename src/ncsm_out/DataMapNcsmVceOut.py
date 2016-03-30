@@ -28,6 +28,5 @@ class DataMapNcsmVceOut(DataMap):
         def ncsmvce_out_file_filter(filepath):
             filename = filepath[filepath.rfind(sep)+1:]
             return matches_completely(regex=self._rgx_fname, string=filename)
-
         return get_files_r(directory=self.parent_dir,
                            filterfn=ncsmvce_out_file_filter)

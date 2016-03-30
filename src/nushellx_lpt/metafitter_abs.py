@@ -64,7 +64,8 @@ def metafit_nushellx_lpt(
         _label='{N}, {exp}', _get_label_fmt_kwargs=_get_label_kwargs_lpt,
         _print_results=False,
         _idx='N',
-        **kwargs):
+        **kwargs
+):
     return single_particle_metafit_int(
         fitfn=fitfn, exp_list=exp_list, exp_filter_fn=exp_filter_fn,
         sourcedir=_sourcedir, savedir=_savedir,

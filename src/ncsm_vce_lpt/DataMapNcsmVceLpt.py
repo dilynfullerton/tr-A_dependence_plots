@@ -14,15 +14,15 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
     # noinspection PyUnusedLocal
     def __init__(
             self, parent_directory, exp_list=None, exp_filter_fn=None,
-            _regex_filename=_RGX_FNAME, _regex_ggparent_dir=_RGX_DNAME_GGP,
+            _rgx_fname=_RGX_FNAME, _rgx_ggparent_dname=_RGX_DNAME_GGP,
             **kwargs
     ):
         super(DataMapNcsmVceLpt, self).__init__(
             parent_directory=parent_directory,
             exp_list=exp_list, exp_filter_fn=exp_filter_fn,
             _exp_type=ExpNcsmVceLpt,
-            _regex_filename=_regex_filename,
-            _regex_ggparent_dir=_regex_ggparent_dir
+            _regex_filename=_rgx_fname,
+            _regex_ggparent_dir=_rgx_ggparent_dname
         )
 
     def _exp_from_file_path(self, f):
@@ -32,17 +32,19 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
             self, z, nmax, n1, n2, nshell, ncomponent
     ):
         aeff_eq_a_to_ground_energy = dict()
-        for exp in self.map.keys():
-            presc = exp.A_presc
+        for exp0 in self.map.keys():
+            presc = exp0.A_presc
             if presc[0] != presc[1] or presc[0] != presc[2]:
                 continue
-            elif exp.Z != z or exp.Nmax != nmax or exp.n1 != n1 or exp.n2 != n2:
+            elif exp0.Z != z or exp0.Nmax != nmax:
                 continue
-            elif exp.nshell != nshell or exp.ncomponent != ncomponent:
+            elif exp0.n1 != n1 or exp0.n2 != n2:
+                continue
+            elif exp0.nshell != nshell or exp0.ncomponent != ncomponent:
                 continue
             else:
                 a = presc[0]
-                dat = self[exp]
+                dat = self[exp0]
                 ground_energy_map = dat.mass_ground_energy_map()
                 if a in ground_energy_map:
                     ground_energy = ground_energy_map[a]

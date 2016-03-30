@@ -19,11 +19,13 @@ class DatumInt(Datum):
     """Stores maps generated from *.int files and methods for generating new
     maps from this data
     """
-    def __init__(self, directory, exp, files, std_io_map=None,
-                 standardize_io_map=True, organize_files=True,
-                 org_file_dir=DPATH_FILES_INT_ORG,
-                 directory_format=ORG_FMT_INT_DNAME,
-                 file_format=ORG_FMT_INT_FNAME):
+    def __init__(
+            self, directory, exp, files, std_io_map=None,
+            standardize_io_map=True, organize_files=True,
+            org_file_dir=DPATH_FILES_INT_ORG,
+            directory_format=ORG_FMT_INT_DNAME,
+            file_format=ORG_FMT_INT_FNAME
+    ):
         super(DatumInt, self).__init__(directory=directory, exp=exp,
                                        files=files)
         self.name = None

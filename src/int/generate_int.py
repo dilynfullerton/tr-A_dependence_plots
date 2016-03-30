@@ -29,7 +29,8 @@ def generate_int_file_from_fit(
         metafitter_sp=single_particle_firstp_metafit,
         metafitter_mp=multi_particle_firstp_metafit,
         sourcedir=DPATH_FILES_INT,
-        **kwargs):
+        **kwargs
+):
     """Given fit functions for zbt, sp, and mp, as well as a set of e_hw_pairs,
     a range of mass numbers, and specific metafitter algorithms, generates
     fake interaction files_INT based on the fit functions
@@ -62,8 +63,7 @@ def generate_int_file_from_fit(
 
 
 def generate_int_file_from_fit_results(
-        results_zbt, results_sp, results_mp,
-        mass_range, e_hw_pairs,
+        results_zbt, results_sp, results_mp, mass_range, e_hw_pairs,
         io_map=STANDARD_IO_MAP,
         file_save_dir=DPATH_GEN_INT,
         _file_save_subdir=GEN_INT_DNAME_SUBDIR,
@@ -75,7 +75,8 @@ def generate_int_file_from_fit_results(
         _row_idx_key=GEN_INT_ROW_INDEX_KEY,
         _row_blank=GEN_INT_ROW_BLANK,
         _row_sp=GEN_INT_ROW_SINGLE_PARTICLE,
-        _row_mp=GEN_INT_ROW_INTERACTION):
+        _row_mp=GEN_INT_ROW_INTERACTION
+):
     """Generate a set of .int interaction files from a set of sp results, mp
     results, and zbt results for a given mass range.
 
@@ -165,7 +166,8 @@ class InconsistentDatasetsGivenToIntFileGeneratorException(Exception):
 def _get_file_lines(
         x, results_zbt, results_sp, results_mp, io_map, e_hw_pairs,
         row_lines_title, row_lines_subtitle, row_zbt, row_idx_key_head,
-        row_idx_key, row_blank, row_sp, row_mp):
+        row_idx_key, row_blank, row_sp, row_mp
+):
     info_zbt = results_zbt[4]
     info_sp = results_sp[4]
     info_mp = results_mp[4]

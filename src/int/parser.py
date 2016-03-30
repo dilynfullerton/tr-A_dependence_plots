@@ -212,9 +212,10 @@ def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     return data_lines
 
 
-def orbital_energies(header_items_list,
-                     start_index=COL_START_ORBITAL,
-                     num_orbitals=NCOLS_ORBITALS):
+def orbital_energies(
+        header_items_list, start_index=COL_START_ORBITAL,
+        num_orbitals=NCOLS_ORBITALS
+):
     """Returns the orbital energies from the given header list
     :param num_orbitals:
     :param start_index:
@@ -223,9 +224,10 @@ def orbital_energies(header_items_list,
     return header_items_list[start_index: start_index + num_orbitals]
 
 
-def other_constants(header_items_list,
-                    start_index=COL_START_ORBITAL,
-                    num_orbitals=NCOLS_ORBITALS):
+def other_constants(
+        header_items_list, start_index=COL_START_ORBITAL,
+        num_orbitals=NCOLS_ORBITALS
+):
     """Return the other values in the header items list, following the
     orbital energies
 
