@@ -14,6 +14,8 @@ from constants import PLOT_CMAP, LEGEND_SIZE, PLOT_FIGSIZE
 
 
 # todo this function is very grody, can we fix it? yes we can!
+# todo abstract the plotting part outside of this function; plot_the_plots
+# todo   can remain as a wrapper for compatibility
 def plot_the_plots(
         plots, title, label, xlabel, ylabel,
         data_line_style='-',
@@ -151,17 +153,7 @@ def plot_the_plots(
     # Add legend
     if include_legend:
         if legend_size is not None:
-            # todo move this legend stuff to a helper function
-            l = len(plots)
-            ncol = legend_size.num_cols(l)
-            fontsize = legend_size.fontsize(l, ncol)
-            box = ax.get_position()
-            ax.set_position(
-                [box.x0, box.y0,
-                 box.width * legend_size.width_scale(l, ncol, fontsize),
-                 box.height])
-            plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
-                       fontsize=fontsize)
+            _set_legend(num_plots=len(plots), legend_size=legend_size, ax=ax)
         else:
             plt.legend()
     # Save
@@ -183,12 +175,106 @@ def plot_the_plots(
     return fig, ax, cmap
 
 
+def save_plot_figure(
+        data_plots, title, xlabel, ylabel, savepath,
+        fit_plots=None,
+        data_labels=None, fit_labels=None,
+        data_line_style='-', fit_line_style='--',
+        ax=None, fig=None,
+        cmap=None, cmap_name=PLOT_CMAP, dark=False,
+        legendsize=LEGEND_SIZE, figsize=PLOT_FIGSIZE,
+):
+    # todo
+    pass
+
+
+def save_plot_figure_categorical(
+        category_to_plots_map, title, xlabel, ylabel, savepath,
+        category_to_labels_map=None, category_to_line_style_map=None,
+        default_line_style='-',
+        ax=None, fig=None, cmap=None, cmap_name=PLOT_CMAP, dark=False,
+        legendsize=LEGEND_SIZE, figsize=PLOT_FIGSIZE,
+):
+    include_legend = category_to_labels_map is not None
+    if category_to_labels_map is None:
+        category_to_labels_map = dict()
+    if category_to_line_style_map is None:
+        category_to_line_style_map = dict()
+    plot_list_list = list()
+    label_list_list = list()
+    line_style_list_list = list()
+    for category, plot_list in category_to_plots_map.items():
+        plot_list_list.append(plot_list)
+        if category in category_to_labels_map:
+            label_list_list.append(category_to_labels_map[category])
+        else:
+            label_list_list.append(None)
+        if category in category_to_line_style_map:
+            line_style_list_list.append(category_to_line_style_map[category])
+        else:
+            line_style_list_list.append(default_line_style)
+
+    if fig is None and ax is None:
+        fig = plt.figure(figsize=figsize)
+    if ax is None:
+        ax = fig.add_subplot(111)
+    if cmap is None:
+        cmap = plt.get_cmap(name=cmap_name)
+    if dark:
+        plt.style.use(b'dark_background')
+
+    return _save_plot_figure(
+        plot_list_list=plot_list_list,
+        label_list_list=label_list_list,
+        line_style_list_list=line_style_list_list,
+        title=title, xlabel=xlabel, ylabel=ylabel,
+        savepath=savepath, ax=ax, cmap=cmap, legendsize=legendsize,
+        include_legend=include_legend
+    )
+
+
+def _save_plot_figure(
+        plot_list_list, title, xlabel, ylabel, savepath,
+        label_list_list, line_style_list_list,
+        ax, cmap, legendsize, include_legend
+):
+    num_plots = len(plot_list_list[0])
+    c_norm = colors.Normalize(vmin=0, vmax=num_plots-1)
+    scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
+    for lop, lol, lols, i in (zip(*plot_list_list), zip(*label_list_list),
+                              zip(*line_style_list_list), range(num_plots)):
+        for plot, label, line_style in zip(lop, lol, lols):
+            x, y = plot[:2]
+            ax.plot(x, y, line_style, label=label, color=scalar_map.to_rgba(i))
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    if include_legend:
+        if legendsize is not None:
+            _set_legend(num_plots=num_plots, legend_size=legendsize, ax=ax)
+        else:
+            plt.legend()
+    plt.savefig(savepath)
+
+
+def _set_legend(num_plots, legend_size, ax):
+    l = num_plots
+    ncol = legend_size.num_cols(l)
+    fontsize = legend_size.fontsize(l, ncol)
+    box = ax.get_position()
+    ax.set_position(
+        [box.x0, box.y0,
+         box.width * legend_size.width_scale(l, ncol, fontsize),
+         box.height])
+    plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
+               fontsize=fontsize)
+
+
 def _make_plot_data_file(
         plots, title, xlabel, ylabel, savedir, savename, label,
-        get_label_kwargs=None,
-        idx_key=None,
-        extension='.dat',
-        comment_str=b''):
+        get_label_kwargs=None, idx_key=None,
+        extension='.dat', comment_str=b''
+):
     """Write a data file with the given plot data
     :param plots: sequence containing plots, where each plot is defined as a
     four tuple consisting of (x_array, y_array, const_list, const_dict)
