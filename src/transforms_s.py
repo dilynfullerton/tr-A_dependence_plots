@@ -88,7 +88,8 @@ def _combine_plots(
         p1, p2,
         combine_rules=None,
         sort_plot=False,
-        sort_key=lambda x_y: x_y[0]):
+        sort_key=lambda x_y: x_y[0]
+):
     # Combine x arrays with each other and y arrays with each other
     x1, y1 = p1[0:2]
     x2, y2 = list(), list()

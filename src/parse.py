@@ -141,7 +141,8 @@ def matches_completely(regex, string):
 
 def half_int_str_to_float(string):
     if '/' in string:
-        return reduce(lambda a, b: int(a)/int(b), string.split('/'))
+        a, b = string.split('/')
+        return int(a) / int(b)
     else:
         return int(string)
 

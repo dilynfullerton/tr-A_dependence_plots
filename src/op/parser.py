@@ -116,7 +116,8 @@ def get_data(filepath, comment_str, regex_h, regex_0bt, regex_1bt, regex_2bt):
         regex_h=regex_h,
         regex_0bt=regex_0bt,
         regex_1bt=regex_1bt,
-        regex_2bt=regex_2bt)))
+        regex_2bt=regex_2bt
+    )))
     h_head, h_line = data[0]
     zbt = data[1]
     map_1bt = _particles_to_trel_1b_map(data[2])

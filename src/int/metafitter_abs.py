@@ -13,8 +13,8 @@ from int.DataMapInt import DataMapInt
 
 # noinspection PyUnusedLocal
 def _get_plot_single_particle(k, exp, me_map, mzbt_map, io_map, others, *args):
-    x, y, const_list, const_dict = _set_const(k, exp, io_map, me_map,
-                                              mzbt_map, others)
+    x, y, const_list, const_dict = _set_const(
+        k, exp, io_map, me_map, mzbt_map, others)
     qnums = io_map[k]
     const_list[0] = qnums
     const_dict['index'] = k
@@ -45,7 +45,8 @@ def _get_plots_single_particle(
         for k in sorted(ime_map.keys()):
             plots.append(get_plot(
                 k=k, exp=exp, io_map=io_map, me_map=ime_map[k],
-                mzbt_map=mzbt_map, others=other_constants))
+                mzbt_map=mzbt_map, others=other_constants
+            ))
     return plots
 
 
@@ -99,8 +100,10 @@ def _printer_for_single_particle_metafit(
 def _get_label_kwargs(plot, idx_key=None):
     x, y, const_list, const_dict = plot
     l = dict()
-    for kw, key in zip(['e', 'hw', 'rp', 'b', 'i'],
-                       ['e', 'hw', 'rp', 'base', idx_key]):
+    for kw, key in zip(
+            ['e', 'hw', 'rp', 'b', 'i'],
+            ['e', 'hw', 'rp', 'base', idx_key]
+    ):
         if key in const_dict:
             v = const_dict[key]
             l[kw] = v if v is not None else ''
@@ -237,13 +240,14 @@ def single_particle_metafit_int(
         _cmap=_cmap, _legend_size=_legend_size, _savename=_savename,
         _plot_sort_key=_plot_sort_key, _get_data_from_map=_get_data,
         _data_map_type=_data_map, _get_plot=_get_plot, _get_plots=_get_plots,
-        _printer=_printer)
+        _printer=_printer
+    )
 
 
 # noinspection PyUnusedLocal
 def _get_multi_particle_plot(k, exp, io_map, me_map, mzbt_map, others, *args):
-    x, y, const_list, const_dict = _set_const(k, exp, io_map, me_map,
-                                              mzbt_map, others)
+    x, y, const_list, const_dict = _set_const(
+        k, exp, io_map, me_map, mzbt_map, others)
     const_dict['interaction'] = k
     # noinspection PyProtectedMember
     const_dict = dict(const_dict.items() + dict(k._asdict()).items())
@@ -257,7 +261,8 @@ def _printer_for_multiparticle_metafit(
 ):
     return _printer_for_single_particle_metafit(
         metafit_results, linregress_results,
-        print_mf_results, print_lr_results, full_output, header)
+        print_mf_results, print_lr_results, full_output, header
+    )
 
 
 def multi_particle_metafit_int(
@@ -279,26 +284,21 @@ def multi_particle_metafit_int(
         transform=transform, _get_data=_get_data, _get_plot=_get_plot,
         _printer=_printer, show_legend=show_legend,
         _plot_sort_key=_plot_sort_key, _title=_title, _idx=_idx, ylabel=ylabel,
-        **kwargs)
+        **kwargs
+    )
 
 
 def _set_const(k, identifier, io_map, me_map, mzbt_map, other_constants):
     e, hw, base, rp = identifier
     x, y = map_to_arrays(me_map)
-    x0 = x[0]
-    y0 = y[0]
+    x0, y0 = x[0], y[0]
     zbt_arr = map_to_arrays(mzbt_map)[1]
     zbt0 = zbt_arr[0]
     const_list = [None, e, hw, k, zbt_arr, y0, zbt0, rp, x0, base, identifier]
-    const_dict = {'e': e,
-                  'hw': hw,
-                  'rp': rp,
-                  'zbt_arr': zbt_arr,
-                  'x0': x0,
-                  'y0': y0,
-                  'zbt0': zbt0,
-                  'io_map': io_map,
-                  'base': base,
-                  'exp': identifier,
-                  'others': other_constants}
+    const_dict = {
+        'e': e, 'hw': hw, 'rp': rp, 'zbt_arr': zbt_arr,
+        'x0': x0, 'y0': y0, 'zbt0': zbt0,
+        'io_map': io_map, 'base': base, 'exp': identifier,
+        'others': other_constants
+    }
     return x, y, const_list, const_dict

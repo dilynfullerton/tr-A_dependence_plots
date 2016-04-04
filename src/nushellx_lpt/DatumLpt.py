@@ -13,8 +13,8 @@ class DatumLpt(Datum):
     from these.
     """
     def __init__(self, directory, exp, files):
-        super(DatumLpt, self).__init__(directory=directory, exp=exp,
-                                       files=files)
+        super(DatumLpt, self).__init__(
+            directory=directory, exp=exp, files=files)
         self._mass_header_map = None
         self._mass_n_body_map = None
         self._mass_zbt_map = None

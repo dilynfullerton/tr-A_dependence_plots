@@ -37,8 +37,8 @@ def e_level_from_filename(filename, split_char=ELT_SPLIT,
     :param split_char: the character with which filename elements are separated
     :param e_regex: the regex that fully matches the element with e
     """
-    return _e_from_felts(filename_elts_list(filename, split_char),
-                         e_regex)
+    return _e_from_felts(
+        filename_elts_list(filename, split_char), e_regex)
 
 
 def _e_from_felts(felts, e_regex):
@@ -59,8 +59,8 @@ def hw_from_filename(filename, split_char=ELT_SPLIT,
     :param split_char: the character with which filename elements are separated
     :param hw_regex: the regex that fully matches the element with hw
     """
-    return _hw_from_felts(filename_elts_list(filename, split_char),
-                          hw_regex)
+    return _hw_from_felts(
+        filename_elts_list(filename, split_char), hw_regex)
 
 
 def _hw_from_felts(felts, hw_regex):
@@ -81,8 +81,8 @@ def base_from_filename(filename, split_char=ELT_SPLIT,
     element
     :return: the integer value of the base or None, if not found
     """
-    return _base_from_felts(filename_elts_list(filename, split_char),
-                            base_regex)
+    return _base_from_felts(
+        filename_elts_list(filename, split_char), base_regex)
 
 
 def _base_from_felts(felts, base_regex):
@@ -100,8 +100,8 @@ def rp_from_filename(filename, split_char=ELT_SPLIT,
     :param rp_regex: the regex that fully matches the rp element
     :return: the Rp (integer) label, if found, otherwise returns None
     """
-    return _rp_from_felts(reversed(filename_elts_list(filename, split_char)),
-                          rp_regex)
+    return _rp_from_felts(
+        reversed(filename_elts_list(filename, split_char)), rp_regex)
 
 
 def _rp_from_felts(felts, rp_regex):
@@ -191,6 +191,7 @@ def zero_body_term(zbt_line):
         return None
 
 
+# todo docstring
 def header_list(lines, header_pos=ROW_HEAD):
     """Returns the line containing the header in the form of an list
     :param header_pos:
@@ -200,6 +201,7 @@ def header_list(lines, header_pos=ROW_HEAD):
     return header_line.split()
 
 
+# todo docstring
 def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     """Returns the lines containing the interaction data in the form of an 
     array (list of lists)
@@ -212,6 +214,7 @@ def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     return data_lines
 
 
+# todo docstring
 def orbital_energies(
         header_items_list, start_index=COL_START_ORBITAL,
         num_orbitals=NCOLS_ORBITALS
@@ -224,6 +227,7 @@ def orbital_energies(
     return header_items_list[start_index: start_index + num_orbitals]
 
 
+# todo docstring
 def other_constants(
         header_items_list, start_index=COL_START_ORBITAL,
         num_orbitals=NCOLS_ORBITALS
@@ -249,6 +253,7 @@ def orbital_energies_from_filename(filepath, comment_str=CMNT_STR):
         lines=list(content_lines(filepath, comment_str))))
 
 
+# todo docstring
 def other_constants_from_filename(filepath, comment_str=CMNT_STR):
     """Given a filename, returns all of the items in the header items list
     following the orbital energies
@@ -262,7 +267,8 @@ def other_constants_from_filename(filepath, comment_str=CMNT_STR):
 
 # ............................................................
 # Map construction
-# ............................................................ 
+# ............................................................
+# todo docstring
 def index_map(idx_lines):
     """Returns a map from the orbital index to its descriptive quantum
     numbers
@@ -286,6 +292,7 @@ def index_to_tuple_map(filepath, comment_str=CMNT_STR):
         commnt_lines=comment_lines(filepath, comment_str)))
 
 
+# todo docstring
 def mass_energy_array_map(directory, filterfn=lambda x: True,
                           filtered_files=None):
     """Returns a map from atomic mass to orbital energy arrays
@@ -353,8 +360,8 @@ def mass_to_interaction_to_energy_map(directory, filterfn=lambda x: True,
     :param filterfn: the filter function to apply to the files before
     constructing the map
     """
-    mida_map = _mass_interaction_data_array_map(directory, filterfn,
-                                                filtered_files)
+    mida_map = _mass_interaction_data_array_map(
+        directory, filterfn, filtered_files)
     for k in mida_map.keys():
         v = mida_map[k]
         nextv = dict()
@@ -385,12 +392,12 @@ def mass_to_zbt_map(directory, filterfn=lambda x: True,
     for f in filtered_files:
         mass_number = mass_number_from_filename(f)
         zbt = zero_body_term(
-            zero_body_term_line(
-                cmnt_lines=comment_lines(f, comment_str)))
+            zero_body_term_line(cmnt_lines=comment_lines(f, comment_str)))
         mzbt_map[mass_number] = zbt
     return mzbt_map
 
 
+# todo docstring
 def mass_other_constants_map(directory, filterfn=lambda x: True,
                              filtered_files=None):
     """Given a directory, creates a mapping from mass number to the other

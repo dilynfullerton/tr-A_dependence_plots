@@ -39,10 +39,12 @@ class DataMap(object):
             elif key not in self.map:
                 key_files = list(
                     filter(lambda ff: key == self._exp_from_file_path(ff),
-                           files))
-                value = self.datum_type(directory=self.parent_dir, exp=key,
-                                        files=key_files,
-                                        **self.kwargs)
+                           files)
+                )
+                value = self.datum_type(
+                    directory=self.parent_dir, exp=key, files=key_files,
+                    **self.kwargs
+                )
                 self.map[key] = value
 
     def _exp_from_file_path(self, f):

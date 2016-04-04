@@ -26,8 +26,8 @@ class DatumInt(Datum):
             directory_format=ORG_FMT_INT_DNAME,
             file_format=ORG_FMT_INT_FNAME
     ):
-        super(DatumInt, self).__init__(directory=directory, exp=exp,
-                                       files=files)
+        super(DatumInt, self).__init__(
+            directory=directory, exp=exp, files=files)
         self.name = None
         self.standardized_indexing = False
         self.files_organized = False
@@ -86,9 +86,7 @@ class DatumInt(Datum):
             mass number -> (a, b, c, d, j) -> energy
         mapping for the directory
         """
-        miiem = (
-            get_miie_map(self.dir,
-                         filtered_files=self.files))
+        miiem = (get_miie_map(self.dir, filtered_files=self.files))
 
         # Turn each tuple into a named tuple
         for A in miiem.keys():
@@ -137,8 +135,7 @@ class DatumInt(Datum):
             mkdir(d)
         for f in self.files:
             mass_num = mass_from_filename(f)
-            new_f = path.join(d,
-                              file_fmt.format(*(arg_list + [mass_num])))
+            new_f = path.join(d, file_fmt.format(*(arg_list + [mass_num])))
             next_files.append(new_f)
             if not path.exists(new_f):
                 link(f, new_f)

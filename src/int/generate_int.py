@@ -50,16 +50,17 @@ def generate_int_file_from_fit(
     """
     imsrg_data_map = DataMapInt(
         sourcedir, exp_list=e_hw_pairs, standard_indices=std_io_map)
-    results_zbt = metafitter_zbt(fitfn_zbt, e_hw_pairs,
-                                 imsrg_data_map=imsrg_data_map)
-    results_sp = metafitter_sp(fitfn_sp, e_hw_pairs,
-                               imsrg_data_map=imsrg_data_map)
-    results_mp = metafitter_mp(fitfn_mp, e_hw_pairs,
-                               imsrg_data_map=imsrg_data_map)
+    results_zbt = metafitter_zbt(
+        fitfn_zbt, e_hw_pairs, imsrg_data_map=imsrg_data_map)
+    results_sp = metafitter_sp(
+        fitfn_sp, e_hw_pairs, imsrg_data_map=imsrg_data_map)
+    results_mp = metafitter_mp(
+        fitfn_mp, e_hw_pairs, imsrg_data_map=imsrg_data_map)
     generate_int_file_from_fit_results(
         results_zbt=results_zbt, results_sp=results_sp, results_mp=results_mp,
         e_hw_pairs=e_hw_pairs, io_map=std_io_map, mass_range=mass_range,
-        **kwargs)
+        **kwargs
+    )
 
 
 def generate_int_file_from_fit_results(
@@ -126,10 +127,12 @@ def generate_int_file_from_fit_results(
 
     e_hw_pairs_strings = [str(pair) for pair in e_hw_pairs]
 
-    fname_args = {'ehw': '[' + ', '.join(e_hw_pairs_strings) + ']',
-                  'mf1': info_zbt['mf_code'], 'ffn1': info_zbt['ffn_code'],
-                  'mf2': info_sp['mf_code'], 'ffn2': info_sp['ffn_code'],
-                  'mf3': info_mp['mf_code'], 'ffn3': info_mp['ffn_code']}
+    fname_args = {
+        'ehw': '[' + ', '.join(e_hw_pairs_strings) + ']',
+        'mf1': info_zbt['mf_code'], 'ffn1': info_zbt['ffn_code'],
+        'mf2': info_sp['mf_code'], 'ffn2': info_sp['ffn_code'],
+        'mf3': info_mp['mf_code'], 'ffn3': info_mp['ffn_code']
+    }
 
     # MAKE DIRECTORY
     directory = str(file_save_dir + _file_save_subdir.format(**fname_args))
@@ -145,7 +148,8 @@ def generate_int_file_from_fit_results(
             row_lines_title=_row_lines_title,
             row_lines_subtitle=_row_lines_subtitle, row_zbt=_row_zbt,
             row_idx_key_head=_row_idx_key_head, row_idx_key=_row_idx_key,
-            row_blank=_row_blank, row_sp=_row_sp, row_mp=_row_mp)
+            row_blank=_row_blank, row_sp=_row_sp, row_mp=_row_mp
+        )
 
         # NAME FILE
         fname_args['mass'] = x
@@ -186,27 +190,23 @@ def _get_file_lines(
 
     file_lines = list()
     # + TITLE
-    file_lines.extend(
-            _title_lines(row_lines_title, info_zbt, info_sp, info_mp,
-                         e_hw_pairs=e_hw_pairs))
+    file_lines.extend(_title_lines(
+        row_lines_title, info_zbt, info_sp, info_mp, e_hw_pairs=e_hw_pairs))
     file_lines.append(row_blank)
     # + SUBTITLE
-    file_lines.extend(
-            _subtitle_lines(row_lines_subtitle,
-                            params_zbt, params_sp, params_mp))
+    file_lines.extend(_subtitle_lines(
+        row_lines_subtitle, params_zbt, params_sp, params_mp))
     file_lines.append(row_blank)
     # + ZERO BODY TERM
-    file_lines.append(
-            _zbt_line(row_zbt, x, params_zbt, plots_zbt, fitfn_zbt))
+    file_lines.append(_zbt_line(row_zbt, x, params_zbt, plots_zbt, fitfn_zbt))
     file_lines.append(row_blank)
     # + INDEX KEY
     file_lines.append(row_idx_key_head)
-    file_lines.extend(
-            _index_lines(row_idx_key, io_map))
+    file_lines.extend(_index_lines(row_idx_key, io_map))
     file_lines.append(row_blank)
     # + SINGLE PARTICLE
-    file_lines.append(
-            _single_particle_line(row_sp, x, params_sp, plots_sp, fitfn_sp))
+    file_lines.append(_single_particle_line(
+        row_sp, x, params_sp, plots_sp, fitfn_sp))
     # + INTERACTIONS
     file_lines.extend(
             _interactions_lines(row_mp, x, params_mp, plots_mp, fitfn_mp))
@@ -217,7 +217,8 @@ def _title_lines(row_lines_title, info_zbt, info_sp, info_mp, e_hw_pairs):
     for i, info in zip(range(1, 4), [info_zbt, info_sp, info_mp]):
         row_lines_title[i] = row_lines_title[i].format(
                 mf=info['mf_name'], code=info['mf_code'],
-                ffn=info['ffn_name'], ffn_code=info['ffn_code'])
+                ffn=info['ffn_name'], ffn_code=info['ffn_code']
+        )
     row_lines_title[5] = row_lines_title[5].format(ehw=e_hw_pairs)
     return row_lines_title
 
@@ -248,8 +249,8 @@ def _index_lines(row_index_key, io_map):
     for k, v in sorted(io_map.items()):
         n, l, j, tz = v
         lines.append(row_index_key.format(
-            k, int(n), int(l), str(int(2 * j)) + '/2',
-            str(int(2 * tz)) + '/2'))
+            k, int(n), int(l), str(int(2 * j)) + '/2', str(int(2 * tz)) + '/2')
+        )
     return lines
 
 
@@ -264,8 +265,8 @@ def _single_particle_line(row_sp, mass_num, params_sp, plots_sp, fitfn_sp):
             raise OverlapOfSingleParticleDataException()
         else:
             indices.append(index)
-            fmt_args.append(get_energy(params_sp, const_list, const_dict,
-                                       fitfn_sp, mass_num))
+            fmt_args.append(get_energy(
+                params_sp, const_list, const_dict, fitfn_sp, mass_num))
     others = plots_sp[0][3]['others']
     fmt_args.extend([int(others[0]), int(others[1]), float(others[2])])
     return row_sp.format(*fmt_args)
@@ -288,8 +289,8 @@ def _interactions_lines(row_mp, mass_num, params_mp, plots_mp, fitfn_mp):
         else:
             interactions.append(interaction)
             fmt_args.extend([i for i in interaction])
-            fmt_args.append(get_energy(params_mp, const_list, const_dict,
-                                       fitfn_mp, mass_num))
+            fmt_args.append(get_energy(
+                params_mp, const_list, const_dict, fitfn_mp, mass_num))
             lines.append(row_mp.format(*fmt_args))
     return lines
 

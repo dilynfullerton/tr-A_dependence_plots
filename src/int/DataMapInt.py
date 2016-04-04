@@ -21,7 +21,8 @@ class DataMapInt(DataMap):
             exp_type=ExpInt, datum_type=DatumInt,
             exp_list=exp_list,
             exp_filter_fn=exp_filter_fn,
-            std_io_map=standard_indices)
+            std_io_map=standard_indices
+        )
 
     def _exp_from_file_path(self, f):
         return exp(f)

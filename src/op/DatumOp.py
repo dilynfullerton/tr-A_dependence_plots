@@ -25,9 +25,8 @@ class DatumOp(Datum):
             _rgx_1bt=_REGEX_1BT,
             _rgx_2bt=_REGEX_2BT
     ):
-        super(DatumOp, self).__init__(directory=directory,
-                                      exp=exp,
-                                      files=files)
+        super(DatumOp, self).__init__(
+            directory=directory, exp=exp, files=files)
         self._comment_str = _comment_str
         self._rgx_h = _rgx_h
         self._rgx_0bt = _rgx_0bt
@@ -59,8 +58,8 @@ class DatumOp(Datum):
             self._particles_to_1bt_trel_map[TrelParticles(*k)] = v
         self._particles_interaction_to_2bt_trel_map = dict()
         for k, v in trel_2bt_map.items():
-            next_k = TrelParticlesInteraction(Particle(*k[0]), Particle(*k[1]),
-                                              Interaction(*k[2]))
+            next_k = TrelParticlesInteraction(
+                Particle(*k[0]), Particle(*k[1]), Interaction(*k[2]))
             self._particles_interaction_to_2bt_trel_map[next_k] = v
 
     def h_head(self):
@@ -105,8 +104,8 @@ class DatumOp(Datum):
             i = Interaction(a, b, a, b)
             pt_map = ipt_map[i]
         except KeyError:
-            raise InteractionNotFoundException('There is no data for the'
-                                               'interaction {}'.format(i))
+            raise InteractionNotFoundException(
+                'There is no data for the interaction {}'.format(i))
         num = 0
         denom = 0
         for k, v in pt_map.items():

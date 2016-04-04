@@ -40,25 +40,33 @@ class FitFunction:
     def __call__(self, x, params, const_list, const_dict):
         if self.fz is not None:
             f = self.fn
-            return (f(x, params, const_list, const_dict) -
-                    f(self.fz, params, const_list, const_dict))
+            return (
+                f(x, params, const_list, const_dict) -
+                f(self.fz, params, const_list, const_dict)
+            )
         elif self.fzfn is not None:
             f = self.fn
             x0 = self.fzfn(const_dict)
-            return (f(x, params, const_list, const_dict) -
-                    f(x0, params, const_list, const_dict))
+            return (
+                f(x, params, const_list, const_dict) -
+                f(x0, params, const_list, const_dict)
+            )
         elif self.fk is not None:
             f = self.fn
             x0, k = self.fk
-            return (f(x, params, const_list, const_dict) -
-                    f(x0, params, const_list, const_dict) +
-                    k)
+            return (
+                f(x, params, const_list, const_dict) -
+                f(x0, params, const_list, const_dict) +
+                k
+            )
         elif self.fkfn is not None:
             f = self.fn
             x0, k = self.fkfn(const_dict)
-            return (f(x, params, const_list, const_dict) -
-                    f(x0, params, const_list, const_dict) +
-                    k)
+            return (
+                f(x, params, const_list, const_dict) -
+                f(x0, params, const_list, const_dict) +
+                k
+            )
         else:
             return self.fn(x, params, const_list, const_dict)
 

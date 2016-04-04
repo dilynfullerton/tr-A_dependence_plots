@@ -37,7 +37,6 @@ def _get_plots_lpt(exp_list, all_data_map, get_data, get_plot=_get_plot_lpt,
         data_map = all_data_map[exp]
         nme_map = get_data(data_map)
         mzbt_map = data_map.mass_zbt_map()
-
         for n, me_map in nme_map.items():
             plots.append(get_plot(n, exp, me_map, mzbt_map))
     return plots

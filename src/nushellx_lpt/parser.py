@@ -160,8 +160,9 @@ def mass_to_n_to_body_data_map(
         mass = a_z(f, _comment_str, _row_az)[0]
         nb_map = _n_to_body_data_map(
             _cured_body_lists(
-                body_lists=_body_lists(
-                    body_lines=_body_lines(f, _comment_str, row_body_start)),
+                body_lists=_body_lists(body_lines=_body_lines(
+                    f, _comment_str, row_body_start
+                )),
                 ncols_body=_ncols_body))
         mnb_map[mass] = nb_map
     return mnb_map
@@ -177,8 +178,8 @@ def mass_to_zbt_map(
 ):
     d = dict()
     for fp_lpt in filtered_filepaths_lpt:
-        mass = a_z(filepath=fp_lpt, comment_str=_comment_str_lpt,
-                   row_az=_row_az)[0]
+        mass = a_z(
+            filepath=fp_lpt, comment_str=_comment_str_lpt, row_az=_row_az)[0]
         zbt = _zbt_from_lpt(
             filepath_lpt=fp_lpt, filename_int_regex=_filename_int_regex,
             comment_str_int=_comment_str_int, zbt_comment=_zbt_comment

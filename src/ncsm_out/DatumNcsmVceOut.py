@@ -29,8 +29,7 @@ class DatumNcsmVceOut(Datum):
     """
     def __init__(self, directory, exp, files):
         super(DatumNcsmVceOut, self).__init__(
-            directory=directory, exp=exp, files=files
-        )
+            directory=directory, exp=exp, files=files)
         # maps
         self._a_aeff_nhw_to_states_map = dict()
 
@@ -132,8 +131,7 @@ class DatumNcsmVceOut(Datum):
     def _aeff_exact_to_states_map_for_nmax(self, nmax, a0):
         aeff_exact_to_states = dict()
         for k, v in self._a_aeff_to_states_map_for_nmax(
-                nmax=nmax, a0=a0
-        ).items():
+                nmax=nmax, a0=a0).items():
             if k[0] != k[1]:
                 continue
             else:
@@ -141,16 +139,15 @@ class DatumNcsmVceOut(Datum):
         return aeff_exact_to_states
 
     def _aeff_exact_to_ground_state_map_for_nmax(self, nmax, a0):
-        return {k: v[0] for k, v in
-                self._aeff_exact_to_states_map_for_nmax(
-                    nmax=nmax, a0=a0
-                ).items()}
+        return {
+            k: v[0] for k, v in self._aeff_exact_to_states_map_for_nmax(
+                    nmax=nmax, a0=a0).items()
+            }
 
     def _aeff_exact_to_ground_state_energy_map_for_nmax(self, nmax, a0):
         return {k: v.E for k, v in
                 self._aeff_exact_to_ground_state_map_for_nmax(
-                    nmax=nmax, a0=a0
-                ).items()}
+                    nmax=nmax, a0=a0).items()}
 
     # user maps
     def a_aeff_to_states_map(
@@ -163,8 +160,7 @@ class DatumNcsmVceOut(Datum):
                 return self._a_aeff_to_states_map_for_nmax(nmax=nmax, a0=a0)
             elif nshell is not None and ncomponent is not None:
                 return self._a_aeff_to_states_map_for_nmax(
-                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent)
-                )
+                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent))
             else:
                 raise IncompleteArgumentsException(MSG1.format(
                     'a_aeff_to_states_map'
@@ -182,12 +178,10 @@ class DatumNcsmVceOut(Datum):
         elif nmax is not None:
             if a0 is not None:
                 return self._a_aeff_to_ground_state_map_for_nmax(
-                    nmax=nmax, a0=a0
-                )
+                    nmax=nmax, a0=a0)
             elif nshell is not None and ncomponent is not None:
                 return self._a_aeff_to_ground_state_map_for_nmax(
-                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent)
-                )
+                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent))
             else:
                 raise IncompleteArgumentsException(MSG1.format(
                     'a_aeff_to_ground_state_map'
@@ -207,16 +201,13 @@ class DatumNcsmVceOut(Datum):
                 return self._aeff_exact_to_states_map_for_nmax(nmax=nmax, a0=a0)
             elif nshell is not None and ncomponent is not None:
                 return self._aeff_exact_to_states_map_for_nmax(
-                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent)
-                )
+                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent))
             else:
                 raise IncompleteArgumentsException(MSG1.format(
-                    'aeff_exact_to_states_map'
-                ))
+                    'aeff_exact_to_states_map'))
         else:
             raise IncompleteArgumentsException(MSG2.format(
-                'aeff_exact_to_states_map'
-            ))
+                'aeff_exact_to_states_map'))
 
     def aeff_exact_to_ground_state_map(
             self, nhw=None, nmax=None, a0=None, nshell=None, ncomponent=None,
@@ -226,20 +217,16 @@ class DatumNcsmVceOut(Datum):
         elif nmax is not None:
             if a0 is not None:
                 return self._aeff_exact_to_ground_state_map_for_nmax(
-                    nmax=nmax, a0=a0
-                )
+                    nmax=nmax, a0=a0)
             elif nshell is not None and ncomponent is not None:
                 return self._aeff_exact_to_ground_state_map_for_nmax(
-                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent)
-                )
+                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent))
             else:
                 raise IncompleteArgumentsException(MSG1.format(
-                    'aeff_exact_to_ground_state_map'
-                ))
+                    'aeff_exact_to_ground_state_map'))
         else:
             raise IncompleteArgumentsException(MSG2.format(
-                'aeff_exact_to_ground_state_map'
-            ))
+                'aeff_exact_to_ground_state_map'))
 
     def aeff_exact_to_ground_state_energy_map(
             self, nhw=None, nmax=None, a0=None, nshell=None, ncomponent=None,
@@ -249,17 +236,13 @@ class DatumNcsmVceOut(Datum):
         elif nmax is not None:
             if a0 is not None:
                 return self._aeff_exact_to_ground_state_energy_map_for_nmax(
-                    nmax=nmax, a0=a0
-                )
+                    nmax=nmax, a0=a0)
             elif nshell is not None and ncomponent is not None:
                 return self._aeff_exact_to_ground_state_energy_map_for_nmax(
-                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent)
-                )
+                    nmax=nmax, a0=_get_a0(nshell=nshell, ncomponent=ncomponent))
             else:
                 raise IncompleteArgumentsException(MSG1.format(
-                    'aeff_exact_to_ground_state_energy_map'
-                ))
+                    'aeff_exact_to_ground_state_energy_map'))
         else:
             raise IncompleteArgumentsException(MSG2.format(
-                'aeff_exact_to_ground_state_energy_map'
-            ))
+                'aeff_exact_to_ground_state_energy_map'))

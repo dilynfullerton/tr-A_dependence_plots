@@ -2,6 +2,9 @@
 their parameter variance, regression agreement, etc.
 """
 
+from __future__ import division
+from __future__ import print_function
+
 from itertools import combinations
 
 import numpy as np
@@ -33,12 +36,13 @@ def max_r2_value(
     exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
     imsrg_data_map = DataMapInt(
         parent_directory=sourcedir, exp_list=exp_list,
-        standard_indices=std_io_map)
+        standard_indices=std_io_map
+    )
     fn_res_r2_map = dict()
     for fitfn in fitfns:
         try:
-            res = metafitter(fitfn, exp_list,
-                             imsrg_data_map=imsrg_data_map, **kwargs)
+            res = metafitter(
+                fitfn, exp_list, imsrg_data_map=imsrg_data_map, **kwargs)
         except TypeError:
             continue
         lg_res = res[1]
@@ -50,9 +54,11 @@ def max_r2_value(
         fn_res_r2_map[fitfn] = (res, r2)
     rank_map = dict()
     result_map = dict()
-    for fitfn, i in zip(sorted(fn_res_r2_map.keys(),
-                               key=lambda f: -1 * fn_res_r2_map[f][1]),
-                        range(len(fn_res_r2_map))):
+    for fitfn, i in zip(
+            sorted(fn_res_r2_map.keys(),
+                   key=lambda f: -1 * fn_res_r2_map[f][1]),
+            range(len(fn_res_r2_map))
+    ):
         res, r2 = fn_res_r2_map[fitfn]
         rank_map[i + 1] = (fitfn, r2)
         result_map[fitfn] = res
@@ -63,8 +69,10 @@ def max_r2_value(
 
 def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
     e_hw_pairs = [tuple(e_hw_pair) for e_hw_pair in e_hw_pairs]
-    title_str = ('\nR^2 values for fit functions under metafit {mf} for '
-                 '{ehw}\n'.format(mf=metafitter.__name__, ehw=e_hw_pairs))
+    title_str = (
+        '\nR^2 values for fit functions under metafit {mf} for '
+        '{ehw}\n'.format(mf=metafitter.__name__, ehw=e_hw_pairs)
+    )
     print(P_TITLE + title_str + P_BREAK + P_END)
     template_str = '{r:>4}\t{fn:>100}\t{r2:>15}'
     head_str = template_str.format(r='Rank', fn='Fit function', r2='R^2')
@@ -141,11 +149,13 @@ def _distributions_from_lol(lol):
 def _printer_for_compare_params(
         params_result_list, depth, statfn, e_hw_pairs, metafitter, fitfn
 ):
-    title_str = ('\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
-                 '{mf} and fit function {ffn}'
-                 '').format(
+    title_str = (
+        '\nDepth {d} comparison of {sfn} for {ehw} using meta-fitter '
+        '{mf} and fit function {ffn}'
+    ).format(
         d=depth, sfn=statfn, ehw=e_hw_pairs,
-        mf=metafitter.__name__, ffn=fitfn.__name__)
+        mf=metafitter.__name__, ffn=fitfn.__name__
+    )
     print(P_TITLE + title_str + '\n' + P_BREAK + P_END)
     temp_str = '{p:>20}\t{std:>20}\t{rel:>20}'
     print(P_HEAD +

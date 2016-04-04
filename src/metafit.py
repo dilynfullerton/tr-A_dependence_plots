@@ -152,13 +152,16 @@ def metafitter_abs(
         all_data_map = _data_map_type(
             parent_directory=sourcedir,
             exp_list=exp_list, exp_filter_fn=exp_filter_fn,
-            standard_indices=_std_io_map)
+            standard_indices=_std_io_map
+        )
 
     exp_list = all_data_map.map.keys()
 
-    plts = _get_plots(exp_list=exp_list, all_data_map=all_data_map,
-                      get_data=_get_data_from_map, print_key=print_key,
-                      std_io_map=_std_io_map, get_plot=_get_plot)
+    plts = _get_plots(
+        exp_list=exp_list, all_data_map=all_data_map,
+        get_data=_get_data_from_map, print_key=print_key,
+        std_io_map=_std_io_map, get_plot=_get_plot
+    )
 
     # Print index orbital map, if standard
     if print_key is True and _std_io_map is not None:
@@ -168,14 +171,16 @@ def metafitter_abs(
         plots=plts, transform=transform,
         super_transform_pre=super_transform_pre,
         super_transform_post=super_transform_post,
-        fitfn=fitfn, full_output=full_output, idx=_idx, )
+        fitfn=fitfn, full_output=full_output, idx=_idx,
+    )
 
     mf_results, lr_results, plots, fitfn = rr
     params = mf_results[0]
 
     formatted_title = title.format(
         mfn=mf_name, tr=transform.__name__, fn=fitfn.__name__,
-        ehw=exp_list_to_string(exp_list))
+        ehw=exp_list_to_string(exp_list)
+    )
 
     # Print results
     if print_results is True:
@@ -194,7 +199,8 @@ def metafitter_abs(
             cmap_name=_cmap,
             show_fit=show_fit, fit_params=params, fitfn=fitfn,
             include_legend=show_legend, legend_size=_legend_size,
-            savedir=savedir_plots, savename=_savename, code=code)
+            savedir=savedir_plots, savename=_savename, code=code
+        )
         plt.show()
 
     # Make an info dict
@@ -226,8 +232,9 @@ def _meta_fit_with_transformation(
         num_fit_params = fitfn.num_fit_params
     else:
         num_fit_params = fitfn.__code__.co_argcount - 1
-    param_guess = _meta_fit([plots[0]], fitfn,
-                            np.ones(num_fit_params))[0]
+    param_guess = _meta_fit(
+        [plots[0]], fitfn, np.ones(num_fit_params)
+    )[0]
 
     # Do the meta-fit
     mf_results = _meta_fit(plots, fitfn, param_guess, full_output=full_output)
@@ -284,7 +291,8 @@ def _meta_fit(plots, fitfn, params_guess, full_output=False, **lsqkwargs):
     return leastsq(
         func=_mls, x0=params_guess,
         args=(fitfn, combined_x, combined_y, constants_lists, constants_dicts),
-        full_output=full_output, **lsqkwargs)
+        full_output=full_output, **lsqkwargs
+    )
 
 
 def _mls(params, fitfn, lox, loy, const_lists, const_dicts):

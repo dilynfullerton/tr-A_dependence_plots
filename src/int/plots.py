@@ -57,7 +57,6 @@ def plot_energy_vs_mass_for_interactions(
 
     plt.xlabel('A')
     plt.ylabel('energy (MeV)')
-
     title = ('energy vs mass for interactions with '
              'e{e}, hw{hw}').format(e=e, hw=hw)
     plt.title(title)
@@ -67,10 +66,8 @@ def plot_energy_vs_mass_for_interactions(
     else:
         savename = title
     plt.savefig(savedir + '/' + savename + '.png')
-
     if 'show' in kwargs and kwargs['show']:
         plt.show(block=True)
-
     return plot_map
 
 
@@ -123,7 +120,6 @@ def plot_energy_vs_mass_for_orbitals(
 
     plt.xlabel('A')
     plt.ylabel('energy (MeV)')
-
     title = 'energy vs mass for orbitals with e{e}, hw{hw}'.format(e=e, hw=hw)
     plt.title(title)
 
@@ -132,8 +128,6 @@ def plot_energy_vs_mass_for_orbitals(
     else:
         savename = title
     plt.savefig(savedir + '/' + savename + '.png')
-
     if 'show' in kwargs and kwargs['show']:
         plt.show()
-
     return plot_map

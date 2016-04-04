@@ -16,6 +16,7 @@ class TwoBodyInteraction(namedtuple('TwoBodyInteraction',
         sep = b'|'
         left = b'('
         right = b')'
-        return ('{left}{a:2} {b:2}{s} V {s}{c:2} {d:2}{right}'
-                '').format(a=self.a, b=self.b, c=self.c, d=self.d,
-                           left=left, right=right, s=sep)
+        return '{left}{a:2} {b:2}{s} V {s}{c:2} {d:2}{right}'.format(
+            a=self.a, b=self.b, c=self.c, d=self.d,
+            left=left, right=right, s=sep
+        )

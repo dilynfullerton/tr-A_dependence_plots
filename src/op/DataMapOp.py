@@ -33,8 +33,7 @@ class DataMapOp(DataMap):
 
     def _exp_from_file_path(self, f):
         return exp(
-            filepath=f, split_char=self._split_char, regex_hw=self._rgx_hw
-        )
+            filepath=f, split_char=self._split_char, regex_hw=self._rgx_hw)
 
     def _get_files(self):
         def op_file_filter(filepath):

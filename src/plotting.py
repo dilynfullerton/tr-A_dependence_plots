@@ -184,16 +184,38 @@ def save_plot_figure(
         cmap=None, cmap_name=PLOT_CMAP, dark=False,
         legendsize=LEGEND_SIZE, figsize=PLOT_FIGSIZE,
 ):
-    # todo
-    pass
+    category_to_plots_map = {'data': data_plots}
+    if fit_plots is not None:
+        category_to_plots_map.update({'fit': fit_plots})
+
+    category_to_labels_map = dict()
+    if data_labels is not None:
+        category_to_labels_map.update({'data': data_labels})
+    if fit_labels is not None:
+        category_to_labels_map.update({'fit': fit_labels})
+
+    category_to_line_style_map = dict()
+    if data_line_style is not None:
+        category_to_line_style_map.update({'data': data_line_style})
+    if fit_line_style is not None:
+        category_to_line_style_map.update({'fit': fit_line_style})
+
+    return save_plot_figure_categorical(
+        category_to_plots_map=category_to_plots_map,
+        category_to_labels_map=category_to_labels_map,
+        category_to_line_style_map=category_to_line_style_map,
+        title=title, xlabel=xlabel, ylabel=ylabel, savepath=savepath,
+        ax=ax, fig=fig, cmap=cmap, cmap_name=cmap_name, dark=dark,
+        legendsize=legendsize, figsize=figsize,
+    )
 
 
 def save_plot_figure_categorical(
         category_to_plots_map, title, xlabel, ylabel, savepath,
         category_to_labels_map=None, category_to_line_style_map=None,
-        default_line_style='-',
         ax=None, fig=None, cmap=None, cmap_name=PLOT_CMAP, dark=False,
         legendsize=LEGEND_SIZE, figsize=PLOT_FIGSIZE,
+        _default_line_style='-',
 ):
     include_legend = category_to_labels_map is not None
     if category_to_labels_map is None:
@@ -212,7 +234,7 @@ def save_plot_figure_categorical(
         if category in category_to_line_style_map:
             line_style_list_list.append(category_to_line_style_map[category])
         else:
-            line_style_list_list.append(default_line_style)
+            line_style_list_list.append(_default_line_style)
 
     if fig is None and ax is None:
         fig = plt.figure(figsize=figsize)

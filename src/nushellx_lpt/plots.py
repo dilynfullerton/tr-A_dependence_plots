@@ -14,12 +14,12 @@ def lpt_plot_energy_vs_n_for_mass(
         mass_num, directory=DPATH_SHELL_RESULTS,
         exp_list=None, proton_num=None, transform=None
 ):
-    imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
-                                        exp_list=exp_list).map
+    imsrg_data_map = DataMapNushellxLpt(
+        parent_directory=directory, exp_list=exp_list).map
     plots = list()
     if proton_num is not None:
-        items = filter(lambda item: item[0].Z == proton_num,
-                       imsrg_data_map.items())
+        items = filter(
+            lambda item: item[0].Z == proton_num, imsrg_data_map.items())
     else:
         items = imsrg_data_map.items()
     for k, v in items:
@@ -36,14 +36,12 @@ def lpt_plot_energy_vs_n_for_mass(
     if transform is not None:
         plots = [transform(*plot) for plot in plots]
 
-    plot_the_plots(plots,
-                   label='{exp}',
-                   title='Energy vs N for A={}'.format(mass_num),
-                   xlabel='N',
-                   ylabel='Energy (MeV)',
-                   sort_key=lambda p: p[3]['exp'],
-                   get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
-                   include_legend=True)
+    plot_the_plots(
+        plots, label='{exp}', title='Energy vs N for A={}'.format(mass_num),
+        xlabel='N', ylabel='Energy (MeV)', sort_key=lambda p: p[3]['exp'],
+        get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
+        include_legend=True
+    )
     plt.show()
 
 
@@ -51,12 +49,12 @@ def lpt_plot_energy_vs_mass_for_n(
         n, directory=DPATH_SHELL_RESULTS,
         exp_list=None, proton_num=None, transform=None
 ):
-    imsrg_data_map = DataMapNushellxLpt(parent_directory=directory,
-                                        exp_list=exp_list).map
+    imsrg_data_map = DataMapNushellxLpt(
+        parent_directory=directory, exp_list=exp_list).map
     plots = list()
     if proton_num is not None:
-        items = filter(lambda item: item[0].Z == proton_num,
-                       imsrg_data_map.items())
+        items = filter(
+            lambda item: item[0].Z == proton_num, imsrg_data_map.items())
     else:
         items = imsrg_data_map.items()
     for k, v in items:
@@ -78,10 +76,10 @@ def lpt_plot_energy_vs_mass_for_n(
     if transform is not None:
         plots = [transform(*plot) for plot in plots]
 
-    plot_the_plots(plots,
-                   label='{exp}', title='Energy vs A for N={}'.format(n),
-                   xlabel='A', ylabel='Energy (MeV)',
-                   sort_key=lambda p: p[3]['exp'],
-                   get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
-                   include_legend=True)
+    plot_the_plots(
+        plots, label='{exp}', title='Energy vs A for N={}'.format(n),
+        xlabel='A', ylabel='Energy (MeV)', sort_key=lambda p: p[3]['exp'],
+        get_label_kwargs=lambda p, idx: {'exp': p[3]['exp']},
+        include_legend=True
+    )
     plt.show()
