@@ -166,7 +166,7 @@ def plot_the_plots(
         if savedir is not None:
             plt.savefig(path.join(savedir, savename + extension))
         if data_file_savedir is not None:
-            _make_plot_data_file(
+            make_plot_data_file(
                 plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
                 savedir=data_file_savedir, savename=savename,
                 label=label, get_label_kwargs=get_label_kwargs,
@@ -194,16 +194,18 @@ def save_plot_figure(
     if fit_labels is not None:
         category_to_labels_map.update({'fit': fit_labels})
 
-    category_to_line_style_map = dict()
+    category_to_line_styles_map = dict()
     if data_line_style is not None:
-        category_to_line_style_map.update({'data': data_line_style})
-    if fit_line_style is not None:
-        category_to_line_style_map.update({'fit': fit_line_style})
+        category_to_line_styles_map.update(
+            {'data': [data_line_style]*len(data_plots)})
+    if fit_line_style is not None and fit_plots is not None:
+        category_to_line_styles_map.update(
+            {'fit': [fit_line_style]*len(fit_plots)})
 
     return save_plot_figure_categorical(
         category_to_plots_map=category_to_plots_map,
         category_to_labels_map=category_to_labels_map,
-        category_to_line_style_map=category_to_line_style_map,
+        category_to_line_style_map=category_to_line_styles_map,
         title=title, xlabel=xlabel, ylabel=ylabel, savepath=savepath,
         ax=ax, fig=fig, cmap=cmap, cmap_name=cmap_name, dark=dark,
         legendsize=legendsize, figsize=figsize,
@@ -234,7 +236,7 @@ def save_plot_figure_categorical(
         if category in category_to_line_style_map:
             line_style_list_list.append(category_to_line_style_map[category])
         else:
-            line_style_list_list.append(_default_line_style)
+            line_style_list_list.append([_default_line_style]*len(plot_list))
 
     if fig is None and ax is None:
         fig = plt.figure(figsize=figsize)
@@ -263,8 +265,12 @@ def _save_plot_figure(
     num_plots = len(plot_list_list[0])
     c_norm = colors.Normalize(vmin=0, vmax=num_plots-1)
     scalar_map = cm.ScalarMappable(norm=c_norm, cmap=cmap)
-    for lop, lol, lols, i in (zip(*plot_list_list), zip(*label_list_list),
-                              zip(*line_style_list_list), range(num_plots)):
+    for lop, lol, lols, i in zip(
+            zip(*plot_list_list),
+            zip(*label_list_list),
+            zip(*line_style_list_list),
+            range(num_plots)
+    ):
         for plot, label, line_style in zip(lop, lol, lols):
             x, y = plot[:2]
             ax.plot(x, y, line_style, label=label, color=scalar_map.to_rgba(i))
@@ -292,7 +298,8 @@ def _set_legend(num_plots, legend_size, ax):
                fontsize=fontsize)
 
 
-def _make_plot_data_file(
+# todo change all of the usages of this function to save_plot_data_file
+def make_plot_data_file(
         plots, title, xlabel, ylabel, savedir, savename, label,
         get_label_kwargs=None, idx_key=None,
         extension='.dat', comment_str=b''
@@ -329,6 +336,23 @@ def _make_plot_data_file(
             writelines.append(b'{x:16.8f} {y:16.8f}'.format(x=xi, y=yi))
         writelines.append(b'')
     with open(path.join(savedir, savename + extension), 'w') as fw:
+        fw.write(b'{0}\n'.format(b'\n'.join(writelines)))
+
+
+def save_plot_data_file(
+        plots, title, xlabel, ylabel, savepath, labels=None, comment_str=b''):
+    writelines = list()
+    writelines.append(comment_str + title)
+    for p, i in zip(plots, range(len(plots))):
+        if labels is not None:
+            writelines.append(comment_str + labels[i])
+        writelines.append(
+            comment_str + b'{xl:>16} {yl:>16}'.format(xl=xlabel, yl=ylabel))
+        x, y, = p[:2]
+        for xi, yi in zip(x, y):
+            writelines.append(b'{x:16.8f} {y:16.8f}'.format(x=xi, y=yi))
+        writelines.append(b'')
+    with open(path.join(savepath), 'w') as fw:
         fw.write(b'{0}\n'.format(b'\n'.join(writelines)))
 
 
