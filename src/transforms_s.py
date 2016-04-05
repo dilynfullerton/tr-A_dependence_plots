@@ -47,8 +47,7 @@ def keep_lesser_x0_y0_zbt0_pair_in_dict(p, p1, p2):
 def s_combine_like(
         keys=None, f=None,
         combine_rules=list([keep_lesser_x0_y0_zbt0_pair_in_dict]),
-        sort_plot=False,
-        sort_key=lambda x_y: x_y[0]
+        sort_plot=False, sort_key=lambda x_y: x_y[0]
 ):
     """Returns a super-fit-transform that combines all plots that share the
     same value returned by the given f, which acts on a single plot
@@ -85,10 +84,8 @@ def s_combine_like(
 
 
 def _combine_plots(
-        p1, p2,
-        combine_rules=None,
-        sort_plot=False,
-        sort_key=lambda x_y: x_y[0]
+        p1, p2, combine_rules=None,
+        sort_plot=False, sort_key=lambda x_y: x_y[0]
 ):
     # Combine x arrays with each other and y arrays with each other
     x1, y1 = p1[0:2]

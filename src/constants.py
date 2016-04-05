@@ -131,7 +131,8 @@ LEGEND_SIZE = LegendSize(
     min_fontsize=LEGEND_MIN_FONTSIZE,
     total_fontsize=LEGEND_TOTAL_FONTSIZE,
     rows_per_col=LEGEND_ROWS_PER_COL,
-    space_scale=LEGEND_SPACE_SCALE)
+    space_scale=LEGEND_SPACE_SCALE
+)
 
 STANDARD_IO_MAP = {
     1: QuantumNumbers(0.0, 2.0, 2.5, -0.5),

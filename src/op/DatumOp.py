@@ -19,11 +19,8 @@ class DatumOp(Datum):
     """
     def __init__(
             self, directory, exp, files,
-            _comment_str=_CMNT_STR,
-            _rgx_h=_REGEX_H,
-            _rgx_0bt=_REGEX_0BT,
-            _rgx_1bt=_REGEX_1BT,
-            _rgx_2bt=_REGEX_2BT
+            _comment_str=_CMNT_STR, _rgx_h=_REGEX_H,
+            _rgx_0bt=_REGEX_0BT, _rgx_1bt=_REGEX_1BT, _rgx_2bt=_REGEX_2BT
     ):
         super(DatumOp, self).__init__(
             directory=directory, exp=exp, files=files)

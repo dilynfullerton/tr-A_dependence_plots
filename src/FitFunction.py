@@ -16,13 +16,9 @@ class FitFunction:
     the meta-fit algorithm
     """
     def __init__(
-            self, function, num_fit_params,
-            force_zero=None,
-            name=None,
-            code='',
-            force_zero_func=None,
-            force_k=None,
-            force_k_func=None
+            self, function, num_fit_params, name=None, code='',
+            force_zero=None, force_zero_func=None,
+            force_k=None, force_k_func=None
     ):
         self.fn = function
         self.num_fit_params = num_fit_params
@@ -96,8 +92,7 @@ class FitFunction:
 
 
 def combine_ffns(
-        list_of_ffn,
-        force_zero=None,
+        list_of_ffn, force_zero=None,
         _name_pref=FF_NAME_PREF,
         _name_sep=FF_NAME_SEP,
         _name_suff=FF_NAME_SUFF,
@@ -142,7 +137,7 @@ def combine_ffns(
         return result
 
     return FitFunction(
-        combined_ffns, total_params_length,
+        function=combined_ffns, num_fit_params=total_params_length,
         force_zero=force_zero, name=combined_name, code=combined_code, **kwargs
     )
 
@@ -401,12 +396,12 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
         return f(p, x)
 
     dep_str = _dep_str(dep_keys, ctfs)
-    return FitFunction(d,
-                       num_fit_params=(len(dep_keys) + len(ctfs)) * n_params,
-                       force_zero=force_zero,
-                       name=name + ' on {}'.format(dep_str),
-                       code=code.format(dep_str),
-                       **kwargs)
+    return FitFunction(
+        function=d, num_fit_params=(len(dep_keys) + len(ctfs)) * n_params,
+        force_zero=force_zero,
+        name=name + ' on {}'.format(dep_str), code=code.format(dep_str),
+        **kwargs
+    )
 
 
 def _dep_str(dep_keys, ctfs):
@@ -416,8 +411,8 @@ def _dep_str(dep_keys, ctfs):
 
 
 # FITTERS WITH DEPENDENCIES
-def linear_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None,
-                                  **kwargs):
+def linear_with_linear_dependence(
+        dep_keys, ctfs=list(), force_zero=None, **kwargs):
     return combine_ffns(
         list_of_ffn=[linear(force_zero=force_zero),
                      linear_dependence(dep_keys, ctfs, force_zero=force_zero)],
@@ -425,8 +420,8 @@ def linear_with_linear_dependence(dep_keys, ctfs=list(), force_zero=None,
     )
 
 
-def poly_with_linear_dependence(n, dep_keys, ctfs=list(), force_zero=None,
-                                **kwargs):
+def poly_with_linear_dependence(
+        n, dep_keys, ctfs=list(), force_zero=None, **kwargs):
     return combine_ffns(
         list_of_ffn=[poly(n), linear_dependence(dep_keys, ctfs)],
         force_zero=force_zero, **kwargs
