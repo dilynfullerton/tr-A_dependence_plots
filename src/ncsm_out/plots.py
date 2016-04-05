@@ -24,7 +24,7 @@ def plot_ground_state_prescription_error_vs_exact(
     # exact
     if dm_exact is None:
         dm_exact = DataMapNcsmVceOut(
-            parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2)])
+            parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2)],)
     dat_exact = dm_exact.map.values()[0]
     ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
         nmax=nmax, nshell=nshell, ncomponent=ncomponent,)
@@ -33,7 +33,7 @@ def plot_ground_state_prescription_error_vs_exact(
     if dm_vce is None:
         dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
     aeff_eq_a_map = dm_vce.aeff_eq_a_to_ground_energy_map(
-        z=z, nmax=nmax, n1=n1, n2=n2, nshell=nshell, ncomponent=ncomponent)
+        z=z, nmax=nmax, n1=n1, n2=n2, nshell=nshell, ncomponent=ncomponent,)
     x_aaf, y_aaf = [list(a) for a in map_to_arrays(aeff_eq_a_map)]
     x_del = sorted(list(set(x_ex) & set(x_aaf)))
     y_del = list()
@@ -92,7 +92,7 @@ def plot_ground_state_prescription_error_vs_exact(
         return save_plot_figure(
             data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
             savepath=path.join(_savedir, savename + '.pdf'),
-            data_labels=labels,
+            data_labels=labels, cmap_name='jet',
         )
     else:
         return plots
