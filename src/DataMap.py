@@ -7,12 +7,21 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from os import path
+
+
+class PathDoesNotExistException(Exception):
+    pass
+
 
 class DataMap(object):
     def __init__(self, parent_directory, exp_type, datum_type,
                  exp_list=None, exp_filter_fn=None, **kwargs):
-        self.parent_dir = parent_directory
-        self.map = dict()
+        if path.exists(parent_directory):
+            self.parent_dir = parent_directory
+        else:
+            raise PathDoesNotExistException(
+                '\nDirectory not found: {}'.format(parent_directory))
         if exp_list is not None:
             self.exp_list = [exp_type(*exp_item) for exp_item in exp_list]
         else:
@@ -21,6 +30,7 @@ class DataMap(object):
         self.exp_type = exp_type
         self.datum_type = datum_type
         self.kwargs = kwargs
+        self.map = dict()
         self._set_maps()
 
     def __getitem__(self, item):

@@ -12,9 +12,10 @@ DPATH_FILES_INT_ORG = '../files_INT_org'
 DPATH_FILES_OP = '../files_OP'
 DPATH_FILES_OP_ORG = '../files_OP_org'
 DPATH_PLOTS = '../plots'
+DPATH_PLOTS_NCSMVCE = '../plots/vce_prescription_dependence'
 DPATH_GEN_INT = '../gen_files_INT'
-DPATH_SHELL_RESULTS = '../../cougar-nushellx/results'
-DPATH_NCSM_RESULTS = '../../cougar-ncsm/results'
+DPATH_SHELL_RESULTS = '../../tr-c-nushellx/results'
+DPATH_NCSM_RESULTS = '../../tr-c-ncsm/results'
 
 # File organization
 ORG_FMT_INT_DNAME = 'sd-shell_{}_e{}_hw{}_O{}_Rp{}'
