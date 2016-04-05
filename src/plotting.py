@@ -343,14 +343,15 @@ def save_plot_data_file(
         plots, title, xlabel, ylabel, savepath, labels=None, comment_str=b''):
     writelines = list()
     writelines.append(comment_str + title)
+    writelines.append(b'    x: {}'.format(xlabel))
+    writelines.append(b'    y: {}'.format(ylabel))
+    writelines.append(b'')
     for p, i in zip(plots, range(len(plots))):
         if labels is not None:
-            writelines.append(comment_str + labels[i])
-        writelines.append(
-            comment_str + b'{xl:>16} {yl:>16}'.format(xl=xlabel, yl=ylabel))
+            writelines.append(comment_str + b' plot: ' + labels[i])
         x, y, = p[:2]
         for xi, yi in zip(x, y):
-            writelines.append(b'{x:16.8f} {y:16.8f}'.format(x=xi, y=yi))
+            writelines.append(b'  {x:>16.8f}  {y:>16.8f}'.format(x=xi, y=yi))
         writelines.append(b'')
     with open(path.join(savepath), 'w') as fw:
         fw.write(b'{0}\n'.format(b'\n'.join(writelines)))

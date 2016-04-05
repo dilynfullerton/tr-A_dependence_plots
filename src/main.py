@@ -5,7 +5,6 @@ from ncsm_out.plots import plot_ground_state_prescription_error_vs_exact
 
 plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
-        # (2, 3, 4),
         (4, 5, 6),
     ],
     nmax=4, n1=15, n2=15,

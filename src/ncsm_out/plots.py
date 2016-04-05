@@ -78,7 +78,7 @@ def plot_ground_state_prescription_error_vs_exact(
     plots = sorted(plots, key=lambda p0: p0[3]['name'])
     title = 'Ground state energy error due to various A-prescriptions'
     labels = [p[3]['name'] for p in plots]
-    xlabel, ylabel = 'A', 'E_presc-E_ncsm'
+    xlabel, ylabel = 'A', 'E_presc-E_ncsm (MeV)'
     savename = 'vce_presc{}_Nmax{}_{}_{}_shell{}_dim{}'.format(
         str(a_prescriptions).replace(' ', ''),
         nmax, n1, n2, nshell, ncomponent,
