@@ -64,6 +64,7 @@ FN_PARSE_NCSMVCE_LPT_RGX_PRESC = b'presc\d+,\d+,\d+'
 FN_PARSE_NCSMVCE_LPT_RGX_NMAX = b'Nmax\d+'
 FN_PARSE_NCSMVCE_LPT_RGX_NSHELL = b'shell\d+'
 FN_PARSE_NCSMVCE_LPT_RGX_NCOMP = b'dim\d+'
+FN_PARSE_NCSMVCE_LPT_RGX_SCALE = b'scale\d+\.\d+'
 
 # *.op filename parsing
 FN_PARSE_OP_RGX_NAME = b'[A-Za-z]+'
@@ -81,6 +82,7 @@ F_PARSE_OP_STR_CMNT = F_PARSE_INT_CMNT_STR
 # NCSM/VCE *.out filename parsing
 FN_PARSE_NCSMVCE_OUT_RGX_FNAME = b'[a-z][a-z_]\d+_\d+_Nhw\d+_\d+_\d+\.out'
 FN_PARSE_NCSMVCE_OUT_RGX_NHW = b'Nhw\d+'
+FN_PARSE_NCSMVCE_OUT_RGX_SCALE = b'scale\d+\.\d+'
 FN_PARSE_NCSMVCE_OUT_CHR_ELT_SPLIT = b'_'
 
 # NCSM/VCE *.out file content parsing
