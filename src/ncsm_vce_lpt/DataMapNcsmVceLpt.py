@@ -13,24 +13,21 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
     """
     # noinspection PyUnusedLocal
     def __init__(
-            self, parent_directory, exp_list=None, exp_filter_fn=None,
-            _rgx_fname=_RGX_FNAME, _rgx_ggparent_dname=_RGX_DNAME_GGP,
-            **kwargs
+            self, parent_directory, exp_list=None, exp_filter_fn=None, **kwargs
     ):
         super(DataMapNcsmVceLpt, self).__init__(
             parent_directory=parent_directory,
             exp_list=exp_list, exp_filter_fn=exp_filter_fn,
             _exp_type=ExpNcsmVceLpt,
-            _regex_filename=_rgx_fname,
-            _regex_ggparent_dir=_rgx_ggparent_dname
+            _regex_filename=_RGX_FNAME,
+            _regex_ggparent_dir=_RGX_DNAME_GGP
         )
 
     def _exp_from_file_path(self, f):
         return exp(filepath=f)
 
     def aeff_eq_a_to_ground_energy_map(
-            self, z, nmax, n1, n2, nshell, ncomponent
-    ):
+            self, z, nmax, n1, n2, nshell, ncomponent, scalefactor=None):
         aeff_eq_a_to_ground_energy = dict()
         for exp0 in self.map.keys():
             presc = exp0.A_presc
@@ -41,6 +38,8 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
             elif exp0.n1 != n1 or exp0.n2 != n2:
                 continue
             elif exp0.nshell != nshell or exp0.ncomponent != ncomponent:
+                continue
+            elif exp0.scale != scalefactor:
                 continue
             else:
                 a = presc[0]
