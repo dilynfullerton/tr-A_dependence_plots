@@ -39,7 +39,7 @@ class DataMap(object):
         return self.map[item]
 
     def _set_maps(self):
-        files = self._get_files()
+        files = list(self._get_files())
         for f in files:
             key = self.exp_type(*self._exp_from_file_path(f))
             if self.exp_list is not None and key not in self.exp_list:
@@ -47,10 +47,8 @@ class DataMap(object):
             elif self.exp_filter_fn is not None and not self.exp_filter_fn(key):
                 continue
             elif key not in self.map:
-                key_files = list(
-                    filter(lambda ff: key == self._exp_from_file_path(ff),
-                           files)
-                )
+                key_files = list(filter(
+                    lambda ff: key == self._exp_from_file_path(ff), files))
                 value = self.datum_type(
                     directory=self.parent_dir, exp=key, files=key_files,
                     **self.kwargs
