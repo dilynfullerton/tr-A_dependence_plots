@@ -27,17 +27,16 @@ def get_files(directory, filterfn=lambda x: True):
 def get_files_r(directory, filterfn=lambda x: True):
     """Recursively get all of the files that children (direct or indirect) to
     the given directory and match the given filter function
-
     :param directory: the directory whose children are to be returned
     :param filterfn: the filter function with which to filter the children
-    :return: a list of all of the file paths of the files that are children
+    :return: a generator of all of the file paths of the files that are children
     to the given directory and match the filter function
     """
     w = walk(directory)
-    filepaths_list = list()
     for root, dirs, files in w:
-        filepaths_list.extend([path.join(root, f) for f in files])
-    return list(filter(filterfn, filepaths_list))
+        for fpath in [path.join(root, f) for f in files]:
+            if filterfn(fpath):
+                yield fpath
 
 
 def has_extension(fname, ext):
