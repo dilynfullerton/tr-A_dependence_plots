@@ -6,13 +6,13 @@ from __future__ import print_function
 from os import sep, path, walk
 from re import match
 
-from constants import F_PARSE_LPT_STR_CMNT as _CMNT_STR
+from constants import F_PARSE_LPT_STR_CMNT as _LPT_CMNT_STR
 from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
 from constants import F_PARSE_LPT_ROW_HEAD as _ROW_HEAD
 from constants import F_PARSE_LPT_COL_HEAD_DATA_START as _COL_START
 from constants import F_PARSE_LPT_ROW_START_DATA as _ROW_BODY_START
 from constants import F_PARSE_LPT_NCOLS_BODY as _NCOLS_BODY
-from constants import FN_PARSE_LPT_RGX_FNAME_INT as _REGEX_FILENAME_INT
+from constants import FN_PARSE_LPT_RGX_FNAME_INT as _RGX_FNAME_INT
 from constants import F_PARSE_INT_CMNT_STR as _INT_CMNT_STR
 from constants import F_PARSE_INT_CMNT_ZBT as _INT_CMNT_ZBT
 from parse import content_lines, comment_lines, half_int_str_to_float
@@ -24,7 +24,7 @@ def _a_z_line(filepath, comment_str, row_az):
     return list(content_lines(filepath, comment_str))[row_az]
 
 
-def a_z(filepath, comment_str=_CMNT_STR, row_az=_ROW_AZ):
+def a_z(filepath, comment_str=_LPT_CMNT_STR, row_az=_ROW_AZ):
     """Return A and Z from a list of lines, whose a_z_line has the format
             a = [A] z = [Z]
     :param filepath: path to the *.lpt file
@@ -46,16 +46,15 @@ def interaction(filepath):
     return filepath.split(sep)[-3]
 
 
-def exp(filepath, comment_str=_CMNT_STR, row_az=_ROW_AZ):
+def exp(filepath):
     """Get the elements necessary to form the ExpLpt for the given filepath
     :param filepath: path to the file
-    :param comment_str: character representing a commented line
-    :param row_az: the index of the a, z row with respect to content lines
-    :return: the tuple representation of the ExpLpt, that is
-            (Z, interaction)
+    :return: the tuple representation of the ExpLpt, that is (Z, interaction)
     """
-    return (a_z(filepath=filepath, comment_str=comment_str, row_az=row_az)[1],
-            str(interaction(filepath=filepath)))
+    return (
+        a_z(filepath=filepath, comment_str=_LPT_CMNT_STR, row_az=_ROW_AZ)[1],
+        str(interaction(filepath=filepath))
+    )
 
 
 # OTHER
@@ -124,19 +123,15 @@ def _cured_body_lists(body_lists, ncols_body):
 
 
 # MAPS
-def mass_to_header_data_map(
-        filtered_filepaths,
-        _comment_str=_CMNT_STR,
-        _row_az=_ROW_AZ, row_head=_ROW_HEAD,
-        _col_start=_COL_START
-):
+def mass_to_header_data_map(filtered_filepaths):
     mh_map = dict()
     for f in filtered_filepaths:
-        mass = a_z(filepath=f, comment_str=_comment_str, row_az=_row_az)[0]
+        mass = a_z(filepath=f, comment_str=_LPT_CMNT_STR, row_az=_ROW_AZ)[0]
         mh_map[mass] = _cured_header_data(
             _header_data(
-                header_line=_header_line(f, _comment_str, row_head),
-                col_start=_col_start
+                header_line=_header_line(
+                    filepath=f, comment_str=_LPT_CMNT_STR, row_head=_ROW_HEAD),
+                col_start=_COL_START
             )
         )
     return mh_map
@@ -149,40 +144,30 @@ def _n_to_body_data_map(cured_body_lists):
     return nb_map
 
 
-def mass_to_n_to_body_data_map(
-        filtered_filepaths,
-        _comment_str=_CMNT_STR,
-        _row_az=_ROW_AZ, row_body_start=_ROW_BODY_START,
-        _ncols_body=_NCOLS_BODY
-):
+def mass_to_n_to_body_data_map(filtered_filepaths):
     mnb_map = dict()
     for f in filtered_filepaths:
-        mass = a_z(f, _comment_str, _row_az)[0]
-        nb_map = _n_to_body_data_map(
-            _cured_body_lists(
-                body_lists=_body_lists(body_lines=_body_lines(
-                    f, _comment_str, row_body_start
-                )),
-                ncols_body=_ncols_body))
+        mass = a_z(f, _LPT_CMNT_STR, _ROW_AZ)[0]
+        nb_map = _n_to_body_data_map(_cured_body_lists(
+            body_lists=_body_lists(body_lines=_body_lines(
+                filepath=f,
+                comment_str=_LPT_CMNT_STR,
+                row_body_start=_ROW_BODY_START
+            )),
+            ncols_body=_NCOLS_BODY
+        ))
         mnb_map[mass] = nb_map
     return mnb_map
 
 
-def mass_to_zbt_map(
-        filtered_filepaths_lpt,
-        _filename_int_regex=_REGEX_FILENAME_INT,
-        _row_az=_ROW_AZ,
-        _comment_str_lpt=_CMNT_STR,
-        _comment_str_int=_INT_CMNT_STR,
-        _zbt_comment=_INT_CMNT_ZBT
-):
+def mass_to_zbt_map(filtered_filepaths_lpt):
     d = dict()
     for fp_lpt in filtered_filepaths_lpt:
         mass = a_z(
-            filepath=fp_lpt, comment_str=_comment_str_lpt, row_az=_row_az)[0]
+            filepath=fp_lpt, comment_str=_LPT_CMNT_STR, row_az=_ROW_AZ)[0]
         zbt = _zbt_from_lpt(
-            filepath_lpt=fp_lpt, filename_int_regex=_filename_int_regex,
-            comment_str_int=_comment_str_int, zbt_comment=_zbt_comment
+            filepath_lpt=fp_lpt, filename_int_regex=_RGX_FNAME_INT,
+            comment_str_int=_INT_CMNT_STR, zbt_comment=_INT_CMNT_ZBT
         )
         d[mass] = zbt
     return d
