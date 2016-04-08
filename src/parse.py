@@ -47,17 +47,18 @@ def _get_extension(fname):
     return fname[fname.rfind('.'):]
 
 
-def filename_elts_list(filename, split_char):
+def filename_elts_list(filename, split_char, remove_ext=True):
     """Get a list of the elements in the filename where name elements are
     separated by split_char
     :param filename: Name of the file or directory to split
     :param split_char: Character by which to split the string
+    :param remove_ext: if true, removes everything following the final '.'
     """
     ext_index = filename.rfind('.')
     dir_index = filename.rfind('/')
-    if dir_index != -1 and ext_index != -1:
+    if dir_index != -1 and ext_index != -1 and remove_ext:
         filename_woext = filename[dir_index+1:ext_index]
-    elif ext_index != -1:
+    elif ext_index != -1 and remove_ext:
         filename_woext = filename[:ext_index]
     elif dir_index != -1:
         filename_woext = filename[dir_index+1:]
