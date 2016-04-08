@@ -43,7 +43,8 @@ def nmax_n1_n2_from_delts(delts, regex_nmax):
 def exp(filepath):
     z = a_z(filepath=filepath, comment_str=_STR_CMNT, row_az=_ROW_AZ)[1]
     dirname = datum_dirname(filepath=filepath)
-    delts = filename_elts_list(filename=dirname, split_char=_CHR_SPLIT)
+    delts = filename_elts_list(
+        filename=dirname, split_char=_CHR_SPLIT, remove_ext=False)
     a_presc = _a_presc_from_delts(delts=delts, regex_presc=_RGX_PRESC)
     nmax, n1, n2 = nmax_n1_n2_from_delts(delts=delts, regex_nmax=_RGX_NMAX)
     nshell = int(elt_from_felts(felts=delts, elt_regex=_RGX_NSHELL)[5:])
