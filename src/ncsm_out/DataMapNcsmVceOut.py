@@ -13,8 +13,8 @@ class DataMapNcsmVceOut(DataMap):
     """
     # noinspection PyUnusedLocal
     def __init__(self, parent_directory, exp_list=None, exp_filter_fn=None,
-                 _rgx_fname=_RGX_FNAME, **kwargs):
-        self._rgx_fname = _rgx_fname
+                 **kwargs):
+        self._rgx_fname = _RGX_FNAME
         super(DataMapNcsmVceOut, self).__init__(
             parent_directory=parent_directory,
             exp_type=ExpNcsmVceOut, datum_type=DatumNcsmVceOut,

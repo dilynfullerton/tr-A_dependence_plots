@@ -13,7 +13,8 @@ from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 
 def plot_ground_state_prescription_error_vs_exact(
-        a_prescriptions, z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2,
+        a_prescriptions,
+        z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2, scalefactor=None,
         abs_value=False,
         do_plot=True,
         transform=None,
@@ -24,7 +25,7 @@ def plot_ground_state_prescription_error_vs_exact(
     # exact
     if dm_exact is None:
         dm_exact = DataMapNcsmVceOut(
-            parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2)],)
+            parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2, scalefactor)],)
     dat_exact = dm_exact.map.values()[0]
     ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
         nmax=nmax, nshell=nshell, ncomponent=ncomponent,)
@@ -33,7 +34,9 @@ def plot_ground_state_prescription_error_vs_exact(
     if dm_vce is None:
         dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
     aeff_eq_a_map = dm_vce.aeff_eq_a_to_ground_energy_map(
-        z=z, nmax=nmax, n1=n1, n2=n2, nshell=nshell, ncomponent=ncomponent,)
+        z=z, nmax=nmax, n1=n1, n2=n2,
+        nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor
+    )
     x_aaf, y_aaf = [list(a) for a in map_to_arrays(aeff_eq_a_map)]
     x_del = sorted(list(set(x_ex) & set(x_aaf)))
     y_del = list()
@@ -45,8 +48,10 @@ def plot_ground_state_prescription_error_vs_exact(
             y_del.append(y_del_i)
     plots = [(np.array(x_del), np.array(y_del), list(), {'name': 'Aeff = A'})]
     # prescriptions
-    exp_list = [dm_vce.exp_type(z, ap, nmax, n1, n2, nshell, ncomponent)
-                for ap in a_prescriptions]
+    exp_list = [
+        dm_vce.exp_type(z, ap, nmax, n1, n2, nshell, ncomponent, scalefactor)
+        for ap in a_prescriptions
+        ]
     d_vce_list = dm_vce.map.values()
     for d_vce in d_vce_list:
         if d_vce.exp not in exp_list:
@@ -83,6 +88,10 @@ def plot_ground_state_prescription_error_vs_exact(
         str(a_prescriptions).replace(' ', ''),
         nmax, n1, n2, nshell, ncomponent,
     )
+    if scalefactor is not None:
+        title += (' with off-diagonal coupling terms scaled by '
+                  '{}').format(scalefactor)
+        savename += '_scale{:.2}'.format(scalefactor)
 
     if do_plot:
         save_plot_data_file(
