@@ -30,6 +30,9 @@ def plot_ground_state_prescription_error_vs_exact(
     ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
         nmax=nmax, nshell=nshell, ncomponent=ncomponent,)
     x_ex, y_ex = [list(a) for a in map_to_arrays(ncsm_exact)]
+    print('Exact NCSM')
+    print('  x_ex = \n    {}'.format(x_ex))
+    print('  y_ex = \n    {}'.format([round(yi, 2) for yi in y_ex]))
     # A = Aeff prescription
     if dm_vce is None:
         dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
@@ -38,6 +41,9 @@ def plot_ground_state_prescription_error_vs_exact(
         nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor
     )
     x_aaf, y_aaf = [list(a) for a in map_to_arrays(aeff_eq_a_map)]
+    print('Prescription: Aeff = A')
+    print('  x_aaf = \n    {}'.format(x_aaf))
+    print('  y_aaf = \n    {}'.format([round(yi, 2) for yi in y_aaf]))
     x_del = sorted(list(set(x_ex) & set(x_aaf)))
     y_del = list()
     for x in x_del:
@@ -46,6 +52,8 @@ def plot_ground_state_prescription_error_vs_exact(
             y_del.append(abs(y_del_i))
         else:
             y_del.append(y_del_i)
+    print('  x_del = \n    {}'.format(x_del))
+    print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
     plots = [(np.array(x_del), np.array(y_del), list(), {'name': 'Aeff = A'})]
     # prescriptions
     exp_list = [
@@ -58,6 +66,9 @@ def plot_ground_state_prescription_error_vs_exact(
             continue
         vce_ground_energy_map = d_vce.mass_ground_energy_map()
         x_vce, y_vce = [list(a) for a in map_to_arrays(vce_ground_energy_map)]
+        print('Prescription: {}'.format(d_vce.exp.A_presc))
+        print('  x_vce = \n    {}'.format(x_vce))
+        print('  y_vce = \n    {}'.format([round(yi, 2) for yi in y_vce]))
 
         x_del = sorted(list(set(x_vce) & set(x_ex)))
         y_del = list()
@@ -67,6 +78,9 @@ def plot_ground_state_prescription_error_vs_exact(
                 y_del.append((abs(y_del_i)))
             else:
                 y_del.append(y_del_i)
+
+        print('  x_del = \n    {}'.format(x_del))
+        print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
 
         x_del = np.array(x_del)
         y_del = np.array(y_del)

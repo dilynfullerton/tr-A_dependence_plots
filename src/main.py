@@ -7,8 +7,8 @@ plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
         (4, 5, 6),
     ],
-    nmax=6, n1=15, n2=15,
-    nshell=1, ncomponent=2,
+    nmax=2, n1=15, n2=15,
+    nshell=1, ncomponent=2, scalefactor=0.00,
     abs_value=False,
     # transform=cubic_spline(500)
 )
