@@ -23,12 +23,12 @@ class IncompleteArgumentsException(Exception):
     pass
 
 
-class DatumNcsmVceOut(Datum):
+class DatumNcsmOut(Datum):
     """Stores data maps specific to a common set of NCSM out files, as
     identified by an ExpNcsmVceOut
     """
     def __init__(self, directory, exp, files):
-        super(DatumNcsmVceOut, self).__init__(
+        super(DatumNcsmOut, self).__init__(
             directory=directory, exp=exp, files=files)
         # maps
         self._a_aeff_nhw_to_states_map = dict()

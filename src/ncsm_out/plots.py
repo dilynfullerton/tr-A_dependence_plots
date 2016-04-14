@@ -8,7 +8,7 @@ from constants import DPATH_SHELL_RESULTS, DPATH_NCSM_RESULTS
 from constants import DPATH_PLOTS_NCSMVCE
 from plotting import map_to_arrays
 from plotting import save_plot_figure, save_plot_data_file
-from ncsm_out.DataMapNcsmVceOut import DataMapNcsmVceOut
+from ncsm_out.DataMapNcsmOut import DataMapNcsmOut
 from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 
@@ -24,7 +24,7 @@ def plot_ground_state_prescription_error_vs_exact(
 ):
     # exact
     if dm_exact is None:
-        dm_exact = DataMapNcsmVceOut(
+        dm_exact = DataMapNcsmOut(
             parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2, scalefactor)],)
     dat_exact = dm_exact.map.values()[0]
     ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(

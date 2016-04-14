@@ -4,7 +4,7 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class ExpNcsmVceOut(namedtuple('ExpNcsmVceOut', ['Z', 'n1', 'n2', 'scale'])):
+class ExpNcsmOut(namedtuple('ExpNcsmVceOut', ['Z', 'n1', 'n2', 'scale'])):
     """Identifier for a set of NCSD *.out files generated for the same
     element in the same model space
     """
@@ -13,4 +13,4 @@ class ExpNcsmVceOut(namedtuple('ExpNcsmVceOut', ['Z', 'n1', 'n2', 'scale'])):
     def __str__(self):
         return str(tuple(self._asdict().values())).replace(', None', '')
 
-ExpNcsmVceOut.__new__.__defaults__ = (None,) * 3
+ExpNcsmOut.__new__.__defaults__ = (None,) * 3

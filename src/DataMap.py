@@ -55,6 +55,9 @@ class DataMap(object):
                 )
                 self.map[key] = value
 
+    def _exp_set(self):
+        return set(self.map.keys())
+
     def _exp_from_file_path(self, f):
         raise NotImplemented()
 
