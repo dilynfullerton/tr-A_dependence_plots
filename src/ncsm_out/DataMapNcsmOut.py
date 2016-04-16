@@ -32,7 +32,7 @@ class DataMapNcsmOut(DataMap):
         return get_files_r(directory=self.parent_dir,
                            filterfn=ncsmvce_out_file_filter)
 
-    def _scale_to_aeff_exact_to_ground_energy_map(
+    def scale_to_aeff_exact_to_ground_energy_map(
             self, z, n1, n2,
             nhw=None, nmax=None, a0=None, nshell=None, ncomponent=None
     ):
@@ -55,7 +55,7 @@ class DataMapNcsmOut(DataMap):
             nhw=None, nmax=None, a0=None, nshell=None, ncomponent=None
     ):
         try:
-            scale_aeff_gnd = self._scale_to_aeff_exact_to_ground_energy_map(
+            scale_aeff_gnd = self.scale_to_aeff_exact_to_ground_energy_map(
                 z=z, n1=n1, n2=n2, nhw=nhw, nmax=nmax, a0=a0,
                 nshell=nshell, ncomponent=ncomponent,
             )
