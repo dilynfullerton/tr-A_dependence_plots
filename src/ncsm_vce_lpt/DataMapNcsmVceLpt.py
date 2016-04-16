@@ -31,7 +31,7 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
         aeff_eq_a_to_ground_energy = dict()
         for exp0 in self.map.keys():
             presc = exp0.A_presc
-            if presc[0] != presc[1] or presc[0] != presc[2]:
+            if not (presc[0] == presc[1] == presc[2]):
                 continue
             elif exp0.Z != z or exp0.Nmax != nmax:
                 continue
