@@ -31,7 +31,7 @@ def exp(filepath):
     nhw, n1, n2 = nhw_n1_n2_from_felts(delts=felts, regex_nmax=_RGX_NHW)
     scale_elt = elt_from_felts(felts=felts, elt_regex=_RGX_SCALE)
     if scale_elt is None:
-        scalefactor = None
+        scalefactor = 1.0
     else:
         scalefactor = float(scale_elt[5:])
     return z, n1, n2, scalefactor
