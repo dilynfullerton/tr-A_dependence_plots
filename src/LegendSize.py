@@ -26,8 +26,11 @@ class LegendSize:
     def fontsize(self, num_plots, num_cols=None):
         if num_cols is None:
             num_cols = self.num_cols(num_plots)
-        return max(min(num_cols * self.total_fontsize / num_plots,
-                   self.max_fontsize), self.min_fontsize)
+        if num_plots > 0:
+            return max(min(num_cols * self.total_fontsize / num_plots,
+                           self.max_fontsize), self.min_fontsize)
+        else:
+            return self.min_fontsize
 
     def width_scale(self, num_plots, num_cols=None, fontsize=None):
         if num_cols is None:
