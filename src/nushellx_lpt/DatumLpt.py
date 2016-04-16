@@ -8,6 +8,10 @@ from nushellx_lpt.parser import mass_to_n_to_body_data_map as mnbd_map
 from nushellx_lpt.parser import mass_to_zbt_map as mass_zbt_map
 
 
+class GroundStateEnergyNotFoundException(Exception):
+    pass
+
+
 class DatumLpt(Datum):
     """Stores data maps from *.lpt files and methods for generating new maps
     from these.
@@ -51,7 +55,7 @@ class DatumLpt(Datum):
         else:
             return None
 
-    def mass_n_body_map(self):
+    def mass_n_exstate_map(self):
         return dict(self._mass_n_body_map)
 
     def mass_zbt_map(self):
@@ -63,12 +67,28 @@ class DatumLpt(Datum):
             d[m] = {n: b.E for n, b in nb_map.items()}
         return d
 
-    def mass_lowest_energy_map(self):
+    def mass_lowest_ex_energy_map(self):
         return {k: v[1] for k, v in self.mass_n_energy_map().items()}
+
+    def mass_ground_ex_energy_map(self):
+        m = dict()
+        for mass, n_to_ex_state_map in self.mass_n_exstate_map().items():
+            j0 = 0.0 if mass % 2 == 0 else 1.5  # todo is always true?
+            for n, ex in sorted(n_to_ex_state_map.items(), key=lambda i: i[0]):
+                if ex.J == j0:
+                    m[mass] = ex.E
+                    break
+            else:
+                print(repr(ex.J))
+                raise GroundStateEnergyNotFoundException(
+                    '\nGround state energy for A={} could not be found in {}'
+                    ''.format(mass, self.files))
+        return m
 
     def mass_ground_energy_map(self):
         mzbt = self.mass_zbt_map()
-        me0 = self.mass_lowest_energy_map()
+        # me0 = self.mass_lowest_ex_energy_map()
+        me0 = self.mass_ground_ex_energy_map()  # todo is this right?
         mg = dict()
         for k in mzbt:
             if k in me0:
