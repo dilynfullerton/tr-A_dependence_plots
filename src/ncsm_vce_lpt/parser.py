@@ -50,5 +50,5 @@ def exp(filepath):
     nshell = int(elt_from_felts(felts=delts, elt_regex=_RGX_NSHELL)[5:])
     ncomponent = int(elt_from_felts(felts=delts, elt_regex=_RGX_NCOMP)[3:])
     scale_elt = elt_from_felts(felts=delts, elt_regex=_RGX_SCALE)
-    scalefactor = float(scale_elt[5:]) if scale_elt is not None else None
+    scalefactor = float(scale_elt[5:]) if scale_elt is not None else 1.0
     return z, a_presc, nmax, n1, n2, nshell, ncomponent, scalefactor
