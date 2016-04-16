@@ -1,6 +1,7 @@
 """Abstracted file parsing functions
 """
 
+from __future__ import division, print_function
 from re import match
 from os import walk, path
 
@@ -142,9 +143,9 @@ def matches_completely(regex, string):
 def half_int_str_to_float(string):
     if '/' in string:
         a, b = string.split('/')
-        return int(a) / int(b)
+        return float(a) / float(b)
     else:
-        return int(string)
+        return float(string)
 
 
 def half_int_float_to_str(f):
