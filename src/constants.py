@@ -81,7 +81,7 @@ F_PARSE_OP_STR_CMNT = F_PARSE_INT_CMNT_STR
 
 # NCSM/VCE *.out filename parsing
 FN_PARSE_NCSMVCE_OUT_RGX_FNAME = (
-    b'[a-z][a-z_]\d+_\d+_Nhw\d+_\d+_\d+(_scale.+)?\.out')
+    b'(([a-z][a-z_])|(\d+-))\d+_\d+_Nhw\d+_\d+_\d+(_scale.+)?\.out')
 FN_PARSE_NCSMVCE_OUT_RGX_NHW = b'Nhw\d+'
 FN_PARSE_NCSMVCE_OUT_RGX_SCALE = b'scale\d+\.\d+'
 FN_PARSE_NCSMVCE_OUT_CHR_ELT_SPLIT = b'_'

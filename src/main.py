@@ -7,6 +7,7 @@ from ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 
 plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
+        # (2, 3, 4),
         (4, 5, 6),
         # (5, 5, 5),
         # (6, 6, 6),
@@ -15,8 +16,9 @@ plot_ground_state_prescription_error_vs_exact(
         # (9, 9, 9),
         # (10, 10, 10),
     ],
-    nmax=2, n1=15, n2=15,
-    nshell=1, ncomponent=2, scalefactor=0.00,
+    nmax=0, n1=15, n2=15,
+    nshell=1, ncomponent=2, scalefactor=1.00,
+    # z=0,
     abs_value=False,
     # transform=cubic_spline(500)
 )
@@ -27,10 +29,10 @@ plot_ground_state_prescription_error_vs_exact(
 # )
 
 # plot_a_aeff_ground_energy_vs_nmax(
-#     a_aeff_pairs=[(a, aeff) for a in [4, 5, 6] for aeff in [7, 8, 9, 10]],
+#     a_aeff_pairs=[(a, a) for a in [4, 5, 6]],
 #     nmax_range=range(0, 9, 2),
-#     scale=0.0,
-#     transform=None
+#     scale=1.0,
+#     # transform=None,
 # )
 
 plt.show()
