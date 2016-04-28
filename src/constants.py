@@ -155,16 +155,18 @@ FF_CODE_SEP = ','
 FF_CODE_SUFF = ']'
 
 # File generating
-# noinspection PyPep8
-GEN_INT_DNAME_SUBDIR = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}'
-# noinspection PyPep8
-GEN_INT_FNAME = '/fit-generated-sd-shell_{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int'
-# noinspection PyPep8
+GEN_INT_DNAME_SUBDIR = ('/fit-generated-sd-shell_'
+                        '{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}')
+GEN_INT_FNAME = ('/fit-generated-sd-shell_'
+                 '{ehw}_{mf1}-{ffn1}_{mf2}-{ffn2}_{mf3}-{ffn3}_A{mass}.int')
 GEN_INT_ROW_LINES_TITLE = [
     '! Interaction file generated from:',
-    '!  +  zero body term fitter: {mf:<60} {code:<15}\n!        using fit function: {ffn:<60} {ffn_code:<15}',
-    '!  + single particle fitter: {mf:<60} {code:<15}\n!        using fit function: {ffn:<60} {ffn_code:<15}',
-    '!  +     interaction fitter: {mf:<60} {code:<15}\n!        using fit function: {ffn:<60} {ffn_code:<15}',
+    '!  +  zero body term fitter: {mf:<60} {code:<15}\n!'
+    '        using fit function: {ffn:<60} {ffn_code:<15}',
+    '!  + single particle fitter: {mf:<60} {code:<15}\n!'
+    '        using fit function: {ffn:<60} {ffn_code:<15}',
+    '!  +     interaction fitter: {mf:<60} {code:<15}\n!'
+    '        using fit function: {ffn:<60} {ffn_code:<15}',
     '!',
     '! Fit performed on: {ehw}']
 GEN_INT_ROW_LINES_FIT_PARAMS = [
