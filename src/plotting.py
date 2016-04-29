@@ -42,13 +42,13 @@ def plot_the_plots(
         include_legend=False,
         legend_size=LEGEND_SIZE,
         code=None,  # todo get rid of this parameter
-        savedir=None,  # todo get rid of this parameter
-        savename=None,  # todo replace with plot_savepath
-        extension='.png',  # todo get rid of this parameter
+        fname=None,  # todo replace with plot_savepath
+        dpath_fig=None,  # todo get rid of this parameter
+        extension_fig='.png',  # todo get rid of this parameter
         use_savename_kwargs=True,  # todo get rid of this parameter
-        data_file_savedir=None,  # todo replace with data_file_savepath
-        data_file_extension='.dat',  # todo get rid of this parameter
-        data_file_comment_str=b''
+        dpath_dat=None,  # todo replace with data_file_savepath
+        extension_dat='.dat',  # todo get rid of this parameter
+        data_file_comment_str=b''  # todo get rid of this parameter
 ):
     """A function for plotting plots. The given plots are plotted (against
     their fits of fit parameters and a fit function are provided)
@@ -96,17 +96,17 @@ def plot_the_plots(
     information on how to size the legend. If None, the default
     formatting is used.
     :param code: (Optional) Code string to use in formatting the savename.
-    :param savedir: (Optional) Directory in which to save the plot figure.
+    :param dpath_fig: (Optional) Directory in which to save the plot figure.
     If None, will not save a figure.
-    :param savename: (Optional) Name by which the plot [and/or data file] is
+    :param fname: (Optional) Name by which the plot [and/or data file] is
     saved.
-    :param extension: (Optional) Filename extension for the generated plot
+    :param extension_fig: (Optional) Filename extension for the generated plot
     figure.
     :param use_savename_kwargs: (Optional) If True, formats the savename
     string with keyword arguments c=code and t=title.
-    :param data_file_savedir: (Optional) Directory in which the data file is
+    :param dpath_dat: (Optional) Directory in which the data file is
     to be saved. If None, no data file will be generated.
-    :param data_file_extension: (Optional) Extension for the generated data
+    :param extension_dat: (Optional) Extension for the generated data
     file.
     :param data_file_comment_str: (Optional) Character(s) to precede all titles,
     headings, etc. in the generated data file. If the empty string is given,
@@ -157,21 +157,24 @@ def plot_the_plots(
         else:
             plt.legend()
     # Save
-    if savename is not None:
+    if get_label_kwargs is None:
+        labels = [label] * len(plots)
+    else:
+        labels = [label.format(**get_label_kwargs(p, idx_key)) for p in plots]
+    if fname is not None:
         if use_savename_kwargs:
             # todo no string formatting inside this function
             savename_kwargs = {'t': title,
                                'c': code if code is not None else ''}
-            savename = savename.format(**savename_kwargs)
-        if savedir is not None:
-            plt.savefig(path.join(savedir, savename + extension))
-        if data_file_savedir is not None:
-            make_plot_data_file(
+            fname = fname.format(**savename_kwargs)
+        if dpath_fig is not None:
+            plt.savefig(path.join(dpath_fig, fname + extension_fig))
+        if dpath_dat is not None:
+            save_plot_data_file(
                 plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-                savedir=data_file_savedir, savename=savename,
-                label=label, get_label_kwargs=get_label_kwargs,
-                idx_key=idx_key, extension=data_file_extension,
-                comment_str=data_file_comment_str)
+                savepath=path.join(dpath_dat, fname + extension_dat),
+                labels=labels, comment_str=data_file_comment_str,
+            )
     return fig, ax, cmap
 
 
@@ -296,47 +299,6 @@ def _set_legend(num_plots, legend_size, ax):
          box.height])
     plt.legend(ncol=ncol, loc='upper left', bbox_to_anchor=(1.0, 1.0),
                fontsize=fontsize)
-
-
-# todo change all of the usages of this function to save_plot_data_file
-def make_plot_data_file(
-        plots, title, xlabel, ylabel, savedir, savename, label,
-        get_label_kwargs=None, idx_key=None,
-        extension='.dat', comment_str=b''
-):
-    """Write a data file with the given plot data
-    :param plots: sequence containing plots, where each plot is defined as a
-    four tuple consisting of (x_array, y_array, const_list, const_dict)
-    :param title: title of the plot
-    :param xlabel: x axis label
-    :param ylabel: y axis label
-    :param savedir: directory in which to save the file
-    :param savename: name of the file (without extension)
-    :param label: label string [template] to be used for each plot
-    :param get_label_kwargs: function that when given a plot and a idx_key,
-    returns a dictionary mapping label string kwargs to their values for
-    formatting
-    :param idx_key: something that does something
-    :param extension: extension to be used for the data file
-    :param comment_str: string to be used to 'comment out' headings and labels
-    in the data file
-    """
-    writelines = list()
-    writelines.append(comment_str + title)
-    for p in plots:
-        if get_label_kwargs is not None:
-            writelines.append(
-                comment_str + label.format(**get_label_kwargs(p, idx_key)))
-        else:
-            writelines.append(comment_str + label)
-        writelines.append(comment_str +
-                          b'{xl:>16} {yl:>16}'.format(xl=xlabel, yl=ylabel))
-        x, y, = p[:2]
-        for xi, yi in zip(x, y):
-            writelines.append(b'{x:16.8f} {y:16.8f}'.format(x=xi, y=yi))
-        writelines.append(b'')
-    with open(path.join(savedir, savename + extension), 'w') as fw:
-        fw.write(b'{0}\n'.format(b'\n'.join(writelines)))
 
 
 def save_plot_data_file(
