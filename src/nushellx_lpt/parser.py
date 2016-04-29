@@ -118,8 +118,22 @@ def _cured_body_list(body_list, ncols_body):
     return cbl
 
 
+class LptParseWarning(Warning):
+    pass
+
+
 def _cured_body_lists(body_lists, ncols_body):
-    return [_cured_body_list(row, ncols_body) for row in body_lists]
+    cured_body_lists = list()
+    parsing_error = False
+    for row in body_lists:
+        try:
+            cured_body_lists.append(_cured_body_list(row, ncols_body))
+        except ValueError:
+            parsing_error = True
+            continue
+    if parsing_error:
+        raise LptParseWarning()
+    return cured_body_lists
 
 
 # MAPS
@@ -146,16 +160,20 @@ def _n_to_body_data_map(cured_body_lists):
 
 def mass_to_n_to_body_data_map(filtered_filepaths):
     mnb_map = dict()
+    problem_files = list()
     for f in filtered_filepaths:
         mass = a_z(f, _LPT_CMNT_STR, _ROW_AZ)[0]
-        nb_map = _n_to_body_data_map(_cured_body_lists(
-            body_lists=_body_lists(body_lines=_body_lines(
-                filepath=f,
-                comment_str=_LPT_CMNT_STR,
-                row_body_start=_ROW_BODY_START
-            )),
-            ncols_body=_NCOLS_BODY
-        ))
+        try:
+            nb_map = _n_to_body_data_map(_cured_body_lists(
+                body_lists=_body_lists(body_lines=_body_lines(
+                    filepath=f,
+                    comment_str=_LPT_CMNT_STR,
+                    row_body_start=_ROW_BODY_START
+                )),
+                ncols_body=_NCOLS_BODY
+            ))
+        except LptParseWarning:
+            problem_files.append(f)
         mnb_map[mass] = nb_map
     return mnb_map
 
