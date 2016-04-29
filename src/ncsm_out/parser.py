@@ -40,7 +40,12 @@ def exp(filepath):
 # FILENAME DATA
 def _a_aeff_nhw(filepath, split_char):
     felts = filename_elts_list(filename=filepath, split_char=split_char)
-    return tuple([int(x) for x in [felts[0][2:], felts[1], felts[2][3:]]])
+    if len(felts[0]) > 1:  # he4
+        return tuple([int(x) for x in [felts[0][2:], felts[1], felts[2][3:]]])
+    else:  # o
+        felts = felts[1:]
+        return tuple([int(x) for x in [felts[0], felts[1], felts[2][3:]]])
+
 
 
 # MAPS
