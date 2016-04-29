@@ -14,6 +14,7 @@ from constants import FN_PARSE_NCSMVCE_LPT_RGX_NMAX as _RGX_NMAX
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_NSHELL as _RGX_NSHELL
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_NCOMP as _RGX_NCOMP
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_SCALE as _RGX_SCALE
+from constants import FN_PARSE_NCSMVCE_LPT_RGX_IPROT as _RGX_IPROT
 from parse import elt_from_felts, filename_elts_list
 from nushellx_lpt.parser import interaction as datum_dirname
 from nushellx_lpt.parser import a_z as a_z
@@ -51,4 +52,5 @@ def exp(filepath):
     ncomponent = int(elt_from_felts(felts=delts, elt_regex=_RGX_NCOMP)[3:])
     scale_elt = elt_from_felts(felts=delts, elt_regex=_RGX_SCALE)
     scalefactor = float(scale_elt[5:]) if scale_elt is not None else 1.0
-    return z, a_presc, nmax, n1, n2, nshell, ncomponent, scalefactor
+    incl_prot = elt_from_felts(felts=delts, elt_regex=_RGX_IPROT) is None
+    return z, a_presc, nmax, n1, n2, nshell, ncomponent, scalefactor, incl_prot

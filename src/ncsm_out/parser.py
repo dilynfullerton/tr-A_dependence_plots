@@ -10,6 +10,7 @@ from constants import (F_PARSE_NCSMVCE_OUT_RGX_LINE_SPECTRUM as
                        _RGX_LINE_SPECTRUM)
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_NHW as _RGX_NHW
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_SCALE as _RGX_SCALE
+from constants import FN_PARSE_NCSMVCE_OUT_RGX_IPROT as _RGX_IPROT
 from constants import FN_PARSE_NCSMVCE_OUT_CHR_ELT_SPLIT as _CHR_SPLIT
 from parse import content_lines, filename_elts_list, elt_from_felts
 from ncsm_vce_lpt.parser import nmax_n1_n2_from_delts as nhw_n1_n2_from_felts
@@ -29,12 +30,13 @@ def exp(filepath):
                          rgx_line_z=_RGX_LINE_Z)
     felts = filename_elts_list(filename=filepath, split_char=_CHR_SPLIT)
     nhw, n1, n2 = nhw_n1_n2_from_felts(delts=felts, regex_nmax=_RGX_NHW)
+    incl_protons = elt_from_felts(felts=felts, elt_regex=_RGX_IPROT) is None
     scale_elt = elt_from_felts(felts=felts, elt_regex=_RGX_SCALE)
     if scale_elt is None:
         scalefactor = 1.0
     else:
         scalefactor = float(scale_elt[5:])
-    return z, n1, n2, scalefactor
+    return z, n1, n2, scalefactor, incl_protons
 
 
 # FILENAME DATA
@@ -45,7 +47,6 @@ def _a_aeff_nhw(filepath, split_char):
     else:  # o
         felts = felts[1:]
         return tuple([int(x) for x in [felts[0], felts[1], felts[2][3:]]])
-
 
 
 # MAPS

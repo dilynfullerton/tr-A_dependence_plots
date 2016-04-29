@@ -27,7 +27,9 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
         return exp(filepath=f)
 
     def aeff_eq_a_to_ground_energy_map(
-            self, z, nmax, n1, n2, nshell, ncomponent, scalefactor=None):
+            self, z, nmax, n1, n2, nshell, ncomponent, scalefactor=None,
+            incl_proton=True,
+    ):
         aeff_eq_a_to_ground_energy = dict()
         for exp0 in self.map.keys():
             presc = exp0.A_presc
@@ -39,12 +41,12 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
                 continue
             elif exp0.nshell != nshell or exp0.ncomponent != ncomponent:
                 continue
-            elif exp0.scale != scalefactor:
+            elif exp0.scale != scalefactor or exp0.incl_proton != incl_proton:
                 continue
             else:
                 a = presc[0]
                 dat = self[exp0]
-                ground_energy_map = dat.mass_ground_energy_map()
+                ground_energy_map = dat.mass_ground_energy_map(nshell=nshell)
                 if a in ground_energy_map:
                     ground_energy = ground_energy_map[a]
                     aeff_eq_a_to_ground_energy[a] = ground_energy
