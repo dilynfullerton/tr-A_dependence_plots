@@ -154,8 +154,7 @@ def plot_ground_state_prescription_error_vs_exact(
         dm_exact = DataMapNcsmOut(
             parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2, scalefactor)],)
     dat_exact = dm_exact.map.values()[0]
-    ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
-        nmax=nmax, nshell=nshell, ncomponent=ncomponent,)
+    ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(nmax=nmax, z=z)
     x_ex, y_ex = [list(a) for a in map_to_arrays(ncsm_exact)]
     print('Exact NCSM')
     print('  x_ex = \n    {}'.format(x_ex))

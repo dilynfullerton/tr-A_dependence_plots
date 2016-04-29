@@ -70,12 +70,16 @@ class DatumLpt(Datum):
     def mass_lowest_ex_energy_map(self):
         return {k: v[1] for k, v in self.mass_n_energy_map().items()}
 
+    # todo this only filters out incorrect ground states for EVEN mass numbers
     def mass_ground_ex_energy_map(self):
         m = dict()
         for mass, n_to_ex_state_map in self.mass_n_exstate_map().items():
-            j0 = 0.0 if mass % 2 == 0 else 1.5  # todo is always true?
+            # j0 = 0.0 if mass % 2 == 0 else 1.5  # todo is always true?
             for n, ex in sorted(n_to_ex_state_map.items(), key=lambda i: i[0]):
-                if ex.J == j0:
+                if mass % 2 == 0 and ex.J == 0.0:
+                    m[mass] = ex.E
+                    break
+                elif mass % 2 == 1:
                     m[mass] = ex.E
                     break
             else:

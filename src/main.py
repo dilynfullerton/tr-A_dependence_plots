@@ -8,17 +8,18 @@ from ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
         # (2, 3, 4),
-        (4, 5, 6),
+        # (4, 5, 6),
         # (5, 5, 5),
         # (6, 6, 6),
         # (7, 7, 7),
         # (8, 8, 8),
         # (9, 9, 9),
         # (10, 10, 10),
+        (16, 17, 18),
     ],
-    nmax=0, n1=15, n2=15,
-    nshell=1, ncomponent=2, scalefactor=1.00,
-    # z=0,
+    nmax=2, n1=15, n2=15,
+    nshell=2, ncomponent=2, scalefactor=1.00,
+    z=8,
     abs_value=False,
     # transform=cubic_spline(500)
 )
