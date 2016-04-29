@@ -1,11 +1,13 @@
 from __future__ import print_function, division, unicode_literals
 
-from Datum import Datum
+from warnings import warn
 
+from Datum import Datum
 from nushellx_lpt.Shell import Shell
 from nushellx_lpt.parser import mass_to_header_data_map as mhd_map
 from nushellx_lpt.parser import mass_to_n_to_body_data_map as mnbd_map
 from nushellx_lpt.parser import mass_to_zbt_map as mass_zbt_map
+from ncsm_out.DatumNcsmOut import get_ground_state_j
 
 
 class GroundStateEnergyNotFoundException(Exception):
@@ -71,28 +73,33 @@ class DatumLpt(Datum):
         return {k: v[1] for k, v in self.mass_n_energy_map().items()}
 
     # todo this only filters out incorrect ground states for EVEN mass numbers
-    def mass_ground_ex_energy_map(self):
+    def mass_ground_ex_energy_map(self, nshell):
         m = dict()
         for mass, n_to_ex_state_map in self.mass_n_exstate_map().items():
             # j0 = 0.0 if mass % 2 == 0 else 1.5  # todo is always true?
+            j0 = get_ground_state_j(mass=mass, nshell=nshell)
             for n, ex in sorted(n_to_ex_state_map.items(), key=lambda i: i[0]):
-                if mass % 2 == 0 and ex.J == 0.0:
+                if j0 is None:
+                    warn(
+                        '\nGround state angular momentum not known for '
+                        'A={}, nshell={}.'
+                        'Using state with lowest energy.'.format(mass, nshell)
+                    )
                     m[mass] = ex.E
                     break
-                elif mass % 2 == 1:
+                elif ex.J == j0:
                     m[mass] = ex.E
                     break
             else:
-                print(repr(ex.J))
                 raise GroundStateEnergyNotFoundException(
                     '\nGround state energy for A={} could not be found in {}'
                     ''.format(mass, self.files))
         return m
 
-    def mass_ground_energy_map(self):
+    def mass_ground_energy_map(self, nshell):
         mzbt = self.mass_zbt_map()
         # me0 = self.mass_lowest_ex_energy_map()
-        me0 = self.mass_ground_ex_energy_map()  # todo is this right?
+        me0 = self.mass_ground_ex_energy_map(nshell=nshell)
         mg = dict()
         for k in mzbt:
             if k in me0:
