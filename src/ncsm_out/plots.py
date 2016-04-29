@@ -142,6 +142,7 @@ def plot_ncsm_exact_for_nmax_and_scale(
 def plot_ground_state_prescription_error_vs_exact(
         a_prescriptions,
         z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2, scalefactor=1.0,
+        incl_proton=True,
         abs_value=False,
         do_plot=True,
         transform=None,
@@ -152,9 +153,12 @@ def plot_ground_state_prescription_error_vs_exact(
     # exact
     if dm_exact is None:
         dm_exact = DataMapNcsmOut(
-            parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2, scalefactor)],)
+            parent_directory=_dpath_ncsm,
+            exp_list=[(z, n1, n2, scalefactor, incl_proton)],
+        )
     dat_exact = dm_exact.map.values()[0]
-    ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(nmax=nmax, z=z)
+    ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
+        nshell=nshell, nmax=nmax, z=z)
     x_ex, y_ex = [list(a) for a in map_to_arrays(ncsm_exact)]
     print('Exact NCSM')
     print('  x_ex = \n    {}'.format(x_ex))
@@ -164,7 +168,8 @@ def plot_ground_state_prescription_error_vs_exact(
         dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
     aeff_eq_a_map = dm_vce.aeff_eq_a_to_ground_energy_map(
         z=z, nmax=nmax, n1=n1, n2=n2,
-        nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor
+        nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor,
+        incl_proton=incl_proton,
     )
     x_aaf, y_aaf = [list(a) for a in map_to_arrays(aeff_eq_a_map)]
     print('Prescription: Aeff = A')
@@ -184,14 +189,15 @@ def plot_ground_state_prescription_error_vs_exact(
               {'name': 'Aeff = A, Nmax={}'.format(nmax)})]
     # prescriptions
     exp_list = [
-        dm_vce.exp_type(z, ap, nmax, n1, n2, nshell, ncomponent, scalefactor)
+        dm_vce.exp_type(z, ap, nmax, n1, n2, nshell, ncomponent,
+                        scalefactor, incl_proton)
         for ap in a_prescriptions
         ]
     d_vce_list = dm_vce.map.values()
     for d_vce in d_vce_list:
         if d_vce.exp not in exp_list:
             continue
-        vce_ground_energy_map = d_vce.mass_ground_energy_map()
+        vce_ground_energy_map = d_vce.mass_ground_energy_map(nshell=nshell)
         x_vce, y_vce = [list(a) for a in map_to_arrays(vce_ground_energy_map)]
         print('Prescription: {}'.format(d_vce.exp.A_presc))
         print('  x_vce = \n    {}'.format(x_vce))
