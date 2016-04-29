@@ -68,14 +68,6 @@ def zbt(xarr, yarr, *args):
     return (xarr, zbt_arr) + args
 
 
-def firstp(xarr, yarr, *args):
-    return (xarr[0:1], yarr[0:1]) + args
-
-
-def first2p(xarr, yarr, *args):
-    return (xarr[0:2], yarr[0:2]) + args
-
-
 # TRANSFORM COMPOSITIONS
 def relative_per_nucleon(xarr, yarr, *args):
     return relative_y(*per_nucleon(xarr, yarr, *args))
@@ -152,6 +144,9 @@ def first_np(n):
     t.__name__ = b'first_{}p'.format(n)
     return t
 
+firstp = first_np(1)
+first2p = first_np(2)
+
 
 def cubic_spline(num_pts):
     def cs(xarr, yarr, *args):
@@ -191,6 +186,22 @@ def cubic_spline(num_pts):
         return (xnew, ynew) + args
     cs.__name__ = b'cubic_spline'
     return cs
+
+
+def filter_x(func, name=None):
+    def t(xarr, yarr, *args):
+        x_next = list()
+        y_next = list()
+        for xi, yi in zip(xarr, yarr):
+            if func(xi):
+                x_next.append(xi)
+                y_next.append(yi)
+        return (np.array(x_next), np.array(y_next)) + args
+    t.__name__ = name if name else b'filter_x'
+    return t
+
+filter_evens = filter_x(func=lambda x: x % 2 == 0.0, name=b'filter_evens')
+filter_odds = filter_x(func=lambda x: x % 2 == 1.0, name=b'filter_odds')
 
 
 # TRANSFORM CHAIN GENERATION
