@@ -199,7 +199,7 @@ def metafitter_abs(
             cmap_name=_cmap,
             show_fit=show_fit, fit_params=params, fitfn=fitfn,
             include_legend=show_legend, legend_size=_legend_size,
-            savedir=savedir_plots, savename=_savename, code=code
+            dpath_fig=savedir_plots, fname=_savename, code=code
         )
         plt.show()
 

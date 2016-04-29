@@ -18,12 +18,12 @@ from int.DataMapInt import DataMapInt
 
 def max_r2_value(
         metafitter, fitfns, e_hw_pairs, print_r2_results=False,
-        sourcedir=DPATH_FILES_INT, std_io_map=STANDARD_IO_MAP, **kwargs
+        dpath_source=DPATH_FILES_INT, std_io_map=STANDARD_IO_MAP, **kwargs
 ):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
 
-    :param sourcedir: the directory from which to retrieve the data
+    :param dpath_source: the directory from which to retrieve the data
     :param print_r2_results: whether to print the results of this analysis
     :param metafitter: the metafitter method (e.g.
     single_particle_relative_metafigt)
@@ -35,7 +35,7 @@ def max_r2_value(
     """
     exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
     imsrg_data_map = DataMapInt(
-        parent_directory=sourcedir, exp_list=exp_list,
+        parent_directory=dpath_source, exp_list=exp_list,
         standard_indices=std_io_map
     )
     fn_res_r2_map = dict()
@@ -85,7 +85,7 @@ def _printer_for_max_r2_value(rank_map, metafitter, e_hw_pairs):
 
 def compare_params(
         metafitter, fitfn, e_hw_pairs, depth, statfn=np.std,
-        print_compare_results=False, sourcedir=DPATH_FILES_INT,
+        print_compare_results=False, dpath_source=DPATH_FILES_INT,
         std_io_map=STANDARD_IO_MAP, **kwargs
 ):
     """Compare parameter results for a given metafitter on a given fitfn using
@@ -105,7 +105,7 @@ def compare_params(
     single-parameter results. Must take a single ndarray object as input and
     return a float output.
     :param print_compare_results: whether to print the results in a neat table
-    :param sourcedir: directory from which to retrieve the files
+    :param dpath_source: directory from which to retrieve the files
     :param std_io_map: a standard index -> orbital mapping scheme to use fo the
     generated imsrg_data_map
     :param kwargs: keyword arguments to be passed to the metafitter
@@ -113,7 +113,7 @@ def compare_params(
     """
     exp_list = [ExpInt(*e_hw_pair) for e_hw_pair in e_hw_pairs]
     imsrg_data_map = DataMapInt(
-        sourcedir, exp_list=exp_list, standard_indices=std_io_map)
+        dpath_source, exp_list=exp_list, standard_indices=std_io_map)
     if depth > len(e_hw_pairs) - 1:
         depth = len(e_hw_pairs) - 1
     params = metafitter(fitfn, e_hw_pairs,
