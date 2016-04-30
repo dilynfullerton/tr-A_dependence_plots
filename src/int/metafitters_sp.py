@@ -189,18 +189,18 @@ def single_particle_first2p_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
 
 
 # META-FITTER GENERATORS
-def single_particle_relative_to_y_pzbt_metafit(x):
+def single_particle_relative_to_y_pzbt_metafit(x0):
     name = b'single_particle_relative_to_y({})_pzbt_metafit'.format(x)
 
     def spryz(fitfn, e_hw_pairs, **kwargs):
         return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-            transform=compose_transforms([relative_to_y(x), pzbt]),
+            transform=compose_transforms([relative_to_y(x0), pzbt]),
             code='sprypz', mf_name=name,
             xlabel='A',
             ylabel='Relative Single Particle Energy'
-                   ' + Zero Body Term with respect to A = {}'.format(x),
+                   ' + Zero Body Term with respect to A = {}'.format(x0),
             **kwargs
         )
 
