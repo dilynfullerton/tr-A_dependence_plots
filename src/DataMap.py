@@ -1,6 +1,7 @@
-"""These definitions hold key-value maps to store data of different types.
+"""DataMap.py
+These definitions hold key-value maps to store data of different types.
 
-For example, ImsrgDataMapInt stores a mapping from ExpInt to ImsrgDatumInt,
+For example, DataMapInt stores a mapping from ExpInt to DatumInt,
 the data-type that stores data retrieved from *.int files.
 """
 from __future__ import division
@@ -17,6 +18,15 @@ class PathDoesNotExistException(Exception):
 class DataMap(object):
     def __init__(self, parent_directory, exp_type, datum_type,
                  exp_list=None, exp_filter_fn=None, **kwargs):
+        """Initialize the data map in the given parent (head) head directory
+        to hold a map from exp_type -> datum_type.
+        :param parent_directory: head directory containing relevant files
+        :param exp_type: type of exp that will act as keys for self.map
+        :param datum_type: type of datum that will be the values for self.map
+        :param exp_list: list of exp tuples to gather data for
+        :param exp_filter_fn: function to filter files based on their exp
+        :param kwargs: other arguments to be passed to datum instances
+        """
         if path.exists(parent_directory):
             self.parent_dir = parent_directory
         else:
@@ -39,6 +49,11 @@ class DataMap(object):
         return self.map[item]
 
     def _set_maps(self):
+        """Set the self.map variable
+        This is a pretty good algorithm, I think. There should not be any
+        reason to override it. Rather, the user should override
+        _exp_from_file_path() and _get_files().
+        """
         files = list(self._get_files())
         for f in files:
             key = self.exp_type(*self._exp_from_file_path(f))
@@ -59,7 +74,14 @@ class DataMap(object):
         return set(self.map.keys())
 
     def _exp_from_file_path(self, f):
+        """Should return the Exp object from the path for a given file
+        retrieved via _get_files.
+        :param f: filepath
+        """
         raise NotImplemented()
 
     def _get_files(self):
+        """Should return a generator or sequence of relevant file paths in the
+        directory
+        """
         raise NotImplemented()

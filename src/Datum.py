@@ -1,7 +1,8 @@
-"""These definitions store data from particular file types of IMSRG data
+"""Datum.py
+These definitions store data from particular file types of interaction or
+shell data
 
-For example, ImsrgDatumInt stores a bunch of maps generated based on *.int
-files.
+For example, DatumInt stores a bunch of maps generated based on *.int files.
 """
 from __future__ import division, print_function, unicode_literals
 

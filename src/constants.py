@@ -1,4 +1,5 @@
-"""Constants for use throughout the project
+"""constants.py
+Constants for use throughout the project
 """
 
 from __future__ import unicode_literals
