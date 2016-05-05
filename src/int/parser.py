@@ -1,4 +1,5 @@
-"""Functions for parsing interaction files and extracting information from
+"""int/parser.py
+Functions for parsing interaction files and extracting information from
 their file names
 """
 
@@ -26,13 +27,12 @@ from constants import F_PARSE_INT_CMNT_STR as CMNT_STR
 # ............................................................
 def e_level_from_filename(filename, split_char=ELT_SPLIT,
                           e_regex=REGEX_E):
-    """Gets the e-level number from the file name. 
+    """Gets the e_max truncation number from the file name.
     Assumes files are named accoding to the convention:
         ..._[...]_e[e-level]_[...]_...
     Also assumes that the name element containing th e-level is the last
     element which begins with an e.
     Returns None if not found.
-
     :param filename: the name of the file
     :param split_char: the character with which filename elements are separated
     :param e_regex: the regex that fully matches the element with e
@@ -70,11 +70,10 @@ def _hw_from_felts(felts, hw_regex):
 
 def base_from_filename(filename, split_char=ELT_SPLIT,
                        base_regex=REGEX_BASE):
-    """Gets the base A-number from the filename
-
+    """Gets the base A-number (that normal-ordering was done WRT)
+    from the filename.
     Assumes that the base number is the first element (from left to right) that
-    will be matched by the base_regex
-
+    will be matched by the base_regex.
     :param filename: the name of the file
     :param split_char: the character that separates file elements
     :param base_regex: the regular expression which will entirely match the
@@ -92,9 +91,8 @@ def _base_from_felts(felts, base_regex):
 
 def rp_from_filename(filename, split_char=ELT_SPLIT,
                      rp_regex=REGEX_RP):
-    """Gets the Rp (proton radius) label from the file name, returns None if
+    """Gets the Rp (proton radius?) label from the file name, returns None if
     not found.
-
     :param filename: the name of the file to parse
     :param split_char: the character which separates filename elements
     :param rp_regex: the regex that fully matches the rp element
@@ -113,7 +111,6 @@ def mass_number_from_filename(filename, split_char=ELT_SPLIT,
                               mass_regex=REGEX_MASS):
     """Gets the mass number from the file name. Assumes files are named
     according to the convention *A[mass number][file extension]
-
     :param filename: the filename from which to get the mass number
     :param split_char: the character that separates name elements
     :param mass_regex: the regex that fully matches the mass element
@@ -125,11 +122,9 @@ def mass_number_from_filename(filename, split_char=ELT_SPLIT,
 
 def name_from_filename(filename, split_char=ELT_SPLIT,
                        name_regex=REGEX_NAME):
-    """Gets the analysis method name from the filename
-
+    """Gets the method name (e.g. magnus) from the filename.
     Assumes that the name is the first element (from left to right) that will
     be entirely matched by name_regex
-
     :param filename: the name of the data file
     :param split_char: the split character for name
     :param name_regex: the regular expression which should be entirely matched
@@ -142,6 +137,15 @@ def name_from_filename(filename, split_char=ELT_SPLIT,
 
 def exp(filename, split_char=ELT_SPLIT, e_regex=REGEX_E, hw_regex=REGEX_HW,
         b_regex=REGEX_BASE, rp_regex=REGEX_RP):
+    """Returns a 4-tuple representing the exp (see int/ExpInt.py)
+    :param filename: name of the interaction file
+    :param split_char: character that separates filename elements
+    :param e_regex: regular expression that matches the e_max element
+    :param hw_regex: regular expression that matches the hw element
+    :param b_regex: regular expression that matches the normal ordering element
+    :param rp_regex: regular expression that matches the rp element
+    :return: (emax, hw, b, rp)
+    """
     felts = filename_elts_list(filename, split_char)
     return (_e_from_felts(felts, e_regex), _hw_from_felts(felts, hw_regex),
             _base_from_felts(felts, b_regex), _rp_from_felts(felts, rp_regex))
@@ -150,15 +154,15 @@ def exp(filename, split_char=ELT_SPLIT, e_regex=REGEX_E, hw_regex=REGEX_HW,
 # ............................................................
 # File content parsing
 # ............................................................
-
-
+# todo: Some of this could be done a lot better
 def index_lines(commnt_lines, index_comment=CMNT_INDEX):
     """From the set of comment lines taken from a data file, returns the
     lines that relate the orbital indices to their quantum numbers. Assumes
     these lines always occur at the end of the commented section and are
     directly preceded with a line beginning with the word "Index"
     :param commnt_lines: lines commented out
-    :param index_comment:
+    :param index_comment: comment string that indicates the start of the
+    index -> orbital key
     """
     start_index = -1
     for cl, index in zip(commnt_lines, range(len(commnt_lines) + 1)):
@@ -171,7 +175,6 @@ def index_lines(commnt_lines, index_comment=CMNT_INDEX):
 def zero_body_term_line(cmnt_lines, zbt_comment=CMNT_ZBT):
     """From the set of comment lines taken from a data file, returns the line
     that tells the zero body term.
-
     :param cmnt_lines: lines that are comments in the data file
     :param zbt_comment: the descriptive flag that indicates that the given line
     is the zero body term line
@@ -191,22 +194,22 @@ def zero_body_term(zbt_line):
         return None
 
 
-# todo docstring
 def header_list(lines, header_pos=ROW_HEAD):
     """Returns the line containing the header in the form of an list
-    :param header_pos:
-    :param lines:
+    :param header_pos: position of the SPE line WRT to non-empty, non-comment
+    lines
+    :param lines: content lines
     """
     header_line = lines[header_pos]
     return header_line.split()
 
 
-# todo docstring
 def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     """Returns the lines containing the interaction data in the form of an 
     array (list of lists)
-    :param lines:
-    :param interaction_start:
+    :param lines: file content lines
+    :param interaction_start: position of first TBME with respect to
+    non-empty, non-commented file lines
     """
     data_lines = lines[interaction_start:]
     for i in range(len(data_lines)):
@@ -214,31 +217,26 @@ def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
     return data_lines
 
 
-# todo docstring
 def orbital_energies(
         header_items_list, start_index=COL_START_ORBITAL,
         num_orbitals=NCOLS_ORBITALS
 ):
     """Returns the orbital energies from the given header list
-    :param num_orbitals:
-    :param start_index:
-    :param header_items_list:
+    :param num_orbitals: number of orbitals for which to gather lines
+    :param start_index: position of first SPE in SPE line
+    :param header_items_list: list of split items in SPE line
     """
     return header_items_list[start_index: start_index + num_orbitals]
 
 
-# todo docstring
 def other_constants(
         header_items_list, start_index=COL_START_ORBITAL,
         num_orbitals=NCOLS_ORBITALS
 ):
-    """Return the other values in the header items list, following the
-    orbital energies
-
-    :param header_items_list:
-    :param start_index:
-    :param num_orbitals:
-    :return:
+    """Return the other values in the header items list, following the SPE's
+    :param header_items_list: list of items in the SPE line
+    :param start_index: index of first SPE in line
+    :param num_orbitals: number of SPE's
     """
     return header_items_list[start_index + num_orbitals:]
 
@@ -253,13 +251,11 @@ def orbital_energies_from_filename(filepath, comment_str=CMNT_STR):
         lines=list(content_lines(filepath, comment_str))))
 
 
-# todo docstring
 def other_constants_from_filename(filepath, comment_str=CMNT_STR):
     """Given a filename, returns all of the items in the header items list
     following the orbital energies
     :param filepath: path to the file
     :param comment_str: string signifying a commented line
-    :return:
     """
     return other_constants(header_list(
         lines=list(content_lines(filepath, comment_str))))
@@ -268,11 +264,10 @@ def other_constants_from_filename(filepath, comment_str=CMNT_STR):
 # ............................................................
 # Map construction
 # ............................................................
-# todo docstring
 def index_map(idx_lines):
     """Returns a map from the orbital index to its descriptive quantum
     numbers
-    :param idx_lines:
+    :param idx_lines: lines defining the index -> orbital key
     """
     idx_map = dict()
     for line in idx_lines:
@@ -292,14 +287,13 @@ def index_to_tuple_map(filepath, comment_str=CMNT_STR):
         commnt_lines=comment_lines(filepath, comment_str)))
 
 
-# todo docstring
 def mass_energy_array_map(directory, filterfn=lambda x: True,
                           filtered_files=None):
-    """Returns a map from atomic mass to orbital energy arrays
-    :param filtered_files:
+    """Returns a map from mass number to orbital energy arrays
     :param directory: the directory which is a direct parent to the files to use
     :param filterfn: the function to use to filter the file names in the
     directory
+    :param filtered_files: relevant file paths
     """
     if filtered_files is None:
         filtered_files = get_files_r(directory, filterfn)
@@ -397,16 +391,14 @@ def mass_to_zbt_map(directory, filterfn=lambda x: True,
     return mzbt_map
 
 
-# todo docstring
 def mass_other_constants_map(directory, filterfn=lambda x: True,
                              filtered_files=None):
     """Given a directory, creates a mapping from mass number to the other
     constants following the orbital energies in the first line of data
-
-    :param filtered_files:
-    :param directory:
-    :param filterfn:
-    :return:
+    :param directory: main directory
+    :param filterfn: filter to apply to files before constructing the map
+    :param filtered_files: if not None, this is used instead of getting files
+    in the directory
     """
     if filtered_files is None:
         filtered_files = get_files_r(directory, filterfn)

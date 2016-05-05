@@ -275,8 +275,7 @@ def metafitter_abs(
     :param _code_pref: Prefix to append to the code string.
     :param _std_io_map: A standard index -> orbital mapping scheme to use for
     generating the data representations
-    :return: (mf_results, lr_results), A 2-tuple containing the meta-fit results
-    and the regressional results for the fit.
+    :return: mf_results, lr_results, plots, fitfn, info_dict
     """
     code = _code_pref + code
     # Get index->orbital and index->mass->energy maps

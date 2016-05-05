@@ -1,3 +1,7 @@
+"""ExpInt.py
+Definition of the namedtuple that identifies a set of interaction files from
+which to derive data
+"""
 from __future__ import division
 from __future__ import unicode_literals
 
@@ -9,8 +13,8 @@ class ExpInt(namedtuple('ExpInt', ['e', 'hw', 'base', 'rp'])):
     """Descriptive key for *.int data.
     e: max e-level
     hw: hw frequency
-    base: (default None) the base number of nucleons (e.g. in targeted)
-    rp: (default None) the proton radius
+    base: (default None) the mass number that normal ordering was done WRT
+    rp: (default None) the proton radius? I do not really know what this is
     """
     __slots__ = ()
 

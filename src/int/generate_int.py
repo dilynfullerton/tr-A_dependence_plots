@@ -1,11 +1,11 @@
-"""Generate interaction files based on metafits
+"""generate_int.py
+Generate interaction files based on fits
 """
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import mkdir, path
-
 from FitFunction import FitFunction
 from ExpInt import ExpInt
 from metafitters_sp import single_particle_firstp_metafit

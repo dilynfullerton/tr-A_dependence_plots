@@ -1,3 +1,6 @@
+"""int/QuantumNumbers.py
+Defines namedtuple representation of single particle orbital quantum numbers
+"""
 from __future__ import division, print_function, unicode_literals
 from collections import namedtuple
 

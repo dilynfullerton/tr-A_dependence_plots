@@ -1,3 +1,6 @@
+"""DataMapInt.py
+Implementation of DataMap (see DataMap.py) for NuShellX interaction data
+"""
 from __future__ import print_function, division, unicode_literals
 
 from DataMap import DataMap

@@ -67,7 +67,7 @@ def metafit_nushellx_lpt(
 ):
     return single_particle_metafit_int(
         fitfn=fitfn, exp_list=exp_list, exp_filter_fn=exp_filter_fn,
-        sourcedir=_sourcedir, savedir=_savedir,
+        dpath_sources=_sourcedir, dpath_plots=_savedir,
         transform=transform,
         xlabel=xlabel, ylabel=ylabel,
         show_fit=show_fit,

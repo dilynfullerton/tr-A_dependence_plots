@@ -1,10 +1,13 @@
+"""TwoBodyInteraction.py
+Defines namedtuple representation of a matrix element
+"""
 from __future__ import division, print_function, unicode_literals
 from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
 class TwoBodyInteraction(namedtuple(
-    'TwoBodyInteractionInt', ['a', 'b', 'c', 'd', 'j', 'zzz']
+    'TwoBodyInteractionInt', ['a', 'b', 'c', 'd', 'j', 't']
 )):
     """Stores label for interaction (*.int) two-body matrix element label
     """

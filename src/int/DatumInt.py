@@ -1,7 +1,9 @@
+"""DatumInt.py
+Implementation of Datum (see Datum.py) for NuShellX interactions
+"""
 from __future__ import print_function, division, unicode_literals
 
 from os import path, mkdir, link
-
 from Datum import Datum
 from constants import DPATH_FILES_INT_ORG, ORG_FMT_INT_DNAME, ORG_FMT_INT_FNAME
 from int.QuantumNumbers import QuantumNumbers
@@ -22,26 +24,44 @@ class DatumInt(Datum):
     def __init__(
             self, directory, exp, files, std_io_map=None,
             standardize_io_map=True, organize_files=True,
-            org_file_dir=DPATH_FILES_INT_ORG,
-            directory_format=ORG_FMT_INT_DNAME,
-            file_format=ORG_FMT_INT_FNAME
+            dpath_org_files=DPATH_FILES_INT_ORG,
+            dname_fmt_org=ORG_FMT_INT_DNAME,
+            fname_fmt_org=ORG_FMT_INT_FNAME
     ):
+        """Initialize a particular NuShellX datum, where "datum" refers to
+        all of the data in directory that matches the given exp
+        (see ExpInt.py). The first three arguments are set by the DataMap,
+        and the user should generally not need to address them.
+        :param directory: parent directory
+        :param exp: unique identifier for the data held by this type
+        :param files: list of file paths of all of the relevant files
+        :param std_io_map: standard index -> orbital map to use. This fixes
+        the issue of differing conventions amongst different files
+        :param standardize_io_map: if true, all of the maps in this instance
+        will be standardized according to the provided std_io_map
+        :param organize_files: if true, all files are rewritten into
+        org_file_dir according to a consistent naming scheme from which the
+        ExpInt is easily read
+        :param dpath_org_files: directory in which to store files that have been
+        renamed
+        :param dname_fmt_org: directory name to be formatted with exp
+        :param fname_fmt_org: new interaction file name to be formatted with
+        exp and the mass number
+        """
         super(DatumInt, self).__init__(
             directory=directory, exp=exp, files=files)
         self.name = None
         self.standardized_indexing = False
         self.files_organized = False
-
         # Create maps initially empty
         self.standard_index_orbital_map = std_io_map
         self._particular_index_orbital_map = None
         self._index_orbital_map = dict()
-        self._mass_index_energy_map = dict()
+        self._mass_index_spe_map = dict()
         self._mass_interaction_index_energy_map = dict()
         self._mass_zero_body_term_map = dict()
         self._other_constants = None
         self._unorg_files = None
-
         # Perform setup methods
         self._set_maps()
         self._set_name()
@@ -50,7 +70,7 @@ class DatumInt(Datum):
             self._standardize_indexing()
             self.standardized_indexing = True
         if organize_files:
-            self._organize_files(org_file_dir, directory_format, file_format)
+            self._organize_files(dpath_org_files, dname_fmt_org, fname_fmt_org)
 
     def _set_maps(self):
         self._set_index_orbital_map()
@@ -64,13 +84,11 @@ class DatumInt(Datum):
         """
         # Assuming all files characteristic have the same indexing...
         index_orbital_map = get_index_tuple_map(self.files[0])
-
         # Turn each tuple in the map into a named tuple
         for k in index_orbital_map.keys():
             v = index_orbital_map[k]
             nextv = QuantumNumbers(*_qnums_to_list(v))
             index_orbital_map[k] = nextv
-
         self._index_orbital_map = index_orbital_map
 
     def _set_mass_index_energy_map(self):
@@ -78,7 +96,7 @@ class DatumInt(Datum):
             mass number -> orbital index -> energy
         mapping for the directory
         """
-        self._mass_index_energy_map = (
+        self._mass_index_spe_map = (
             get_mie_map(self.dir, filtered_files=self.files))
 
     def _set_mass_interaction_index_energy_map(self):
@@ -87,7 +105,6 @@ class DatumInt(Datum):
         mapping for the directory
         """
         miiem = (get_miie_map(self.dir, filtered_files=self.files))
-
         # Turn each tuple into a named tuple
         for A in miiem.keys():
             tuple_energy_map = miiem[A]
@@ -100,7 +117,6 @@ class DatumInt(Datum):
                 nextk = TwoBodyInteraction(*nextk)
                 next_tuple_energy_map[nextk] = v
             miiem[A] = next_tuple_energy_map
-
         self._mass_interaction_index_energy_map = miiem
 
     def _set_zero_body_term_map(self):
@@ -114,7 +130,10 @@ class DatumInt(Datum):
 
     def _set_other_constants(self):
         """Sets other heading constants. Assumes all files in a given directory
-        have the same constants
+        have the same constants.
+        I do not know what these are, hence the name "other constants."
+        They are the values that follow the single particle energies on
+        the first non-comment line in the interaction files.
         """
         self._other_constants = oc_from_filename(self.files[0])
 
@@ -151,7 +170,7 @@ class DatumInt(Datum):
         """Reformat the mass -> index -> energy map indices to be with respect
         to the standard io_map
         """
-        mie_map = self._mass_index_energy_map
+        mie_map = self._mass_index_spe_map
         std_mie_map = dict()
         for m, ie_map in mie_map.items():
             std_ie_map = dict()
@@ -159,7 +178,7 @@ class DatumInt(Datum):
                 next_idx = self._standard_index(idx)
                 std_ie_map[next_idx] = energy
             std_mie_map[m] = std_ie_map
-        self._mass_index_energy_map = std_mie_map
+        self._mass_index_spe_map = std_mie_map
 
     def _standardize_mass_interaction_index_energy_map_indexing(self):
         miie_map = self._mass_interaction_index_energy_map
@@ -186,22 +205,41 @@ class DatumInt(Datum):
         return soi_map[io_map[i]]
 
     def index_orbital_map(self):
+        """Returns a map from index used for SPE's and TBME's to the
+        orbital quantum numbers
+        """
         return dict(self._index_orbital_map)
 
-    def mass_index_energy_map(self):
-        return dict(self._mass_index_energy_map)
+    def mass_index_spe_map(self):
+        """Returns a map from
+            mass number -> orbital index -> SPE
+        :return:
+        """
+        return dict(self._mass_index_spe_map)
 
     def mass_interaction_index_energy_map(self):
+        """Returns a map
+            mass number -> matrix element (interaction) -> energy
+        The matrix element is a namedtuple, defined in TwoBodyInteraction.py
+        """
         return dict(self._mass_interaction_index_energy_map)
 
     def mass_zero_body_term_map(self):
+        """Returns a map
+            mass number -> zero body term
+        """
         return dict(self._mass_zero_body_term_map)
 
     def other_constants(self):
+        """Returns a list of the values that follow the SPE's on the top line
+        """
         return list(self._other_constants)
 
     def folded_mass_interaction_index_energy_map(self):
-        """Return a flat version of the map"""
+        """Folds the map into a list of 3-tuples
+            (mass number, matrix element, energy)
+        This is more useful than the map representation in some cases
+        """
         miie_map = self._mass_interaction_index_energy_map
         folded_map = list()
         for mass_num in miie_map.keys():
@@ -227,7 +265,7 @@ class DatumInt(Datum):
         """From the (mass -> orbital index -> energy) map produce an
         (orbital index -> mass -> energy) map
         """
-        mie_map = self._mass_index_energy_map
+        mie_map = self._mass_index_spe_map
         ime_map = dict()
         for mass in mie_map.keys():
             for index in mie_map[mass].keys():
@@ -237,6 +275,11 @@ class DatumInt(Datum):
         return ime_map
 
     def interaction_qnums_mass_energy_map(self):
+        """Returns a map
+            (matrix element -> mass number -> energy),
+        where "matrix element," in this case, is a namedtuple of
+        quantum numbers instead of orbital indices
+        """
         iqme_map = dict()
         iime_map = self.interaction_index_mass_energy_map()
         for interaction_tuple in sorted(iime_map.keys()):
@@ -246,6 +289,11 @@ class DatumInt(Datum):
         return iqme_map
 
     def interaction_indices_to_interaction_qnums(self, ii):
+        """Converts a TwoBodyInteraction of orbital indices to a
+        TwoBodyInteraction of QuantumNumbers. That is, it simply replaces the
+        idices (which are just labels) with the acutal quantum numbers using
+        the index -> orbital map.
+        """
         next_tup = tuple()
         for index in ii[0:4]:
             qnums = self._index_orbital_map[index]
