@@ -5,6 +5,7 @@ from __future__ import print_function, division, unicode_literals
 
 from metafit import metafitter_abs, print_io_key
 from transforms import relative_y, identity
+from transforms_s import s_transform_to_super
 from plotting import map_to_arrays
 from constants import P_TITLE, P_END, P_SUB, P_HEAD
 from constants import STANDARD_IO_MAP, PLOT_CMAP, LEGEND_SIZE
@@ -110,10 +111,11 @@ def _get_label_kwargs(plot, idx_key=None):
     return l
 
 
+# todo: finish docstring
 def single_particle_metafit_int(
         fitfn, exp_list, sourcedir, savedir,
         transform=relative_y,
-        super_transform_pre=None, super_transform_post=None,
+        super_transform=None,
         imsrg_data_map=None,
         exp_filter_fn=None,
         print_key=False, print_results=False,
@@ -141,34 +143,16 @@ def single_particle_metafit_int(
 ):
     """A meta-fit for all the orbitals with a given e, hw, and rp,
      based on the given fit function
-
     :type _get_plots: (exp_list:list, all_data_map:_ImsrgDataMap,
     get_data:_ImsrgDatum -> dict, get_plot:Any->Tuple[Any, Any, list, dict])
     -> list
     :type _data_map: _ImsrgDataMap
-    :param _get_plots:
-    :param _data_map:
-    :param _get_label_fmt_kwargs:
-    :param _code_pref:
-    :param exp_filter_fn:
-    :param exp_list:
-    :param _legend_size:
-    :param print_lr_results:
-    :param print_mf_results:
     :param fitfn: The FitFunction object to use for fitting. Alternatively,
     may be of the form in fitfns.py, although this is deprecated.
     the data set(s) to use. If rp is not included, it is assumed to be None.
     :param sourcedir: The main files directory to use for initializing the
     ImsrgDataMaps
     :param savedir: The directory in which to save plots
-    :param transform: (Optional) A transformation to apply to the data before
-    fitting,
-        t(xarr, yarr, *args) -> (newxarr, newyarr, *args),
-    where xarr, yarr, newxarr, and newyarr are arrays.
-    :param super_transform_pre: (Optional) A transform to transform all of the
-    plots together prior to the individual transform. Default is None.
-    :param super_transform_post: (Optional) A transform to transform all of the
-    plots together after the individual transform. Default is None.
     :param imsrg_data_map: (Optional) If included, will not retrieve data map
     from sourcedir and will instead take the given data map
     :param _std_io_map: A standard index -> orbital mapping scheme to use for
@@ -222,11 +206,11 @@ def single_particle_metafit_int(
     :return: (mf_results, lr_results), A 2-tuple containing the meta-fit results
     and the regressional results for the fit.
     """
+    if super_transform is None:
+        super_transform = s_transform_to_super(transform=transform)
     return metafitter_abs(
         fitfn=fitfn, exp_list=exp_list, sourcedir=sourcedir,
-        savedir_plots=savedir, transform=transform,
-        super_transform_pre=super_transform_pre,
-        super_transform_post=super_transform_post,
+        savedir_plots=savedir, super_transform=super_transform,
         data_map=imsrg_data_map, exp_filter_fn=exp_filter_fn,
         print_key=print_key, print_results=print_results,
         print_mf_results=print_mf_results, print_lr_results=print_lr_results,
@@ -281,7 +265,8 @@ def multi_particle_metafit_int(
 ):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs, sourcedir, savedir,
-        transform=transform, _get_data=_get_data, _get_plot=_get_plot,
+        super_transform=s_transform_to_super(transform=transform),
+        _get_data=_get_data, _get_plot=_get_plot,
         _printer=_printer, show_legend=show_legend,
         _plot_sort_key=_plot_sort_key, _title=_title, _idx=_idx, ylabel=ylabel,
         **kwargs

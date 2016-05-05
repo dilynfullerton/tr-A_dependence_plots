@@ -17,22 +17,22 @@ from ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 #     # transform=filter_evens,
 # )
 
-# plot_ground_state_prescription_error_vs_exact(
-#     a_prescriptions=[
-#         (16, 17, 18),
-#     ],
-#     nmax=0, n1=15, n2=15,
-#     nshell=2, ncomponent=2, scalefactor=1.00, z=8,
-#     abs_value=False,
-#     # transform=filter_evens,
-# )
-
-plot_ground_state_prescription_error_vs_ncsm_with_aeff(
+plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
-        (500, 500, 500),
+        (16, 17, 18),
     ],
-    ncsm_aeff=500, z=8, nmax=0, nshell=2,
+    nmax=2, n1=15, n2=15,
+    nshell=2, ncomponent=2, scalefactor=1.00, z=8,
+    abs_value=False,
+    # transform=filter_evens,
 )
+
+# plot_ground_state_prescription_error_vs_ncsm_with_aeff(
+#     a_prescriptions=[
+#         (500, 500, 500),
+#     ],
+#     ncsm_aeff=500, z=8, nmax=0, nshell=2,
+# )
 
 # plot_ncsm_exact_for_nmax_and_scale(
 #     # nmax_range=range(0, 7, 2), scale_range=[0.00]

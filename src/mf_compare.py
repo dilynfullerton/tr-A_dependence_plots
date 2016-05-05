@@ -1,17 +1,31 @@
-"""Various tools to compare multiple meta-fits of functional forms based on
+"""mf_compare.py
+Various tools to compare multiple meta-fits of functional forms based on
 their parameter variance, regression agreement, etc.
+
+Definitions:
+    metafitter:
+        function that given a fitfn, an exp, and optional keyword arguments,
+        fits onto all the plots that match that exp simultaneously
+        Form:
+            f(fitfn, exp, **kwargs) ->
+                (mf_results, lr_results, plots, fitfn, info_dict)
+    fitfn:
+        function that when given and x value, a list of parameters, and
+        constants, deterministically returns a y value (the fit)
+        Form:
+            f(x, params, const_list, const_dict) -> y
+    exp:
+        namedtuple object that uniquely identifies a sequence of input files
+        to use for plotting.
 """
 
 from __future__ import division
 from __future__ import print_function
 
-from itertools import combinations
-
 import numpy as np
-
+from itertools import combinations
 from constants import DPATH_FILES_INT, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
-
 from int.ExpInt import ExpInt
 from int.DataMapInt import DataMapInt
 
@@ -22,7 +36,6 @@ def max_r2_value(
 ):
     """Returns the fit function (and its optimized results) that produces the
     largest total r^2 value
-
     :param dpath_source: the directory from which to retrieve the data
     :param print_r2_results: whether to print the results of this analysis
     :param metafitter: the metafitter method (e.g.
@@ -92,7 +105,6 @@ def compare_params(
     combinations of the given e_hw_pairs to the depth given by depth. The
     method of comparison is given by the statistical function statfn, whose
     default is the standard deviation.
-
     :param metafitter: meta-fitting method to use (e.g.
     single_particle_relative_metafit)
     :param fitfn: fit function to use

@@ -15,7 +15,7 @@ from constants import F_PARSE_LPT_NCOLS_BODY as _NCOLS_BODY
 from constants import FN_PARSE_LPT_RGX_FNAME_INT as _RGX_FNAME_INT
 from constants import F_PARSE_INT_CMNT_STR as _INT_CMNT_STR
 from constants import F_PARSE_INT_CMNT_ZBT as _INT_CMNT_ZBT
-from parse import content_lines, comment_lines, half_int_str_to_float
+from parse import content_lines, comment_lines, fraction_str_to_float
 from int.parser import zero_body_term, zero_body_term_line
 
 
@@ -109,7 +109,7 @@ def _cured_body_list(body_list, ncols_body):
     cbl = list()
     cbl.extend([int(bl) for bl in body_list[0:2]])
     cbl.extend([float(bl)for bl in body_list[2:4]])
-    cbl.extend([half_int_str_to_float(bl) for bl in body_list[4:6]])
+    cbl.extend([fraction_str_to_float(bl) for bl in body_list[4:6]])
     cbl.append(int(body_list[6]))
     if len(body_list) == ncols_body:
         cbl.extend([float(body_list[7]), body_list[8]])

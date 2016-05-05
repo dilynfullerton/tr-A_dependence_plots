@@ -15,7 +15,7 @@ def multi_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return multi_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-            transform=relative_zbt,
+            transform=relative_y_zbt,
             code='sprpz', mf_name='multi_particle_relative_pzbt_metafit',
             xlabel='A', ylabel='Relative Energy + Zero Body Term (MeV)',
             **kwargs

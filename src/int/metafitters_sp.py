@@ -7,8 +7,8 @@ from __future__ import unicode_literals
 
 from transforms import *
 from transforms_s import *
-from int.metafitter_abs import single_particle_metafit_int
 from constants import DPATH_FILES_INT, DPATH_PLOTS
+from int.metafitter_abs import single_particle_metafit_int
 
 
 # META-FITTERS
@@ -24,7 +24,7 @@ def single_particle_relative_per_nucleon_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_per_nucleon,
+        transform=relative_y_div_x,
         code='sprpn', mf_name='single_particle_relative_per_nucleon_metafit',
         ylabel='Relative Energy per Nucleon (MeV)', **kwargs
     )
@@ -35,7 +35,7 @@ def single_particle_relative_log_log_per_nucleon_metafit(
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_log_log_per_nucleon,
+        transform=relative_y_log_log_div_x,
         code='sprllpn',
         mf_name='single_particle_relative_log_log_per_nucleon_metafit',
         xlabel='log(A)', ylabel='relative log(Energy per Nucleon)',
@@ -47,7 +47,7 @@ def single_particle_relative_flip_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_flip,
+        transform=relative_y_flip,
         code='sprf', mf_name='single_particle_relative_flip_metafit',
         xlabel='Relative Energy (MeV)', ylabel='A', **kwargs
     )
@@ -58,7 +58,7 @@ def single_particle_relative_flip_per_nucleon_metafit(
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_flip_per_nucleon,
+        transform=relative_y_flip_div_x,
         code='sprfpn',
         mf_name='single_particle_relative_flip_per_nucleon_metafit',
         xlabel='Energy per Nucleon (MeV)', ylabel='Relative A', **kwargs
@@ -70,7 +70,7 @@ def single_particle_flip_relative_per_nucleon_metafit(
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=flip_relative_per_nucleon,
+        transform=flip_relative_y_div_x,
         code='spfrpn',
         mf_name='single_particle_flip_relative_per_nucleon_metafit',
         xlabel='Relative Energy per Nucleon', ylabel='A', **kwargs
@@ -82,7 +82,7 @@ def single_particle_relative_flip_relative_per_nuceon_metafit(
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_flip_relative_per_nucleon,
+        transform=relative_y_flip_relative_y_div_x,
         mf_name='single_particle_relative_flip_relative_per_nuceon_metafit',
         code='sprfrpn',
         xlabel='Relative Energy per Nucleon', ylabel='Relative A', **kwargs
@@ -93,7 +93,7 @@ def single_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_zbt,
+        transform=relative_y_zbt,
         code='sprpz', mf_name='single_particle_relative_pzbt_metafit',
         xlabel='A',
         ylabel='Relative Single Particle Energy + Zero Body Term (MeV)',
@@ -104,8 +104,7 @@ def single_particle_relative_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
 def single_particle_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
-        sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=pzbt,
+        sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS, transform=pzbt,
         code='sppz', mf_name='single_particle_pzbt_metafit',
         xlabel='A', ylabel='Single Particle Energy +Zero Body Term (MeV)',
         **kwargs
@@ -116,7 +115,7 @@ def single_particle_relative_xy_pzbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=relative_xy_zbt,
+        transform=relative_xy_pzbt,
         code='sprrpz',
         mf_name='single_particle_relative_xy_pzbt_metafit',
         xlabel='Relative A',
@@ -147,8 +146,12 @@ def single_particle_firstp_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=firstp,
-        super_transform_post=s_combine_like(['qnums']),
+        super_transform=compose_super_transforms(
+            list_of_st=[
+                s_combine_like(keys=['qnums']),
+                s_transform_to_super(transform=firstp)
+            ]
+        ),
         code='spf1p', mf_name='single_particle_firstp_metafit',
         xlabel='A', ylabel='Energy (MeV)',
         _data_line_style='-', _fit_line_style='--', **kwargs
@@ -159,8 +162,12 @@ def single_particle_first2p_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=first2p,
-        super_transform_post=s_combine_like(['qnums']),
+        super_transform=compose_super_transforms(
+            list_of_st=[
+                s_combine_like(keys=['qnums']),
+                s_transform_to_super(transform=first2p)
+            ]
+        ),
         code='spf2p', mf_name='single_particle_first2p_metafit',
         xlabel='A', ylabel='Energy (MeV)', **kwargs
     )
@@ -170,8 +177,14 @@ def single_particle_firstp_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=compose_transforms([firstp, zbt]),
-        super_transform_post=s_combine_like([]),
+        super_transform=compose_super_transforms(
+            list_of_st=[
+                s_combine_like(keys=[]),
+                s_transform_to_super(
+                    transform=compose_transforms(
+                        list_of_transform=[firstp, zbt]))
+            ]
+        ),
         code='spf1pz', mf_name='single_particle_firstp_zbt_metafit',
         xlabel='A', ylabel='Zero Body Term (MeV)', **kwargs
     )
@@ -181,8 +194,14 @@ def single_particle_first2p_zbt_metafit(fitfn, e_hw_pairs, **kwargs):
     return single_particle_metafit_int(
         fitfn, e_hw_pairs,
         sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-        transform=compose_transforms([first2p, zbt]),
-        super_transform_post=s_combine_like([]),
+        super_transform=compose_super_transforms(
+            list_of_st=[
+                s_combine_like(keys=[]),
+                s_transform_to_super(
+                    transform=compose_transforms(
+                        list_of_transform=[first2p, zbt]))
+            ]
+        ),
         code='spf2pz', mf_name='single_particle_first2p_zbt_metafit',
         xlabel='A', ylabel='Zero Body Term (MeV)', **kwargs
     )
@@ -217,7 +236,7 @@ def single_particle_ltrim_relative_pzbt_metafit(n):
             fitfn, e_hw_pairs,
             sourcedir=DPATH_FILES_INT,
             savedir=DPATH_PLOTS,
-            transform=compose_transforms([ltrim(n), relative_zbt]),
+            transform=compose_transforms([ltrim(n), relative_y_zbt]),
             code='spltrz', mf_name=name,
             xlabel='A',
             ylabel='Relative Single Particle Energy + Zero Body Term',
@@ -235,8 +254,13 @@ def single_particle_first_np_zbt_metafit(n):
         return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-            transform=compose_transforms([first_np(n), zbt]),
-            super_transform_post=s_combine_like([]),
+            super_transform=compose_super_transforms(
+                list_of_st=[
+                    s_combine_like(keys=[]),
+                    s_transform_to_super(
+                        compose_transforms([first_np(n), zbt]))
+                ]
+            ),
             code='spf{}pz'.format(n), mf_name=name,
             xlabel='A', ylabel='Zero Body Term (MeV)', **kwargs
         )
@@ -252,8 +276,12 @@ def single_particle_first_np_metafit(n):
         return single_particle_metafit_int(
             fitfn, e_hw_pairs,
             sourcedir=DPATH_FILES_INT, savedir=DPATH_PLOTS,
-            transform=first_np(n),
-            super_transform_post=s_combine_like(['qnums']),
+            super_transform=compose_super_transforms(
+                list_of_st=[
+                    s_combine_like(keys=['qnums']),
+                    s_transform_to_super(first_np(n))
+                ]
+            ),
             code='spf{}p'.format(n), mf_name=name,
             xlabel='A', ylabel='Energy (MeV)', **kwargs
         )
