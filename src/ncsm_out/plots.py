@@ -2,6 +2,7 @@
 Functions for making plots from NCSD data
 """
 from __future__ import print_function, division, unicode_literals
+
 import numpy as np
 from os import path
 from constants import DPATH_SHELL_RESULTS, DPATH_NCSM_RESULTS
@@ -15,16 +16,37 @@ from ncsm_out.DataMapNcsmOut import DataMapNcsmOut
 from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 
-# todo documentation
 # todo combine and abstract common parts of these functions
+
+# todo: define A-prescription to be a function as opposed to a tuple, such
+# todo: that exact can be treated as a prescription, for example
+# todo: (see how this was done in vce_A_depdendence_toy
 
 
 def plot_a_aeff_ground_energy_vs_nmax(
         a_aeff_pairs, nmax_range, scale=1.0,
         z=2, n1=15, n2=15, nshell=1, ncomponent=2,
         do_plot=True, transform=relative_y, dm_ncsm=None,
-        _dpath_ncsm=DPATH_NCSM_RESULTS, _savedir=DPATH_PLOTS_NCSMVCE
+        _dpath_ncsm=DPATH_NCSM_RESULTS, _dpath_plots=DPATH_PLOTS_NCSMVCE
 ):
+    """For the given A, Aeff pairs and Nmax range, plot ground state
+    energy vs. Nmax
+    :param a_aeff_pairs: sequence of (A, Aeff) pairs
+    :param nmax_range: sequence of Nmax values
+    :param scale: scale factor
+    :param z: proton number (Z)
+    :param n1: one-particle TBME interaction truncation
+    :param n2: two-particle TBME interaction truncation
+    :param nshell: (0=s, 1=p, 2=sd, ...)
+    :param ncomponent: 1 -> neutrons, 2 -> protons and neutrons
+    :param do_plot: if true, plots the plot to plt and saves the figure;
+    otherwise the plots are simply returned
+    :param transform: transform to apply to the plots (see transforms.py)
+    :param dm_ncsm: existing DataMap to use. If None, one is created here
+    :param _dpath_ncsm: path to ncsm results
+    :param _dpath_plots: directory in which to save plots
+    :return: plots list
+    """
     if dm_ncsm is None:
         dm_ncsm = DataMapNcsmOut(
             parent_directory=_dpath_ncsm, exp_list=[(z, n1, n2, scale)])
@@ -62,11 +84,11 @@ def plot_a_aeff_ground_energy_vs_nmax(
     if do_plot:
         save_plot_data_file(
             plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            labels=labels, savepath=path.join(_savedir, savename + '.dat'),
+            labels=labels, savepath=path.join(_dpath_plots, savename + '.dat'),
         )
         return save_plot_figure(
             data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            savepath=path.join(_savedir, savename + '.pdf'),
+            savepath=path.join(_dpath_plots, savename + '.pdf'),
             data_labels=labels, cmap_name='jet',
             data_line_style='-o',
             legendsize=LegendSize(
@@ -87,8 +109,26 @@ def plot_ncsm_exact_for_nmax_and_scale(
         z=2, nmax_range=list([4]), scale_range=list([1.0]),
         n1=15, n2=15, nshell=1, ncomponent=2,
         do_plot=True, transform=None, dm_exact=None,
-        _dpath_ncsm=DPATH_NCSM_RESULTS, _savedir=DPATH_PLOTS_NCSMVCE
+        _dpath_ncsm=DPATH_NCSM_RESULTS, _dpath_plots=DPATH_PLOTS_NCSMVCE
 ):
+    """Plots No-Core Shell Model exact (Aeff=A) results for the given
+    sequences of nmax and scale factors
+    :param z: proton number (Z)
+    :param nmax_range: sequence of Nmax values to plot
+    :param scale_range: sequence of scale factors to plot
+    :param n1: one-particle TBME interaction truncation
+    :param n2: two-particle TBME interaction truncation
+    :param nshell: shell (0=s, 1=p, 2=sd, ...)
+    :param ncomponent: 1 -> neutrons, 2 -> protons and neutrons
+    :param do_plot: if true, make the plot figure and save it; else return
+    the plots list
+    :param transform: transform to apply to the plots (see transforms.py)
+    :param dm_exact: existing DataMap to use; if None, one is created here
+    :param _dpath_ncsm: path to the NCSM results directory
+    :param _dpath_plots: directory in which to save the plot figure if do_plot
+    is True
+    :return: list of plots
+    """
     # exact
     if dm_exact is None:
         dm_exact = DataMapNcsmOut(
@@ -122,11 +162,11 @@ def plot_ncsm_exact_for_nmax_and_scale(
     if do_plot:
         save_plot_data_file(
             plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            labels=labels, savepath=path.join(_savedir, savename + '.dat'),
+            labels=labels, savepath=path.join(_dpath_plots, savename + '.dat'),
         )
         return save_plot_figure(
             data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            savepath=path.join(_savedir, savename + '.pdf'),
+            savepath=path.join(_dpath_plots, savename + '.pdf'),
             data_labels=labels, cmap_name='jet',
             legendsize=LegendSize(
                 max_cols=LEGEND_SIZE.max_cols,
@@ -146,13 +186,38 @@ def plot_ground_state_prescription_error_vs_ncsm_with_aeff(
         a_prescriptions, ncsm_aeff,
         z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2, scalefactor=1.0,
         incl_proton=True,
-        abs_value=False,
         do_plot=True,
         transform=None,
         dm_exact=None, dm_vce=None,
-        _dpath_shell=DPATH_SHELL_RESULTS, _dpath_ncsm=DPATH_NCSM_RESULTS,
-        _savedir=DPATH_PLOTS_NCSMVCE,
+        _dpath_ncsm=DPATH_NCSM_RESULTS,
+        _dpath_shell=DPATH_SHELL_RESULTS,
+        _dpath_plots=DPATH_PLOTS_NCSMVCE,
 ):
+    """Plots prescription error vs NCSM results with the given Aeff
+    :param a_prescriptions: list of A-prescriptions to plot
+    :param ncsm_aeff: constant Aeff value of the NCSM results to be used
+    :param z: proton number (Z)
+    :param nmax: major oscillator truncation level
+    :param n1: one-particle TBME interaction truncation
+    :param n2: two-particle TBME interaction truncation
+    :param nshell: (0=s, 1=p, 2=sd,...)
+    :param ncomponent: 1 -> neutrons, 2 -> protons and neutrons
+    :param scalefactor: factor by which off-diagonal coupling terms were
+    scaled
+    :param incl_proton: whether the proton part of the interaction was included
+    :param do_plot: if true, make and save the plot figure; else just return
+    the plots
+    :param transform: transform to apply to plots before making figure
+    (see transforms.py)
+    :param dm_exact: existing DataMap to use for exact NCSM results. If None,
+    one is initialized here.
+    :param dm_vce: existing DataMap to use for VCE results. If None, one is
+    initialized here.
+    :param _dpath_ncsm: directory for NCSM results
+    :param _dpath_shell: directory for NuShellX results
+    :param _dpath_plots: directory in which to save plot figure
+    :return: plots list
+    """
     # exact
     if dm_exact is None:
         dm_exact = DataMapNcsmOut(
@@ -189,11 +254,7 @@ def plot_ground_state_prescription_error_vs_ncsm_with_aeff(
         x_del = sorted(list(set(x_vce) & set(x_ex)))
         y_del = list()
         for x in x_del:
-            y_del_i = (y_vce[x_vce.index(x)] - y_ex[x_ex.index(x)])
-            if abs_value:
-                y_del.append((abs(y_del_i)))
-            else:
-                y_del.append(y_del_i)
+            y_del.append(y_vce[x_vce.index(x)] - y_ex[x_ex.index(x)])
         print('  x_del = \n    {}'.format(x_del))
         print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
         x_del = np.array(x_del)
@@ -223,11 +284,11 @@ def plot_ground_state_prescription_error_vs_ncsm_with_aeff(
     if do_plot:
         save_plot_data_file(
             plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            labels=labels, savepath=path.join(_savedir, savename + '.dat'),
+            labels=labels, savepath=path.join(_dpath_plots, savename + '.dat'),
         )
         return save_plot_figure(
             data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            savepath=path.join(_savedir, savename + '.pdf'),
+            savepath=path.join(_dpath_plots, savename + '.pdf'),
             data_labels=labels, cmap_name='jet',
         )
     else:
@@ -238,13 +299,37 @@ def plot_ground_state_prescription_error_vs_exact(
         a_prescriptions,
         z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2, scalefactor=1.0,
         incl_proton=True,
-        abs_value=False,
         do_plot=True,
         transform=None,
         dm_exact=None, dm_vce=None,
         _dpath_shell=DPATH_SHELL_RESULTS, _dpath_ncsm=DPATH_NCSM_RESULTS,
-        _savedir=DPATH_PLOTS_NCSMVCE,
+        _dpath_plots=DPATH_PLOTS_NCSMVCE,
 ):
+    """Plot the ground state energy error for each prescription
+    :param a_prescriptions: list of 3-tuples representing A-prescriptions
+    :param z: proton number (Z)
+    :param nmax: major oscillator truncation
+    :param n1: one-particle TBME interaction truncation
+    :param n2: two-particle TBME interaction truncation
+    :param nshell: (0=s, 1=p, 2=sd, ...)
+    :param ncomponent: 1 -> neutrons, 2 -> protons and neutrons
+    :param scalefactor: factor by which off-diagonal coupling terms in the
+    TBME interaction were scaled
+    :param incl_proton: whether or not proton part of the TBME interaction
+    was included. 0 => Vpp and Vpn were set to 0.
+    :param do_plot: if true, make and save the plot figure; else just return
+    the plots
+    :param transform: transform to apply to the plots (see transforms.py)
+    :param dm_exact: existing DataMap to use for NCSM exact data. If None,
+    one is created here.
+    :param dm_vce: existing DataMap to use for VCE data. If None,
+    one is created here.
+    :param _dpath_shell: directory with shell results
+    :param _dpath_ncsm: directory with NCSM results
+    :param _dpath_plots: directory in which to save plot figure if do_plot is
+    true
+    :return: list of plots
+    """
     # exact
     if dm_exact is None:
         dm_exact = DataMapNcsmOut(
@@ -273,11 +358,7 @@ def plot_ground_state_prescription_error_vs_exact(
     x_del = sorted(list(set(x_ex) & set(x_aaf)))
     y_del = list()
     for x in x_del:
-        y_del_i = (y_aaf[x_aaf.index(x)] - y_ex[x_ex.index(x)])
-        if abs_value:
-            y_del.append(abs(y_del_i))
-        else:
-            y_del.append(y_del_i)
+        y_del.append(y_aaf[x_aaf.index(x)] - y_ex[x_ex.index(x)])
     print('  x_del = \n    {}'.format(x_del))
     print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
     plots = [(np.array(x_del), np.array(y_del), list(),
@@ -300,11 +381,7 @@ def plot_ground_state_prescription_error_vs_exact(
         x_del = sorted(list(set(x_vce) & set(x_ex)))
         y_del = list()
         for x in x_del:
-            y_del_i = (y_vce[x_vce.index(x)] - y_ex[x_ex.index(x)])
-            if abs_value:
-                y_del.append((abs(y_del_i)))
-            else:
-                y_del.append(y_del_i)
+            y_del.append(y_vce[x_vce.index(x)] - y_ex[x_ex.index(x)])
         print('  x_del = \n    {}'.format(x_del))
         print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
         x_del = np.array(x_del)
@@ -333,11 +410,11 @@ def plot_ground_state_prescription_error_vs_exact(
     if do_plot:
         save_plot_data_file(
             plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            labels=labels, savepath=path.join(_savedir, savename + '.dat'),
+            labels=labels, savepath=path.join(_dpath_plots, savename + '.dat'),
         )
         return save_plot_figure(
             data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-            savepath=path.join(_savedir, savename + '.pdf'),
+            savepath=path.join(_dpath_plots, savename + '.pdf'),
             data_labels=labels, cmap_name='jet',
         )
     else:

@@ -75,6 +75,7 @@ def _save_plot_figure(
         else:
             plt.legend()
     plt.savefig(savepath)
+    return plot_list_list
 
 
 def save_plot_figure_categorical(

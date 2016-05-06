@@ -13,7 +13,6 @@ from ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 #     ],
 #     nmax=0, n1=15, n2=15,
 #     nshell=1, ncomponent=2, scalefactor=1.00, incl_proton=False, z=2,
-#     abs_value=False,
 #     # transform=filter_evens,
 # )
 
@@ -23,7 +22,6 @@ plot_ground_state_prescription_error_vs_exact(
     ],
     nmax=2, n1=15, n2=15,
     nshell=2, ncomponent=2, scalefactor=1.00, z=8,
-    abs_value=False,
     # transform=filter_evens,
 )
 
