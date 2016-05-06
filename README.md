@@ -6,7 +6,7 @@ _Coming soon._
 
 ### Dependencies
 
-##### Required:
+#### Required:
 The following are required for using the full functionality of this program:
 
 * [python 2.7](https://www.python.org/downloads) 
@@ -15,7 +15,7 @@ The following are required for using the full functionality of this program:
   * matplotlib
   * numpy
 
-##### Recommended:
+#### Recommended:
 All of the above requirements and more are included in the Anaconda
 distribution.
 
