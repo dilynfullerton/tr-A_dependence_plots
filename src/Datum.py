@@ -1,8 +1,9 @@
 """Datum.py
 These definitions store data from particular file types of interaction or
-shell data
+shell data. For example, DatumInt stores a bunch of maps generated based
+on *.int files.
 
-For example, DatumInt stores a bunch of maps generated based on *.int files.
+Wow, DataMap that maps to Datum. Very creative naming...
 """
 from __future__ import division, print_function, unicode_literals
 

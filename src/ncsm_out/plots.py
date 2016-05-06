@@ -1,4 +1,4 @@
-"""
+"""ncsm_out/plots.py
 Functions for making plots from NCSD data
 """
 from __future__ import print_function, division, unicode_literals
@@ -15,6 +15,7 @@ from ncsm_out.DataMapNcsmOut import DataMapNcsmOut
 from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 
+# todo documentation
 # todo combine and abstract common parts of these functions
 
 
@@ -96,8 +97,7 @@ def plot_ncsm_exact_for_nmax_and_scale(
     plots = list()
     for nmax in nmax_range:
         scale_aeff_gnd = dm_exact.scale_to_aeff_exact_to_ground_energy_map(
-            z=z, n1=n1, n2=n2, nmax=nmax, nshell=nshell, ncomponent=ncomponent,
-        )
+            z=z, n1=n1, n2=n2, nmax=nmax, nshell=nshell)
         for scale, aeff_to_ground in scale_aeff_gnd.items():
             x_ex, y_ex = [list(a) for a in map_to_arrays(aeff_to_ground)]
             plots.append(

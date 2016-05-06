@@ -1,14 +1,16 @@
+"""DatumNcsmOut.py
+Particular Datum for Ncsm *.out files.
+"""
 from __future__ import print_function, division, unicode_literals
 
 from warnings import warn
-
 from Datum import Datum
 from ncsm_out.State import State
 from ncsm_out.parser import a_aeff_nhw_to_states_map
 
 MSG1 = (
     '\nInsufficient keyword arguments to evaluate {}.'
-    '\nPlease supply either a0 or (nshell and ncomponent) as keyword arguments.'
+    '\nPlease supply either nhw or (nmax and z) as keyword arguments'
 )
 
 MSG2 = (
@@ -18,10 +20,19 @@ MSG2 = (
 
 
 def _get_a0(nshell, ncomponent):
+    """Return the first mass number in the given shell
+    :param nshell: shell (0=s, 1=p, 2=sd, ...)
+    :param ncomponent: 1 -> neutrons, 2 -> protons & neutrons
+    """
     return int((nshell+2) * (nshell+1) * nshell/3 * ncomponent)
 
 
+# todo: make this general
 def get_ground_state_j(mass, nshell):
+    """Get the j for the ground state for the given mass number and shell.
+    :param mass: mass number
+    :param nshell: (0=s, 1=p, 2=sd, ...)
+    """
     if mass % 2 == 0:
         return 0.0
     elif nshell == 1:
@@ -34,8 +45,15 @@ class GroundStateNotFoundException(Exception):
     pass
 
 
-# todo this only filters out incorrect ground states for EVEN mass numbers
+# todo: This only filters out incorrect ground states for some cases
+# todo: Extend to make general
 def _get_ground_state(mass, states, nshell):
+    """Given a mass number, a list of states, and the shell, returns the
+    ground states (defined here to be the lowest energy with the correct J)
+    :param mass: mass number (A)
+    :param states: list of State (see State.py)
+    :param nshell: (0=s, 1=p, 2=sd, ...)
+    """
     if len(states) == 0:
         raise GroundStateNotFoundException(
             'Could not find ground state for A={}'.format(mass))
@@ -81,11 +99,17 @@ class DatumNcsmOut(Datum):
     identified by an ExpNcsmVceOut
     """
     def __init__(self, directory, exp, files):
+        """Initializes the Datum. Typically this would be handled by the
+        DataMap (e.g. DataMapNcmOut), so the user generally need not concern
+        theirself with this.
+        :param directory: directory in which to initialize the datum
+        :param exp: exp for the datum, which uniquely matches to its data
+        :param files: list of relevant file paths to be parsed into the datum
+        """
         super(DatumNcsmOut, self).__init__(
             directory=directory, exp=exp, files=files)
         # maps
         self._a_aeff_nhw_to_states_map = dict()
-
         # setup methods
         self._set_maps()
 
@@ -99,6 +123,10 @@ class DatumNcsmOut(Datum):
                 self._a_aeff_nhw_to_states_map[k] = [State(*vi) for vi in v]
 
     def a_aeff_nmax_to_states_map(self, z):
+        """Returns map
+            (A, Aeff, Nmax) -> list of states
+        :param z: proton number (Z)
+        """
         a_aeff_nmax_to_states = dict()
         for k, v in self._a_aeff_nhw_to_states_map.items():
             a, aeff, nhw = k
@@ -141,36 +169,6 @@ class DatumNcsmOut(Datum):
                 nhw=nhw, nshell=nshell).items()
             }
 
-    # maps for maximal Nhw
-    def a_aeff_to_states_map_for_max_nhw(self):
-        a_aeff_to_states = dict()
-        a_aeff_to_nhw = dict()
-        for k, v in self._a_aeff_nhw_to_states_map.items():
-            a, aeff, nhw = k
-            if (a, aeff) not in a_aeff_to_nhw or nhw > a_aeff_to_nhw[(a, aeff)]:
-                a_aeff_to_nhw[(a, aeff)] = nhw
-                a_aeff_to_states[(a, aeff)] = v
-        return a_aeff_to_states
-
-    def aeff_exact_to_states_map_for_max_nhw(self):
-        aeff_exact_to_states = dict()
-        for k, v in self.a_aeff_to_states_map_for_max_nhw().items():
-            if k[0] != k[1]:
-                continue
-            else:
-                aeff_exact_to_states[k[0]] = v
-        return aeff_exact_to_states
-
-    def aeff_exact_to_ground_state_map_for_max_nhw(self, nshell):
-        return {k: _get_ground_state(mass=k, states=v, nshell=nshell)
-                for k, v in self.aeff_exact_to_states_map_for_max_nhw().items()}
-
-    def aeff_exact_to_ground_state_energy_map_for_max_nhw(self, nshell):
-        return {k: v.E for k, v in
-                self.aeff_exact_to_ground_state_map_for_max_nhw(
-                    nshell=nshell).items()
-                }
-
     # maps for a given Nmax
     def _a_aeff_to_states_map_for_nmax(self, nmax, z):
         a_aeff_to_states = dict()
@@ -210,6 +208,14 @@ class DatumNcsmOut(Datum):
 
     # user maps
     def a_aeff_to_states_map(self, nhw=None, nmax=None, z=None):
+        """Returns a map
+            (A, Aeff) -> list of state
+        for the given Nhw or Nmax and Z.
+        Either nhw or (nmax and z) must be provided.
+        :param nhw: major oscillator truncation
+        :param nmax: major oscillator truncation minus min number orbitals.
+        :param z: proton number (Z)
+        """
         if nhw is not None:
             return self._a_aeff_to_states_map_for_nhw(nhw=nhw)
         elif nmax is not None:
@@ -225,6 +231,16 @@ class DatumNcsmOut(Datum):
             ))
 
     def a_aeff_to_ground_state_map(self, nshell, nhw=None, nmax=None, z=None):
+        """Returns a map
+            (A, Aeff) -> ground state
+        for a given shell.
+        Either nhw or (nmax and z) must be provided.
+        :param nshell: (0=s, 1=p, 2=sd, ...)
+        :param nhw: major oscillator truncation
+        :param nmax: major oscillator truncation relative to min required
+        orbitals
+        :param z: proton number (Z)
+        """
         if nhw is not None:
             return self._a_aeff_to_ground_state_map_for_nhw(
                 nhw=nhw, nshell=nshell)
@@ -243,6 +259,15 @@ class DatumNcsmOut(Datum):
 
     def a_aeff_to_ground_state_energy_map(
             self, nshell, nhw=None, nmax=None, z=None):
+        """Returns a map
+            (A, Aeff) -> ground energy
+        for a given shell and truncation level.
+        :param nshell: shell (0=s, 1=p, 2=sd)
+        :param nhw: major oscillator truncation
+        :param nmax: major oscillator truncation relative to minimum requried
+        orbitals
+        :param z: proton number (Z)
+        """
         try:
             a_aeff_to_gnd_state = self.a_aeff_to_ground_state_map(
                 nhw=nhw, nmax=nmax, z=z, nshell=nshell)
@@ -250,37 +275,18 @@ class DatumNcsmOut(Datum):
             raise
         return {k: v.E for k, v in a_aeff_to_gnd_state.items()}
 
-    def aeff_exact_to_states_map(self, nhw=None, nmax=None, z=None):
-        if nhw is not None:
-            return self._aeff_exact_to_states_map_for_nhw(nhw=nhw)
-        elif nmax is not None:
-            if z is not None:
-                return self._aeff_exact_to_states_map_for_nmax(nmax=nmax, z=z)
-            else:
-                raise IncompleteArgumentsException(MSG1.format(
-                    'aeff_exact_to_states_map'))
-        else:
-            raise IncompleteArgumentsException(MSG2.format(
-                'aeff_exact_to_states_map'))
-
-    def aeff_exact_to_ground_state_map(
-            self, nshell, nhw=None, nmax=None, z=None):
-        if nhw is not None:
-            return self._aeff_exact_to_ground_state_map_for_nhw(
-                nhw=nhw, nshell=nshell)
-        elif nmax is not None:
-            if z is not None:
-                return self._aeff_exact_to_ground_state_map_for_nmax(
-                    nmax=nmax, z=z, nshell=nshell)
-            else:
-                raise IncompleteArgumentsException(MSG1.format(
-                    'aeff_exact_to_ground_state_map'))
-        else:
-            raise IncompleteArgumentsException(MSG2.format(
-                'aeff_exact_to_ground_state_map'))
-
     def aeff_exact_to_ground_state_energy_map(
             self, nshell, nhw=None, nmax=None, z=None):
+        """Returns a map
+            A=Aeff -> ground energy
+        from mass number to ground energy in the case where Aeff=A.
+        Either nhw or (nmax and z) is required
+        :param nshell: shell (0=s, 1=p, 2=sd, ...)
+        :param nhw: major oscillator truncation
+        :param nmax: major oscillator truncation relative to minimum required
+        number of orbitals
+        :param z: proton number (Z)
+        """
         if nhw is not None:
             return self._aeff_exact_to_ground_state_energy_map_for_nhw(
                 nhw=nhw, nshell=nshell)

@@ -30,8 +30,7 @@ class DatumInt(Datum):
     ):
         """Initialize a particular NuShellX datum, where "datum" refers to
         all of the data in directory that matches the given exp
-        (see ExpInt.py). The first three arguments are set by the DataMap,
-        and the user should generally not need to address them.
+        (see ExpInt.py). In general, this will be initialized by a DataMap.
         :param directory: parent directory
         :param exp: unique identifier for the data held by this type
         :param files: list of file paths of all of the relevant files
