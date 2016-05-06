@@ -209,20 +209,6 @@ class DatumInt(Datum):
         """
         return dict(self._index_orbital_map)
 
-    def mass_index_spe_map(self):
-        """Returns a map from
-            mass number -> orbital index -> SPE
-        :return:
-        """
-        return dict(self._mass_index_spe_map)
-
-    def mass_interaction_index_energy_map(self):
-        """Returns a map
-            mass number -> matrix element (interaction) -> energy
-        The matrix element is a namedtuple, defined in TwoBodyInteraction.py
-        """
-        return dict(self._mass_interaction_index_energy_map)
-
     def mass_zero_body_term_map(self):
         """Returns a map
             mass number -> zero body term
@@ -233,19 +219,6 @@ class DatumInt(Datum):
         """Returns a list of the values that follow the SPE's on the top line
         """
         return list(self._other_constants)
-
-    def folded_mass_interaction_index_energy_map(self):
-        """Folds the map into a list of 3-tuples
-            (mass number, matrix element, energy)
-        This is more useful than the map representation in some cases
-        """
-        miie_map = self._mass_interaction_index_energy_map
-        folded_map = list()
-        for mass_num in miie_map.keys():
-            for tup in miie_map[mass_num]:
-                energy = miie_map[mass_num][tup]
-                folded_map.append((mass_num, tup, energy))
-        return folded_map
 
     def interaction_index_mass_energy_map(self):
         """From the mass -> interaction index -> energy map, creates a
@@ -272,20 +245,6 @@ class DatumInt(Datum):
                     ime_map[index] = dict()
                 ime_map[index][mass] = mie_map[mass][index]
         return ime_map
-
-    def interaction_qnums_mass_energy_map(self):
-        """Returns a map
-            (matrix element -> mass number -> energy),
-        where "matrix element," in this case, is a namedtuple of
-        quantum numbers instead of orbital indices
-        """
-        iqme_map = dict()
-        iime_map = self.interaction_index_mass_energy_map()
-        for interaction_tuple in sorted(iime_map.keys()):
-            inter_qnums = self.interaction_indices_to_interaction_qnums(
-                interaction_tuple)
-            iqme_map[inter_qnums] = iime_map[interaction_tuple]
-        return iqme_map
 
     def interaction_indices_to_interaction_qnums(self, ii):
         """Converts a TwoBodyInteraction of orbital indices to a
