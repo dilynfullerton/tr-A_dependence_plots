@@ -9,8 +9,8 @@ _Coming soon._
 #### Required:
 The following are required for using the full functionality of this program:
 
-* [python 2.7](https://www.python.org/downloads) 
-* [scipy](https://www.scipy.org/install.html)
+* [python 2](https://www.python.org/downloads) (2.7 or higher)
+* [SciPy](https://www.scipy.org/install.html)
   * scipy
   * matplotlib
   * numpy
@@ -19,7 +19,7 @@ The following are required for using the full functionality of this program:
 All of the above requirements and more are included in the Anaconda
 distribution.
 
-* [anaconda](https://www.continuum.io/downloads)
+* [Anaconda](https://www.continuum.io/downloads)
 
 ### Setup
 The following should be done to prepare for usage:
