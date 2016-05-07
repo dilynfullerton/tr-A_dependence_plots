@@ -1,3 +1,7 @@
+"""DataMapNcsmVceLpt.py
+Implementation of DataMap (see DataMap.py) for *.lpt files produced based on
+a Valence Cluster Expansion
+"""
 from __future__ import print_function, division, unicode_literals
 
 from constants import FN_PARSE_LPT_RGX_FNAME as _RGX_FNAME
@@ -15,6 +19,13 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
     def __init__(
             self, parent_directory, exp_list=None, exp_filter_fn=None, **kwargs
     ):
+        """Initialize the DataMap in the given parent_directory
+        :param parent_directory: directory in which to recursively retrieve
+        files
+        :param exp_list: list of exp for which to gather data
+        :param exp_filter_fn: function with which to filter files by their exp
+        :param kwargs: other arguments to pass to DatumLpt
+        """
         super(DataMapNcsmVceLpt, self).__init__(
             parent_directory=parent_directory,
             exp_list=exp_list, exp_filter_fn=exp_filter_fn,
@@ -26,10 +37,26 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
     def _exp_from_file_path(self, f):
         return exp(filepath=f)
 
+    # todo: Only a mother could love this ugly method. There should be a
+    # todo: better way to do this without passing all of these parameters
     def aeff_eq_a_to_ground_energy_map(
             self, z, nmax, n1, n2, nshell, ncomponent, scalefactor=None,
             incl_proton=True,
     ):
+        """Returns a map
+            Aeff=A -> Ground energy
+        where the ground energy is that from the lpt file for the prescription
+        (A, A, A) with mass A.
+        :param z: proton number (Z)
+        :param nmax: oscillator truncation
+        :param n1: one-particle TBME interaction truncation
+        :param n2: two-particle TBME interaction truncation
+        :param nshell: major oscillator shell (0=s, 1=p, 2=sd, ...)
+        :param ncomponent: 1 -> neutrons, 2 -> protons & neutrons
+        :param scalefactor: factor by which off-diagonal coupling terms in
+        the interaction were scaled
+        :param incl_proton: whether or not proton interaction was included.
+        """
         aeff_eq_a_to_ground_energy = dict()
         for exp0 in self.map.keys():
             presc = exp0.A_presc

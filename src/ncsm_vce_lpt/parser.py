@@ -1,4 +1,5 @@
-"""Functions for parsing *.lpt file data from a VCE *.int file. This amounts
+"""ncsm_vce_lpt/parser.py
+Functions for parsing *.lpt file data from a VCE *.int file. This amounts
 simply to retrieving the information necessary to construct the exp, as
 all *.lpt data is parsed by the parser in /nushellx_lpt
 """
@@ -22,18 +23,34 @@ from nushellx_lpt.parser import a_z as a_z
 
 # EXP
 def _a_presc_from_delts(delts, regex_presc):
+    """Get the A-prescription tuple from directory name elements
+    :param delts: list of ordered directory name elements
+    :param regex_presc: regular expression that fully matches the
+    A-prescription element
+    :return A-prescription element, if found; else, return None
+    """
     a_presc_elt = elt_from_felts(felts=delts, elt_regex=regex_presc)
-    a_presc_tuple_str = sub('[A-Za-z]', '', a_presc_elt)
-    return tuple([int(x) for x in a_presc_tuple_str.split(',')])
+    if a_presc_elt is not None:
+        a_presc_tuple_str = sub('[A-Za-z]', '', a_presc_elt)
+        return tuple([int(x) for x in a_presc_tuple_str.split(',')])
+    else:
+        return None
 
 
 def nmax_n1_n2_from_delts(delts, regex_nmax):
-    nhw_elt = elt_from_felts(felts=delts, elt_regex=regex_nmax)
-    if nhw_elt is None:
+    """Gets a 3-tuple containing (Nmax, N1, N2) from the given directory name
+    elements list
+    :param delts: list of directory name elements
+    :param regex_nmax: regular expression that fully matches the Nmax element.
+    N1 and N2 are assumed to be the next two elements
+    :return: 3-tuple (Nmax, N1, N2) if found; else return (None, None, None)
+    """
+    nmax_elt = elt_from_felts(felts=delts, elt_regex=regex_nmax)
+    if nmax_elt is None:
         return (None,)*3
     else:
-        nhw_elt0 = sub('[A-Za-z]', '', nhw_elt)
-        i = delts.index(nhw_elt)
+        nhw_elt0 = sub('[A-Za-z]', '', nmax_elt)
+        i = delts.index(nmax_elt)
         n1_elt, n2_elt = delts[i+1:i+3]
         nnn = [int(x) for x in [nhw_elt0, n1_elt, n2_elt]]
         # if nnn[0] % 2 == 1:
@@ -42,6 +59,10 @@ def nmax_n1_n2_from_delts(delts, regex_nmax):
 
 
 def exp(filepath):
+    """From the given file path, returns the ordered tuple necessary to
+    generate the file's ExpNcsmVceLpt
+    :param filepath: path to the file
+    """
     z = a_z(filepath=filepath, comment_str=_STR_CMNT, row_az=_ROW_AZ)[1]
     dirname = datum_dirname(filepath=filepath)
     delts = filename_elts_list(
