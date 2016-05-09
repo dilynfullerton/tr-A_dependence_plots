@@ -18,7 +18,7 @@ from constants import F_PARSE_INT_CMNT_INDEX as CMNT_INDEX
 from constants import F_PARSE_INT_CMNT_ZBT as CMNT_ZBT
 from constants import F_PARSE_INT_COL_START_ORBITAL as COL_START_ORBITAL
 from constants import F_PARSE_INT_NCOLS_ORBITALS as NCOLS_ORBITALS
-from constants import F_PARSE_INT_ROW_HEAD as ROW_HEAD
+from constants import F_PARSE_INT_ROW_SPE as ROW_SPE
 from constants import F_PARSE_INT_CMNT_STR as CMNT_STR
 
 
@@ -194,17 +194,17 @@ def zero_body_term(zbt_line):
         return None
 
 
-def header_list(lines, header_pos=ROW_HEAD):
+def spe_list(lines, spe_line_pos=ROW_SPE):
     """Returns the line containing the header in the form of an list
-    :param header_pos: position of the SPE line WRT to non-empty, non-comment
-    lines
+    :param spe_line_pos: position of the SPE line WRT to non-empty,
+    non-comment lines
     :param lines: content lines
     """
-    header_line = lines[header_pos]
+    header_line = lines[spe_line_pos]
     return header_line.split()
 
 
-def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
+def tbme_data_array(lines, interaction_start=ROW_SPE + 1):
     """Returns the lines containing the interaction data in the form of an 
     array (list of lists)
     :param lines: file content lines
@@ -218,47 +218,45 @@ def interaction_data_array(lines, interaction_start=ROW_HEAD + 1):
 
 
 def orbital_energies(
-        header_items_list, start_index=COL_START_ORBITAL,
+        spe_line_items_list, start_index=COL_START_ORBITAL,
         num_orbitals=NCOLS_ORBITALS
 ):
     """Returns the orbital energies from the given header list
     :param num_orbitals: number of orbitals for which to gather lines
     :param start_index: position of first SPE in SPE line
-    :param header_items_list: list of split items in SPE line
+    :param spe_line_items_list: list of split items in SPE line
     """
-    return header_items_list[start_index: start_index + num_orbitals]
+    return spe_line_items_list[start_index: start_index + num_orbitals]
 
 
 def other_constants(
-        header_items_list, start_index=COL_START_ORBITAL,
+        spe_line_items_list, start_index=COL_START_ORBITAL,
         num_orbitals=NCOLS_ORBITALS
 ):
     """Return the other values in the header items list, following the SPE's
-    :param header_items_list: list of items in the SPE line
+    :param spe_line_items_list: list of items in the SPE line
     :param start_index: index of first SPE in line
     :param num_orbitals: number of SPE's
     """
-    return header_items_list[start_index + num_orbitals:]
+    return spe_line_items_list[start_index + num_orbitals:]
 
 
-def orbital_energies_from_filename(filepath, comment_str=CMNT_STR):
+def orbital_energies_from_filename(filepath):
     """Returns the orbital energies from the given filename through
     functional composition
     :param filepath: path to the file
-    :param comment_str: string signifying a commented line
     """
-    return orbital_energies(header_list(
-        lines=list(content_lines(filepath, comment_str))))
+    return orbital_energies(spe_list(
+        lines=list(content_lines(filepath, CMNT_STR))))
 
 
-def other_constants_from_filename(filepath, comment_str=CMNT_STR):
+def other_constants_from_filename(filepath):
     """Given a filename, returns all of the items in the header items list
     following the orbital energies
     :param filepath: path to the file
-    :param comment_str: string signifying a commented line
     """
-    return other_constants(header_list(
-        lines=list(content_lines(filepath, comment_str))))
+    return other_constants(spe_list(
+        lines=list(content_lines(filepath, CMNT_STR))))
 
 
 # ............................................................
@@ -277,46 +275,43 @@ def index_map(idx_lines):
     return idx_map
 
 
-def index_to_tuple_map(filepath, comment_str=CMNT_STR):
+def index_to_qnums_map(fpath):
     """Given a data file name, gets the mapping from orbital index to
     (n, l, j, tz) tuple
-    :param filepath: path to the file
-    :param comment_str: string signifying a commented line
+    :param fpath: path to the file
     """
-    return index_map(index_lines(
-        commnt_lines=comment_lines(filepath, comment_str)))
+    return index_map(index_lines(commnt_lines=comment_lines(fpath, CMNT_STR)))
 
 
-def mass_energy_array_map(directory, filterfn=lambda x: True,
-                          filtered_files=None):
+def mass_spe_data_map(dpath, filterfn=lambda x: True, fpath_list=None):
     """Returns a map from mass number to orbital energy arrays
-    :param directory: the directory which is a direct parent to the files to use
+    :param dpath: the directory which is a direct parent to the files to use
     :param filterfn: the function to use to filter the file names in the
     directory
-    :param filtered_files: relevant file paths
+    :param fpath_list: relevant file paths
     """
-    if filtered_files is None:
-        filtered_files = get_files_r(directory, filterfn)
+    if fpath_list is None:
+        fpath_list = get_files_r(dpath, filterfn)
     d = dict()
-    for f in filtered_files:
+    for f in fpath_list:
         mass_number = mass_number_from_filename(f)
         orbital_energies_list = orbital_energies_from_filename(f)
         d[mass_number] = orbital_energies_list
     return d
 
 
-def mass_to_index_to_energy_map(directory, filterfn=lambda x: True,
-                                filtered_files=None):
+def mass_to_index_to_energy_map(dpath, filterfn=lambda x: True,
+                                fpath_list=None):
     """Given a directory, creates a mapping
         mass number -> (index -> energy)
     using the files in that directory
-    :param filtered_files:
-    :param directory: the directory that is a direct parent to the files from
+    :param fpath_list:
+    :param dpath: the directory that is a direct parent to the files from
     which the map is to be constructed
     :param filterfn: the filter to apply to the files prior to constructing the
     map
     """
-    mea_map = mass_energy_array_map(directory, filterfn, filtered_files)
+    mea_map = mass_spe_data_map(dpath, filterfn, fpath_list)
     for k in mea_map.keys():
         v = mea_map[k]
         nextv = dict()
@@ -326,36 +321,33 @@ def mass_to_index_to_energy_map(directory, filterfn=lambda x: True,
     return mea_map
 
 
-def _mass_interaction_data_array_map(
-        directory, filterfn=lambda x: True, filtered_files=None,
-        comment_str=CMNT_STR
-):
+def _mass_tbme_data_map(dpath, filterfn=lambda x: True, fpath_list=None):
     """Creates a mapping from mass number to an array of interaction data
     for each file in the directory
     """
-    if filtered_files is None:
-        filtered_files = get_files_r(directory, filterfn)
+    if fpath_list is None:
+        fpath_list = get_files_r(dpath, filterfn)
     mida_map = dict()
-    for f in filtered_files:
+    for f in fpath_list:
         mass_number = mass_number_from_filename(f)
-        ida = interaction_data_array(lines=list(content_lines(f, comment_str)))
+        ida = tbme_data_array(lines=list(content_lines(f, CMNT_STR)))
         mida_map[mass_number] = ida
     return mida_map
 
 
-def mass_to_interaction_to_energy_map(directory, filterfn=lambda x: True,
-                                      filtered_files=None):
+def mass_to_tbint_to_energy_map(dpath, filterfn=lambda x: True,
+                                fpath_list=None):
     """Given a directory, creates a mapping
         mass number -> ( a, b, c, d, j -> energy )
     using the files in the directory
-    :param filtered_files:
-    :param directory: the directory which is a direct parent to the files from
+    :param fpath_list:
+    :param dpath: the directory which is a direct parent to the files from
     which to generate the map
     :param filterfn: the filter function to apply to the files before
     constructing the map
     """
-    mida_map = _mass_interaction_data_array_map(
-        directory, filterfn, filtered_files)
+    mida_map = _mass_tbme_data_map(
+        dpath, filterfn, fpath_list)
     for k in mida_map.keys():
         v = mida_map[k]
         nextv = dict()
@@ -367,43 +359,40 @@ def mass_to_interaction_to_energy_map(directory, filterfn=lambda x: True,
     return mida_map
 
 
-def mass_to_zbt_map(directory, filterfn=lambda x: True,
-                    filtered_files=None, comment_str=CMNT_STR):
+def mass_to_zbt_map(dpath, filterfn=lambda x: True, fpath_list=None):
     """Given a directory, creates a mapping
             mass -> zero body term
     using the files in the directory
-    :param directory: the directory that is a direct parent to the files from
+    :param dpath: the directory that is a direct parent to the files from
     which to construct the map
     :param filterfn: the filter to apply to the files before constructing the
     map
-    :param filtered_files: filepaths from which to gather data. If None, looks
+    :param fpath_list: filepaths from which to gather data. If None, looks
     in whole directory
-    :param comment_str: String signifying a commented line.
     """
-    if filtered_files is None:
-        filtered_files = get_files_r(directory, filterfn)
+    if fpath_list is None:
+        fpath_list = get_files_r(dpath, filterfn)
     mzbt_map = dict()
-    for f in filtered_files:
+    for f in fpath_list:
         mass_number = mass_number_from_filename(f)
         zbt = zero_body_term(
-            zero_body_term_line(cmnt_lines=comment_lines(f, comment_str)))
+            zero_body_term_line(cmnt_lines=comment_lines(f, CMNT_STR)))
         mzbt_map[mass_number] = zbt
     return mzbt_map
 
 
-def mass_other_constants_map(directory, filterfn=lambda x: True,
-                             filtered_files=None):
+def mass_other_constants_map(dpath, filterfn=lambda x: True, fpath_list=None):
     """Given a directory, creates a mapping from mass number to the other
     constants following the orbital energies in the first line of data
-    :param directory: main directory
+    :param dpath: main directory
     :param filterfn: filter to apply to files before constructing the map
-    :param filtered_files: if not None, this is used instead of getting files
+    :param fpath_list: if not None, this is used instead of getting files
     in the directory
     """
-    if filtered_files is None:
-        filtered_files = get_files_r(directory, filterfn)
+    if fpath_list is None:
+        fpath_list = get_files_r(dpath, filterfn)
     moc_map = dict()
-    for f in filtered_files:
+    for f in fpath_list:
         mass_number = mass_number_from_filename(f)
         oc = other_constants_from_filename(f)
         moc_map[mass_number] = oc

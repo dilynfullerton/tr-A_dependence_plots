@@ -7,8 +7,6 @@ from __future__ import division, print_function
 
 from re import sub
 
-from constants import F_PARSE_LPT_STR_CMNT as _STR_CMNT
-from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
 from constants import FN_PARSE_INT_ELT_SPLIT as _CHR_SPLIT
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_PRESC as _RGX_PRESC
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_NMAX as _RGX_NMAX
@@ -63,7 +61,7 @@ def exp(filepath):
     generate the file's ExpNcsmVceLpt
     :param filepath: path to the file
     """
-    z = a_z(filepath=filepath, comment_str=_STR_CMNT, row_az=_ROW_AZ)[1]
+    z = a_z(filepath=filepath)[1]
     dirname = datum_dirname(filepath=filepath)
     delts = filename_elts_list(
         filename=dirname, split_char=_CHR_SPLIT, remove_ext=False)

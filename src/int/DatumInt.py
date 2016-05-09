@@ -8,9 +8,9 @@ from Datum import Datum
 from constants import DPATH_FILES_INT_ORG, ORG_FMT_INT_DNAME, ORG_FMT_INT_FNAME
 from int.QuantumNumbers import QuantumNumbers
 from int.TwoBodyInteraction import TwoBodyInteraction
-from int.parser import index_to_tuple_map as get_index_tuple_map
+from int.parser import index_to_qnums_map as get_index_tuple_map
 from int.parser import mass_to_index_to_energy_map as get_mie_map
-from int.parser import mass_to_interaction_to_energy_map as get_miie_map
+from int.parser import mass_to_tbint_to_energy_map as get_miie_map
 from int.parser import mass_to_zbt_map
 from int.parser import name_from_filename
 from int.parser import other_constants_from_filename as oc_from_filename
@@ -96,14 +96,14 @@ class DatumInt(Datum):
         mapping for the directory
         """
         self._mass_index_spe_map = (
-            get_mie_map(self.dir, filtered_files=self.files))
+            get_mie_map(self.dir, fpath_list=self.files))
 
     def _set_mass_interaction_index_energy_map(self):
         """Retrieves the
             mass number -> (a, b, c, d, j) -> energy
         mapping for the directory
         """
-        miiem = (get_miie_map(self.dir, filtered_files=self.files))
+        miiem = (get_miie_map(self.dir, fpath_list=self.files))
         # Turn each tuple into a named tuple
         for A in miiem.keys():
             tuple_energy_map = miiem[A]
@@ -120,7 +120,7 @@ class DatumInt(Datum):
 
     def _set_zero_body_term_map(self):
         self._mass_zero_body_term_map = (
-            mass_to_zbt_map(self.dir, filtered_files=self.files))
+            mass_to_zbt_map(self.dir, fpath_list=self.files))
 
     def _set_name(self):
         """Sets the incidence name variable

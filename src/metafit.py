@@ -204,6 +204,8 @@ def metafitter_abs(
     :param exp_filter_fn: Function from exp to {True, False}. Used as an
     alternative to explicitly listing out exp tuples such that the set of
     data gathered are only those that satisfy the filter
+    :param super_transform: transformation to apply to list of plots
+    (see transforms_s.py)
     :param sourcedir: Main files directory to use for initializing the
     DataMaps
     :param data_map: (Optional) If included, will not retrieve data map

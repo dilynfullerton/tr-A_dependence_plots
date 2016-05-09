@@ -58,7 +58,7 @@ class DatumLpt(Datum):
         self._mass_n_body_map = d
 
     def _set_mass_zbt_map(self):
-        self._mass_zbt_map = mass_zbt_map(filtered_filepaths_lpt=self.files)
+        self._mass_zbt_map = mass_zbt_map(fpath_list=self.files)
 
     def mass_header_map(self):
         """Returns a map

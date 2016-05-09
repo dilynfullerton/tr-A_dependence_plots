@@ -18,14 +18,13 @@ from ncsm_vce_lpt.parser import nmax_n1_n2_from_delts as nhw_n1_n2_from_felts
 
 
 # EXP
-def _z_from_filepath(filepath, comment_str, rgx_line_z):
+def _z_from_filepath(filepath, rgx_line_z):
     """From the given file path, get the proton number (Z)
     :param filepath: file path
-    :param comment_str: string signifying a comment line
     :param rgx_line_z: regular expression that matches the line containing Z
     :return proton number, or None if not found
     """
-    for line in content_lines(filepath=filepath, comment_str=comment_str):
+    for line in content_lines(filepath=filepath, comment_str=_CMNT_STR):
         if match(rgx_line_z, line) is not None:
             return int(line.split()[2])
     else:
@@ -35,8 +34,7 @@ def _z_from_filepath(filepath, comment_str, rgx_line_z):
 def exp(filepath):
     """Get the tuple representation of the ExpNcsmOut for the given file
     """
-    z = _z_from_filepath(filepath=filepath, comment_str=_CMNT_STR,
-                         rgx_line_z=_RGX_LINE_Z)
+    z = _z_from_filepath(filepath=filepath, rgx_line_z=_RGX_LINE_Z)
     felts = filename_elts_list(filename=filepath, split_char=_CHR_SPLIT)
     nhw, n1, n2 = nhw_n1_n2_from_felts(delts=felts, regex_nmax=_RGX_NHW)
     incl_protons = elt_from_felts(felts=felts, elt_regex=_RGX_IPROT) is None
