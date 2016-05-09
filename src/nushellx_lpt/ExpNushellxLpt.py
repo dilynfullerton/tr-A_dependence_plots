@@ -1,3 +1,7 @@
+"""ExpNushellxLpt.py
+Definition for namedtuple representation of a set of *.lpt file data
+from running NuShellX on Magnus, Heiko, or normal-ordered interactions
+"""
 from __future__ import print_function, division, unicode_literals
 
 from collections import namedtuple

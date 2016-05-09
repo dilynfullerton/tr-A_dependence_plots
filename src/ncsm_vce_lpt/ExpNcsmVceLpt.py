@@ -1,5 +1,6 @@
 """ExpNcsmVceLpt.py
 Definition for namedtuple representation of a set of *.lpt file data
+from running NuShellX in VCE interactions
 """
 from __future__ import print_function, division, unicode_literals
 

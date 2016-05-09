@@ -1,10 +1,12 @@
-"""Plots for *.lpt data
+"""nushellx_lpt/plots.py
+Plots for *.lpt data.
+NOTE: These are, for the most part, deprecated. The user should prefer to use
+metafitters in nushellx_lpt/metafitters.py to do plots.
 """
 from __future__ import print_function, division, unicode_literals
 
 import numpy as np
 from matplotlib import pyplot as plt
-
 from constants import DPATH_SHELL_RESULTS
 from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 from plotting import map_to_arrays, plot_the_plots
@@ -14,6 +16,14 @@ def lpt_plot_energy_vs_n_for_mass(
         mass_num, directory=DPATH_SHELL_RESULTS,
         exp_list=None, proton_num=None, transform=None
 ):
+    """Makes and shows a plot of E (energy) vs. N (state index) for a given
+    A (mass number)
+    :param mass_num: mass number (A)
+    :param directory: directory in which to make the data map
+    :param exp_list: list of ExpNushellxLpt for which to get data
+    :param proton_num: proton number Z
+    :param transform: transform to apply to the plot (see transforms.py)
+    """
     imsrg_data_map = DataMapNushellxLpt(
         parent_directory=directory, exp_list=exp_list).map
     plots = list()
@@ -32,10 +42,9 @@ def lpt_plot_energy_vs_n_for_mass(
         const_list = list()
         const_dict = {'exp': k, 'A': mass_num}
         plots.append((x, y, const_list, const_dict))
-
     if transform is not None:
         plots = [transform(*plot) for plot in plots]
-
+    # TODO: stop using this function
     plot_the_plots(
         plots, label='{exp}', title='Energy vs N for A={}'.format(mass_num),
         xlabel='N', ylabel='Energy (MeV)', sort_key=lambda p: p[3]['exp'],
@@ -49,6 +58,15 @@ def lpt_plot_energy_vs_mass_for_n(
         n, directory=DPATH_SHELL_RESULTS,
         exp_list=None, proton_num=None, transform=None
 ):
+    """Makes and shows a plot of E (energy) vs. A (mass number) for a given
+    N (state index), where N is based on the convention in *.lpt files: N=1
+    is the ground state.
+    :param n: state index, beginning with 1
+    :param directory: directory in which to gather data
+    :param exp_list: list of ExpNushellxLpt for which to get data
+    :param proton_num: proton number (Z)
+    :param transform: transform to apply before plotting (see transforms.py)
+    """
     imsrg_data_map = DataMapNushellxLpt(
         parent_directory=directory, exp_list=exp_list).map
     plots = list()
@@ -72,10 +90,9 @@ def lpt_plot_energy_vs_mass_for_n(
                 zbt[i] = zbta
         const_dict = {'exp': k, 'N': n, 'zbt_arr': zbt}
         plots.append((x, y, const_list, const_dict))
-
     if transform is not None:
         plots = [transform(*plot) for plot in plots]
-
+    # TODO: stop using this function
     plot_the_plots(
         plots, label='{exp}', title='Energy vs A for N={}'.format(n),
         xlabel='A', ylabel='Energy (MeV)', sort_key=lambda p: p[3]['exp'],

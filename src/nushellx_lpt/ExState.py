@@ -1,3 +1,6 @@
+"""ExState.py
+Definition for a single state from a *.lpt file
+"""
 from __future__ import division, print_function, unicode_literals
 from collections import namedtuple
 
@@ -5,8 +8,9 @@ from parse import half_int_float_to_str as to_str
 
 
 # noinspection PyClassHasNoInit
-class Shell(namedtuple('ShellLpt',
-                       ['NJ', 'E', 'Ex', 'J', 'Tz', 'p', 'lowest_Ex', 'name'])):
+class ExState(namedtuple(
+    'ExState', ['NJ', 'E', 'Ex', 'J', 'Tz', 'p', 'lowest_Ex', 'name']
+)):
     """Holds the body data for *.lpt files
     """
     __slots__ = ()

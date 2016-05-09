@@ -30,7 +30,7 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
             parent_directory=parent_directory,
             exp_list=exp_list, exp_filter_fn=exp_filter_fn,
             _exp_type=ExpNcsmVceLpt,
-            _regex_filename=_RGX_FNAME,
+            _regex_fname_lpt=_RGX_FNAME,
             _regex_ggparent_dir=_RGX_DNAME_GGP
         )
 

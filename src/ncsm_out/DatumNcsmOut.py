@@ -101,7 +101,7 @@ class DatumNcsmOut(Datum):
     def __init__(self, directory, exp, files):
         """Initializes the Datum. Typically this would be handled by the
         DataMap (e.g. DataMapNcmOut), so the user generally need not concern
-        theirself with this.
+        their self with this.
         :param directory: directory in which to initialize the datum
         :param exp: exp for the datum, which uniquely matches to its data
         :param files: list of relevant file paths to be parsed into the datum
