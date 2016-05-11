@@ -32,7 +32,8 @@ The following should be done to prepare for usage:
 2. Get familiar with the data defintions used.
 
 ### Data definitions
-**_Plot_**:
+**_Plot_**:  
+
    single curve defined by a 4-tuple of the form
 
    ```
@@ -48,7 +49,8 @@ The following should be done to prepare for usage:
    * `const_dict`: dictionary of named constants related to the
    particular curve
    
-**_Fit function_**:
+**_Fit function_**:  
+
    (aka fitfn, `FitFunction`) callable object used for
    fitting, which takes the form
 
