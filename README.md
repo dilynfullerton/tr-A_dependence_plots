@@ -32,11 +32,18 @@ The following should be done to prepare for usage:
 2. Get familiar with the data defintions used.
 
 ### Data definitions
-**_Fit function_**: (aka fitfn, `FitFunction`) Callable object used for
+**_Plot_**: single curve defined by a 4-tuple of the form
+
+```python
+(x_array, y_array, const_list, const_dict)
+```
+
+
+**_Fit function_**: (aka fitfn, `FitFunction`) callable object used for
 fitting, which takes the form
 
 ```python
-f(x, params, const_list, const_dict)
+(x, params, const_list, const_dict) -> y
 ```
 where
 * `x`: value of the independent variable; a real number
@@ -46,6 +53,13 @@ depends on \(to be optimized\)
 **_plot_** or optimization
 * `const_dict`: dictionary of named constants related to the
 particular **_plot_** or optimization
+* `y`: value of the dependent variable (the fit); a real number
+A **_fit function_** has a field
+```python
+self.num_fit_params
+```,
+which gives the number of fit parameters necessary to evaluate the
+function.
 
 _Coming soon: MORE_
 
