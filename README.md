@@ -87,8 +87,8 @@ next_plot = t2(*t1(*plot))
 ```
 Or it may be done using `compose_transforms` from `transforms.py`:
 ```python
-# Apply t1 then t2
 from transforms import compose_transforms
+# Apply t1 then t2
 t_comp = compose_transforms([t2, t1])
 next_plot = t_comp(*plot)
 ```
