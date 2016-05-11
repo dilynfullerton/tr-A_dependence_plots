@@ -60,8 +60,8 @@ t(x_array, y_array, *args) -> (next_x, next_y, *args)
 where
 * `x_array`: (see **_plot_** definition)
 * `y_array`: (see **_plot_** definition)
-* `new_x`: transformed x array
-* `new_y`: transformed y array
+* `next_x`: transformed x array
+* `next_y`: transformed y array
 * `*args`: other arguments, which are unchanged by the
 transformation (but may be referenced by the transformation).
 
