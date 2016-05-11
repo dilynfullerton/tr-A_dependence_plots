@@ -163,7 +163,7 @@ function.
 
 _Coming soon._
 
-##### Composition:
+##### Combination:
 
 _Coming soon._
 
