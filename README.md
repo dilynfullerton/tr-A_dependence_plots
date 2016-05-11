@@ -84,8 +84,9 @@ This may be done manually:
 ```python
 next_plot = t2(*t1(*plot))
 ```
-Or it may be done using `compose_transforms`:
+Or it may be done using `compose_transforms` from `transforms.py`:
 ```python
+from transforms import compose_transforms
 t_comp = compose_transforms([t2, t1])
 next_plot = t_comp(*plot)
 ```
