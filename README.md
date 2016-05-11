@@ -43,7 +43,11 @@ git clone https://github.com/dilynfullerton/tr-A_depdendence_plots.git
 
 #### _Plot_:
 
-single curve defined by a 4-tuple.
+single curve defined by a 4-tuple.  
+Unfortunately the extent of my creativity has its limits.
+The use of the word "plot" is kind of subtle, as it is more
+commonly attributed to a visual figure, while I use it to describe
+a particular curve independent of a figure.
 
 ##### Form:
 
