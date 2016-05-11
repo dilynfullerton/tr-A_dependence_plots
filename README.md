@@ -3,12 +3,14 @@ _Coming soon_: MORE information about this stuff. Oooh weee! I can't wait
 
 ### Overview
 ---
+
 _Coming soon._
 
 ### Dependencies
 ---
 
 #### Required:
+
 The following are required for using the full functionality of this program:
 
 * [python 2](https://www.python.org/downloads) (2.7 or higher)
@@ -18,6 +20,7 @@ The following are required for using the full functionality of this program:
   * numpy
 
 #### Recommended:
+
 All of the above requirements and more are included in the Anaconda
 distribution.
 
@@ -25,6 +28,7 @@ distribution.
 
 ### Setup
 ---
+
 The following should be done to prepare for usage:
 
 1. Clone this repository to the desired directory.
@@ -36,8 +40,11 @@ git clone https://github.com/dilynfullerton/tr-A_depdendence_plots.git
 
 ### Data definitions
 ---
-#### _Plot_:  
+
+#### _Plot_:
+
 single curve defined by a 4-tuple.
+
 ##### Form:
 
 ```
@@ -53,9 +60,11 @@ curve
 particular curve
 
 #### _Plot transform_:
+
 (aka **_transform_**) callable object that performs a transformation
 on a curve or **_plot_**.  
 See `transforms.py`.
+
 ##### Form:
 
 ```
@@ -67,6 +76,8 @@ t(x_array, y_array, *args) -> (next_x, next_y, *args)
 * `next_y`: transformed y array
 * `*args`: other arguments, which are unchanged by the
 transformation (but may be referenced by the transformation).
+
+##### Using with _plot_:
 
 The inclusion of `args` is particularly convenient for working with
 a **_plot_**.
@@ -96,6 +107,7 @@ next_plot = t_comp(*plot)
 ```
 
 #### _Plot super transform_:
+
 (aka **_super transform_**) callable object that performs a
 transformation on a list of **_plot_**. This is a
 generalization of **_plot transform_**.
