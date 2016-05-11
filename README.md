@@ -43,7 +43,6 @@ single curve defined by a 4-tuple.
 ```
 (x_array, y_array, const_list, const_dict)
 ```
-where
 * `x_array`: ordered numpy array specifying the values of the
 independent variable
 * `y_array`: ordered numpy array specifying the values of the
@@ -62,7 +61,6 @@ See `transforms.py`.
 ```
 t(x_array, y_array, *args) -> (next_x, next_y, *args)
 ```
-where
 * `x_array`: (see **_plot_** definition)
 * `y_array`: (see **_plot_** definition)
 * `next_x`: transformed x array
@@ -102,7 +100,6 @@ See `transforms_s.py`.
 ```
 st(list_of_plot) -> next_list_of_plot
 ```
-where
 * `list_of_plot`: list of **_plot_**
 * `next_list_of_plot`: transformed list of **_plot_**
 
@@ -114,7 +111,6 @@ See `FitFunction.py`.
 ```
 f(x, params, const_list, const_dict) -> y
 ```
-where
 * `x`: value of the independent variable; a real number
 * `params`: list of parameters the functional form of the fit
 depends on \(to be optimized\)
