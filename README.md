@@ -82,10 +82,12 @@ Another benefit of the above definition is that a series of
 **_transform_** can be composed.  
 This may be done manually:
 ```python
+# Apply t1 then t2
 next_plot = t2(*t1(*plot))
 ```
 Or it may be done using `compose_transforms` from `transforms.py`:
 ```python
+# Apply t1 then t2
 from transforms import compose_transforms
 t_comp = compose_transforms([t2, t1])
 next_plot = t_comp(*plot)
