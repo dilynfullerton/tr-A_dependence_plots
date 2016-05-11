@@ -126,7 +126,8 @@ st_comp = compose_super_transforms([st2, st1])
 next_list_of_plot = st_comp(list_of_plot)
 ```
 
-#### _Fit function_:  
+#### _Fit function_:
+
 (aka **_fitfn_**, `FitFunction`) callable object used for fitting.  
 See `FitFunction.py`.
 
@@ -146,10 +147,36 @@ A **_fit function_** `f` has the field `f.num_fit_params`,
 which gives the number of fit parameters necessary to evaluate the
 function.
 
-_Coming soon: MORE_
-	
+##### Dependence on a constant:
+
+_Coming soon._
+
+##### Composition:
+
+_Coming soon._
+
+#### _Exp_:
+
+_Coming soon._
+
+#### _DataMap_:
+
+See `DataMap.py`.
+_Coming soon._
+
+#### _Datum_:
+
+See `Datum.py`
+_Coming soon._
+
+#### _Metafitter_:
+
+See `metafit.py`
+_Coming soon._
+
 ### Usage
 ---
+
 _Coming soon._
 
 ### Future developments
