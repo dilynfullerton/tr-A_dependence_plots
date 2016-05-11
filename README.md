@@ -33,7 +33,8 @@ The following should be done to prepare for usage:
 
 ### Data definitions
 #### _Plot_:  
-single curve defined by a 4-tuple of the form
+single curve defined by a 4-tuple.
+##### Form:
 
 ```
 (x_array, y_array, const_list, const_dict)
@@ -47,10 +48,35 @@ depenent variable (same length as `x_array`)
 curve
 * `const_dict`: dictionary of named constants related to the
 particular curve
-   
+
+#### _Plot transform_:
+(aka transform) callable object that performs a transformation on a
+curve or **_plot_**.
+##### Form:
+
+```
+t(x_array, y_array, *args) -> (new_x, new_y, *args)
+```
+where
+* `x_array`: (see **_plot_** definition)
+* `y_array`: (see **_plot_** definition)
+* `new_x`: transformed x array
+* `new_y`: transformed y array
+* `*args`: other arguments, which are unchanged by the
+transformation (but may be referenced by the transformation).
+
+The inclusion of `args` is particularly convenient for working with
+a **_plot_**.
+```python
+new_plot = t(*plot)
+```
+Alternatively, a **_transform_** could be used independently of
+a **_plot_**, as long as `args` is not referenced by the
+**_transform_**.
+
 #### _Fit function_:  
-(aka fitfn, `FitFunction`) callable object used for
-fitting, which takes the form
+(aka fitfn, `FitFunction`) callable object used for fitting.
+##### Form:
 
 ```
 f(x, params, const_list, const_dict) -> y
