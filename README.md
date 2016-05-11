@@ -32,39 +32,40 @@ The following should be done to prepare for usage:
 2. Get familiar with the data defintions used.
 
 ### Data definitions
-**_Plot_**: single curve defined by a 4-tuple of the form
+**_Plot_**:
+   single curve defined by a 4-tuple of the form
 
-```
-(x_array, y_array, const_list, const_dict)
-```
-where
-* `x_array`: ordered numpy array specifying the values of the
-independent variable
-* `y_array`: ordered numpy array specifying the values of the
-depenent variable (same length as `x_array`)
-* `const_list`: ordered list of constants related to the particular
-**_plot_** or optimization
-* `const_dict`: dictionary of named constants related to the
-particular **_plot_** or optimization
+   ```
+   (x_array, y_array, const_list, const_dict)
+   ```
+   where
+   * `x_array`: ordered numpy array specifying the values of the
+   independent variable
+   * `y_array`: ordered numpy array specifying the values of the
+   depenent variable (same length as `x_array`)
+   * `const_list`: ordered list of constants related to the particular
+   curve
+   * `const_dict`: dictionary of named constants related to the
+   particular curve
+   
+**_Fit function_**:
+   (aka fitfn, `FitFunction`) callable object used for
+   fitting, which takes the form
 
+   ```
+   f(x, params, const_list, const_dict) -> y
+   ```
+   where
+   * `x`: value of the independent variable; a real number
+   * `params`: list of parameters the functional form of the fit
+   depends on \(to be optimized\)
+   * `const_list`: (see **_plot_** definition)
+   * `const_dict`: (see **_plot_** definition)
+   * `y`: value of the dependent variable (the fit); a real number
 
-**_Fit function_**: (aka fitfn, `FitFunction`) callable object used for
-fitting, which takes the form
-
-```
-f(x, params, const_list, const_dict) -> y
-```
-where
-* `x`: value of the independent variable; a real number
-* `params`: list of parameters the functional form of the fit
-depends on \(to be optimized\)
-* `const_list`: (see **_plot_** definition)
-* `const_dict`: (see **_plot_** definition)
-* `y`: value of the dependent variable (the fit); a real number
-
-A **_fit function_** `f` has the field `f.num_fit_params`,
-which gives the number of fit parameters necessary to evaluate the
-function.
+   A **_fit function_** `f` has the field `f.num_fit_params`,
+   which gives the number of fit parameters necessary to evaluate the
+   function.
 
 _Coming soon: MORE_
 	
