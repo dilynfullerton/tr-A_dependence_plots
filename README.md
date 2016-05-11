@@ -50,8 +50,8 @@ curve
 particular curve
 
 #### _Plot transform_:
-(aka transform) callable object that performs a transformation on a
-curve or **_plot_**.
+(aka **_transform_**) callable object that performs a transformation
+on a curve or **_plot_**.
 ##### Form:
 
 ```
@@ -75,7 +75,7 @@ a **_plot_**, as long as `args` is not referenced by the
 **_transform_**.
 
 #### _Fit function_:  
-(aka fitfn, `FitFunction`) callable object used for fitting.
+(aka **_fitfn_**, `FitFunction`) callable object used for fitting.
 ##### Form:
 
 ```
