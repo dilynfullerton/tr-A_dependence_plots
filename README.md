@@ -1,4 +1,5 @@
 # tr-A_dependence_plots
+
 _Coming soon_: MORE information about this stuff. Oooh weee! I can't wait
 
 ### Overview
@@ -31,7 +32,7 @@ distribution.
 
 The following should be done to prepare for usage:
 
-1. Clone this repository to the desired directory.
+1. Clone this repository to the desired directory.  
 
 ```bash
 git clone https://github.com/dilynfullerton/tr-A_depdendence_plots.git
