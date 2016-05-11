@@ -32,24 +32,20 @@ The following should be done to prepare for usage:
 2. Get familiar with the data defintions used.
 
 ### Data definitions
-*_Fit function_*: (aka fitfn, `FitFunction`) Callable object used for
+**_Fit function_**: (aka fitfn, `FitFunction`) Callable object used for
 fitting, which takes the form
 
 ```python
 f(x, params, const_list, const_dict)
 ```
 where
-* `x`  
-value of the independent variable; a real number
-* `params`  
-list of parameters the functional form of the fit depends on \(to be
-optimized\)
-* `const_list`  
-ordered list of constants related to the particular *_plot_* or
-optimization
-* `const_dict`  
-dictionary of named constants related to the particulare *_plot_* or
-optimization
+* `x`: value of the independent variable; a real number
+* `params`: list of parameters the functional form of the fit
+depends on \(to be optimized\)
+* `const_list`: ordered list of constants related to the particular
+**_plot_** or optimization
+* `const_dict`: dictionary of named constants related to the
+particular **_plot_** or optimization
 
 _Coming soon: MORE_
 
