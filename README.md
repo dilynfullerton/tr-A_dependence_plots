@@ -58,9 +58,9 @@ on a curve or **_plot_**.
 See `transforms.py`.
 ##### Form:
 
-```
-t(x_array, y_array, *args) -> (next_x, next_y, *args)
-```
+    ```
+    t(x_array, y_array, *args) -> (next_x, next_y, *args)
+    ```
 * `x_array`: (see **_plot_** definition)
 * `y_array`: (see **_plot_** definition)
 * `next_x`: transformed x array
@@ -70,9 +70,10 @@ transformation (but may be referenced by the transformation).
 
 The inclusion of `args` is particularly convenient for working with
 a **_plot_**.
-```python
-transformed_plot = t(*plot)
-```
+
+    ```python
+    transformed_plot = t(*plot)
+    ```
 Alternatively, a **_transform_** could be used independently of
 a **_plot_**, as long as `args` is not referenced by the
 **_transform_**.  
@@ -81,39 +82,60 @@ a **_plot_**, as long as `args` is not referenced by the
 Another benefit of the above definition is that a series of
 **_transform_** can be composed.  
 This may be done manually:
-```python
-# Apply t1 then t2
-next_plot = t2(*t1(*plot))
-```
+
+    ```python
+    # Apply t1 then t2
+    next_plot = t2(*t1(*plot))
+    ```
 Or it may be done using `compose_transforms` from `transforms.py`:
-```python
-from transforms import compose_transforms
-# Apply t1 then t2
-t_comp = compose_transforms([t2, t1])
-next_plot = t_comp(*plot)
-```
+
+    ```python
+    from transforms import compose_transforms
+    # Apply t1 then t2
+    t_comp = compose_transforms([t2, t1])
+    next_plot = t_comp(*plot)
+    ```
 
 #### _Plot super transform_:
 (aka **_super transform_**) callable object that performs a
 transformation on a list of **_plot_**. This is a
 generalization of **_plot transform_**.
 See `transforms_s.py`.
+
 ##### Form:
 
-```
-st(list_of_plot) -> next_list_of_plot
-```
+    ```
+    st(list_of_plot) -> next_list_of_plot
+    ```
 * `list_of_plot`: list of **_plot_**
 * `next_list_of_plot`: transformed list of **_plot_**
+
+##### Composition:
+A series of **_super transform_** may be composed.
+This may be done manually:
+
+    ```python
+	# Apply st1 then st2
+	next_list_of_plot = st2(st1(list_of_plot))
+	```
+Or it may be done using `compose_super_transforms` from `transforms.py`
+
+    ```python
+	from transforms_s import compose_super_transforms
+	# Apply st1 then st2
+	st_comp = compose_super_transforms([st2, st1])
+	next_list_of_plot = st_comp(list_of_plot)
+	```
 
 #### _Fit function_:  
 (aka **_fitfn_**, `FitFunction`) callable object used for fitting.  
 See `FitFunction.py`.
+
 ##### Form:
 
-```
-f(x, params, const_list, const_dict) -> y
-```
+    ```
+    f(x, params, const_list, const_dict) -> y
+    ```
 * `x`: value of the independent variable; a real number
 * `params`: list of parameters the functional form of the fit
 depends on \(to be optimized\)
