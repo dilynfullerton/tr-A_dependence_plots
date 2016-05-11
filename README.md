@@ -34,7 +34,7 @@ The following should be done to prepare for usage:
 ### Data definitions
 **_Plot_**: single curve defined by a 4-tuple of the form
 
-```python
+```
 (x_array, y_array, const_list, const_dict)
 ```
 
@@ -42,7 +42,7 @@ The following should be done to prepare for usage:
 **_Fit function_**: (aka fitfn, `FitFunction`) callable object used for
 fitting, which takes the form
 
-```python
+```
 (x, params, const_list, const_dict) -> y
 ```
 where
@@ -54,11 +54,11 @@ depends on \(to be optimized\)
 * `const_dict`: dictionary of named constants related to the
 particular **_plot_** or optimization
 * `y`: value of the dependent variable (the fit); a real number
-A **_fit function_** has a field
+
+A **_fit function_** has the field
 ```python
 self.num_fit_params
 ```
-,
 which gives the number of fit parameters necessary to evaluate the
 function.
 
