@@ -118,7 +118,8 @@ This may be done manually:
 	# Apply st1 then st2
 	next_list_of_plot = st2(st1(list_of_plot))
 	```
-Or it may be done using `compose_super_transforms` from `transforms.py`
+Or it may be done using `compose_super_transforms` from
+`transforms.py`:
 
     ```python
 	from transforms_s import compose_super_transforms
