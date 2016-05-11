@@ -55,7 +55,7 @@ curve or **_plot_**.
 ##### Form:
 
 ```
-t(x_array, y_array, *args) -> (new_x, new_y, *args)
+t(x_array, y_array, *args) -> (next_x, next_y, *args)
 ```
 where
 * `x_array`: (see **_plot_** definition)
@@ -68,7 +68,7 @@ transformation (but may be referenced by the transformation).
 The inclusion of `args` is particularly convenient for working with
 a **_plot_**.
 ```python
-new_plot = t(*plot)
+transformed_plot = t(*plot)
 ```
 Alternatively, a **_transform_** could be used independently of
 a **_plot_**, as long as `args` is not referenced by the
