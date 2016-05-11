@@ -2,9 +2,11 @@
 _Coming soon_: MORE information about this stuff. Oooh weee! I can't wait
 
 ### Overview
+---
 _Coming soon._
 
 ### Dependencies
+---
 
 #### Required:
 The following are required for using the full functionality of this program:
@@ -22,6 +24,7 @@ distribution.
 * [Anaconda](https://www.continuum.io/downloads)
 
 ### Setup
+---
 The following should be done to prepare for usage:
 
 1. Clone this repository to the desired directory.
@@ -32,6 +35,7 @@ The following should be done to prepare for usage:
 2. Get familiar with the data defintions used.
 
 ### Data definitions
+---
 #### _Plot_:  
 single curve defined by a 4-tuple.
 ##### Form:
@@ -96,7 +100,9 @@ function.
 _Coming soon: MORE_
 	
 ### Usage
+---
 _Coming soon._
 
 ### Future developments
+---
 _Coming soon._
