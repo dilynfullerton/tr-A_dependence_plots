@@ -57,12 +57,13 @@ particular **_plot_** or optimization
 A **_fit function_** has a field
 ```python
 self.num_fit_params
-```,
+```
+,
 which gives the number of fit parameters necessary to evaluate the
 function.
 
 _Coming soon: MORE_
-
+	
 ### Usage
 _Coming soon._
 
