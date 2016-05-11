@@ -1,3 +1,7 @@
+"""op/TwoBodyInteraction.py
+Definition of namedtuple representation of a two-body matrix element
+<a b|V|c b>
+"""
 from __future__ import print_function, division, unicode_literals
 
 from collections import namedtuple

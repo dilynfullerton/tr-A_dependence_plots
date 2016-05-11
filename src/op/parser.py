@@ -1,6 +1,12 @@
-"""Functions for parsing *.op data files and generating maps from the data
+"""op/parser.py
+Functions for parsing *.op data files and generating maps from the data
 """
 from __future__ import print_function, division
+from constants import F_PARSE_OP_STR_CMNT as _CMNT_STR
+from constants import F_PARSE_OP_RGX_HERM as _RGX_H
+from constants import F_PARSE_OP_RGX_0B as _RGX_0BT
+from constants import F_PARSE_OP_RGX_1B as _RGX_1BT
+from constants import F_PARSE_OP_RGX_2B as _RGX_2BT
 from parse import elt_from_felts, filename_elts_list, index_of_line
 from parse import content_lines
 
@@ -62,7 +68,6 @@ def _ordered_lists_cured(ordered_lists):
     """Given a 4-tuple of lists of *.op file data, cures the elements of each
     line (list) by converting to integers, floats, etc, where appropriate
     based on the file format:
-
     (string) [HEADER]
     (float) (float) (float)
     (string) (float) [ZERO BODY]
@@ -87,36 +92,50 @@ def _ordered_lists_cured(ordered_lists):
 
 
 def _particles_to_trel_1b_map(cured_1bt_lists):
+    """Based on one body term line data, constructs a map
+        (particle1, particle2) -> 1 body term,
+    where particle1 is a 3 tuple containing (j, p, Tz)
+    :param cured_1bt_lists: list of one body term line data, which has been
+    converted into the correct types (floats, ints, etc)
+    """
     return {(p0, p1): trel for p0, p1, trel in cured_1bt_lists}
 
 
 def _interaction_to_trel_2b_map(cured_2bt_lists):
+    """Based on two body term line data, constructs a map
+        (particle1, particle2, (a, b, c, d)) -> 2 body term,
+    where 'particle1' and 'particle2' are 3-tuples (j, p, Tz)
+    :param cured_2bt_lists: list of two body term line data, which has been
+    converted into the correct types (floats, ints, etc)
+    """
     return {(tuple(l[0:3]), tuple(l[3:6]), tuple(l[6:10])): l[10]
             for l in cured_2bt_lists}
 
 
-def get_data(filepath, comment_str, regex_h, regex_0bt, regex_1bt, regex_2bt):
+def get_data(
+        filepath,
+        rgx_h=_RGX_H, rgx_0bt=_RGX_0BT, rgx_1bt=_RGX_1BT, rgx_2bt=_RGX_2BT
+):
     """Given a file path and other constants, retrieve the file data and
     return it in an ordered tuple
     :param filepath: string representation of the location of the file
-    :param comment_str: character representing a commented line
-    :param regex_h: the regular expression which matches the h header line
+    :param rgx_h: the regular expression which matches the h header line
     completely
-    :param regex_0bt: regular expression that matches the zero body line
+    :param rgx_0bt: regular expression that matches the zero body line
     completely
-    :param regex_1bt: regular expression that matches the one body header
+    :param rgx_1bt: regular expression that matches the one body header
     completely
-    :param regex_2bt: regular expression that matches the two body header
+    :param rgx_2bt: regular expression that matches the two body header
     completely
-    :return:
+    :return: (1st line, 2nd line, zero body term, (p1, p2)->1bt map,
+    (p1,p2,interaction)->2bt map
     """
     data = _ordered_lists_cured(_ordered_lists(_ordered_lines(
-        content=list(content_lines(filepath=filepath,
-                                   comment_str=comment_str)),
-        regex_h=regex_h,
-        regex_0bt=regex_0bt,
-        regex_1bt=regex_1bt,
-        regex_2bt=regex_2bt
+        content=list(content_lines(filepath=filepath, comment_str=_CMNT_STR)),
+        regex_h=rgx_h,
+        regex_0bt=rgx_0bt,
+        regex_1bt=rgx_1bt,
+        regex_2bt=rgx_2bt
     )))
     h_head, h_line = data[0]
     zbt = data[1]

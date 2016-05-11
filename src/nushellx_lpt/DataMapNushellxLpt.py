@@ -21,19 +21,17 @@ class DataMapNushellxLpt(DataMap):
     # noinspection PyUnusedLocal
     def __init__(
             self, parent_directory, exp_list=None, exp_filter_fn=None,
-            _regex_fname_lpt=_RGX_FNAME, _regex_ggparent_dir=_RGX_DNAME_GGP,
+            _rgx_fname_lpt=_RGX_FNAME, _rgx_dname_ggparent_dir=_RGX_DNAME_GGP,
             _exp_type=ExpNushellxLpt, _datum_type=DatumLpt, **kwargs
     ):
-        """
-
-        Initialize the DataMap in the given parent_directory
+        """Initialize the DataMap in the given parent_directory
         :param parent_directory: directory in which to recursively retrieve
         files
         :param exp_list: list of exp for which to gather data
         :param exp_filter_fn: function with which to filter files by their exp
-        :param _regex_fname_lpt: regular expression that fully matches a
+        :param _rgx_fname_lpt: regular expression that fully matches a
         *.lpt file name
-        :param _regex_ggparent_dir: regular expression that fully matches the
+        :param _rgx_dname_ggparent_dir: regular expression that fully matches the
         great-grandparent directory to the *.lpt file. Note: This is
         inconsistent with calling the parent_directory the "parent" directory,
         as the parent directory is actually the main directory from which
@@ -43,8 +41,8 @@ class DataMapNushellxLpt(DataMap):
         :param _datum_type: type for the Datum.
         :param kwargs: other arguments to pass to DatumLpt
         """
-        self._regex_filename = _regex_fname_lpt
-        self._regex_ggp_dirname = _regex_ggparent_dir
+        self._regex_filename = _rgx_fname_lpt
+        self._regex_ggp_dirname = _rgx_dname_ggparent_dir
         super(DataMapNushellxLpt, self).__init__(
             parent_directory=parent_directory,
             exp_type=_exp_type, datum_type=_datum_type,

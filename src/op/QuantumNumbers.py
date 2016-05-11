@@ -1,3 +1,6 @@
+"""op/QuantumNumbers.py
+Definition of namedtuple representation of a particle state's quantum numbers
+"""
 from __future__ import print_function, division, unicode_literals
 
 from collections import namedtuple

@@ -1,3 +1,7 @@
+"""op/ExpOp.py
+Definition for the namedtuples representation fo a set of *.op files from
+which to construct a Datum
+"""
 from __future__ import print_function, division, unicode_literals
 
 from collections import namedtuple
