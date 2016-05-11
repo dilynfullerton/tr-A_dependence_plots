@@ -55,7 +55,8 @@ particular curve
 
 #### _Plot transform_:
 (aka **_transform_**) callable object that performs a transformation
-on a curve or **_plot_**.
+on a curve or **_plot_**.  
+See `transforms.py`.
 ##### Form:
 
 ```
@@ -76,10 +77,38 @@ transformed_plot = t(*plot)
 ```
 Alternatively, a **_transform_** could be used independently of
 a **_plot_**, as long as `args` is not referenced by the
-**_transform_**.
+**_transform_**.  
+
+##### Composition:
+Another benefit of the above definition is that a series of
+**_transform_** can be composed.  
+This may be done manually:
+```python
+next_plot = t2(*t1(*plot))
+```
+Or it may be done using `compose_transforms`:
+```python
+t_comp = compose_transforms([t2, t1])
+next_plot = t_comp(*plot)
+```
+
+#### _Plot super transform_:
+(aka **_super transform_**) callable object that performs a
+transformation on a list of **_plot_**. This is a
+generalization of **_plot transform_**.
+See `transforms_s.py`.
+##### Form:
+
+```
+st(list_of_plot) -> next_list_of_plot
+```
+where
+* `list_of_plot`: list of **_plot_**
+* `next_list_of_plot`: transformed list of **_plot_**
 
 #### _Fit function_:  
-(aka **_fitfn_**, `FitFunction`) callable object used for fitting.
+(aka **_fitfn_**, `FitFunction`) callable object used for fitting.  
+See `FitFunction.py`.
 ##### Form:
 
 ```
