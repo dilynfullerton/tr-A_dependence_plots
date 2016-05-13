@@ -20,7 +20,7 @@ plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
         (16, 17, 18),
     ],
-    nmax=2, n1=15, n2=15,
+    nmax=0, n1=15, n2=15,
     nshell=2, ncomponent=2, scalefactor=1.00, z=8,
     # transform=filter_evens,
 )
