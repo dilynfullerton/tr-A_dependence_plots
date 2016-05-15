@@ -37,6 +37,8 @@ def get_ground_state_j(mass, nshell):
         return 0.0
     elif nshell == 1:
         return 1.5
+    elif nshell == 2:
+        return 2.5
     else:
         return None
 

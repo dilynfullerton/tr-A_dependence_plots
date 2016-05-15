@@ -135,10 +135,6 @@ def _state_line_data(state_line):
     return cbl
 
 
-class LptParseWarning(Warning):
-    pass
-
-
 def _state_lines_data(state_lines):
     """Given a list of state lines (raw string representations of the
     state lines), maps the function _state_line_data onto this list to get
@@ -147,16 +143,15 @@ def _state_lines_data(state_lines):
     raw string representation of a state line from a *.lpt file
     """
     cured_body_lists = list()
-    parsing_error = False
+    parse_errors = list()
     for row in state_lines:
         try:
-            cured_body_lists.append(_state_line_data(row))
+            state_line_data = _state_line_data(state_line=row)
+            cured_body_lists.append(state_line_data)
         except ValueError:
-            parsing_error = True
+            parse_errors += row
             continue
-    if parsing_error:
-        raise LptParseWarning()
-    return cured_body_lists
+    return cured_body_lists, parse_errors
 
 
 # MAPS
@@ -196,14 +191,16 @@ def mass_to_n_to_state_data_map(fpath_list):
     problem_files = list()
     for f in fpath_list:
         mass = a_z(f)[0]
-        try:
-            nb_map = _n_to_state_data_map(_state_lines_data(
-                state_lines=_state_lines(filepath=f)))
-        except LptParseWarning:
+        state_lines_data, parse_errors = _state_lines_data(
+            state_lines=_state_lines(filepath=f))
+        if len(parse_errors) > 0:
             problem_files.append(f)
+        nb_map = _n_to_state_data_map(state_lines_data=state_lines_data)
         mnb_map[mass] = nb_map
+    if len(problem_files) > 0:
+        print('Problem parsing files:')
     for pf in problem_files:
-        warn('Problem parsing file: {}'.format(pf))
+        print('    {}'.format(pf))
     return mnb_map
 
 

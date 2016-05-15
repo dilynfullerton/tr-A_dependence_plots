@@ -3,7 +3,6 @@ Main file to store data from a *.lpt file. (see Datum.py)
 """
 from __future__ import print_function, division, unicode_literals
 
-from warnings import warn
 from Datum import Datum
 from nushellx_lpt.ExState import ExState
 from nushellx_lpt.parser import mass_to_spe_line_data_map as mhd_map
@@ -118,10 +117,10 @@ class DatumLpt(Datum):
             j0 = get_ground_state_j(mass=mass, nshell=nshell)
             for n, ex in sorted(n_to_ex_state_map.items(), key=lambda i: i[0]):
                 if j0 is None:
-                    warn(
+                    print(
                         '\nGround state angular momentum not known for '
-                        'A={}, nshell={}.'
-                        'Using state with lowest energy.'.format(mass, nshell)
+                        'A={}, nshell={}.\n'
+                        'nUsing state with lowest energy.'.format(mass, nshell)
                     )
                     m[mass] = ex.E
                     break
@@ -129,9 +128,12 @@ class DatumLpt(Datum):
                     m[mass] = ex.E
                     break
             else:
-                raise GroundStateEnergyNotFoundException(
-                    '\nGround state energy for A={} could not be found in {}'
-                    ''.format(mass, self.files))
+                files_str = '\n    '.join(self.files)
+                message = (
+                    '\nGround state energy for A={} could not be found in \n'
+                    '    {}'
+                ).format(mass, files_str)
+                raise GroundStateEnergyNotFoundException(message)
         return m
 
     def mass_ground_energy_map(self, nshell):
