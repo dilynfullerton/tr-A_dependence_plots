@@ -70,13 +70,11 @@ def plot_a_aeff_ground_energy_vs_nmax(
         xarr, yarr = map_to_arrays(x_to_y_map)
         plots.append(
             (xarr, yarr, list(), {'name': 'A={}, Aeff={}'.format(*a_aeff)}))
-
     if transform is not None:
         next_plots = list()
         for plot in plots:
             next_plots.append(transform(*plot))
         plots = next_plots
-
     plots = sorted(plots, key=lambda p0: p0[3]['name'])
     title = 'NCSM ground state energy vs Nmax'
     labels = [p[3]['name'] for p in plots]
@@ -84,7 +82,6 @@ def plot_a_aeff_ground_energy_vs_nmax(
     savename = 'ncsm_A,Aeff{}_Nmax{}_{}_{}_shell{}_dim{}_scale{}'.format(
         a_aeff_pairs, nmax_range, n1, n2, nshell, ncomponent, scale
     ).replace(' ', '')
-
     if do_plot:
         save_plot_data_file(
             plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
@@ -148,13 +145,11 @@ def plot_ncsm_exact_for_nmax_and_scale(
                 (np.array(x_ex), np.array(y_ex), list(),
                  {'name': 'NCSM exact, Nmax={}, scale={}'.format(nmax, scale)})
             )
-
     if transform is not None:
         next_plots = list()
         for plot in plots:
             next_plots.append(transform(*plot))
         plots = next_plots
-
     plots = sorted(plots, key=lambda p0: p0[3]['name'])
     title = 'NCSM exact ground state energies'
     labels = [p[3]['name'] for p in plots]
@@ -162,7 +157,6 @@ def plot_ncsm_exact_for_nmax_and_scale(
     savename = 'ncsm_exact_Nmax{}_scale{}_{}_{}_shell{}_dim{}'.format(
         nmax_range, list(scale_range), n1, n2, nshell, ncomponent,
     ).replace(' ', '')
-
     if do_plot:
         save_plot_data_file(
             plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
@@ -345,8 +339,7 @@ def plot_ground_state_prescription_error_vs_exact(
         dat_exact = dat_list.pop()
     else:
         raise DataNotFoundForExpException(
-            '\nNo data was found matching the given parameters'
-        )
+            '\nNo data was found matching the given parameters')
     ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
         nshell=nshell, nmax=nmax, z=z)
     x_ex, y_ex = [list(a) for a in map_to_arrays(ncsm_exact)]
