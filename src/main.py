@@ -1,6 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 from matplotlib import pyplot as plt
-from transforms import cubic_spline, filter_evens
+from transforms import cubic_spline, filter_evens, compose_transforms
 from ncsm_out.plots import plot_ground_state_prescription_error_vs_exact
 from ncsm_out.plots import (
     plot_ground_state_prescription_error_vs_ncsm_with_aeff)
@@ -11,8 +11,10 @@ plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[
         (4, 5, 6),
     ],
-    nmax=2, n1=15, n2=15,
+    nmax=0, n1=15, n2=15,
     nshell=1, ncomponent=2, scalefactor=1.00, incl_proton=True, z=2,
+    # transform=compose_transforms([cubic_spline(500), filter_evens]),
+    # transform=cubic_spline(500),
     # transform=filter_evens,
 )
 
@@ -22,6 +24,8 @@ plot_ground_state_prescription_error_vs_exact(
 #     ],
 #     nmax=0, n1=15, n2=15,
 #     nshell=2, ncomponent=2, scalefactor=1.00, z=8,
+#     # transform=compose_transforms([cubic_spline(500), filter_evens]),
+#     # transform=cubic_spline(500),
 #     # transform=filter_evens,
 # )
 

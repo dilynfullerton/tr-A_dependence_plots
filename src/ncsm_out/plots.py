@@ -23,6 +23,10 @@ from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 # todo: (see how this was done in vce_A_depdendence_toy
 
 
+class DataNotFoundForExpException(Exception):
+    pass
+
+
 def plot_a_aeff_ground_energy_vs_nmax(
         a_aeff_pairs, nmax_range, scale=1.0,
         z=2, n1=15, n2=15, nshell=1, ncomponent=2,
@@ -336,7 +340,13 @@ def plot_ground_state_prescription_error_vs_exact(
             parent_directory=_dpath_ncsm,
             exp_list=[(z, n1, n2, scalefactor, incl_proton)],
         )
-    dat_exact = dm_exact.map.values()[0]
+    dat_list = list(dm_exact.map.values())
+    if len(dat_list) > 0:
+        dat_exact = dat_list.pop()
+    else:
+        raise DataNotFoundForExpException(
+            '\nNo data was found matching the given parameters'
+        )
     ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
         nshell=nshell, nmax=nmax, z=z)
     x_ex, y_ex = [list(a) for a in map_to_arrays(ncsm_exact)]
