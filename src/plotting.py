@@ -6,10 +6,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from os import path
-
 import numpy as np
 from matplotlib import pyplot as plt, colors, cm
-
 from FitFunction import FitFunction
 from constants import PLOT_CMAP, LEGEND_SIZE, PLOT_FIGSIZE
 

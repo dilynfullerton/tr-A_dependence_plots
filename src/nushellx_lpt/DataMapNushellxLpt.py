@@ -31,12 +31,13 @@ class DataMapNushellxLpt(DataMap):
         :param exp_filter_fn: function with which to filter files by their exp
         :param _rgx_fname_lpt: regular expression that fully matches a
         *.lpt file name
-        :param _rgx_dname_ggparent_dir: regular expression that fully matches the
-        great-grandparent directory to the *.lpt file. Note: This is
-        inconsistent with calling the parent_directory the "parent" directory,
-        as the parent directory is actually the main directory from which
-        all files are gathered, whereas the "great-grandparent" directory, as
-        used here is the great-grandparent to a given *.lpt file.
+        :param _rgx_dname_ggparent_dir: regular expression that fully
+        matches the great-grandparent directory to the *.lpt file.
+        Note: This is inconsistent with calling the parent_directory
+        the "parent" directory, as the parent directory is actually the
+        main directory from which all files are gathered, whereas the
+        "great-grandparent" directory, as used here is the great-grandparent
+        to a given *.lpt file.
         :param _exp_type: type for the Exp.
         :param _datum_type: type for the Datum.
         :param kwargs: other arguments to pass to DatumLpt
