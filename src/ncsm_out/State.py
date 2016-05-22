@@ -6,12 +6,10 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class State(namedtuple('State', ['E', 'Ex', 'J', 'T'])):
+class State(namedtuple('State', ['E', 'J', 'T'])):
     """Stores the four data corresponding to a specific state
         E:
             energy
-        Ex:
-            excitation
         J:
             angular momentum
         T:

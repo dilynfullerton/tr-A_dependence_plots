@@ -7,8 +7,6 @@ from re import match
 from constants import F_PARSE_NCSMVCE_OUT_CMNT_STR as _CMNT_STR
 from constants import F_PARSE_NCSMVCE_OUT_RGX_LINE_Z as _RGX_LINE_Z
 from constants import F_PARSE_NCSMVCE_OUT_RGX_LINE_STATE as _RGX_LINE_STATE
-from constants import (F_PARSE_NCSMVCE_OUT_RGX_LINE_SPECTRUM as
-                       _RGX_LINE_SPECTRUM)
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_NHW as _RGX_NHW
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_SCALE as _RGX_SCALE
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_IPROT as _RGX_IPROT
@@ -64,7 +62,7 @@ def _a_aeff_nhw(filepath, split_char):
 def a_aeff_nhw_to_states_map(filepaths):
     """Based on a given list of *.out filepaths, constructs a map from
     (A, Aeff, Nhw) to the ordered list of states, each a tuple of
-    energy (E), excited energy (Ex), angular momentum (J), and isospin (T).
+    energy (E), angular momentum (J), and isospin (T).
     :param filepaths: list of filepaths from which to construct the mapping
     """
     a_aeff_nhw_to_states = dict()
@@ -75,14 +73,11 @@ def a_aeff_nhw_to_states_map(filepaths):
         for line in cl:
             if match(_RGX_LINE_STATE, line) is not None:
                 state_lines.append(line)
-            elif match(_RGX_LINE_SPECTRUM, line) is not None:
-                spectrum_lines.append(line)
         states_list = list()
-        for state_ln, spect_ln in zip(state_lines, spectrum_lines):
+        for state_ln in state_lines:
             state_elts = state_ln.split()
             i = state_elts.index('=') + 1
             e, j, t = [float(x) for x in state_elts[i::3]]
-            ex = float(spect_ln.split()[3])
-            states_list.append((e, ex, j, t))
+            states_list.append((e, j, t))
         a_aeff_nhw_to_states[(a, aeff, nhw)] = states_list
     return a_aeff_nhw_to_states
