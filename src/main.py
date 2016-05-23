@@ -1,6 +1,7 @@
 from __future__ import division, print_function, unicode_literals
 from matplotlib import pyplot as plt
-from transforms import cubic_spline, filter_evens, compose_transforms
+from transforms import cubic_spline, filter_evens, filter_odds
+from transforms import compose_transforms
 from ncsm_out.plots import plot_ground_state_prescription_error_vs_exact
 from ncsm_out.plots import (
     plot_ground_state_prescription_error_vs_ncsm_with_aeff)
@@ -16,6 +17,7 @@ from ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 #     # transform=compose_transforms([cubic_spline(500), filter_evens]),
 #     # transform=cubic_spline(500),
 #     # transform=filter_evens,
+#     # transform=filter_odds,
 # )
 
 plot_ground_state_prescription_error_vs_exact(
@@ -27,6 +29,7 @@ plot_ground_state_prescription_error_vs_exact(
     # transform=compose_transforms([cubic_spline(500), filter_evens]),
     # transform=cubic_spline(500),
     # transform=filter_evens,
+    # transform=filter_odds,
 )
 
 # plot_ground_state_prescription_error_vs_ncsm_with_aeff(

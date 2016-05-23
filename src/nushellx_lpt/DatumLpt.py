@@ -32,7 +32,6 @@ class DatumLpt(Datum):
         self._mass_header_map = None
         self._mass_n_body_map = None
         self._mass_zbt_map = None
-
         self._set_maps()
 
     def _set_maps(self):
@@ -103,7 +102,6 @@ class DatumLpt(Datum):
         """
         return {k: v[1] for k, v in self.mass_n_energy_map().items()}
 
-    # todo this only filters out incorrect ground states for EVEN mass numbers
     def mass_ground_ex_energy_map(self, nshell):
         """Given the shell, returns a map
             A -> ground energy
@@ -113,14 +111,13 @@ class DatumLpt(Datum):
         """
         m = dict()
         for mass, n_to_ex_state_map in self.mass_n_exstate_map().items():
-            # j0 = 0.0 if mass % 2 == 0 else 1.5  # todo is always true?
             j0 = get_ground_state_j(mass=mass, nshell=nshell)
             for n, ex in sorted(n_to_ex_state_map.items(), key=lambda i: i[0]):
                 if j0 is None:
                     print(
-                        '\nGround state angular momentum not known for '
+                        'Ground state angular momentum not known for '
                         'A={}, nshell={}.\n'
-                        'nUsing state with lowest energy.'.format(mass, nshell)
+                        'Using state with lowest energy.'.format(mass, nshell)
                     )
                     m[mass] = ex.E
                     break
@@ -130,7 +127,7 @@ class DatumLpt(Datum):
             else:
                 files_str = '\n    '.join(self.files)
                 message = (
-                    '\nGround state energy for A={} could not be found in \n'
+                    'Ground state energy for A={} could not be found in \n'
                     '    {}'
                 ).format(mass, files_str)
                 raise GroundStateEnergyNotFoundException(message)
