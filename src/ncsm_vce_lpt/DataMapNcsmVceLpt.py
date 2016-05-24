@@ -39,6 +39,57 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
 
     # todo: Only a mother could love this ugly method. There should be a
     # todo: better way to do this without passing all of these parameters
+    def aeff_eq_a_to_n_to_j_energy_map(
+            self, z, nmax, n1, n2, nshell, ncomponent, scalefactor=None,
+            incl_proton=True,
+    ):
+        """Returns a map
+            Aeff=A -> N -> (J, Energy)
+        where the Energy is that associated with index N from the lpt file
+        with the addition of the zero body term for the
+        prescription (A, A, A) with mass A.
+        :param z: proton number (Z)
+        :param nmax: oscillator truncation
+        :param n1: one-particle TBME interaction truncation
+        :param n2: two-particle TBME interaction truncation
+        :param nshell: major oscillator shell (0=s, 1=p, 2=sd, ...)
+        :param ncomponent: 1 -> neutrons, 2 -> protons & neutrons
+        :param scalefactor: factor by which off-diagonal coupling terms in
+        the interaction were scaled
+        :param incl_proton: whether or not proton interaction was included.
+        """
+        a_to_n_to_energy_map = dict()
+        for exp0 in self.map.keys():
+            presc = exp0.A_presc
+            if not (presc[0] == presc[1] == presc[2]):
+                continue
+            elif exp0.Z != z or exp0.Nmax != nmax:
+                continue
+            elif exp0.n1 != n1 or exp0.n2 != n2:
+                continue
+            elif exp0.nshell != nshell or exp0.ncomponent != ncomponent:
+                continue
+            elif exp0.scale != scalefactor or exp0.incl_proton != incl_proton:
+                continue
+            else:
+                a = presc[0]
+                dat = self[exp0]
+                mass_to_zbt_map = dat.mass_to_zbt_map()
+                mass_to_ex_states_map = dat.mass_to_ex_states_map()
+                if a in mass_to_zbt_map and a in mass_to_ex_states_map:
+                    if a not in a_to_n_to_energy_map:
+                        a_to_n_to_energy_map[a] = dict()
+                    zbt = mass_to_zbt_map[a]
+                    for ex_state in mass_to_ex_states_map[a]:
+                        j = ex_state.J
+                        e = ex_state.E + zbt
+                        a_to_n_to_energy_map[a][ex_state.N] = (j, e)
+                else:
+                    continue
+        return a_to_n_to_energy_map
+
+    # todo: Only a mother could love this ugly method. There should be a
+    # todo: better way to do this without passing all of these parameters
     def aeff_eq_a_to_ground_energy_map(
             self, z, nmax, n1, n2, nshell, ncomponent, scalefactor=None,
             incl_proton=True,
@@ -73,7 +124,7 @@ class DataMapNcsmVceLpt(DataMapNushellxLpt):
             else:
                 a = presc[0]
                 dat = self[exp0]
-                ground_energy_map = dat.mass_ground_energy_map(nshell=nshell)
+                ground_energy_map = dat.mass_to_ground_energy_map(nshell=nshell)
                 if a in ground_energy_map:
                     ground_energy = ground_energy_map[a]
                     aeff_eq_a_to_ground_energy[a] = ground_energy

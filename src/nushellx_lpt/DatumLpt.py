@@ -29,80 +29,80 @@ class DatumLpt(Datum):
         """
         super(DatumLpt, self).__init__(
             directory=directory, exp=exp, files=files)
-        self._mass_header_map = None
-        self._mass_n_body_map = None
-        self._mass_zbt_map = None
+        self._mass_to_spe_line_map = None
+        self._mass_to_ex_states_map = None
+        self._mass_to_zbt_map = None
         self._set_maps()
 
     def _set_maps(self):
-        self._set_mass_header_map()
-        self._set_mass_n_body_map()
-        self._set_mass_zbt_map()
+        self._set_mass_to_spe_line_map()
+        self._set_mass_to_ex_states_map()
+        self._set_mass_to_zbt_map()
 
-    def _set_mass_header_map(self):
+    def _set_mass_to_spe_line_map(self):
         try:
-            self._mass_header_map = mhd_map(self.files)
+            self._mass_to_spe_line_map = mhd_map(self.files)
         except ValueError:
-            self._mass_header_map = None
+            self._mass_to_spe_line_map = None
 
-    def _set_mass_n_body_map(self):
+    def _set_mass_to_ex_states_map(self):
         mass_n_body_map = mnbd_map(self.files)
         d = dict()
         for m, nb_map in mass_n_body_map.items():
-            if m not in d and len(nb_map) > 0:
-                d[m] = dict()
+            ex_states = list()
             for n, b in nb_map.items():
-                d[m][n] = ExState(*b)
-        self._mass_n_body_map = d
+                ex_states.append(ExState(n, *b))
+            d[m] = ex_states
+        self._mass_to_ex_states_map = d
 
-    def _set_mass_zbt_map(self):
-        self._mass_zbt_map = mass_zbt_map(fpath_list=self.files)
+    def _set_mass_to_zbt_map(self):
+        self._mass_to_zbt_map = mass_zbt_map(fpath_list=self.files)
 
-    def mass_header_map(self):
+    def mass_to_spe_line_map(self):
         """Returns a map
-            A -> header list,
+            A -> spe list,
         where the header list is the ordered list of items in the SPE line
         BEGINNING with the first SPE. (The initial 999. is not included)
         """
-        if self._mass_header_map is not None:
-            return dict(self._mass_header_map)
+        if self._mass_to_spe_line_map is not None:
+            return dict(self._mass_to_spe_line_map)
         else:
             return None
 
-    def mass_n_exstate_map(self):
+    def mass_to_ex_states_map(self):
         """Returns a map
             A -> N -> Excited state,
         where A is the mass number, N is the index for the state (beginning at
         one), and the object representing the state is that defined in
         nushellx_lpe/ExState.py
         """
-        return dict(self._mass_n_body_map)
+        return dict(self._mass_to_ex_states_map)
 
-    def mass_zbt_map(self):
+    def mass_to_zbt_map(self):
         """Returns a map
             A -> zero body term
         """
-        return dict(self._mass_zbt_map)
+        return dict(self._mass_to_zbt_map)
 
-    def mass_n_energy_map(self):
+    def mass_to_n_to_ex_energy_map(self):
         """Returns a map
             A -> N -> energy
         This is similar to self.mass_n_exstate_map(), but instead of
         the whole state, the map's value is only the energy
         """
         d = dict()
-        for m, nb_map in self._mass_n_body_map.items():
-            d[m] = {n: b.E for n, b in nb_map.items()}
+        for m, ex_states in self._mass_to_ex_states_map.items():
+            d[m] = {ex.N: ex.E for ex in ex_states}
         return d
 
-    def mass_lowest_ex_energy_map(self):
+    def mass_to_lowest_ex_energy_map(self):
         """Returns a map
             A -> energy,
         where energy is that associated with index 1.
         """
-        return {k: v[1] for k, v in self.mass_n_energy_map().items()}
+        return {k: v[1] for k, v in self.mass_to_n_to_ex_energy_map().items()}
 
-    def mass_ground_ex_energy_map(self, nshell):
+    def mass_to_ground_ex_energy_map(self, nshell):
         """Given the shell, returns a map
             A -> ground energy
         Where ground energy is taken to be the first energy with the
@@ -110,9 +110,9 @@ class DatumLpt(Datum):
         :param nshell: 0=s, 1=p, 2=sd,...
         """
         m = dict()
-        for mass, n_to_ex_state_map in self.mass_n_exstate_map().items():
+        for mass, ex_states in self.mass_to_ex_states_map().items():
             j0 = get_ground_state_j(mass=mass, nshell=nshell)
-            for n, ex in sorted(n_to_ex_state_map.items(), key=lambda i: i[0]):
+            for ex in sorted(ex_states):
                 if j0 is None:
                     print(
                         'Ground state angular momentum not known for '
@@ -133,23 +133,23 @@ class DatumLpt(Datum):
                 raise GroundStateEnergyNotFoundException(message)
         return m
 
-    def mass_ground_energy_map(self, nshell):
+    def mass_to_ground_energy_map(self, nshell):
         """Returns a map
             A -> ground energy,
         where ground energy is that in mass_ground_ex_energy_map() plus the
         zero body term from mass_zbt_map()
         :param nshell: 0=s, 1=p, 2=sd, ...
         """
-        mzbt = self.mass_zbt_map()
+        mzbt = self.mass_to_zbt_map()
         # me0 = self.mass_lowest_ex_energy_map()
-        me0 = self.mass_ground_ex_energy_map(nshell=nshell)
+        me0 = self.mass_to_ground_ex_energy_map(nshell=nshell)
         mg = dict()
         for k in mzbt:
             if k in me0:
                 mg[k] = mzbt[k] + me0[k]
         return mg
 
-    def n_mass_energy_map(self):
+    def n_to_mass_to_ex_energy_map(self):
         """Returns a map
             N -> A -> energy
         This is essentially the same as the map returned by
@@ -157,7 +157,7 @@ class DatumLpt(Datum):
         n is specified first, then mass
         """
         d = dict()
-        mne_map = self.mass_n_energy_map()
+        mne_map = self.mass_to_n_to_ex_energy_map()
         for m, ne_map in mne_map.items():
             for n, e in ne_map.items():
                 if n not in d:

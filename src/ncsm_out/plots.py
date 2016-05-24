@@ -244,7 +244,7 @@ def plot_ground_state_prescription_error_vs_ncsm_with_aeff(
     for d_vce in d_vce_list:
         if d_vce.exp not in exp_list:
             continue
-        vce_ground_energy_map = d_vce.mass_ground_energy_map(nshell=nshell)
+        vce_ground_energy_map = d_vce.mass_to_ground_energy_map(nshell=nshell)
         x_vce, y_vce = [list(a) for a in map_to_arrays(vce_ground_energy_map)]
         print('Prescription: {}'.format(d_vce.exp.A_presc))
         print('  x_vce = \n    {}'.format(x_vce))
@@ -349,7 +349,7 @@ def plot_ground_state_prescription_error_vs_exact(
     # A = Aeff prescription
     if dm_vce is None:
         dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
-    aeff_eq_a_map = dm_vce.aeff_eq_a_to_ground_energy_map(
+    aeff_eq_a_map = dm_vce.aeff_eq_a_to_states_map(
         z=z, nmax=nmax, n1=n1, n2=n2,
         nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor,
         incl_proton=incl_proton,
@@ -376,7 +376,7 @@ def plot_ground_state_prescription_error_vs_exact(
     for d_vce in d_vce_list:
         if d_vce.exp not in exp_list:
             continue
-        vce_ground_energy_map = d_vce.mass_ground_energy_map(nshell=nshell)
+        vce_ground_energy_map = d_vce.mass_to_ground_energy_map(nshell=nshell)
         x_vce, y_vce = [list(a) for a in map_to_arrays(vce_ground_energy_map)]
         print('Prescription: {}'.format(d_vce.exp.A_presc))
         print('  x_vce = \n    {}'.format(x_vce))

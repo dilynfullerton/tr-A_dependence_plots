@@ -64,7 +64,7 @@ def _get_plots_lpt(exp_list, data_map, get_data_fn, get_plot_fn=_get_plot_lpt,
     for exp in sorted(exps):
         datum = data_map[exp]
         nme_map = get_data_fn(datum)
-        mzbt_map = datum.mass_zbt_map()
+        mzbt_map = datum.mass_to_zbt_map()
         for n, me_map in nme_map.items():
             plots.append(get_plot_fn(n, exp, me_map, mzbt_map))
     return plots
@@ -91,7 +91,7 @@ def metafit_nushellx_lpt(
         show_fit=False,
         _sourcedir=DPATH_SHELL_RESULTS, _savedir=DPATH_PLOTS,
         _data_map=DataMapNushellxLpt,
-        _get_data=lambda dm: dm.n_mass_energy_map(),
+        _get_data=lambda dm: dm.n_to_mass_to_ex_energy_map(),
         _get_plots=_get_plots_lpt, _get_plot=_get_plot_lpt,
         _plot_sort_key=lambda p: p[3]['exp'],
         _code_pref='LPT',

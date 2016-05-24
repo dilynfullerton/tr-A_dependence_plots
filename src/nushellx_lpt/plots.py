@@ -33,7 +33,7 @@ def lpt_plot_energy_vs_n_for_mass(
     else:
         items = imsrg_data_map.items()
     for k, v in items:
-        mne_map = v.mass_n_energy_map()
+        mne_map = v.mass_to_n_to_ex_energy_map()
         if mass_num in mne_map:
             n_e_map = mne_map[mass_num]
         else:
@@ -76,7 +76,7 @@ def lpt_plot_energy_vs_mass_for_n(
     else:
         items = imsrg_data_map.items()
     for k, v in items:
-        nme_map = v.n_mass_energy_map()
+        nme_map = v.n_to_mass_to_ex_energy_map()
         if n in nme_map:
             me_map = nme_map[n]
         else:
@@ -84,7 +84,7 @@ def lpt_plot_energy_vs_mass_for_n(
         x, y = map_to_arrays(me_map)
         const_list = list()
         zbt = np.empty_like(y)
-        x_arr, zbt_arr = map_to_arrays(v.mass_zbt_map())
+        x_arr, zbt_arr = map_to_arrays(v.mass_to_zbt_map())
         for xa, zbta, i in zip(x_arr, zbt_arr, range(len(x_arr))):
             if xa in x:
                 zbt[i] = zbta
