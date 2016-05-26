@@ -13,6 +13,7 @@ from plotting import map_to_arrays
 from plotting import save_plot_figure, save_plot_data_file
 from transforms import relative_y
 from ncsm_out.DataMapNcsmOut import DataMapNcsmOut
+from ncsm_out.DatumNcsmOut import get_ground_state_j
 from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 
@@ -286,6 +287,163 @@ def plot_ground_state_prescription_error_vs_ncsm_with_aeff(
         )
         return save_plot_figure(
             data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
+            savepath=path.join(_dpath_plots, savename + '.pdf'),
+            data_labels=labels, cmap_name='jet',
+        )
+    else:
+        return plots
+
+
+def plot_prescription_error_vs_exact_with_ground_state_j(
+        a_prescriptions,
+        z=2, nmax=4, n1=15, n2=15, nshell=1, ncomponent=2, scalefactor=1.0,
+        incl_proton=True,
+        do_plot=True,
+        transform=None,
+        dm_exact=None, dm_vce=None,
+        _dpath_shell=DPATH_SHELL_RESULTS, _dpath_ncsm=DPATH_NCSM_RESULTS,
+        _dpath_plots=DPATH_PLOTS_NCSMVCE,
+):
+    """Plot the ground state energy error for each prescription
+    :param a_prescriptions: list of 3-tuples representing A-prescriptions
+    :param z: proton number (Z)
+    :param nmax: major oscillator truncation
+    :param n1: one-particle TBME interaction truncation
+    :param n2: two-particle TBME interaction truncation
+    :param nshell: (0=s, 1=p, 2=sd, ...)
+    :param ncomponent: 1 -> neutrons, 2 -> protons and neutrons
+    :param scalefactor: factor by which off-diagonal coupling terms in the
+    TBME interaction were scaled
+    :param incl_proton: whether or not proton part of the TBME interaction
+    was included. 0 => Vpp and Vpn were set to 0.
+    :param do_plot: if true, make and save the plot figure; else just return
+    the plots
+    :param transform: transform to apply to the plots (see transforms.py)
+    :param dm_exact: existing DataMap to use for NCSM exact data. If None,
+    one is created here.
+    :param dm_vce: existing DataMap to use for VCE data. If None,
+    one is created here.
+    :param _dpath_shell: directory with shell results
+    :param _dpath_ncsm: directory with NCSM results
+    :param _dpath_plots: directory in which to save plot figure if do_plot is
+    true
+    :return: list of plots
+    """
+    plots = list()
+    # exact
+    if dm_exact is None:
+        dm_exact = DataMapNcsmOut(
+            parent_directory=_dpath_ncsm,
+            exp_list=[(z, n1, n2, scalefactor, incl_proton)],
+        )
+    dat_list = list(dm_exact.map.values())
+    if len(dat_list) > 0:
+        dat_exact = dat_list.pop()
+    else:
+        raise DataNotFoundForExpException(
+            '\nNo data was found matching the given parameters')
+    ncsm_exact = dat_exact.aeff_exact_to_ground_state_energy_map(
+        nshell=nshell, nmax=nmax, z=z)
+    x_ex, y_ex = [list(a) for a in map_to_arrays(ncsm_exact)]
+    print('Exact NCSM')
+    print('  x_ex = \n    {}'.format(x_ex))
+    print('  y_ex = \n    {}'.format([round(yi, 2) for yi in y_ex]))
+    # A = Aeff prescription
+    if dm_vce is None:
+        dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
+    aeff_eq_a_map = dm_vce.aeff_eq_a_to_n_to_j_energy_map(
+        z=z, nmax=nmax, n1=n1, n2=n2,
+        nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor,
+        incl_proton=incl_proton,
+    )
+    n_to_a_to_energy_map = dict()
+    for a, n_to_j_energy_map in aeff_eq_a_map.items():
+        j0 = get_ground_state_j(mass=a, nshell=nshell)
+        for n, j_energy in n_to_j_energy_map.items():
+            j, energy = j_energy
+            if j != j0:
+                continue
+            elif n not in n_to_a_to_energy_map:
+                n_to_a_to_energy_map[n] = dict()
+            n_to_a_to_energy_map[n][a] = energy
+    for n, a_to_energy_map in n_to_a_to_energy_map.items():
+        x_aaf, y_aaf = [list(a) for a in map_to_arrays(a_to_energy_map)]
+        print('Prescription: Aeff = A')
+        print('  x_aaf = \n    {}'.format(x_aaf))
+        print('  y_aaf = \n    {}'.format([round(yi, 2) for yi in y_aaf]))
+        x_del = sorted(list(set(x_ex) & set(x_aaf)))
+        y_del = list()
+        for x in x_del:
+            y_del.append(y_aaf[x_aaf.index(x)] - y_ex[x_ex.index(x)])
+        print('  x_del = \n    {}'.format(x_del))
+        print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
+        plots.append(
+            (np.array(x_del), np.array(y_del), list(),
+             {'name': 'Aeff = A, Nmax={}, N={}'.format(nmax, n)})
+        )
+    # prescriptions
+    exp_list = [
+        dm_vce.exp_type(z, ap, nmax, n1, n2, nshell, ncomponent,
+                        scalefactor, incl_proton)
+        for ap in a_prescriptions
+        ]
+    d_vce_list = dm_vce.map.values()
+    for d_vce in d_vce_list:
+        if d_vce.exp not in exp_list:
+            continue
+        vce_n_to_a_to_j_e_map = d_vce.n_to_mass_to_j_energy_map()
+        n_to_a_to_e_map = dict()
+        for n, a_to_j_e_map in vce_n_to_a_to_j_e_map.items():
+            for a, j_e in a_to_j_e_map.items():
+                j, e = j_e
+                j0 = get_ground_state_j(mass=a, nshell=nshell)
+                if j != j0:
+                    continue
+                elif n not in n_to_a_to_e_map:
+                    n_to_a_to_e_map[n] = dict()
+                n_to_a_to_e_map[n][a] = e
+        for n, a_to_energy_map in n_to_a_to_e_map.items():
+            x_vce, y_vce = [list(a) for a in map_to_arrays(a_to_energy_map)]
+            print('Prescription: {}'.format(d_vce.exp.A_presc))
+            print('  x_vce = \n    {}'.format(x_vce))
+            print('  y_vce = \n    {}'.format([round(yi, 2) for yi in y_vce]))
+            x_del = sorted(list(set(x_vce) & set(x_ex)))
+            y_del = list()
+            for x in x_del:
+                y_del.append(y_vce[x_vce.index(x)] - y_ex[x_ex.index(x)])
+            print('  x_del = \n    {}'.format(x_del))
+            print('  y_del = \n    {}'.format([round(yi, 2) for yi in y_del]))
+            x_del = np.array(x_del)
+            y_del = np.array(y_del)
+            a_presc = d_vce.exp.A_presc
+            plot_pr = (x_del, y_del, list(),
+                       {'name': '{}, Nmax={}, N={}'.format(a_presc, nmax, n)})
+            plots.append(plot_pr)
+    if transform is not None:
+        next_plots = list()
+        for plot in plots:
+            next_plots.append(transform(*plot))
+        plots = next_plots
+    plots = sorted(plots, key=lambda p0: p0[3]['name'])
+    title = 'Energy error due to various A-prescriptions for ground J'
+    labels = [p[3]['name'] for p in plots]
+    xlabel, ylabel = 'A', 'E_presc - E_ncsm (MeV)'
+    savename = 'gnd_j_vce_presc{}_Nmax{}_{}_{}_shell{}_dim{}'.format(
+        str(a_prescriptions).replace(' ', ''),
+        nmax, n1, n2, nshell, ncomponent,
+    ).replace(' ', '')
+    if scalefactor != 1.0:
+        title += (' with off-diagonal coupling terms scaled by '
+                  '{}').format(scalefactor)
+        savename += '_scale{:.2}'.format(scalefactor)
+    if do_plot:
+        save_plot_data_file(
+            plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
+            labels=labels, savepath=path.join(_dpath_plots, savename + '.dat'),
+        )
+        return save_plot_figure(
+            data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
+            data_line_style='-o',
             savepath=path.join(_dpath_plots, savename + '.pdf'),
             data_labels=labels, cmap_name='jet',
         )

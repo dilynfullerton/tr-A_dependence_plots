@@ -164,3 +164,25 @@ class DatumLpt(Datum):
                     d[n] = dict()
                 d[n][m] = e
         return d
+
+    def n_to_mass_to_energy_map(self):
+        n_to_mass_to_energy_map = dict()
+        for n, mass_to_ex_energy in self.n_to_mass_to_ex_energy_map().items():
+            for mass, ex_energy in mass_to_ex_energy.items():
+                if n not in n_to_mass_to_energy_map:
+                    n_to_mass_to_energy_map[n] = dict()
+                zbt = self._mass_to_zbt_map[mass]
+                n_to_mass_to_energy_map[n][mass] = ex_energy + zbt
+        return n_to_mass_to_energy_map
+
+    def n_to_mass_to_j_energy_map(self):
+        n_to_mass_to_j_energy_map = dict()
+        for a, ex_states in self.mass_to_ex_states_map().items():
+            zbt = self._mass_to_zbt_map[a]
+            for ex in ex_states:
+                n, j, e = ex.N, ex.J, ex.E
+                if n not in n_to_mass_to_j_energy_map:
+                    n_to_mass_to_j_energy_map[n] = dict()
+                n_to_mass_to_j_energy_map[n][a] = (j, e + zbt)
+        return n_to_mass_to_j_energy_map
+
