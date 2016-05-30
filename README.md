@@ -22,8 +22,7 @@ The following are required for using the full functionality of this program:
 
 #### Recommended:
 
-All of the above requirements and more are included in the Anaconda
-distribution.
+All of the above requirements are included in the Anaconda distribution.
 
 * [Anaconda](https://www.continuum.io/downloads)
 
