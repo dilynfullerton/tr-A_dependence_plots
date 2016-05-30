@@ -507,7 +507,7 @@ def plot_ground_state_prescription_error_vs_exact(
     # A = Aeff prescription
     if dm_vce is None:
         dm_vce = DataMapNcsmVceLpt(parent_directory=_dpath_shell)
-    aeff_eq_a_map = dm_vce.aeff_eq_a_to_states_map(
+    aeff_eq_a_map = dm_vce.aeff_eq_a_to_ground_energy_map(
         z=z, nmax=nmax, n1=n1, n2=n2,
         nshell=nshell, ncomponent=ncomponent, scalefactor=scalefactor,
         incl_proton=incl_proton,
