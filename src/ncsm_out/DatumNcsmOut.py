@@ -70,8 +70,27 @@ def _get_ground_state(mass, states, nshell):
             if state.J == j0:
                 return state
         else:
-            raise GroundStateNotFoundException(
-                'Could not find state with J={} for A={}'.format(j0, mass))
+            warn(
+                (
+                    '\nCould not find converged state with J={} for A={}'
+                    '\nAttempting to find approximate solution by rounding'
+                ).format(j0, mass)
+            )
+            return _get_ground_state_rounded(
+                mass=mass, states=states, nshell=nshell)
+
+
+def _get_ground_state_rounded(mass, states, nshell, round_place=4):
+    j0 = get_ground_state_j(mass=mass, nshell=nshell)
+    if round_place < 0:
+        raise GroundStateNotFoundException(
+            'Could not find state with J={} for A={}'.format(j0, mass))
+    for state in states:
+        if round(state.J, round_place) == j0:
+            return state
+    else:
+        return _get_ground_state_rounded(
+            mass=mass, states=states, nshell=nshell, round_place=round_place-1)
 
 
 class IncompleteArgumentsException(Exception):
