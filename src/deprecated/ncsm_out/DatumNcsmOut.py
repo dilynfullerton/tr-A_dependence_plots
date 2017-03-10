@@ -4,9 +4,11 @@ Particular Datum for Ncsm *.out files.
 from __future__ import print_function, division, unicode_literals
 
 from warnings import warn
-from Datum import Datum
+
 from ncsm_out.State import State
 from ncsm_out.parser import a_aeff_nhw_to_states_map
+
+from deprecated.Datum import Datum
 
 MSG1 = (
     '\nInsufficient keyword arguments to evaluate {}.'

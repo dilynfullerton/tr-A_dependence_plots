@@ -3,12 +3,13 @@ Implementation of DataMap (see DataMap.py) for NuShellX interaction data
 """
 from __future__ import print_function, division, unicode_literals
 
-from DataMap import DataMap
-from parse import get_files_r, has_extension
-from constants import FN_PARSE_INT_STR_EXT as _INT_EXT
-from int.ExpInt import ExpInt
 from int.DatumInt import DatumInt
-from int.parser import exp
+from int.ExpInt import ExpInt
+
+from constants import FN_PARSE_INT_STR_EXT as _INT_EXT
+from deprecated.DataMap import DataMap
+from deprecated.int.parser import exp
+from parse import get_files_r, has_extension
 
 
 class DataMapInt(DataMap):

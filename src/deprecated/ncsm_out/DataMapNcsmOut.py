@@ -3,14 +3,17 @@ Imlementation of DataMap (see DataMap.py) for *.out files produced by
 running NCSD
 """
 from __future__ import print_function, division
+
 from os import sep
-from DataMap import DataMap
-from constants import FN_PARSE_NCSMVCE_OUT_RGX_FNAME as _RGX_FNAME
-from parse import matches_completely, get_files_r
+
 from ncsm_out.DatumNcsmOut import DatumNcsmOut
 from ncsm_out.DatumNcsmOut import IncompleteArgumentsException
 from ncsm_out.ExpNcsmOut import ExpNcsmOut
 from ncsm_out.parser import exp
+
+from constants import FN_PARSE_NCSMVCE_OUT_RGX_FNAME as _RGX_FNAME
+from deprecated.DataMap import DataMap
+from parse import matches_completely, get_files_r
 
 
 class DataMapNcsmOut(DataMap):

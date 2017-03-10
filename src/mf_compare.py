@@ -22,12 +22,14 @@ Definitions:
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
 from itertools import combinations
+
+import numpy as np
+from int.ExpInt import ExpInt
+
 from constants import DPATH_FILES_INT, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD
-from int.ExpInt import ExpInt
-from int.DataMapInt import DataMapInt
+from deprecated.int.DataMapInt import DataMapInt
 
 
 def max_r2_value(

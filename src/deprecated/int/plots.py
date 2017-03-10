@@ -8,7 +8,7 @@ from __future__ import print_function, division, unicode_literals
 import numpy as np
 from matplotlib import pyplot as plt
 from int.ExpInt import ExpInt
-from int.DataMapInt import DataMapInt
+from deprecated.int.DataMapInt import DataMapInt
 from transforms import identity
 
 

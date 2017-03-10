@@ -5,14 +5,16 @@ of monopoles, etc.
 from __future__ import print_function, division, unicode_literals
 
 from os.path import sep
-from DataMap import DataMap
-from parse import matches_completely, get_files_r
+
+from op.DatumOp import DatumOp
+from op.ExpOp import ExpOp
+from op.parser import exp
+
 from constants import FN_PARSE_OP_RGX_EXT as _RGX_FILENAME
 from constants import FN_PARSE_OP_RGX_HW as _RGX_HW
 from constants import F_PARSE_OP_ELT_SPLIT as _SPLIT_CHAR
-from op.ExpOp import ExpOp
-from op.DatumOp import DatumOp
-from op.parser import exp
+from deprecated.DataMap import DataMap
+from parse import matches_completely, get_files_r
 
 
 class DataMapOp(DataMap):

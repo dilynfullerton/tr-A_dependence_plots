@@ -4,17 +4,19 @@ Implementation of Datum (see Datum.py) for NuShellX interactions
 from __future__ import print_function, division, unicode_literals
 
 from os import path, mkdir, link
-from Datum import Datum
-from constants import DPATH_FILES_INT_ORG, ORG_FMT_INT_DNAME, ORG_FMT_INT_FNAME
+
 from int.QuantumNumbers import QuantumNumbers
 from int.TwoBodyInteraction import TwoBodyInteraction
-from int.parser import index_to_qnums_map as get_index_tuple_map
-from int.parser import mass_to_index_to_energy_map as get_mie_map
-from int.parser import mass_to_tbint_to_energy_map as get_miie_map
-from int.parser import mass_to_zbt_map
-from int.parser import name_from_filename
-from int.parser import other_constants_from_filename as oc_from_filename
-from int.parser import mass_number_from_filename as mass_from_filename
+
+from constants import DPATH_FILES_INT_ORG, ORG_FMT_INT_DNAME, ORG_FMT_INT_FNAME
+from deprecated.Datum import Datum
+from deprecated.int.parser import index_to_qnums_map as get_index_tuple_map
+from deprecated.int.parser import mass_number_from_filename as mass_from_filename
+from deprecated.int.parser import mass_to_index_to_energy_map as get_mie_map
+from deprecated.int.parser import mass_to_tbint_to_energy_map as get_miie_map
+from deprecated.int.parser import mass_to_zbt_map
+from deprecated.int.parser import name_from_filename
+from deprecated.int.parser import other_constants_from_filename as oc_from_filename
 
 
 class DatumInt(Datum):

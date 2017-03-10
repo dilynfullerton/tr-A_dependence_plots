@@ -7,8 +7,9 @@ from __future__ import print_function, division, unicode_literals
 
 import numpy as np
 from matplotlib import pyplot as plt
+
 from constants import DPATH_SHELL_RESULTS
-from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
+from deprecated.nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 from plotting import map_to_arrays, plot_the_plots
 
 

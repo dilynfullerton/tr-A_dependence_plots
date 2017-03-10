@@ -10,7 +10,7 @@ from transforms_s import s_transform_to_super
 from plotting import map_to_arrays
 from constants import P_TITLE, P_END, P_SUB, P_HEAD
 from constants import STANDARD_IO_MAP, PLOT_CMAP, LEGEND_SIZE
-from int.DataMapInt import DataMapInt
+from deprecated.int.DataMapInt import DataMapInt
 
 
 # todo: Re-evaluate method for doing all of this.

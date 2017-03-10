@@ -5,19 +5,19 @@ from __future__ import division
 from __future__ import print_function
 
 from os import sep, path, walk
-from warnings import warn
-from constants import F_PARSE_LPT_STR_CMNT as _LPT_CMNT_STR
-from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
-from constants import F_PARSE_LPT_ROW_SPE as _ROW_SPE
-from constants import F_PARSE_LPT_COL_START_SPE as _COL_START_SPE
-from constants import F_PARSE_LPT_ROW_START_STATES as _ROW_STATES_START
-from constants import F_PARSE_LPT_NCOLS_STATE as _NCOLS_STATE
+
 from constants import FN_PARSE_LPT_RGX_FNAME_INT as _RGX_FNAME_INT
 from constants import F_PARSE_INT_CMNT_STR as _INT_CMNT_STR
 from constants import F_PARSE_INT_CMNT_ZBT as _INT_CMNT_STR_ZBT
+from constants import F_PARSE_LPT_COL_START_SPE as _COL_START_SPE
+from constants import F_PARSE_LPT_NCOLS_STATE as _NCOLS_STATE
+from constants import F_PARSE_LPT_ROW_AZ as _ROW_AZ
+from constants import F_PARSE_LPT_ROW_SPE as _ROW_SPE
+from constants import F_PARSE_LPT_ROW_START_STATES as _ROW_STATES_START
+from constants import F_PARSE_LPT_STR_CMNT as _LPT_CMNT_STR
+from deprecated.int.parser import zero_body_term, zero_body_term_line
 from parse import content_lines, comment_lines, fraction_str_to_float
 from parse import matches_completely
-from int.parser import zero_body_term, zero_body_term_line
 
 
 # EXP

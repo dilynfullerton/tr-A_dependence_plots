@@ -18,7 +18,7 @@ from constants import GEN_INT_ROW_LINES_TITLE, GEN_INT_ROW_LINES_FIT_PARAMS
 from constants import GEN_INT_ROW_ZERO_BODY_TERM, GEN_INT_ROW_INDEX_KEY_HEAD
 from constants import GEN_INT_ROW_INDEX_KEY, GEN_INT_ROW_BLANK
 from constants import GEN_INT_ROW_SINGLE_PARTICLE, GEN_INT_ROW_INTERACTION
-from int.DataMapInt import DataMapInt
+from deprecated.int.DataMapInt import DataMapInt
 
 
 def generate_int_file_from_fit(

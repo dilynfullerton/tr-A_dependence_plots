@@ -4,11 +4,12 @@ Function definitions for an abstract *.lpt metafitter
 from __future__ import print_function, division, unicode_literals
 
 import numpy as np
-from transforms import pzbt
-from plotting import map_to_arrays
-from constants import DPATH_SHELL_RESULTS, DPATH_PLOTS
 from int.metafitter_abs import single_particle_metafit_int
-from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
+
+from constants import DPATH_SHELL_RESULTS, DPATH_PLOTS
+from deprecated.nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
+from plotting import map_to_arrays
+from transforms import pzbt
 
 
 # noinspection PyUnusedLocal
