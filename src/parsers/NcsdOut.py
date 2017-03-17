@@ -16,14 +16,30 @@ RGX_ENERGY_LEVELS_LINE = compile(b'\s*State\s*#\s*\d+')
 
 class NcsdOut(Parser):
     def __init__(self, filepath):
+        self.aeff = 0
         self.z = 0
         self.n = 0
         self.hw = 0
         self.beta_cm = 0
         self.nhw = 0
         self.nmax = 0
-        self.energy_levels = list()
+        self.energy_levels = dict()
         super(NcsdOut, self).__init__(filepath)
+
+    def __lt__(self, other):
+        return self.z + self.n < other.z + other.n
+
+    def __eq__(self, other):
+        return (
+            (self.z, self.n, self.hw, self.beta_cm, self.nhw, self.nmax) ==
+            (other.z, other.n, other.hw, other.beta_cm, other.nhw, other.nmax)
+        )
+
+    def __hash__(self):
+        return hash((self.z, self.n, self.nmax))
+
+    def _get_data_aeff(self):
+        self.aeff = int(compile(b'_').split(self.filepath)[1])
 
     def _get_data_zn(self):
         def match_fn(line):
@@ -58,16 +74,17 @@ class NcsdOut(Parser):
     def _get_data_energy_levels(self):
         def match_fn(line):
             split_line = RGX_SPLIT.split(line.strip())
+            n = len(self.energy_levels) + 1
             e = float(split_line[3])
-            j = round(float(split_line[5]), 2)
-            t = round(float(split_line[7]), 2)
-            self.energy_levels.append(NcsdEnergyLevel(e, j, t))
+            j = round(float(split_line[5]), 1)
+            t = round(float(split_line[7]), 1)
+            self.energy_levels[NcsdEnergyLevel(n, j, t)] = e
         super(NcsdOut, self)._get_data_lines_fn(
             line_regex=RGX_ENERGY_LEVELS_LINE, match_fn=match_fn,
-            data_name='ENERGY LEVELS'
-        )
+            data_name='ENERGY LEVELS')
 
     def _get_data(self):
+        self._get_data_aeff()
         self._get_data_zn()
         self._get_data_beta_cm()
         self._get_data_nhw_nmax()
@@ -84,5 +101,5 @@ class NcsdOut(Parser):
 # print('NHW  = {}'.format(n.nhw))
 # print('NMAX = {}'.format(n.nmax))
 # print('Energy levels:')
-# for e in n.energy_levels:
-#     print(e)
+# for state, e in n.energy_levels.items():
+#     print('{}: {}'.format(state, e))

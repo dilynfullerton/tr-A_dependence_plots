@@ -5,7 +5,7 @@ Constants for use throughout the project
 from __future__ import unicode_literals
 
 from LegendSize import LegendSize
-from int.QuantumNumbers import QuantumNumbers
+from deprecated.int.QuantumNumbers import QuantumNumbers
 
 # Directory locations relative to src/
 DPATH_FILES_INT = '../files_INT'

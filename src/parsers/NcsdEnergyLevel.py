@@ -6,10 +6,10 @@ from collections import namedtuple
 
 
 # noinspection PyClassHasNoInit
-class NcsdEnergyLevel(namedtuple('NcsdEnergyLevel', ['E', 'J', 'T'])):
-    """Stores the four data corresponding to a specific state
-        E:
-            energy
+class NcsdEnergyLevel(namedtuple('NcsdEnergyLevel', ['N', 'J', 'T'])):
+    """Stores the data corresponding to a specific state
+        N:
+            state number
         J:
             angular momentum
         T:
