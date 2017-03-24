@@ -3,11 +3,11 @@ Main type in which to store data from Trel *.op files. See Datum.py.
 """
 from __future__ import print_function, division, unicode_literals
 
-from op.QuantumNumbers import QuantumNumbers as Particle
-from op.TrelParticles import TrelParticles
-from op.TrelParticlesInteraction import TrelParticlesInteraction
-from op.TwoBodyInteraction import TwoBodyInteraction as Interaction
-from op.parser import get_data as data
+from deprecated.op.QuantumNumbers import QuantumNumbers as Particle
+from deprecated.op.TrelParticles import TrelParticles
+from deprecated.op.TrelParticlesInteraction import TrelParticlesInteraction
+from deprecated.op.TwoBodyInteraction import TwoBodyInteraction as Interaction
+from deprecated.op.parser import get_data as data
 
 from constants import F_PARSE_OP_RGX_0B as _RGX_0BT
 from constants import F_PARSE_OP_RGX_1B as _RGX_1BT

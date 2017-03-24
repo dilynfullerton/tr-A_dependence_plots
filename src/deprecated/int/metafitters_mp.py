@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 
 from transforms import *
 from transforms_s import *
-from int.metafitter_abs import multi_particle_metafit_int
+from deprecated.int.metafitter_abs import multi_particle_metafit_int
 from constants import DPATH_FILES_INT, DPATH_PLOTS
 
 

@@ -3,8 +3,8 @@ Implementation of DataMap (see DataMap.py) for NuShellX interaction data
 """
 from __future__ import print_function, division, unicode_literals
 
-from int.DatumInt import DatumInt
-from int.ExpInt import ExpInt
+from deprecated.int.DatumInt import DatumInt
+from deprecated.int.ExpInt import ExpInt
 
 from constants import FN_PARSE_INT_STR_EXT as _INT_EXT
 from deprecated.DataMap import DataMap

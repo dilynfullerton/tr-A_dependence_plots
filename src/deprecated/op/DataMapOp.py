@@ -6,9 +6,9 @@ from __future__ import print_function, division, unicode_literals
 
 from os.path import sep
 
-from op.DatumOp import DatumOp
-from op.ExpOp import ExpOp
-from op.parser import exp
+from deprecated.op.DatumOp import DatumOp
+from deprecated.op.ExpOp import ExpOp
+from deprecated.op.parser import exp
 
 from constants import FN_PARSE_OP_RGX_EXT as _RGX_FILENAME
 from constants import FN_PARSE_OP_RGX_HW as _RGX_HW

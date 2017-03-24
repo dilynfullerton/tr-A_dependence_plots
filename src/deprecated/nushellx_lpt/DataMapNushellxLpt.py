@@ -6,9 +6,9 @@ from __future__ import print_function, division, unicode_literals
 
 from os.path import sep
 
-from nushellx_lpt.DatumLpt import DatumLpt
-from nushellx_lpt.ExpNushellxLpt import ExpNushellxLpt
-from nushellx_lpt.parser import exp
+from deprecated.nushellx_lpt.DatumLpt import DatumLpt
+from deprecated.nushellx_lpt.ExpNushellxLpt import ExpNushellxLpt
+from deprecated.nushellx_lpt.parser import exp
 
 from constants import FN_PARSE_LPT_RGX_DNAME as _RGX_DNAME_GGP
 from constants import FN_PARSE_LPT_RGX_FNAME as _RGX_FNAME

@@ -12,9 +12,9 @@ from constants import LEGEND_SIZE
 from plotting import map_to_arrays
 from plotting import save_plot_figure, save_plot_data_file
 from transforms import relative_y
-from ncsm_out.DataMapNcsmOut import DataMapNcsmOut
-from ncsm_out.DatumNcsmOut import get_ground_state_j
-from ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
+from DataMapNcsmOut import DataMapNcsmOut
+from DatumNcsmOut import get_ground_state_j
+from deprecated.ncsm_vce_lpt.DataMapNcsmVceLpt import DataMapNcsmVceLpt
 
 
 # todo combine and abstract common parts of these functions

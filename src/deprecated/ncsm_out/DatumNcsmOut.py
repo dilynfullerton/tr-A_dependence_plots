@@ -5,8 +5,8 @@ from __future__ import print_function, division, unicode_literals
 
 from warnings import warn
 
-from ncsm_out.State import State
-from ncsm_out.parser import a_aeff_nhw_to_states_map
+from State import State
+from parser import a_aeff_nhw_to_states_map
 
 from deprecated.Datum import Datum
 

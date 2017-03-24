@@ -2,12 +2,12 @@ from __future__ import division, print_function, unicode_literals
 from matplotlib import pyplot as plt
 from transforms import cubic_spline, filter_evens, filter_odds
 from transforms import compose_transforms
-from ncsm_out.plots import plot_ground_state_prescription_error_vs_exact
-from ncsm_out.plots import plot_prescription_error_vs_exact_with_ground_state_j
-from ncsm_out.plots import (
+from deprecated.ncsm_out.plots import plot_ground_state_prescription_error_vs_exact
+from deprecated.ncsm_out.plots import plot_prescription_error_vs_exact_with_ground_state_j
+from deprecated.ncsm_out.plots import (
     plot_ground_state_prescription_error_vs_ncsm_with_aeff)
-from ncsm_out.plots import plot_ncsm_exact_for_nmax_and_scale
-from ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
+from deprecated.ncsm_out.plots import plot_ncsm_exact_for_nmax_and_scale
+from deprecated.ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 
 plot_ground_state_prescription_error_vs_exact(
     a_prescriptions=[

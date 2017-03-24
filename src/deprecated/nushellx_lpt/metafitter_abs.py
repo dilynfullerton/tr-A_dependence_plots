@@ -4,7 +4,7 @@ Function definitions for an abstract *.lpt metafitter
 from __future__ import print_function, division, unicode_literals
 
 import numpy as np
-from int.metafitter_abs import single_particle_metafit_int
+from deprecated.int.metafitter_abs import single_particle_metafit_int
 
 from constants import DPATH_SHELL_RESULTS, DPATH_PLOTS
 from deprecated.nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt

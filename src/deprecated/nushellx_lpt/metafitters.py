@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from transforms import *
 from transforms_s import *
-from nushellx_lpt.metafitter_abs import metafit_nushellx_lpt as mf
+from deprecated.nushellx_lpt.metafitter_abs import metafit_nushellx_lpt as mf
 
 
 def lpt_pzbt_for_z_in_list_and_n_in_list_metafit(list_z, list_n):

@@ -3,10 +3,10 @@ Main file to store data from a *.lpt file. (see Datum.py)
 """
 from __future__ import print_function, division, unicode_literals
 
-from ncsm_out.DatumNcsmOut import get_ground_state_j
-from nushellx_lpt.parser import mass_to_n_to_state_data_map as mnbd_map
-from nushellx_lpt.parser import mass_to_spe_line_data_map as mhd_map
-from nushellx_lpt.parser import mass_to_zbt_map as mass_zbt_map
+from deprecated.ncsm_out.DatumNcsmOut import get_ground_state_j
+from deprecated.nushellx_lpt.parser import mass_to_n_to_state_data_map as mnbd_map
+from deprecated.nushellx_lpt.parser import mass_to_spe_line_data_map as mhd_map
+from deprecated.nushellx_lpt.parser import mass_to_zbt_map as mass_zbt_map
 
 from deprecated.Datum import Datum
 from deprecated.nushellx_lpt.ExState import ExState

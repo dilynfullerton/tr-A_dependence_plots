@@ -6,10 +6,10 @@ from __future__ import print_function, division
 
 from os import sep
 
-from ncsm_out.DatumNcsmOut import DatumNcsmOut
-from ncsm_out.DatumNcsmOut import IncompleteArgumentsException
-from ncsm_out.ExpNcsmOut import ExpNcsmOut
-from ncsm_out.parser import exp
+from DatumNcsmOut import DatumNcsmOut
+from DatumNcsmOut import IncompleteArgumentsException
+from ExpNcsmOut import ExpNcsmOut
+from parser import exp
 
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_FNAME as _RGX_FNAME
 from deprecated.DataMap import DataMap

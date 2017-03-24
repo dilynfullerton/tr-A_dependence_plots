@@ -4,8 +4,8 @@ a Valence Cluster Expansion
 """
 from __future__ import print_function, division, unicode_literals
 
-from ncsm_vce_lpt.parser import exp
-from nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
+from deprecated.ncsm_vce_lpt.parser import exp
+from deprecated.nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
 
 from constants import FN_PARSE_LPT_RGX_FNAME as _RGX_FNAME
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_DNAME as _RGX_DNAME_GGP

@@ -15,8 +15,8 @@ from constants import FN_PARSE_NCSMVCE_LPT_RGX_NCOMP as _RGX_NCOMP
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_SCALE as _RGX_SCALE
 from constants import FN_PARSE_NCSMVCE_LPT_RGX_IPROT as _RGX_IPROT
 from parse import elt_from_felts, filename_elts_list
-from nushellx_lpt.parser import interaction as datum_dirname
-from nushellx_lpt.parser import a_z as a_z
+from deprecated.nushellx_lpt.parser import interaction as datum_dirname
+from deprecated.nushellx_lpt.parser import a_z as a_z
 
 
 # EXP

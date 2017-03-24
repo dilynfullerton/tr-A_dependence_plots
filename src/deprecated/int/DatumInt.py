@@ -5,8 +5,8 @@ from __future__ import print_function, division, unicode_literals
 
 from os import path, mkdir, link
 
-from int.QuantumNumbers import QuantumNumbers
-from int.TwoBodyInteraction import TwoBodyInteraction
+from deprecated.int.QuantumNumbers import QuantumNumbers
+from deprecated.int.TwoBodyInteraction import TwoBodyInteraction
 
 from constants import DPATH_FILES_INT_ORG, ORG_FMT_INT_DNAME, ORG_FMT_INT_FNAME
 from deprecated.Datum import Datum

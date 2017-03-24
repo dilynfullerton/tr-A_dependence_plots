@@ -12,7 +12,7 @@ from constants import FN_PARSE_NCSMVCE_OUT_RGX_SCALE as _RGX_SCALE
 from constants import FN_PARSE_NCSMVCE_OUT_RGX_IPROT as _RGX_IPROT
 from constants import FN_PARSE_NCSMVCE_OUT_CHR_ELT_SPLIT as _CHR_SPLIT
 from parse import content_lines, filename_elts_list, elt_from_felts
-from ncsm_vce_lpt.parser import nmax_n1_n2_from_delts as nhw_n1_n2_from_felts
+from deprecated.ncsm_vce_lpt.parser import nmax_n1_n2_from_delts as nhw_n1_n2_from_felts
 
 
 # EXP
