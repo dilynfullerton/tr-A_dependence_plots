@@ -2,11 +2,10 @@
 Various functions for plotting A-dependence data
 """
 from __future__ import division, print_function, unicode_literals
-from matplotlib import pyplot as plt
-from parsers.parse_files import parse_ncsd_out_files
 from plotting import map_to_arrays
 from data_maps import get_state_to_a_aeff_to_energy_map
 from data_maps import get_a_aeff_to_ground_state_energy_map
+from parsers.parse_files import parse_ncsd_out_files
 
 
 def get_plots_aeff_exact_to_energy(parsed_ncsd_out_files):
@@ -34,7 +33,7 @@ def get_plots_aeff_exact_to_energy(parsed_ncsd_out_files):
     return list_of_plots
 
 
-def get_plot_aeff_exact_to_energy(parsed_ncsd_out_files):
+def get_plot_aeff_exact_to_ground_energy(parsed_ncsd_out_files):
     a_aeff_to_ground_state_energy = get_a_aeff_to_ground_state_energy_map(
         parsed_ncsd_out_files=parsed_ncsd_out_files)
     a_to_ground_state_energy = dict()
@@ -45,16 +44,15 @@ def get_plot_aeff_exact_to_energy(parsed_ncsd_out_files):
 
 
 # test
-# dpath = '/Users/Alpha/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
-# all_ncsd_files = sorted(parse_ncsd_out_files(dirpath=dpath))
-# he_ncsd_files = filter(lambda n: n.z == 2, all_ncsd_files)
-# # plots = get_plots_aeff_exact_to_energy(he_ncsd_files)
-# # for plot in sorted(plots, key=lambda p: p[3]['state']):
-# #     xarr, yarr, const_list, const_dict = plot
-# #     print('State = {}'.format(const_dict['state']))
-# #     for x, y in zip(xarr, yarr):
-# #         print('  {:4} {:8.4}'.format(x, y))
-# xarr, yarr, cl, cd = get_plot_aeff_exact_to_energy(he_ncsd_files)
-# for x, y in zip(xarr, yarr):
-#     print('  {:4} {:8.4}'.format(x, y))
-
+dpath = '/Users/Alpha/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
+all_ncsd_files = sorted(parse_ncsd_out_files(dirpath=dpath))
+he_ncsd_files = filter(lambda n: n.z == 2, all_ncsd_files)
+# plots = get_plots_aeff_exact_to_energy(he_ncsd_files)
+# for plot in sorted(plots, key=lambda p: p[3]['state']):
+#     xarr, yarr, const_list, const_dict = plot
+#     print('State = {}'.format(const_dict['state']))
+#     for x, y in zip(xarr, yarr):
+#         print('  {:4} {:8.4}'.format(x, y))
+xarr, yarr, cl, cd = get_plot_aeff_exact_to_ground_energy(he_ncsd_files)
+for x, y in zip(xarr, yarr):
+    print('  {:4} {:8.4}'.format(x, y))

@@ -2,7 +2,7 @@
 Functions for retrieving various data maps from parsed files
 """
 from __future__ import division, unicode_literals, print_function
-from parsers.parse_files import parse_ncsd_out_files
+from os import path
 
 
 class NoUniqueMapError(RuntimeError):
@@ -10,7 +10,7 @@ class NoUniqueMapError(RuntimeError):
 
 
 # todo: make this general
-def get_ground_state_j(mass, z):
+def _get_ground_state_j(mass, z):
     """Get the j for the ground state for the given mass number and shell.
     :param mass: mass number
     :param z: proton num
@@ -26,7 +26,7 @@ def get_ground_state_j(mass, z):
 
 
 def _get_ground_state_rounded(mass, states, z, round_place=4):
-    j0 = get_ground_state_j(mass=mass, z=z)
+    j0 = _get_ground_state_j(mass=mass, z=z)
     if round_place < 0:
         print('Could not find state with J={} for A={}'.format(j0, mass))
         return None
@@ -40,14 +40,14 @@ def _get_ground_state_rounded(mass, states, z, round_place=4):
 
 # todo: This only filters out incorrect ground states for some cases
 # todo: Extend to make general
-def get_ground_state(mass, states, z):
+def _get_ground_state(mass, states, z):
     """Given a mass number, a list of states, and the shell, returns the
     ground states (defined here to be the lowest energy with the correct J)
     :param mass: mass number (A)
     :param states: list of State (see State.py)
     :param z: proton num
     """
-    j0 = get_ground_state_j(mass=mass, z=z)
+    j0 = _get_ground_state_j(mass=mass, z=z)
     if len(states) == 0:
         print('Could not find ground state for A={}'.format(mass))
         return None
@@ -70,7 +70,7 @@ def get_ground_state(mass, states, z):
                 mass=mass, states=states, z=z)
 
 
-def get_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files):
+def _get_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files):
     """Returns a map (A, Aeff) -> NcsdOut from the given NcsdOut if it is
     possible to form the map uniquely
     """
@@ -92,8 +92,8 @@ def get_a_aeff_to_state_to_energy_map(parsed_ncsd_out_files):
         (a, aeff) -> (j, t) -> energy
     """
     a_aeff_to_state_to_energy = dict()
-    for a_aeff, ncsd_out in get_a_aeff_to_ncsd_out_map(
-            parsed_ncsd_out_files ).items():
+    for a_aeff, ncsd_out in _get_a_aeff_to_ncsd_out_map(
+            parsed_ncsd_out_files).items():
         state_to_energy = dict()
         for state, e in sorted(ncsd_out.energy_levels.items(),
                                key=lambda i: i[1]):
@@ -117,14 +117,62 @@ def get_state_to_a_aeff_to_energy_map(parsed_ncsd_out_files):
 
 def get_a_aeff_to_ground_state_energy_map(parsed_ncsd_out_files):
     a_aeff_to_ground_state_energy = dict()
-    for a_aeff, ncsd_out in get_a_aeff_to_ncsd_out_map(
-        parsed_ncsd_out_files=parsed_ncsd_out_files
+    for a_aeff, ncsd_out in _get_a_aeff_to_ncsd_out_map(
+            parsed_ncsd_out_files=parsed_ncsd_out_files
     ).items():
         for state, e in sorted(ncsd_out.energy_levels.items()):
-            if state.J == get_ground_state_j(mass=a_aeff[0], z=ncsd_out.z):
+            if state.J == _get_ground_state_j(mass=a_aeff[0], z=ncsd_out.z):
                 a_aeff_to_ground_state_energy[a_aeff] = e
                 break
     return a_aeff_to_ground_state_energy
+
+
+# todo: add data maps for nushellx energy and interaction files
+def _get_fpath_to_parsed_file_map(parsed_files):
+    """Creates a map: filepath -> Parser from the given list of Parser
+    """
+    fpath_to_file = dict()
+    for f in parsed_files:
+        fpath_to_file[f.filepath] = f
+    return fpath_to_file
+
+
+def _get_dpath_to_parsed_file_map(parsed_files):
+    """Creates a map: dirpath -> Parser from the given list of Parser, where
+    dirpath is the full path to the directory containing the file represented
+    by the associated Parser
+    """
+    dpath_to_file = dict()
+    for fpath, parser in _get_fpath_to_parsed_file_map(parsed_files).items():
+        dpath = path.split(fpath)[0]
+        dpath_to_file[dpath] = parser
+    return dpath_to_file
+
+
+def _get_presc_a_to_int_and_lpt_map(parsed_int_files, parsed_lpt_files):
+    dpath_to_int = _get_dpath_to_parsed_file_map(parsed_int_files)
+    dpath_to_lpt = _get_dpath_to_parsed_file_map(parsed_lpt_files)
+    presc_a_to_int_and_lpt = dict()
+    for dpath, intfile in dpath_to_int.items():
+        presc = intfile.a_prescription
+        if presc is not None and dpath in dpath_to_lpt:
+            lptfile = dpath_to_lpt[dpath]
+            a = lptfile.a
+            presc_a_to_int_and_lpt[presc, a] = (intfile, lptfile)
+    return presc_a_to_int_and_lpt
+
+
+def _get_presc_a_to_state_to_energy_map(parsed_int_files, parsed_lpt_files):
+    presc_a_to_int_and_lpt = _get_presc_a_to_int_and_lpt_map(
+        parsed_int_files, parsed_lpt_files)
+    presc_a_to_state_to_energy = dict()
+    for presc_a, int_and_lpt in presc_a_to_int_and_lpt.items():
+        intfile, lptfile = int_and_lpt
+        state_to_energy = dict()
+        for state in lptfile.energy_levels:
+            state_to_energy[state] = state.E + intfile.zero_body_term
+        presc_a_to_state_to_energy[presc_a] = state_to_energy
+    return presc_a_to_state_to_energy
 
 
 # # test

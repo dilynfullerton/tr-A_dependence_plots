@@ -5,7 +5,7 @@ from __future__ import print_function, division, unicode_literals
 from re import match
 
 
-class IncorrectFileTypeException(Exception):
+class ItemNotFoundInFileException(Exception):
     pass
 
 
@@ -30,7 +30,7 @@ class Parser(object):
                 match_fn(line)
                 break
         else:
-            raise IncorrectFileTypeException(
+            raise ItemNotFoundInFileException(
                 'Did not find {} in {}'.format(data_name, self.filepath))
 
     def _get_data_lines_fn(self, line_regex, match_fn, data_name):
@@ -40,5 +40,5 @@ class Parser(object):
                 match_fn(line)
                 matched = True
         if not matched:
-            raise IncorrectFileTypeException(
+            raise ItemNotFoundInFileException(
                 'Did not find {} in {}'.format(data_name, self.filepath))

@@ -25,7 +25,7 @@ from __future__ import print_function
 from itertools import combinations
 
 import numpy as np
-from int.ExpInt import ExpInt
+from deprecated.int import ExpInt
 
 from constants import DPATH_FILES_INT, STANDARD_IO_MAP
 from constants import P_TITLE, P_BREAK, P_END, P_HEAD

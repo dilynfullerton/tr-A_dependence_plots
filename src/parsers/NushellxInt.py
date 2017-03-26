@@ -3,24 +3,42 @@ Store dat from Nushell Interaction *.int files
 """
 from __future__ import print_function, division, unicode_literals
 from re import compile
-from Parser import Parser
+from Parser import Parser, ItemNotFoundInFileException
 from NushellOrbital import NushellOrbital
 from NushellTbme import NushellTbme
 
 
-RGX_ZERO_BODY_TERM = compile(b'.*Zero\sbody\sterm:')
-RGX_INDEX_LINE = compile(b'^\s*!(\s+\d+){5}')
-RGX_SINGLE_PARTICLE_ENERGIES = compile(b'-999')
-RGX_TWO_BODY_MATRIX_ELEMENTS = compile(b'\s*(\d+\s+){6}-?\d+\.\d+')
+RGX_ZERO_BODY_TERM = compile('.*Zero\sbody\sterm:')
+RGX_INDEX_LINE = compile('^\s*!(\s+\d+){5}')
+RGX_SINGLE_PARTICLE_ENERGIES = compile('-999')
+RGX_TWO_BODY_MATRIX_ELEMENTS = compile('\s*(\d+\s+){6}-?\d+\.\d+')
+RGX_PRESC_LINE = compile('^\s*!\s*Effective')
+RGX_PRESC_STR = compile('\(\s*\d+,\s*\d+,\s*\d+\s*\)')
 
 
 class NushellxInt(Parser):
     def __init__(self, filepath):
+        self.a_prescription = None
         self.zero_body_term = 0
         self.index_map = dict()
         self.single_particle_energies = list()
         self.two_body_matrix_elements = dict()
         super(NushellxInt, self).__init__(filepath)
+
+    def _get_a_prescription(self):
+        def match_fn(line):
+            presc_str = compile('=').split(line.strip())[-1]
+            if RGX_PRESC_STR.match(presc_str):
+                presc = compile('\s*,\s*').split(presc_str.strip('()'))
+                self.a_prescription = (int(p) for p in presc)
+            else:
+                self.a_prescription = (int(presc_str.strip()),) * 3
+        try:
+            super(NushellxInt, self)._get_data_line_fn(
+                line_regex=RGX_PRESC_LINE, match_fn=match_fn,
+                data_name='A PRESCRIPTION')
+        except ItemNotFoundInFileException:
+            pass
 
     def _get_zero_body_term(self):
         def match_fn(line):
@@ -55,6 +73,7 @@ class NushellxInt(Parser):
             data_name='TWO BODY MATRIX ELEMENTS')
 
     def _get_data(self):
+        self._get_a_prescription()
         self._get_zero_body_term()
         self._get_index_map()
         self._get_single_particle_energies()
