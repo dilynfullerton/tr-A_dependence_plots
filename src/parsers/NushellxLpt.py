@@ -64,7 +64,7 @@ class NushellxLpt(Parser):
         self._get_data_energy_levels()
 
 
-# n = NushellxLpt('/Users/Alpha/workspace/triumf/tr-c-nushellx/old/'
+# n = NushellxLpt('~/workspace/triumf/tr-c-nushellx/old/'
 #                 'results20160716/Z8/vce/'
 #                 'vce_presc16,17,18_Nmax2_15_15_shell2_dim2/A20/o_20y.lpt')
 # print('A = {}'.format(n.a))

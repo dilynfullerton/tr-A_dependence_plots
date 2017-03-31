@@ -91,7 +91,7 @@ class NcsdOut(Parser):
         self._get_data_energy_levels()
 
 
-# n = NcsdOut('/Users/Alpha/workspace/triumf/tr-c-ncsm/old/'
+# n = NcsdOut('~/workspace/triumf/tr-c-ncsm/old/'
 #             'results20160716/ncsd/'
 #             'o-17_18_Nhw16_15_15/o-17_18_Nhw16_15_15.out')
 # print('Z    = {}'.format(n.z))

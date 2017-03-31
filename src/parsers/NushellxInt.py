@@ -81,7 +81,7 @@ class NushellxInt(Parser):
         self._get_two_body_matrix_elements()
 
 
-# n = NushellxInt('/Users/Alpha/workspace/triumf/tr-c-nushellx/old/'
+# n = NushellxInt('~/workspace/triumf/tr-c-nushellx/old/'
 #                 'results20160716/Z8/vce/'
 #                 'vce_presc16,17,18_Nmax2_15_15_shell2_dim2/A20/A20.int')
 #

@@ -203,7 +203,7 @@ def get_presc_a_to_ground_state_energy_map(parsed_int_files, parsed_lpt_files):
 
 
 # # test
-# dpath = '/Users/Alpha/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
+# dpath = '~/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
 # ncsd_files = sorted(parse_ncsd_out_files(dpath))
 # a_aeff_to_ground_state_energy = get_a_aeff_to_ground_state_energy_map(
 #     ncsd_files,

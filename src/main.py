@@ -12,15 +12,15 @@ from plotters.plotters import *
 TRDIR = '~/workspace/triumf'
 
 # make_plot_ncsd_exact(
-#     dpath_ncsd_files='/Users/Alpha/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd/helium',
-#     dpath_plots='/Users/Alpha/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd',
+#     dpath_ncsd_files=TRDIR+'/tr-c-ncsm/old/results20170224/ncsd/helium',
+#     dpath_plots=TRDIR+'/triumf/tr-c-ncsm/old/results20170224/ncsd',
 #     savename='plot_attempt'
 # )
 
 make_plot_ground_state_prescription_error_vs_exact(
-    dpath_ncsd_files=TRDIR + '/tr-c-ncsm/results/helium20170330',
-    dpath_nushell_files=TRDIR + '/tr-c-nushellx/results/helium20170330',
-    dpath_plots=TRDIR + '/tr-c-ncsm/results/helium20170330',
+    dpath_ncsd_files=TRDIR+'/tr-c-ncsm/results/helium20170330',
+    dpath_nushell_files=TRDIR+'/tr-c-nushellx/results/helium20170330',
+    dpath_plots=TRDIR+'/tr-c-ncsm/results/helium20170330',
     savename='error_helium_nmax2',
     subtitle='Helium, Nmax=2',
     a_prescriptions=[(4, 5, 6)]

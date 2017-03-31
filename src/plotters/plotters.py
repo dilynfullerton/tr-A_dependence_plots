@@ -162,7 +162,7 @@ def make_plot_ground_state_prescription_error_vs_exact(
 
 
 # test
-# dpath = '/Users/Alpha/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
+# dpath = '~/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
 # all_ncsd_files = sorted(parse_ncsd_out_files(dirpath=dpath))
 # he_ncsd_files = filter(lambda n: n.z == 2, all_ncsd_files)
 # # plots = get_plots_aeff_exact_to_energy(he_ncsd_files)
