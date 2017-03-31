@@ -23,8 +23,8 @@ class NushellxLpt(Parser):
 
     def _get_data_az(self):
         def match_fn(line):
-            self.a = RGX_SPLIT.split(line.strip())[1]
-            self.z = RGX_SPLIT.split(line.strip())[3]
+            self.a = int(RGX_SPLIT.split(line.strip())[1])
+            self.z = int(RGX_SPLIT.split(line.strip())[3])
         super(NushellxLpt, self)._get_data_line_fn(
             line_regex=RGX_AZ_LINE, match_fn=match_fn, data_name='A and Z')
 

@@ -72,7 +72,7 @@ def _save_plot_figure(
             _set_legend(num_plots=num_plots, legend_size=legendsize, ax=ax)
         else:
             plt.legend()
-    plt.savefig(savepath)
+    plt.savefig(path.expanduser(savepath))
     return plot_list_list
 
 
@@ -239,7 +239,7 @@ def save_plot_data_file(
         for xi, yi in zip(x, y):
             writelines.append(b'  {x:>16.8f}  {y:>16.8f}'.format(x=xi, y=yi))
         writelines.append(b'')
-    with open(path.join(savepath), 'w') as fw:
+    with open(path.expanduser(savepath), b'w') as fw:
         fw.write(b'{0}\n'.format(b'\n'.join(writelines)))
 
 

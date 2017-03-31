@@ -12,7 +12,7 @@ from NushellxLpt import NushellxLpt
 
 def _parse_files_in_dir(dirpath, fname_regex, parser):
     parsed_files = list()
-    for root, dnames, fnames in walk(dirpath):
+    for root, dnames, fnames in walk(path.expanduser(dirpath)):
         for fname in fnames:
             if match(fname_regex, fname):
                 try:
@@ -24,14 +24,14 @@ def _parse_files_in_dir(dirpath, fname_regex, parser):
 
 def parse_ncsd_out_files(dirpath):
     return _parse_files_in_dir(
-        dirpath=dirpath, fname_regex=compile('.*\.out'), parser=NcsdOut)
+        dirpath=dirpath, fname_regex=compile('.*\.out$'), parser=NcsdOut)
 
 
 def parse_nushellx_int_files(dirpath):
     return _parse_files_in_dir(
-        dirpath=dirpath, fname_regex=compile('.*\.int'), parser=NushellxInt)
+        dirpath=dirpath, fname_regex=compile('.*\.int$'), parser=NushellxInt)
 
 
 def parse_nushellx_lpt_files(dirpath):
     return _parse_files_in_dir(
-        dirpath=dirpath, fname_regex=compile('.*y\.lpt'), parser=NushellxLpt)
+        dirpath=dirpath, fname_regex=compile('.*y\.lpt$'), parser=NushellxLpt)

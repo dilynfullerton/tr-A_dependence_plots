@@ -19,6 +19,8 @@ def _get_ground_state_j(mass, z):
         return 0.0
     elif z == 2:
         return 1.5
+    elif z == 3:
+        return 2.5  # todo is this correct?
     elif z == 16:
         return 2.5
     else:
@@ -158,7 +160,7 @@ def _get_presc_a_to_int_and_lpt_map(parsed_int_files, parsed_lpt_files):
         if presc is not None and dpath in dpath_to_lpt:
             lptfile = dpath_to_lpt[dpath]
             a = lptfile.a
-            presc_a_to_int_and_lpt[presc, a] = (intfile, lptfile)
+            presc_a_to_int_and_lpt[(presc, a)] = (intfile, lptfile)
     return presc_a_to_int_and_lpt
 
 
@@ -173,6 +175,31 @@ def _get_presc_a_to_state_to_energy_map(parsed_int_files, parsed_lpt_files):
             state_to_energy[state] = state.E + intfile.zero_body_term
         presc_a_to_state_to_energy[presc_a] = state_to_energy
     return presc_a_to_state_to_energy
+
+
+def get_state_to_presc_a_to_energy_map(parsed_int_files, parsed_lpt_files):
+    presc_a_to_state_to_energy = _get_presc_a_to_state_to_energy_map(
+        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
+    state_to_presc_a_to_energy = dict()
+    for presc_a, state_to_energy in presc_a_to_state_to_energy.items():
+        for state, energy in state_to_energy.items():
+            if state not in state_to_presc_a_to_energy:
+                state_to_presc_a_to_energy[state] = dict()
+            state_to_presc_a_to_energy[state][presc_a] = energy
+    return state_to_presc_a_to_energy
+
+
+def get_presc_a_to_ground_state_energy_map(parsed_int_files, parsed_lpt_files):
+    presc_a_to_ground_state_energy = dict()
+    for presc_a, int_lpt in _get_presc_a_to_int_and_lpt_map(
+        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files
+    ).items():
+        for state in sorted(int_lpt[1].energy_levels):
+            if state.J == _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z):
+                presc_a_to_ground_state_energy[presc_a] = (
+                    state.E + int_lpt[0].zero_body_term)
+                break
+    return presc_a_to_ground_state_energy
 
 
 # # test

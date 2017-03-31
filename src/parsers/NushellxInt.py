@@ -13,7 +13,7 @@ RGX_INDEX_LINE = compile('^\s*!(\s+\d+){5}')
 RGX_SINGLE_PARTICLE_ENERGIES = compile('-999')
 RGX_TWO_BODY_MATRIX_ELEMENTS = compile('\s*(\d+\s+){6}-?\d+\.\d+')
 RGX_PRESC_LINE = compile('^\s*!\s*Effective')
-RGX_PRESC_STR = compile('\(\s*\d+,\s*\d+,\s*\d+\s*\)')
+RGX_PRESC_STR = compile('.*\s*\d+,\s*\d+,\s*\d+\s*.*')
 
 
 class NushellxInt(Parser):
@@ -29,8 +29,9 @@ class NushellxInt(Parser):
         def match_fn(line):
             presc_str = compile('=').split(line.strip())[-1]
             if RGX_PRESC_STR.match(presc_str):
-                presc = compile('\s*,\s*').split(presc_str.strip('()'))
-                self.a_prescription = (int(p) for p in presc)
+                stripped = presc_str.strip('[]() ')
+                presc = compile('\s*,\s*').split(stripped)
+                self.a_prescription = tuple([int(p) for p in presc])
             else:
                 self.a_prescription = (int(presc_str.strip()),) * 3
         try:
