@@ -20,7 +20,7 @@ def _get_ground_state_j(mass, z):
     elif z == 2:
         return 1.5
     elif z == 3:
-        return 2.5  # todo is this correct?
+        return 1.5  # TODO: is this correct?
     elif z == 16:
         return 2.5
     else:
@@ -40,8 +40,8 @@ def _get_ground_state_rounded(mass, states, z, round_place=4):
             mass=mass, states=states, z=z, round_place=round_place - 1)
 
 
-# todo: This only filters out incorrect ground states for some cases
-# todo: Extend to make general
+# TODO: This only filters out incorrect ground states for some cases
+# TODO: Extend to make general
 def _get_ground_state(mass, states, z):
     """Given a mass number, a list of states, and the shell, returns the
     ground states (defined here to be the lowest energy with the correct J)

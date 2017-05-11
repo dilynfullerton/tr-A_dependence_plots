@@ -147,14 +147,14 @@ def make_plot_ground_state_prescription_error_vs_exact(
     title = 'Ground state energy error for A-prescriptions: ' + subtitle
     labels = [p[3]['name'] for p in  plots]
     xlabel, ylabel = 'A', 'E_presc - E_ncsm (MeV)'
-    savepath = path.join(dpath_plots, savename + '.pdf')
+    savepath = path.join(dpath_plots, savename)
     save_plot_data_file(
         plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-        labels=labels, savepath=savepath
+        labels=labels, savepath=savepath+'.dat'
     )
     return save_plot_figure(
         data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-        savepath=savepath, data_labels=labels, cmap_name='jet',
+        savepath=savepath+'.pdf', data_labels=labels, cmap_name='jet',
     )
 
 
