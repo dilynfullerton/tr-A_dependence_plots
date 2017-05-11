@@ -24,7 +24,9 @@ def _parse_files_in_dir(dirpath, fname_regex, parser):
 
 def parse_ncsd_out_files(dirpath):
     return _parse_files_in_dir(
-        dirpath=dirpath, fname_regex=compile('.*\.out$'), parser=NcsdOut)
+        dirpath=dirpath, fname_regex=compile('^\D+\d+_\d+.*\.out$'),
+        parser=NcsdOut
+    )
 
 
 def parse_nushellx_int_files(dirpath):

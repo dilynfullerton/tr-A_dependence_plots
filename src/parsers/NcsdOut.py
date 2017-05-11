@@ -3,6 +3,7 @@ Store dat from NCSD output *.out files
 """
 from __future__ import print_function, division, unicode_literals
 from re import compile
+from os import path
 from Parser import Parser
 from NcsdEnergyLevel import NcsdEnergyLevel
 
@@ -39,7 +40,8 @@ class NcsdOut(Parser):
         return hash((self.z, self.n, self.nmax))
 
     def _get_data_aeff(self):
-        self.aeff = int(compile(b'_').split(self.filepath)[1])
+        fname = path.split(self.filepath)[-1]
+        self.aeff = int(compile(b'_').split(fname)[1])
 
     def _get_data_zn(self):
         def match_fn(line):
