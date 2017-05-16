@@ -107,7 +107,8 @@ def make_plot_ground_state_prescription_error_vs_exact(
         parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
     vce_plots = _get_plots_presc_a_to_ground_energy(
         parsed_int_files=parse_nushellx_int_files(dirpath=dpath_nushell_files),
-        parsed_lpt_files=parse_nushellx_lpt_files(dirpath=dpath_nushell_files))
+        parsed_lpt_files=parse_nushellx_lpt_files(dirpath=dpath_nushell_files)
+    )
 
     # Ncsd exact arrays
     x_ex, y_ex = [list(i) for i in ncsd_plot[:2]]

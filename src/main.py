@@ -11,7 +11,10 @@ from deprecated.ncsm_out.plots import plot_a_aeff_ground_energy_vs_nmax
 from plotters.plotters import *
 
 if __name__ == '__main__':
-    TRDIR = '~/workspace/triumf'
+    RESULTS_DIR = ('~/workspace/triumf/calculation_results/'
+                   'lithium_nmax0_456_20170511')
+    NCSD_DIR = RESULTS_DIR + '/ncsd'
+    NUSHELL_DIR = RESULTS_DIR + '/vce'
 
     # make_plot_ncsd_exact(
     #     dpath_ncsd_files=TRDIR+'/tr-c-ncsm/old/results20170224/ncsd/helium',
@@ -20,12 +23,12 @@ if __name__ == '__main__':
     # )
 
     make_plot_ground_state_prescription_error_vs_exact(
-        dpath_ncsd_files=TRDIR+'/tr-c-ncsm/results/lithium_nmax0_20170510',
-        dpath_nushell_files=TRDIR+'/tr-c-nushellx/results/lithium_nmax0_20170510',
-        dpath_plots=TRDIR+'/tr-c-ncsm/results/lithium_nmax0_20170510',
-        savename='error_lithium_nmax0',
-        subtitle='Lithium, Nmax=0',
-        a_prescriptions=[(6, 7, 8)]
+        dpath_ncsd_files=NCSD_DIR,
+        dpath_nushell_files=NUSHELL_DIR,
+        dpath_plots=RESULTS_DIR,
+        savename='error_li_nmax0',
+        subtitle='Lithium exact and (4, 5, 6), Nmax=0',
+        a_prescriptions=[(4, 5, 6)],
     )
 
     # plot_ground_state_prescription_error_vs_exact(

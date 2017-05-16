@@ -191,9 +191,10 @@ def get_state_to_presc_a_to_energy_map(parsed_int_files, parsed_lpt_files):
 
 def get_presc_a_to_ground_state_energy_map(parsed_int_files, parsed_lpt_files):
     presc_a_to_ground_state_energy = dict()
-    for presc_a, int_lpt in _get_presc_a_to_int_and_lpt_map(
+    presc_a_to_int_and_lpt = _get_presc_a_to_int_and_lpt_map(
         parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files
-    ).items():
+    )
+    for presc_a, int_lpt in presc_a_to_int_and_lpt.items():
         for state in sorted(int_lpt[1].energy_levels):
             if state.J == _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z):
                 presc_a_to_ground_state_energy[presc_a] = (
