@@ -5,7 +5,7 @@ from __future__ import print_function, division, unicode_literals
 from re import compile
 from Parser import Parser
 from LptEnergyLevel import LptEnergyLevel
-
+from Parser import ItemNotFoundInFileException
 
 RGX_SPLIT = compile(b'\s*[=#]\s*|\s+')
 RGX_AZ_LINE = compile(b'.*a\s*=\s*\d+\s+z\s*=\s*\d+')
@@ -25,16 +25,24 @@ class NushellxLpt(Parser):
         def match_fn(line):
             self.a = int(RGX_SPLIT.split(line.strip())[1])
             self.z = int(RGX_SPLIT.split(line.strip())[3])
-        super(NushellxLpt, self)._get_data_line_fn(
-            line_regex=RGX_AZ_LINE, match_fn=match_fn, data_name='A and Z')
+        try:
+            super(NushellxLpt, self)._get_data_line_fn(
+                line_regex=RGX_AZ_LINE, match_fn=match_fn, data_name='A and Z')
+        except ItemNotFoundInFileException as e:
+            print(e.message)
+            raise  # critical issue: raise
 
     def _get_data_spe(self):
         def match_fn(line):
             nums = map(lambda s: float(s), line.strip().split()[3:-1])
             self.single_particle_energies.extend(nums)
-        super(NushellxLpt, self)._get_data_lines_fn(
-            line_regex=RGX_SPE_LINE, match_fn=match_fn,
-            data_name='SINGLE PARTICLE ENERGIES')
+        try:
+            super(NushellxLpt, self)._get_data_lines_fn(
+                line_regex=RGX_SPE_LINE, match_fn=match_fn,
+                data_name='SINGLE PARTICLE ENERGIES'
+            )
+        except ItemNotFoundInFileException as e:
+            print(e.message)  # non-critical: continue
 
     def _get_data_energy_levels(self):
         def match_fn(line):
@@ -54,9 +62,13 @@ class NushellxLpt(Parser):
             else:
                 t = float(split_line[4])
             self.energy_levels.append(LptEnergyLevel(n, nj, e, j, t, p))
-        super(NushellxLpt, self)._get_data_lines_fn(
-            line_regex=RGX_ENERGY_LEVEL_LINE, match_fn=match_fn,
-            data_name='ENERGY LEVELS')
+        try:
+            super(NushellxLpt, self)._get_data_lines_fn(
+                line_regex=RGX_ENERGY_LEVEL_LINE, match_fn=match_fn,
+                data_name='ENERGY LEVELS'
+            )
+        except ItemNotFoundInFileException as e:
+            print(e.message)  # non-critical issue: continue
 
     def _get_data(self):
         self._get_data_az()
