@@ -73,6 +73,30 @@ def _get_plots_presc_a_to_ground_energy(parsed_int_files, parsed_lpt_files):
     return list_of_plots
 
 
+def _get_plots_presc_a_to_energies_with_ground_j(
+        parsed_int_files, parsed_lpt_files):
+    presc_a_to_energies = get_presc_a_to_energies_of_states_with_ground_j_map(
+        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
+    # make multi-layer dict presc -> A -> energies
+    presc_to_a_to_energies = dict()
+    for presc_a, energies in presc_a_to_energies.items():
+        presc, a = presc_a
+        if presc not in presc_to_a_to_energies:
+            presc_to_a_to_energies[presc] = dict()
+        presc_to_a_to_energies[presc][a] = energies
+    # make plots
+    list_of_plots = list()
+    for presc, a_to_energies in presc_to_a_to_energies.items():
+        xarr = []
+        yarr = []
+        for a, energies in a_to_energies.items():
+            for e in energies:
+                xarr.append(a)
+                yarr.append(e)
+        list_of_plots.append((xarr, yarr, list(), {'presc': presc}))
+    return list_of_plots
+
+
 def make_plot_ncsd_exact(dpath_ncsd_files, dpath_plots, savename, subtitle=''):
     plots = _get_plots_aeff_exact_to_energy(
         parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
@@ -99,13 +123,15 @@ def make_plot_ncsd_exact(dpath_ncsd_files, dpath_plots, savename, subtitle=''):
     )
 
 
-def make_plot_ground_state_prescription_error_vs_exact(
+def _make_plot_prescription_error_vs_exact_abstract(
         dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
-        subtitle='', a_prescriptions=None
+        title, subtitle='', a_prescriptions=None,
+        get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
+        get_vce_plots_fn=_get_plots_presc_a_to_ground_energy
 ):
-    ncsd_plot = _get_plot_aeff_exact_to_ground_energy(
+    ncsd_plot = get_ncsd_plots_fn(
         parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
-    vce_plots = _get_plots_presc_a_to_ground_energy(
+    vce_plots = get_vce_plots_fn(
         parsed_int_files=parse_nushellx_int_files(dirpath=dpath_nushell_files),
         parsed_lpt_files=parse_nushellx_lpt_files(dirpath=dpath_nushell_files)
     )
@@ -145,19 +171,48 @@ def make_plot_ground_state_prescription_error_vs_exact(
             plots.append(plot)
 
     # make plot
-    title = 'Ground state energy error for A-prescriptions: ' + subtitle
-    labels = [p[3]['name'] for p in  plots]
+    fulltitle = title + ': ' + subtitle
+    labels = [p[3]['name'] for p in plots]
     xlabel, ylabel = 'A', 'E_presc - E_ncsm (MeV)'
     savepath = path.join(dpath_plots, savename)
     save_plot_data_file(
-        plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
+        plots=plots, title=fulltitle, xlabel=xlabel, ylabel=ylabel,
         labels=labels, savepath=savepath+'.dat'
     )
     return save_plot_figure(
-        data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
+        data_plots=plots, title=fulltitle, xlabel=xlabel, ylabel=ylabel,
         savepath=savepath+'.pdf', data_labels=labels, cmap_name='jet',
     )
 
+
+# def make_plots_states_with_ground_j_prescription_error_vs_exact(
+#         dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
+#         subtitle='', a_prescriptions=None
+# ):
+#     return _make_plot_prescription_error_vs_exact_abstract(
+#         dpath_ncsd_files=dpath_ncsd_files,
+#         dpath_nushell_files=dpath_nushell_files,
+#         dpath_plots=dpath_plots, savename=savename, subtitle=subtitle,
+#         a_prescriptions=a_prescriptions,
+#         title='Error of states with ground J for A-prescriptions',
+#         get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
+#         get_vce_plots_fn=_get_plots_presc_a_to_energies_with_ground_j
+#     )
+
+
+def make_plot_ground_state_prescription_error_vs_exact(
+        dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
+        subtitle='', a_prescriptions=None
+):
+    return _make_plot_prescription_error_vs_exact_abstract(
+        dpath_ncsd_files=dpath_ncsd_files,
+        dpath_nushell_files=dpath_nushell_files,
+        dpath_plots=dpath_plots, savename=savename, subtitle=subtitle,
+        a_prescriptions=a_prescriptions,
+        title='Ground state energy error for A-prescriptions',
+        get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
+        get_vce_plots_fn=_get_plots_presc_a_to_ground_energy
+    )
 
 
 

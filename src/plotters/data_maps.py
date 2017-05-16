@@ -192,8 +192,7 @@ def get_state_to_presc_a_to_energy_map(parsed_int_files, parsed_lpt_files):
 def get_presc_a_to_ground_state_energy_map(parsed_int_files, parsed_lpt_files):
     presc_a_to_ground_state_energy = dict()
     presc_a_to_int_and_lpt = _get_presc_a_to_int_and_lpt_map(
-        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files
-    )
+        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
     for presc_a, int_lpt in presc_a_to_int_and_lpt.items():
         for state in sorted(int_lpt[1].energy_levels):
             if state.J == _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z):
@@ -201,6 +200,26 @@ def get_presc_a_to_ground_state_energy_map(parsed_int_files, parsed_lpt_files):
                     state.E + int_lpt[0].zero_body_term)
                 break
     return presc_a_to_ground_state_energy
+
+
+def get_presc_a_to_energies_of_states_with_ground_j_map(
+        parsed_int_files, parsed_lpt_files):
+    """Gets a map ( AEFF_PRESC, A ) -> [ E0, E1, ... ], where E0, E1, etc
+    are the energies (zero body plus *.lpt energy level) of states with the
+    same J as the ground state
+    """
+    presc_a_to_energies = dict()
+    presc_a_to_int_and_lpt = _get_presc_a_to_int_and_lpt_map(
+        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
+    for presc_a, int_lpt in presc_a_to_int_and_lpt.items():
+        for state in sorted(int_lpt[1].energy_levels):
+            if state.J == _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z):
+                if presc_a not in presc_a_to_energies:
+                    presc_a_to_energies[presc_a] = list()
+                presc_a_to_energies[presc_a].append(
+                    state.E + int_lpt[0].zero_body_term)
+    return presc_a_to_energies
+
 
 
 # # test
