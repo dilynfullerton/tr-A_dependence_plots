@@ -3,6 +3,7 @@ General class for parsing text files
 """
 from __future__ import print_function, division, unicode_literals
 from re import match
+from os import path
 
 
 class ItemNotFoundInFileException(Exception):
@@ -13,6 +14,10 @@ class Parser(object):
     def __init__(self, filepath):
         self.filepath = filepath
         self._get_data()
+
+    def __repr__(self):
+        return (super(Parser, self).__repr__() + ' at ' +
+                path.relpath(self.filepath))
 
     def _lines(self):
         with open(self.filepath) as f:
