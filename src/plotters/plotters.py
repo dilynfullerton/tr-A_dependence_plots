@@ -73,30 +73,6 @@ def _get_plots_presc_a_to_ground_energy(parsed_int_files, parsed_lpt_files):
     return list_of_plots
 
 
-def _get_plots_presc_a_to_energies_with_ground_j(
-        parsed_int_files, parsed_lpt_files):
-    presc_a_to_energies = get_presc_a_to_energies_of_states_with_ground_j_map(
-        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
-    # make multi-layer dict presc -> A -> energies
-    presc_to_a_to_energies = dict()
-    for presc_a, energies in presc_a_to_energies.items():
-        presc, a = presc_a
-        if presc not in presc_to_a_to_energies:
-            presc_to_a_to_energies[presc] = dict()
-        presc_to_a_to_energies[presc][a] = energies
-    # make plots
-    list_of_plots = list()
-    for presc, a_to_energies in presc_to_a_to_energies.items():
-        xarr = []
-        yarr = []
-        for a, energies in a_to_energies.items():
-            for e in energies:
-                xarr.append(a)
-                yarr.append(e)
-        list_of_plots.append((xarr, yarr, list(), {'presc': presc}))
-    return list_of_plots
-
-
 def make_plot_ncsd_exact(dpath_ncsd_files, dpath_plots, savename, subtitle=''):
     plots = _get_plots_aeff_exact_to_energy(
         parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
@@ -140,12 +116,13 @@ def _make_plot_prescription_error_vs_exact_abstract(
     x_ex, y_ex = [list(i) for i in ncsd_plot[:2]]
 
     # Aeff = A prescription
-    def is_exact_presc(plot):
-        p = plot[3]['presc']
-        return p[0] == p[1] and p[1] == p[2]
+    def is_exact_presc(plot0):
+        p0 = plot0[3]['presc']
+        return p0[0] == p0[1] and p0[1] == p0[2]
+
     x_aaf, y_aaf = list(), list()
     for vce_plot in sorted(filter(is_exact_presc, vce_plots),
-                           key=lambda p: p[3]['presc']):
+                           key=lambda p0: p0[3]['presc']):
         x_arr, y_arr, const_list, const_dict = vce_plot
         a = const_dict['presc'][0]
         if a not in x_arr:
@@ -177,11 +154,11 @@ def _make_plot_prescription_error_vs_exact_abstract(
     savepath = path.join(dpath_plots, savename)
     save_plot_data_file(
         plots=plots, title=fulltitle, xlabel=xlabel, ylabel=ylabel,
-        labels=labels, savepath=savepath+'.dat'
+        labels=labels, savepath=savepath + '.dat'
     )
     return save_plot_figure(
         data_plots=plots, title=fulltitle, xlabel=xlabel, ylabel=ylabel,
-        savepath=savepath+'.pdf', data_labels=labels, cmap_name='jet',
+        savepath=savepath + '.pdf', data_labels=labels, cmap_name='jet',
     )
 
 
@@ -214,19 +191,16 @@ def make_plot_ground_state_prescription_error_vs_exact(
         get_vce_plots_fn=_get_plots_presc_a_to_ground_energy
     )
 
-
-
-
 # test
 # dpath = '~/workspace/triumf/tr-c-ncsm/old/results20170224/ncsd'
 # all_ncsd_files = sorted(parse_ncsd_out_files(dirpath=dpath))
 # he_ncsd_files = filter(lambda n: n.z == 2, all_ncsd_files)
 # # plots = get_plots_aeff_exact_to_energy(he_ncsd_files)
-# # for plot in sorted(plots, key=lambda p: p[3]['state']):
+# # for plot in sorted(plots, key=lambda p0: p0[3]['state']):
 # #     xarr, yarr, const_list, const_dict = plot
 # #     print('State = {}'.format(const_dict['state']))
-# #     for x, y in zip(xarr, yarr):
-# #         print('  {:4} {:8.4}'.format(x, y))
+# #     for p0, y in zip(xarr, yarr):
+# #         print('  {:4} {:8.4}'.format(p0, y))
 # xarr, yarr, cl, cd = get_plot_aeff_exact_to_ground_energy(he_ncsd_files)
-# for x, y in zip(xarr, yarr):
-#     print('  {:4} {:8.4}'.format(x, y))
+# for p0, y in zip(xarr, yarr):
+#     print('  {:4} {:8.4}'.format(p0, y))

@@ -18,58 +18,36 @@ def _get_ground_state_j(mass, z):
     if mass % 2 == 0:
         return 0.0
     elif z == 2:
-        return 1.5
+        if mass != 9:
+            return 1.5
+        else:
+            return 0.5
     elif z == 3:
-        return 1.5  # TODO: is this correct?
+        return 1.5
     elif z == 16:
         return 2.5
     else:
         return None
 
 
-def _get_ground_state_rounded(mass, states, z, round_place=4):
-    j0 = _get_ground_state_j(mass=mass, z=z)
-    if round_place < 0:
-        print('Could not find state with J={} for A={}'.format(j0, mass))
-        return None
-    for state in states:
-        if round(state.J, round_place) == j0:
-            return state
-    else:
-        return _get_ground_state_rounded(
-            mass=mass, states=states, z=z, round_place=round_place - 1)
-
-
-# TODO: This only filters out incorrect ground states for some cases
-# TODO: Extend to make general
-def _get_ground_state(mass, states, z):
-    """Given a mass number, a list of states, and the shell, returns the
-    ground states (defined here to be the lowest energy with the correct J)
-    :param mass: mass number (A)
-    :param states: list of State (see State.py)
-    :param z: proton num
+def _get_ground_state(states, energies, j_list, j0=None):
+    """Gets the ground state and ground energy from the list of states, 
+    energies, and angular momenta. This is chosen by finding the state with
+    lowest associated energy for which angular momentum matches j0
+    :param states: list of energy states
+    :param energies: list of energies assocated with `states`
+    :param j_list: list of J associated with `states`
+    :return ground state, ground energy if found; returns None, None
     """
-    j0 = _get_ground_state_j(mass=mass, z=z)
-    if len(states) == 0:
-        print('Could not find ground state for A={}'.format(mass))
-        return None
-    elif j0 is None:
-        print(
-            '\nGround state angular momentum not known for A={}, z={}.'
-            'Using state with lowest energy.'.format(mass, z))
-        return states[0]
+    states_sorted = sorted(
+        list(zip(states, energies, j_list)), key=lambda x: x[1])
+    for s, e, j in states_sorted:
+        if j == j0:
+            return s, e
     else:
-        for state in states:
-            if state.J == j0:
-                return state
-        else:
-            print(
-                (
-                    '\nCould not find converged state with J={} for A={}'
-                    '\nAttempting to find approximate solution by rounding'
-                ).format(j0, mass))
-            return _get_ground_state_rounded(
-                mass=mass, states=states, z=z)
+        return None, None
+        # s0, e0, j0 = states_sorted[0]
+        # return s0, e
 
 
 def _get_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files):
@@ -122,10 +100,14 @@ def get_a_aeff_to_ground_state_energy_map(parsed_ncsd_out_files):
     for a_aeff, ncsd_out in _get_a_aeff_to_ncsd_out_map(
             parsed_ncsd_out_files=parsed_ncsd_out_files
     ).items():
-        for state, e in sorted(ncsd_out.energy_levels.items()):
-            if state.J == _get_ground_state_j(mass=a_aeff[0], z=ncsd_out.z):
-                a_aeff_to_ground_state_energy[a_aeff] = e
-                break
+        states = ncsd_out.energy_levels.keys()
+        energies = [ncsd_out.energy_levels[s] for s in states]
+        j_list = [s.J for s in states]
+        j0 = _get_ground_state_j(mass=a_aeff[0], z=ncsd_out.z)
+        s0, e0 = _get_ground_state(states=states, energies=energies,
+                                   j_list=j_list, j0=j0)
+        if e0 is not None:
+            a_aeff_to_ground_state_energy[a_aeff] = e0
     return a_aeff_to_ground_state_energy
 
 
@@ -194,32 +176,16 @@ def get_presc_a_to_ground_state_energy_map(parsed_int_files, parsed_lpt_files):
     presc_a_to_int_and_lpt = _get_presc_a_to_int_and_lpt_map(
         parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
     for presc_a, int_lpt in presc_a_to_int_and_lpt.items():
-        for state in sorted(int_lpt[1].energy_levels):
-            if state.J == _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z):
-                presc_a_to_ground_state_energy[presc_a] = (
-                    state.E + int_lpt[0].zero_body_term)
-                break
+        states = int_lpt[1].energy_levels
+        energies = [s.E for s in states]
+        j_list = [s.J for s in states]
+        j0 = _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z)
+        s0, e0 = _get_ground_state(states=states, energies=energies,
+                                   j_list=j_list, j0=j0)
+        if e0 is not None:
+            presc_a_to_ground_state_energy[presc_a] = (
+                e0 + int_lpt[0].zero_body_term)
     return presc_a_to_ground_state_energy
-
-
-def get_presc_a_to_energies_of_states_with_ground_j_map(
-        parsed_int_files, parsed_lpt_files):
-    """Gets a map ( AEFF_PRESC, A ) -> [ E0, E1, ... ], where E0, E1, etc
-    are the energies (zero body plus *.lpt energy level) of states with the
-    same J as the ground state
-    """
-    presc_a_to_energies = dict()
-    presc_a_to_int_and_lpt = _get_presc_a_to_int_and_lpt_map(
-        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
-    for presc_a, int_lpt in presc_a_to_int_and_lpt.items():
-        for state in sorted(int_lpt[1].energy_levels):
-            if state.J == _get_ground_state_j(mass=presc_a[1], z=int_lpt[1].z):
-                if presc_a not in presc_a_to_energies:
-                    presc_a_to_energies[presc_a] = list()
-                presc_a_to_energies[presc_a].append(
-                    state.E + int_lpt[0].zero_body_term)
-    return presc_a_to_energies
-
 
 
 # # test
