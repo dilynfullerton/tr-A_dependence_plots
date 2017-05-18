@@ -67,8 +67,8 @@ class NushellxLpt(Parser):
                 line_regex=RGX_ENERGY_LEVEL_LINE, match_fn=match_fn,
                 data_name='ENERGY LEVELS'
             )
-        except ItemNotFoundInFileException as e:
-            print(e.message)  # non-critical issue: continue
+        except ItemNotFoundInFileException as exc:
+            print(exc.message)  # non-critical issue: continue
 
     def _get_data(self):
         self._get_data_az()

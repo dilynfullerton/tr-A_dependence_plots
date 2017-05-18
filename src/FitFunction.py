@@ -24,22 +24,22 @@ class FitFunction:
     the meta-fit algorithm.
     """
     def __init__(
-            self, function, num_fit_params, name=None, code='',
+            self, func, num_fit_params, name=None, code='',
             force_zero=None, force_zero_func=None,
             force_k=None, force_k_func=None
     ):
         """Initializes a FitFunction
-        :param function: defines the functional form of the fit. This should
+        :param func: defines the functional form of the fit. This should
         satisfy the definition of a fit_function (see top of file)
         :param num_fit_params: number of fit parameters
-        :param name: name of the fit function
+        :param name: name of the fit func
         :param code: abbreviated name for use in file names
         :param force_zero: if not None, the fit will be forced to zero for
         this value of x.
         The functional form becomes
             f'(x) = f(x) - f(x0)
         :param force_zero_func: if not None (and force_zero is None), this
-        function, f(const_dict) -> x0, is applied to the const_dict to
+        func, f(const_dict) -> x0, is applied to the const_dict to
         determine x0, the x value for which the fit should be 0
         The functional form becomes
             f'(x) = f(x) - f(x0)
@@ -49,12 +49,12 @@ class FitFunction:
         The functional form becomes
             f'(x) = f(x) - f(x0) + k
         :param force_k_func: if not None (and force_zero and force_zero_func
-        and force_k are None), this function, f(const_dict) -> (x0, k),
+        and force_k are None), this func, f(const_dict) -> (x0, k),
         defines a point that the fit should be forced through.
         The functional form becomes
             f'(x) = f(x) - f(x0) + k
         """
-        self.fn = function
+        self.fn = func
         self.num_fit_params = num_fit_params
         self.fz = force_zero
         self.fzfn = force_zero_func
@@ -169,7 +169,7 @@ def combine_ffns(
         return result
 
     return FitFunction(
-        function=combined_ffns, num_fit_params=total_params_length,
+        func=combined_ffns, num_fit_params=total_params_length,
         force_zero=force_zero, name=combined_name, code=combined_code, **kwargs
     )
 
@@ -183,7 +183,7 @@ def scalar():
     def sf(x, params, const_list, const_dict):
         a = params[0]
         return a
-    return FitFunction(function=sf, num_fit_params=1, name='scalar', code='s')
+    return FitFunction(func=sf, num_fit_params=1, name='scalar', code='s')
 
 
 def x1(force_zero=None, **kwargs):
@@ -195,7 +195,7 @@ def x1(force_zero=None, **kwargs):
     def x1f(x, params, const_list, const_dict):
         a = params[0]
         return a * x
-    return FitFunction(function=x1f, num_fit_params=1, force_zero=force_zero,
+    return FitFunction(func=x1f, num_fit_params=1, force_zero=force_zero,
                        name='x^1', code='x1', **kwargs)
 
 
@@ -210,7 +210,7 @@ def linear(force_zero=None, **kwargs):
             a, b = params[0:2]
             return a * x + b
         return FitFunction(
-            function=lf, num_fit_params=2, force_zero=force_zero,
+            func=lf, num_fit_params=2, force_zero=force_zero,
             name='linear', code='p1', **kwargs
         )
     else:
@@ -219,7 +219,7 @@ def linear(force_zero=None, **kwargs):
             a = params[0]
             return a * x
         return FitFunction(
-            function=lf, num_fit_params=1, force_zero=force_zero,
+            func=lf, num_fit_params=1, force_zero=force_zero,
             name='linear', code='p1', **kwargs
         )
 
@@ -232,7 +232,7 @@ def x2(force_zero=None, **kwargs):
     def x2f(x, params, const_list, const_dict):
         a = params[0]
         return a * x ** 2
-    return FitFunction(function=x2f, num_fit_params=1, force_zero=force_zero,
+    return FitFunction(func=x2f, num_fit_params=1, force_zero=force_zero,
                        name='x^2', code='x2', **kwargs)
 
 
@@ -246,7 +246,7 @@ def quadratic(force_zero=None, **kwargs):
             a, b, c = params[0:3]
             return np.polyval([a, b, c], x)
         return FitFunction(
-            function=qf, num_fit_params=3, force_zero=force_zero,
+            func=qf, num_fit_params=3, force_zero=force_zero,
             name='quadratic', code='p2', **kwargs
         )
     else:
@@ -255,7 +255,7 @@ def quadratic(force_zero=None, **kwargs):
             a, b = params[0:2]
             return np.polyval([a, b, 0], x)
         return FitFunction(
-            function=qf, num_fit_params=2, force_zero=force_zero,
+            func=qf, num_fit_params=2, force_zero=force_zero,
             name='quadratic', code='p2', **kwargs
         )
 
@@ -269,7 +269,7 @@ def x_power(n, force_zero=None, **kwargs):
         a = params[0]
         return a * x ** n
     return FitFunction(
-        function=xnf, num_fit_params=1, force_zero=force_zero,
+        func=xnf, num_fit_params=1, force_zero=force_zero,
         name='x^{}'.format(n), code='x{}'.format(n), **kwargs
     )
 
@@ -283,7 +283,7 @@ def poly(n, force_zero=None, **kwargs):
         def pf(x, params, const_list, const_dict):
             return np.polyval(params, x)
         return FitFunction(
-            function=pf, num_fit_params=n+1, force_zero=force_zero,
+            func=pf, num_fit_params=n + 1, force_zero=force_zero,
             name='poly{}'.format(n), code='p{}'.format(n), **kwargs
         )
     else:
@@ -291,7 +291,7 @@ def poly(n, force_zero=None, **kwargs):
         def pf(x, params, const_list, const_dict):
             return np.polyval(np.concatenate((params, np.zeros(1))), x)
         return FitFunction(
-            function=pf, num_fit_params=n, force_zero=force_zero,
+            func=pf, num_fit_params=n, force_zero=force_zero,
             name='poly{}'.format(n), code='p{}'.format(n), **kwargs
         )
 
@@ -308,7 +308,7 @@ def asymptote(n, force_zero=None, **kwargs):
         a = params[0]
         return - a / x ** n
     return FitFunction(
-        function=af, num_fit_params=1, force_zero=force_zero,
+        func=af, num_fit_params=1, force_zero=force_zero,
         name='asymptote{}'.format(n), code='a{}'.format(n), **kwargs
     )
 
@@ -323,7 +323,7 @@ def asymptote_n(force_zero=None, **kwargs):
         a, n = params[0:2]
         return - a / x ** n
     return FitFunction(
-        function=anf, num_fit_params=2,
+        func=anf, num_fit_params=2,
         force_zero=force_zero, name='asymptote_n', code='an', **kwargs
     )
 
@@ -526,7 +526,7 @@ def _dependence(f, n_params, dep_keys, name, ctfs=list(), force_zero=None,
         return f(p, x)
     dep_str = _dep_str(dep_keys, ctfs)
     return FitFunction(
-        function=d, num_fit_params=(len(dep_keys) + len(ctfs)) * n_params,
+        func=d, num_fit_params=(len(dep_keys) + len(ctfs)) * n_params,
         force_zero=force_zero,
         name=name + ' on {}'.format(dep_str), code=code.format(dep_str),
         **kwargs
