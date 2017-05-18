@@ -18,10 +18,7 @@ def _get_ground_state_j(mass, z):
     if mass % 2 == 0:
         return 0.0
     elif z == 2:
-        if mass != 9:
-            return 1.5
-        else:
-            return 0.5
+        return 1.5
     elif z == 3:
         return 1.5
     elif z == 16:
