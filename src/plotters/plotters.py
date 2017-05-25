@@ -8,9 +8,11 @@ from plotting import save_plot_figure, save_plot_data_file
 from LegendSize import LegendSize
 from constants import LEGEND_SIZE
 from parsers.parse_files import *
+from parsers.LptEnergyLevel import LptEnergyLevel
+from parsers.NcsdEnergyLevel import NcsdEnergyLevel
 
 
-def _get_plots_aeff_exact_to_energy(parsed_ncsd_out_files):
+def _get_plots_a_to_energy_for_ncsd_states(parsed_ncsd_out_files):
     """Returns a list of plots in the form
             (xdata, ydata, const_list, const_dict),
     where A=Aeff is xdata, energy is ydata, and the const_dict constains
@@ -19,47 +21,94 @@ def _get_plots_aeff_exact_to_energy(parsed_ncsd_out_files):
     to generate the map
     :return: [(a_array, energy_array, state)]
     """
-    state_to_a_aeff_to_energy = get_state_to_a_aeff_to_energy_map(
-        parsed_ncsd_out_files=parsed_ncsd_out_files)
-    state_to_a_exact_to_energy = dict()
-    for state, a_aeff_to_energy in state_to_a_aeff_to_energy.items():
-        for a_aeff, energy in a_aeff_to_energy.items():
-            if a_aeff[0] == a_aeff[1]:
-                if state not in state_to_a_exact_to_energy:
-                    state_to_a_exact_to_energy[state] = dict()
-                state_to_a_exact_to_energy[state][a_aeff[0]] = energy
+    # make map state# -> A -> energy
+    num_to_a_to_energy = dict()
+    for ncsd_out_file in parsed_ncsd_out_files:
+        assert isinstance(ncsd_out_file, NcsdOut)
+        a = ncsd_out_file.n + ncsd_out_file.z
+        states = ncsd_out_file.energy_levels
+        for state in states:
+            # assert isinstance(state, NcsdEnergyLevel)
+            num = state.N
+            if num not in num_to_a_to_energy:
+                num_to_a_to_energy[num] = dict()
+            num_to_a_to_energy[num][a] = state.E
+    # make plots
     list_of_plots = list()
-    for state, a_to_energy in state_to_a_exact_to_energy.items():
-        if len(a_to_energy) < 2:
-            continue
+    for num, a_to_energy in num_to_a_to_energy.items():
         list_of_plots.append(
-            map_to_arrays(a_to_energy) + (list(), {'state': state}))
+            map_to_arrays(a_to_energy) + (list(), {'state': num}))
     return list_of_plots
 
 
-def _get_plot_aeff_exact_to_ground_energy(parsed_ncsd_out_files):
+def _get_ground_energy_plots(
+        parsed_ncsd_out_files, parsed_int_files, parsed_lpt_files):
+    a_aeff_to_ncsd_file = get_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files)
+    presc_a_to_int_and_lpt_files = get_presc_a_to_int_and_lpt_map(
+        parsed_int_files, parsed_lpt_files)
+    # make map (presc, a) to Nushell ground energy, assumed to be given
+    # by the zero body term plus the lowest energy in the *.lpt file
+    presc_a_to_ground_energy = dict()
+    for presc_a, int_lpt in presc_a_to_int_and_lpt_files.items():
+        int_file, lpt_file = int_lpt
+        assert isinstance(int_file, NushellxInt)
+        assert isinstance(lpt_file, NushellxLpt)
+        zbt = int_file.zero_body_term
+        ex0 = lpt_file.energy_levels[0].E
+        presc_a_to_ground_energy[presc_a] = zbt + ex0
+    # make map A -> listof(NcsdEnergyLevel)
+    aeff_exact_to_ncsd_states = dict()
+    for a_aeff, ncsd_file in a_aeff_to_ncsd_file.items():
+        assert isinstance(ncsd_file, NcsdOut)
+        if a_aeff[0] == a_aeff[1]:
+            aeff_exact_to_ncsd_states[a_aeff[0]] = ncsd_file.energy_levels
+    # make map A -> NCSD ground energy, assumed to be given by the lowest
+    # NCSD state whose J and T agree with the corresponding Nushell ground
+    # state for the (A, A, A) prescription
+    a_to_ground_energy = dict()
+    for a, ncsd_states in aeff_exact_to_ncsd_states.items():
+        if ((a, a, a), a) in presc_a_to_int_and_lpt_files:
+            int_file, lpt_file = presc_a_to_int_and_lpt_files[((a, a, a), a)]
+            nushell_ground_state = lpt_file.energy_levels[0]
+            assert isinstance(nushell_ground_state, LptEnergyLevel)
+            j = nushell_ground_state.J
+            t = nushell_ground_state.Tz
+            for state in ncsd_states:
+                assert isinstance(state, NcsdEnergyLevel)
+                if state.J == j and state.T == t:
+                    ground_energy = state.E
+                    break
+            else:
+                continue
+        else:
+            continue
+        a_to_ground_energy[a] = ground_energy
+    return a_to_ground_energy, presc_a_to_ground_energy
+
+
+def _get_plot_aeff_exact_to_ground_energy(a_to_ground_state_energy):
     """Returns a list of plots in the form
             (xdata, ydata, const_list, const_dict),
     where A=Aeff is xdata, and ground energy is ydata
     """
-    a_aeff_to_ground_state_energy = get_a_aeff_to_ground_state_energy_map(
-        parsed_ncsd_out_files=parsed_ncsd_out_files)
-    a_to_ground_state_energy = dict()
-    for a_aeff, e in a_aeff_to_ground_state_energy.items():
-        if a_aeff[0] == a_aeff[1]:
-            a_to_ground_state_energy[a_aeff[0]] = e
+    # a_aeff_to_ground_state_energy = get_a_aeff_to_ground_state_energy_map(
+    #     parsed_ncsd_out_files=parsed_ncsd_out_files)
+    # a_to_ground_state_energy = dict()
+    # for a_aeff, e in a_aeff_to_ground_state_energy.items():
+    #     if a_aeff[0] == a_aeff[1]:
+    #         a_to_ground_state_energy[a_aeff[0]] = e
     return map_to_arrays(a_to_ground_state_energy) + (list(), dict())
 
 
-def _get_plots_presc_a_to_ground_energy(parsed_int_files, parsed_lpt_files):
+def _get_plots_presc_a_to_ground_energy(presc_a_to_ground_energy):
     """Returns a list of plots in the form
             (xdata, ydata, const_list, const_dict),
     where A (mass) is xdata, ground energy is ydata, and const_dict contains
     an item 'presc' whose value is a 3-tuple representation of the 
     A-prescriptions
     """
-    presc_a_to_ground_energy = get_presc_a_to_ground_state_energy_map(
-        parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
+    # presc_a_to_ground_energy = get_presc_a_to_ground_state_energy_map(
+    #     parsed_int_files=parsed_int_files, parsed_lpt_files=parsed_lpt_files)
     presc_to_a_to_ground_energy = dict()
     for presc_a, energy in presc_a_to_ground_energy.items():
         presc, a = presc_a
@@ -74,19 +123,19 @@ def _get_plots_presc_a_to_ground_energy(parsed_int_files, parsed_lpt_files):
 
 
 def make_plot_ncsd_exact(dpath_ncsd_files, dpath_plots, savename, subtitle=''):
-    plots = _get_plots_aeff_exact_to_energy(
+    plots = _get_plots_a_to_energy_for_ncsd_states(
         parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
     title = 'NCSD exact energies: ' + subtitle
     labels = [str(p[3]['state']) for p in plots]
     xlabel, ylabel = 'A', 'E_ncsm (MeV)'
-    savepath = path.join(dpath_plots, savename + '.pdf')
+    savepath = path.join(dpath_plots, savename)
     save_plot_data_file(
         plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-        labels=labels, savepath=savepath
+        labels=labels, savepath=savepath+'.dat'
     )
     return save_plot_figure(
         data_plots=plots, title=title, xlabel=xlabel, ylabel=ylabel,
-        savepath=savepath, data_labels=labels, cmap_name='jet',
+        savepath=savepath+'.pdf', data_labels=labels, cmap_name='jet',
         legendsize=LegendSize(
             max_cols=LEGEND_SIZE.max_cols,
             max_h_space=LEGEND_SIZE.max_h_space,
@@ -105,12 +154,15 @@ def _make_plot_prescription_error_vs_exact_abstract(
         get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
         get_vce_plots_fn=_get_plots_presc_a_to_ground_energy
 ):
-    ncsd_plot = get_ncsd_plots_fn(
-        parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
-    vce_plots = get_vce_plots_fn(
+    ground_energy_maps = _get_ground_energy_plots(
+        parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files),
         parsed_int_files=parse_nushellx_int_files(dirpath=dpath_nushell_files),
-        parsed_lpt_files=parse_nushellx_lpt_files(dirpath=dpath_nushell_files)
+        parsed_lpt_files=parse_nushellx_lpt_files(dirpath=dpath_nushell_files),
     )
+    ncsd_plot = get_ncsd_plots_fn(
+        a_to_ground_state_energy=ground_energy_maps[0])
+    vce_plots = get_vce_plots_fn(
+        presc_a_to_ground_energy=ground_energy_maps[1])
 
     # Ncsd exact arrays
     x_ex, y_ex = [list(i) for i in ncsd_plot[:2]]
@@ -152,6 +204,36 @@ def _make_plot_prescription_error_vs_exact_abstract(
     labels = [p[3]['name'] for p in plots]
     xlabel, ylabel = 'A', 'E_presc - E_ncsm (MeV)'
     savepath = path.join(dpath_plots, savename)
+
+    # save ncsd plot files
+    ncsd_title = fulltitle+' - NCSD ground energies'
+    ncsd_ylabel = 'E_ncsm (MeV)'
+    ncsd_savepath = savepath+'_NCSD'
+    save_plot_data_file(
+        plots=[ncsd_plot], title=ncsd_title, xlabel=xlabel, ylabel=ncsd_ylabel,
+        labels=['ncsd'], savepath=ncsd_savepath+'.dat',
+    )
+    save_plot_figure(
+        data_plots=[ncsd_plot], title=ncsd_title, xlabel=xlabel,
+        ylabel=ncsd_ylabel, data_labels=['ncsd'], savepath=ncsd_savepath+'.pdf',
+        cmap_name='jet',
+    )
+
+    # save vce plots
+    vce_title = fulltitle+' - VCE prescription ground energies'
+    vce_ylabel = 'E_presc (MeV)'
+    vce_labels = [str(p[3]['presc']) for p in vce_plots]
+    vce_savepath = savepath+'_VCE'
+    save_plot_data_file(
+        plots=vce_plots, title=vce_title, xlabel=xlabel,
+        ylabel=vce_ylabel, labels=vce_labels, savepath=vce_savepath+'.dat',
+    )
+    save_plot_figure(
+        data_plots=vce_plots, title=vce_title, xlabel=xlabel, ylabel=vce_ylabel,
+        data_labels=vce_labels, savepath=vce_savepath+'.pdf', cmap_name='jet',
+    )
+
+    # save error plot files
     save_plot_data_file(
         plots=plots, title=fulltitle, xlabel=xlabel, ylabel=ylabel,
         labels=labels, savepath=savepath + '.dat'

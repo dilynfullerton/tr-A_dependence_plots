@@ -56,11 +56,11 @@ class NushellxLpt(Parser):
                      float(split_line[4].split('/')[1]))
             else:
                 j = float(split_line[4])
-            if '/' in split_line[4]:
-                t = (float(split_line[4].split('/')[0]) /
-                     float(split_line[4].split('/')[1]))
+            if '/' in split_line[5]:
+                t = (float(split_line[5].split('/')[0]) /
+                     float(split_line[5].split('/')[1]))
             else:
-                t = float(split_line[4])
+                t = float(split_line[5])
             self.energy_levels.append(LptEnergyLevel(n, nj, e, j, t, p))
         try:
             super(NushellxLpt, self)._get_data_lines_fn(
@@ -69,6 +69,7 @@ class NushellxLpt(Parser):
             )
         except ItemNotFoundInFileException as exc:
             print(exc.message)  # non-critical issue: continue
+        self.energy_levels = sorted(self.energy_levels, key=lambda x: x.E)
 
     def _get_data(self):
         self._get_data_az()

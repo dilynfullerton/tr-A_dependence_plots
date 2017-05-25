@@ -24,7 +24,7 @@ class NcsdOut(Parser):
         self.beta_cm = 0
         self.nhw = 0
         self.nmax = 0
-        self.energy_levels = dict()
+        self.energy_levels = list()
         super(NcsdOut, self).__init__(filepath)
 
     def __lt__(self, other):
@@ -80,7 +80,7 @@ class NcsdOut(Parser):
             e = float(split_line[3])
             j = round(float(split_line[5]), 1)
             t = round(float(split_line[7]), 1)
-            self.energy_levels[NcsdEnergyLevel(n, j, t)] = e
+            self.energy_levels.append(NcsdEnergyLevel(n, j, t, e))
         super(NcsdOut, self)._get_data_lines_fn(
             line_regex=RGX_ENERGY_LEVELS_LINE, match_fn=match_fn,
             data_name='ENERGY LEVELS')
