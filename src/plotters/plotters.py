@@ -162,21 +162,6 @@ def _make_plot_prescription_error_vs_exact_abstract(
     )
 
 
-# def make_plots_states_with_ground_j_prescription_error_vs_exact(
-#         dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
-#         subtitle='', a_prescriptions=None
-# ):
-#     return _make_plot_prescription_error_vs_exact_abstract(
-#         dpath_ncsd_files=dpath_ncsd_files,
-#         dpath_nushell_files=dpath_nushell_files,
-#         dpath_plots=dpath_plots, savename=savename, subtitle=subtitle,
-#         a_prescriptions=a_prescriptions,
-#         title='Error of states with ground J for A-prescriptions',
-#         get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
-#         get_vce_plots_fn=_get_plots_presc_a_to_energies_with_ground_j
-#     )
-
-
 def make_plot_ground_state_prescription_error_vs_exact(
         dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
         subtitle='', a_prescriptions=None
