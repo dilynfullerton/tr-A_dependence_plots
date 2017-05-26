@@ -9,7 +9,7 @@ from Parser import ItemNotFoundInFileException
 
 RGX_SPLIT = compile(b'\s*[=#]\s*|\s+')
 RGX_AZ_LINE = compile(b'.*a\s*=\s*\d+\s+z\s*=\s*\d+')
-RGX_SPE_LINE = compile(b'\s*\w+(\s+-?\d+\.\d+){3,}')
+RGX_SPE_LINE = compile(b'\s*\w+(\s+-?\d+\.\d+\w+){3,}')
 RGX_ENERGY_LEVEL_LINE = compile(b'.*\d+\s+\d+(\s+-?\d+\.\d+){2}')
 
 
@@ -34,7 +34,11 @@ class NushellxLpt(Parser):
 
     def _get_data_spe(self):
         def match_fn(line):
-            nums = map(lambda s: float(s), line.strip().split()[3:-1])
+            try:
+                nums = map(lambda s: float(s), line.strip().split()[3:-1])
+            except ValueError:
+                raise ItemNotFoundInFileException(
+                    'Could not parse single particle energies')
             self.single_particle_energies.extend(nums)
         try:
             super(NushellxLpt, self)._get_data_lines_fn(
