@@ -5,20 +5,20 @@ from plotters.plotters import *
 
 if __name__ == '__main__':
     RESULTS_DIR = ('~/workspace/triumf/calculation_results/'
-                   'lithium_nmax4_iter500_20170519')
+                   'lithium_nmax2_oldNCSD_20170525')
     NCSD_DIR = RESULTS_DIR + '/ncsd'
     NUSHELL_DIR = RESULTS_DIR + '/vce'
-    SAVENAME = 'li_nmax4_iter500_V2'
-    SUBTITLE = 'Lithium exact, (4, 5, 6), (6, 7, 8); Nmax=4'
+    SAVENAME = 'lithium_nmax2_oldNCSD_V2'
+    SUBTITLE = 'Lithium exact, (4, 5, 6), (6, 7, 8); Nmax=2'
 
-    make_plot_ncsd_exact(
-        dpath_ncsd_files=NCSD_DIR,
-        dpath_plots=RESULTS_DIR,
-        savename='ncsd_all_states_'+SAVENAME,
-        subtitle='Lithium; Nmax=4',
-    )
-
-    plt.show()
+    # make_plot_ncsd_exact(
+    #     dpath_ncsd_files=NCSD_DIR,
+    #     dpath_plots=RESULTS_DIR,
+    #     savename='ncsd_all_states_'+SAVENAME,
+    #     subtitle='Lithium; Nmax=4',
+    # )
+    #
+    # plt.show()
 
     make_plot_ground_state_prescription_error_vs_exact(
         dpath_ncsd_files=NCSD_DIR,

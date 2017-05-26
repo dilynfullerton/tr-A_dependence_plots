@@ -26,6 +26,9 @@ def _get_plots_a_to_energy_for_ncsd_states(parsed_ncsd_out_files):
     for ncsd_out_file in parsed_ncsd_out_files:
         assert isinstance(ncsd_out_file, NcsdOut)
         a = ncsd_out_file.n + ncsd_out_file.z
+        aeff = ncsd_out_file.aeff
+        if a != aeff:
+            continue
         states = ncsd_out_file.energy_levels
         for state in states:
             # assert isinstance(state, NcsdEnergyLevel)
@@ -122,11 +125,18 @@ def _get_plots_presc_a_to_ground_energy(presc_a_to_ground_energy):
     return list_of_plots
 
 
-def make_plot_ncsd_exact(dpath_ncsd_files, dpath_plots, savename, subtitle=''):
+def make_plot_ncsd_exact(dpath_ncsd_files, dpath_plots, savename, subtitle='',
+                         ground_state_plot=None, num_states_limit=None):
     plots = _get_plots_a_to_energy_for_ncsd_states(
         parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files))
     title = 'NCSD exact energies: ' + subtitle
     labels = [str(p[3]['state']) for p in plots]
+    if num_states_limit is not None and len(plots) > num_states_limit:
+        plots = plots[:num_states_limit]
+        labels = labels[:num_states_limit]
+    if ground_state_plot is not None:
+        plots.append(ground_state_plot)
+        labels.append(str('Ground state'))
     xlabel, ylabel = 'A', 'E_ncsm (MeV)'
     savepath = path.join(dpath_plots, savename)
     save_plot_data_file(
@@ -205,18 +215,25 @@ def _make_plot_prescription_error_vs_exact_abstract(
     xlabel, ylabel = 'A', 'E_presc - E_ncsm (MeV)'
     savepath = path.join(dpath_plots, savename)
 
-    # save ncsd plot files
-    ncsd_title = fulltitle+' - NCSD ground energies'
+    # save ncsd ground state plot file
+    ncsd_title = fulltitle+' - NCSD ground energy'
     ncsd_ylabel = 'E_ncsm (MeV)'
     ncsd_savepath = savepath+'_NCSD'
     save_plot_data_file(
         plots=[ncsd_plot], title=ncsd_title, xlabel=xlabel, ylabel=ncsd_ylabel,
-        labels=['ncsd'], savepath=ncsd_savepath+'.dat',
+        labels=['ground state'], savepath=ncsd_savepath+'.dat',
     )
     save_plot_figure(
         data_plots=[ncsd_plot], title=ncsd_title, xlabel=xlabel,
-        ylabel=ncsd_ylabel, data_labels=['ncsd'], savepath=ncsd_savepath+'.pdf',
-        cmap_name='jet',
+        ylabel=ncsd_ylabel, data_labels=['ground state'],
+        savepath=ncsd_savepath+'.pdf', cmap_name='jet',
+    )
+
+    # save ncsd all states plot
+    make_plot_ncsd_exact(
+        dpath_ncsd_files=dpath_ncsd_files, dpath_plots=dpath_plots,
+        savename=path.split(ncsd_savepath+'_all_states')[1], subtitle=subtitle,
+        ground_state_plot=ncsd_plot, num_states_limit=15,
     )
 
     # save vce plots
