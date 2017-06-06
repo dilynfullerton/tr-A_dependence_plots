@@ -8,7 +8,7 @@ if __name__ == '__main__':
                    'lithium_nmax2_vcefixtry4_20170605')
     NCSD_DIR = RESULTS_DIR + '/ncsd'
     NUSHELL_DIR = RESULTS_DIR + '/vce'
-    SAVENAME = 'lithium_nmax2_vcefixtry3'
+    SAVENAME = 'lithium_nmax2_vcefixtry3_V3'
     SUBTITLE = 'Lithium exact, (4, 5, 6), (6, 7, 8); Nmax=2'
 
     # make_plot_ncsd_exact(

@@ -45,49 +45,60 @@ def _get_plots_a_to_energy_for_ncsd_states(parsed_ncsd_out_files):
 
 
 def _get_ground_energy_plots(
-        parsed_ncsd_out_files, parsed_int_files, parsed_lpt_files):
+        parsed_ncsd_out_files, parsed_int_files, parsed_lpt_files
+):
+    """Given a set of NCSD out files and NushellX interaction and *.lpt files,
+    makes two plots from the data:
+        * A -> NCSD ground state
+        * (PRESC, A) -> Nushell ground energy
+    The NCSD ground state is assumed to be the lowest energy state in the
+    associated NCSD *.out file.
+    The Nushell ground energy is ZBT + E0, where ZBT is the zero body term
+    obtained from the interaction file and E0 is the lowest energy in the
+    *.lpt file whose J and T match that of the NCSD state with the same
+    Z and A
+    """
+    # Get initial map (Z, A, Aeff) -> NCSD file
     z_a_aeff_to_ncsd_file = get_z_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files)
+    # Filter terms to include only those with A=Aeff
+    a_to_ncsd_file = dict()
+    for z_a_aeff, ncsd_file in z_a_aeff_to_ncsd_file.items():
+        z, a, aeff = z_a_aeff
+        if a == aeff and a not in a_to_ncsd_file:
+            a_to_ncsd_file[a] = ncsd_file
+        elif a == aeff:
+            raise NoUniqueMapError('Multiple NCSD files given with same A=Aeff')
+    # Make map A -> NCSD ground state
+    a_to_ncsd_gs = dict()
+    for a, ncsd_file in a_to_ncsd_file.items():
+        assert isinstance(ncsd_file, NcsdOut)
+        if len(ncsd_file.energy_levels) != 0:
+            a_to_ncsd_gs[a] = ncsd_file.energy_levels[0]
+    # Make map A -> NCSD ground energy
+    a_to_ncsd_gs_energy = {a: gs.E for a, gs in a_to_ncsd_gs.items()}
+
+    # Get map (PRESC, A) -> listof( (INT_FILE, LPT_FILE) )
     presc_a_to_int_and_lpt_files = get_presc_a_to_int_and_lpt_map(
         parsed_int_files, parsed_lpt_files)
-    # make map (presc, a) to Nushell ground energy, assumed to be given
-    # by the zero body term plus the lowest energy in the *.lpt file
+    # Make map (PRESC, A) -> Nushell ground energy
     presc_a_to_ground_energy = dict()
     for presc_a, int_lpt in presc_a_to_int_and_lpt_files.items():
         int_file, lpt_file = int_lpt
         assert isinstance(int_file, NushellxInt)
         assert isinstance(lpt_file, NushellxLpt)
         zbt = int_file.zero_body_term
-        ex0 = lpt_file.energy_levels[0].E
-        presc_a_to_ground_energy[presc_a] = zbt + ex0
-    # make map A -> listof(NcsdEnergyLevel)
-    aeff_exact_to_ncsd_states = dict()
-    for z_a_aeff, ncsd_file in z_a_aeff_to_ncsd_file.items():
-        assert isinstance(ncsd_file, NcsdOut)
-        z, a, aeff = z_a_aeff
-        if a == aeff:
-            aeff_exact_to_ncsd_states[a] = ncsd_file.energy_levels
-    # make map A -> NCSD ground energy, assumed to be given by the lowest
-    # NCSD state whose J and T agree with the corresponding Nushell ground
-    # state for the (A, A, A) prescription
-    a_to_ground_energy = dict()
-    for a, ncsd_states in aeff_exact_to_ncsd_states.items():
-        if ((a, a, a), a) in presc_a_to_int_and_lpt_files:
-            int_file, lpt_file = presc_a_to_int_and_lpt_files[((a, a, a), a)]
-            nushell_ground_state = lpt_file.energy_levels[0]
-            assert isinstance(nushell_ground_state, LptEnergyLevel)
-            j = nushell_ground_state.J
-            t = nushell_ground_state.Tz
-            for state in ncsd_states:
-                assert isinstance(state, NcsdEnergyLevel)
-                if state.J == j and state.T == t:
-                    ground_energy = state.E
-                    break
-            else:
-                continue
-        else:
+        # Retrieve ground state energy
+        if lpt_file.a not in a_to_ncsd_gs:
             continue
-        a_to_ground_energy[a] = ground_energy
-    return a_to_ground_energy, presc_a_to_ground_energy
+        ncsd_ground_state = a_to_ncsd_gs[lpt_file.a]
+        assert isinstance(ncsd_ground_state, NcsdEnergyLevel)
+        for el in lpt_file.energy_levels:
+            assert isinstance(el, LptEnergyLevel)
+            if (ncsd_ground_state.J, ncsd_ground_state.T) == (el.J, el.Tz):
+                presc_a_to_ground_energy[presc_a] = zbt + el.E
+                break
+
+    return a_to_ncsd_gs_energy, presc_a_to_ground_energy
 
 
 def _get_plot_aeff_exact_to_ground_energy(a_to_ground_state_energy):
