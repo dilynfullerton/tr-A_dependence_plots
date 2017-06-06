@@ -5,11 +5,11 @@ from plotters.a_dependence_plotters import *
 
 if __name__ == '__main__':
     RESULTS_DIR = ('~/workspace/triumf/calculation_results/'
-                   'lithium_nmax2_vcefixtry4_20170605')
+                   'helium_nmax2_nompi_20170518')
     NCSD_DIR = RESULTS_DIR + '/ncsd'
     NUSHELL_DIR = RESULTS_DIR + '/vce'
-    SAVENAME = 'lithium_nmax2_vcefixtry3_V3'
-    SUBTITLE = 'Lithium exact, (4, 5, 6), (6, 7, 8); Nmax=2'
+    SAVENAME = 'helium_nmax2_nompi_V3'
+    SUBTITLE = 'Helium exact, (4, 5, 6); Nmax=2'
 
     # make_plot_ncsd_exact(
     #     dpath_ncsd_files=NCSD_DIR,
@@ -26,8 +26,8 @@ if __name__ == '__main__':
         dpath_plots=RESULTS_DIR,
         savename='error_'+SAVENAME+'_ground_state',
         subtitle=SUBTITLE+' - Ground state',
-        a_prescriptions=[(4, 5, 6), (6, 7, 8)],
-        filter_fn_ncsd=lambda f: f.z == 3
+        a_prescriptions=[(4, 5, 6)],
+        filter_fn_ncsd=lambda f: f.z == 2
     )
 
     plt.show()
