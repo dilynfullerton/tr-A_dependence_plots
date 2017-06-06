@@ -8,7 +8,7 @@ from deprecated.int.metafitter_abs import single_particle_metafit_int
 
 from constants import DPATH_SHELL_RESULTS, DPATH_PLOTS
 from deprecated.nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
-from plotting import map_to_arrays
+from plotting_abs import map_to_arrays
 from transforms import pzbt
 
 

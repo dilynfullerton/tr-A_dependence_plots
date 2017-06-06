@@ -7,7 +7,7 @@ from __future__ import print_function, division, unicode_literals
 from metafit import metafitter_abs, print_io_key
 from transforms import relative_y, identity
 from transforms_s import s_transform_to_super
-from plotting import map_to_arrays
+from plotting_abs import map_to_arrays
 from constants import P_TITLE, P_END, P_SUB, P_HEAD
 from constants import STANDARD_IO_MAP, PLOT_CMAP, LEGEND_SIZE
 from deprecated.int.DataMapInt import DataMapInt

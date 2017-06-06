@@ -9,8 +9,8 @@ from constants import DPATH_SHELL_RESULTS, DPATH_NCSM_RESULTS
 from constants import DPATH_PLOTS_NCSMVCE
 from LegendSize import LegendSize
 from constants import LEGEND_SIZE
-from plotting import map_to_arrays
-from plotting import save_plot_figure, save_plot_data_file
+from plotting_abs import map_to_arrays
+from plotting_abs import save_plot_figure, save_plot_data_file
 from transforms import relative_y
 from DataMapNcsmOut import DataMapNcsmOut
 from DatumNcsmOut import get_ground_state_j

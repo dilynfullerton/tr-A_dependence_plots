@@ -42,7 +42,7 @@ from scipy.optimize import leastsq
 from scipy.stats import linregress
 from FitFunction import FitFunction
 from constants import P_TITLE, P_END
-from plotting import plot_the_plots
+from plotting_abs import plot_the_plots
 
 
 class FunctionDoesNotMatchParameterGuessException(Exception):

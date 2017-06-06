@@ -12,7 +12,7 @@ from scipy.stats import linregress as lg
 
 from deprecated.int import ExpInt
 from metafit import print_io_key
-from plotting import map_to_arrays
+from plotting_abs import map_to_arrays
 from transforms import *
 
 E = 12

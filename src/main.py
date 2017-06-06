@@ -1,7 +1,7 @@
 #!/bin/python
 from __future__ import division, print_function, unicode_literals
 from matplotlib import pyplot as plt
-from plotters.plotters import *
+from plotters.a_dependence_plotters import *
 
 if __name__ == '__main__':
     RESULTS_DIR = ('~/workspace/triumf/calculation_results/'

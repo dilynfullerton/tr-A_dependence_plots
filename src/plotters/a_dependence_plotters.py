@@ -2,9 +2,9 @@
 Various functions for plotting A-dependence data
 """
 from __future__ import division, print_function, unicode_literals
-from data_maps import *
-from plotting import map_to_arrays
-from plotting import save_plot_figure, save_plot_data_file
+from a_dependence_maps import *
+from plotting_abs import map_to_arrays
+from plotting_abs import save_plot_figure, save_plot_data_file
 from LegendSize import LegendSize
 from constants import LEGEND_SIZE
 from parsers.parse_files import *

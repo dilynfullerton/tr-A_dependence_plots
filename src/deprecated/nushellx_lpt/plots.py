@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 from constants import DPATH_SHELL_RESULTS
 from deprecated.nushellx_lpt.DataMapNushellxLpt import DataMapNushellxLpt
-from plotting import map_to_arrays, plot_the_plots
+from plotting_abs import map_to_arrays, plot_the_plots
 
 
 def lpt_plot_energy_vs_n_for_mass(
