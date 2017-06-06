@@ -5,10 +5,10 @@ from plotters.plotters import *
 
 if __name__ == '__main__':
     RESULTS_DIR = ('~/workspace/triumf/calculation_results/'
-                   'lithium_nmax2_oldNCSD_20170525')
+                   'lithium_nmax2_vcefixtry4_20170605')
     NCSD_DIR = RESULTS_DIR + '/ncsd'
     NUSHELL_DIR = RESULTS_DIR + '/vce'
-    SAVENAME = 'lithium_nmax2_oldNCSD_V2'
+    SAVENAME = 'lithium_nmax2_vcefixtry3'
     SUBTITLE = 'Lithium exact, (4, 5, 6), (6, 7, 8); Nmax=2'
 
     # make_plot_ncsd_exact(
@@ -27,6 +27,7 @@ if __name__ == '__main__':
         savename='error_'+SAVENAME+'_ground_state',
         subtitle=SUBTITLE+' - Ground state',
         a_prescriptions=[(4, 5, 6), (6, 7, 8)],
+        filter_fn_ncsd=lambda f: f.z == 3
     )
 
     plt.show()

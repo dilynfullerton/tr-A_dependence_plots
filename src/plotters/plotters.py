@@ -46,7 +46,7 @@ def _get_plots_a_to_energy_for_ncsd_states(parsed_ncsd_out_files):
 
 def _get_ground_energy_plots(
         parsed_ncsd_out_files, parsed_int_files, parsed_lpt_files):
-    a_aeff_to_ncsd_file = get_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files)
+    z_a_aeff_to_ncsd_file = get_z_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files)
     presc_a_to_int_and_lpt_files = get_presc_a_to_int_and_lpt_map(
         parsed_int_files, parsed_lpt_files)
     # make map (presc, a) to Nushell ground energy, assumed to be given
@@ -61,10 +61,11 @@ def _get_ground_energy_plots(
         presc_a_to_ground_energy[presc_a] = zbt + ex0
     # make map A -> listof(NcsdEnergyLevel)
     aeff_exact_to_ncsd_states = dict()
-    for a_aeff, ncsd_file in a_aeff_to_ncsd_file.items():
+    for z_a_aeff, ncsd_file in z_a_aeff_to_ncsd_file.items():
         assert isinstance(ncsd_file, NcsdOut)
-        if a_aeff[0] == a_aeff[1]:
-            aeff_exact_to_ncsd_states[a_aeff[0]] = ncsd_file.energy_levels
+        z, a, aeff = z_a_aeff
+        if a == aeff:
+            aeff_exact_to_ncsd_states[a] = ncsd_file.energy_levels
     # make map A -> NCSD ground energy, assumed to be given by the lowest
     # NCSD state whose J and T agree with the corresponding Nushell ground
     # state for the (A, A, A) prescription
@@ -162,12 +163,21 @@ def _make_plot_prescription_error_vs_exact_abstract(
         dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
         title, subtitle='', a_prescriptions=None,
         get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
-        get_vce_plots_fn=_get_plots_presc_a_to_ground_energy
+        get_vce_plots_fn=_get_plots_presc_a_to_ground_energy,
+        filter_fn_ncsd=None, filter_fn_int=None, filter_fn_lpt=None,
 ):
+    ncsd_files = parse_ncsd_out_files(dirpath=dpath_ncsd_files)
+    int_files = parse_nushellx_int_files(dirpath=dpath_nushell_files)
+    lpt_files = parse_nushellx_lpt_files(dirpath=dpath_nushell_files)
+    if filter_fn_ncsd is not None:
+        ncsd_files = filter(filter_fn_ncsd, ncsd_files)
+    if filter_fn_int is not None:
+        int_files = filter(filter_fn_int, int_files)
+    if filter_fn_lpt is not None:
+        lpt_files = filter(filter_fn_lpt, lpt_files)
     ground_energy_maps = _get_ground_energy_plots(
-        parsed_ncsd_out_files=parse_ncsd_out_files(dirpath=dpath_ncsd_files),
-        parsed_int_files=parse_nushellx_int_files(dirpath=dpath_nushell_files),
-        parsed_lpt_files=parse_nushellx_lpt_files(dirpath=dpath_nushell_files),
+        parsed_ncsd_out_files=ncsd_files, parsed_int_files=int_files,
+        parsed_lpt_files=lpt_files,
     )
     ncsd_plot = get_ncsd_plots_fn(
         a_to_ground_state_energy=ground_energy_maps[0])
@@ -263,7 +273,8 @@ def _make_plot_prescription_error_vs_exact_abstract(
 
 def make_plot_ground_state_prescription_error_vs_exact(
         dpath_ncsd_files, dpath_nushell_files, dpath_plots, savename,
-        subtitle='', a_prescriptions=None
+        subtitle='', a_prescriptions=None,
+        filter_fn_ncsd=None, filter_fn_int=None, filter_fn_lpt=None,
 ):
     return _make_plot_prescription_error_vs_exact_abstract(
         dpath_ncsd_files=dpath_ncsd_files,
@@ -272,7 +283,10 @@ def make_plot_ground_state_prescription_error_vs_exact(
         a_prescriptions=a_prescriptions,
         title='Ground state energy error for A-prescriptions',
         get_ncsd_plots_fn=_get_plot_aeff_exact_to_ground_energy,
-        get_vce_plots_fn=_get_plots_presc_a_to_ground_energy
+        get_vce_plots_fn=_get_plots_presc_a_to_ground_energy,
+        filter_fn_ncsd=filter_fn_ncsd,
+        filter_fn_int=filter_fn_int,
+        filter_fn_lpt=filter_fn_lpt,
     )
 
 # test

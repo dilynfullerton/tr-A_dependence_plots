@@ -47,21 +47,22 @@ class NoUniqueMapError(RuntimeError):
 #         # return s0, e
 
 
-def get_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files):
-    """Returns a map (A, Aeff) -> NcsdOut from the given NcsdOut if it is
+def get_z_a_aeff_to_ncsd_out_map(parsed_ncsd_out_files):
+    """Returns a map (Z, A, Aeff) -> NcsdOut from the given NcsdOut if it is
     possible to form the map uniquely
     """
-    a_aeff_to_parsed_file = dict()
+    z_a_aeff_to_parsed_file = dict()
     for ncsd_out in parsed_ncsd_out_files:
-        a = ncsd_out.z + ncsd_out.n
+        z = ncsd_out.z
+        a = z + ncsd_out.n
         aeff = ncsd_out.aeff
-        if (a, aeff) not in a_aeff_to_parsed_file:
-            a_aeff_to_parsed_file[(a, aeff)] = ncsd_out
+        if (z, a, aeff) not in z_a_aeff_to_parsed_file:
+            z_a_aeff_to_parsed_file[(z, a, aeff)] = ncsd_out
         else:
             raise NoUniqueMapError(
-                'Multiple files with (A, Aeff) = ({}, {}) in given list'
-                ''.format(a, aeff))
-    return a_aeff_to_parsed_file
+                'Multiple files with (Z, A, Aeff) = ({}, {}, {}) in given list'
+                ''.format(z, a, aeff))
+    return z_a_aeff_to_parsed_file
 
 
 # def get_a_aeff_to_state_to_energy_map(parsed_ncsd_out_files):
